@@ -16,6 +16,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
  *     }
  *  </form>
  * 
+ * @example
  * <!-- Use with validation errors -->
  *  <form>
  *     <input [formControl]="formControl" placeholder="Enter value" />
@@ -32,7 +33,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
     name: 'firstErrorKey'
 })
 export class FirstErrorKeyPipe implements PipeTransform {
-    transform(input?: ValidationErrors | AbstractControl | null): any {
+    transform(input?: ValidationErrors | AbstractControl | null): string | null {
         if(!input) {
             return null;
         }
