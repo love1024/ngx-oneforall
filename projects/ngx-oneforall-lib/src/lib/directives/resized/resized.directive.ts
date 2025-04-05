@@ -69,11 +69,7 @@ export class ResizedDirective implements OnDestroy {
                 this.zone.run(() => this.handleResize(entries))
             );
             const nativeElement = this.element.nativeElement;
-            if (nativeElement instanceof HTMLElement) {
-                this.observer?.observe(nativeElement);
-            } else {
-                console.error('ResizedDirective: nativeElement is not a valid DOM element.');
-            }
+            this.observer?.observe(nativeElement);
         });
     }
 
