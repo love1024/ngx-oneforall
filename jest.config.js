@@ -3,9 +3,8 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/src/test.ts'],
   transform: {
-    '^.+\\.(ts|js|html)$': 'jest-preset-angular',
-    '^.+\\.tsx?$': [
-        'ts-jest',
+    '^.+\\.(ts|js|html)$': [
+        'jest-preset-angular',
         {
             tsconfig: '<rootDir>/tsconfig.spec.json',
             stringifyContentPathRegex: '\\.html$',

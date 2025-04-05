@@ -1,4 +1,4 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { Component, DebugElement, ElementRef, NgZone } from '@angular/core';
 import { ResizedDirective, ResizedEvent } from './resized.directive';
 import { By } from '@angular/platform-browser';
@@ -39,7 +39,10 @@ describe('ResizedDirective', () => {
 
                 
         // Mock ResizeObserver globally
-        global.ResizeObserver = jest.fn(() => mockResizeObserver);
+        global.ResizeObserver = jest.fn().mockImplementation((cb) => {
+            cb([]);
+            return mockResizeObserver
+        });
     });
 
     afterEach(() => {
@@ -56,7 +59,12 @@ describe('ResizedDirective', () => {
             contentRect: { width: 100, height: 100 } as DOMRectReadOnly,
         } as ResizeObserverEntry;
 
-        directive['handleResize']([mockEntry]);
+        global.ResizeObserver = jest.fn().mockImplementation((cb) => {
+            cb([mockEntry]);
+            return mockResizeObserver
+        });
+
+        fixture.detectChanges();
 
         expect(emitSpy).toHaveBeenCalledWith({
             current: mockEntry.contentRect,
@@ -73,8 +81,13 @@ describe('ResizedDirective', () => {
             contentRect: { width: 200, height: 200 } as DOMRectReadOnly,
         } as ResizeObserverEntry;
 
-        directive['handleResize']([mockEntry1]);
-        directive['handleResize']([mockEntry2]);
+        global.ResizeObserver = jest.fn().mockImplementation((cb) => {
+            cb([mockEntry1]);
+            cb([mockEntry2]);
+            return mockResizeObserver
+        });
+
+        fixture.detectChanges();
 
         expect(emitSpy).toHaveBeenCalledWith({
             current: mockEntry2.contentRect,
@@ -88,6 +101,10 @@ describe('ResizedDirective', () => {
         fixture.destroy();
         expect(mockResizeObserver.disconnect).toHaveBeenCalled();
     });
+    it('should not emit resized event if entries length is 0', () => {
+        directive['handleResize']([]);
 
+        expect(emitSpy).not.toHaveBeenCalled();
+    });
 
 });
