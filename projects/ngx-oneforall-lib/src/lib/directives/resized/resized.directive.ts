@@ -23,7 +23,7 @@ export interface ResizedEvent {
  *
  * @example
  * ```html
- * <div resized (resized)="onResized($event)">
+ * <div (resized)="onResized($event)">
  *   Resize me!
  * </div>
  * ```
@@ -35,7 +35,7 @@ export interface ResizedEvent {
  * @Component({
  *   selector: 'app-root',
  *   template: `
- *     <div resized (resized)="onResized($event)">
+ *     <div (resized)="onResized($event)">
  *       Resize me!
  *     </div>
  *   `,
