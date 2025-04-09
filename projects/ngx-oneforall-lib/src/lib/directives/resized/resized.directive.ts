@@ -1,19 +1,19 @@
 import {
-    afterNextRender,
-    Directive,
-    ElementRef,
-    inject,
-    NgZone,
-    OnDestroy,
-    output,
+  afterNextRender,
+  Directive,
+  ElementRef,
+  inject,
+  NgZone,
+  OnDestroy,
+  output,
 } from '@angular/core';
 
 /**
  * Interface representing the resized event.
  */
 export interface ResizedEvent {
-    current: DOMRectReadOnly;
-    previous: DOMRectReadOnly | null;
+  current: DOMRectReadOnly;
+  previous: DOMRectReadOnly | null;
 }
 
 /**
@@ -56,34 +56,34 @@ export interface ResizedEvent {
  */
 @Directive({ selector: '[resized]' })
 export class ResizedDirective implements OnDestroy {
-    resized = output<ResizedEvent>();
+  resized = output<ResizedEvent>();
 
-    private element = inject(ElementRef);
-    private zone = inject(NgZone);
-    private observer?: ResizeObserver;
-    private previousRect: DOMRectReadOnly | null = null;
+  private element = inject(ElementRef);
+  private zone = inject(NgZone);
+  private observer?: ResizeObserver;
+  private previousRect: DOMRectReadOnly | null = null;
 
-    constructor() {
-        afterNextRender(() => {
-            this.observer = new ResizeObserver(entries =>
-                this.zone.run(() => this.handleResize(entries))
-            );
-            const nativeElement = this.element.nativeElement;
-            this.observer?.observe(nativeElement);
-        });
+  constructor() {
+    afterNextRender(() => {
+      this.observer = new ResizeObserver(entries =>
+        this.zone.run(() => this.handleResize(entries))
+      );
+      const nativeElement = this.element.nativeElement;
+      this.observer?.observe(nativeElement);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+  }
+
+  private handleResize(entries: ResizeObserverEntry[]): void {
+    if (entries.length === 0) {
+      return;
     }
-
-    ngOnDestroy(): void {
-        this.observer?.disconnect();
-    }
-
-    private handleResize(entries: ResizeObserverEntry[]): void {
-        if (entries.length === 0) {
-            return;
-        }
-        const domSize = entries[0];
-        const currentRect = domSize.contentRect;
-        this.resized.emit({ current: currentRect, previous: this.previousRect });
-        this.previousRect = currentRect;
-    }
+    const domSize = entries[0];
+    const currentRect = domSize.contentRect;
+    this.resized.emit({ current: currentRect, previous: this.previousRect });
+    this.previousRect = currentRect;
+  }
 }

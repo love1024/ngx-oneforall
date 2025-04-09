@@ -33,6 +33,16 @@
               "zone.js/testing"
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/ngx-oneforall-lib/**/*.ts",
+              "projects/ngx-oneforall-lib/**/*.html"
+            ],
+            "eslintConfig": "projects/ngx-oneforall-lib/eslint.config.js"
+          }
         }
       }
     },

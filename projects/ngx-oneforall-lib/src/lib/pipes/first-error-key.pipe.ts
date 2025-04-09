@@ -15,7 +15,7 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
  *        </div>
  *     }
  *  </form>
- * 
+ *
  * @example
  * <!-- Use with validation errors -->
  *  <form>
@@ -30,20 +30,21 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
  * @implements {PipeTransform}
  */
 @Pipe({
-    name: 'firstErrorKey'
+  name: 'firstErrorKey',
 })
 export class FirstErrorKeyPipe implements PipeTransform {
-    transform(input?: ValidationErrors | AbstractControl | null): string | null {
-        if(!input) {
-            return null;
-        }
-
-        const errors: ValidationErrors | null = input instanceof AbstractControl ? input.errors : input;
-        if(!errors) {
-            return null;
-        }
-
-        const errorKeys = Object.keys(errors);
-        return errorKeys.length > 0 ? errorKeys[0] : null;
+  transform(input?: ValidationErrors | AbstractControl | null): string | null {
+    if (!input) {
+      return null;
     }
+
+    const errors: ValidationErrors | null =
+      input instanceof AbstractControl ? input.errors : input;
+    if (!errors) {
+      return null;
+    }
+
+    const errorKeys = Object.keys(errors);
+    return errorKeys.length > 0 ? errorKeys[0] : null;
+  }
 }

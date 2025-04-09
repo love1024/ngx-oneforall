@@ -8,9 +8,8 @@ describe('NgxOneforallLibComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NgxOneforallLibComponent]
-    })
-    .compileComponents();
+      imports: [NgxOneforallLibComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(NgxOneforallLibComponent);
     component = fixture.componentInstance;

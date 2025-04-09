@@ -34,14 +34,14 @@ import { Pipe, PipeTransform } from '@angular/core';
  * @returns The result of invoking the handler function with the provided arguments.
  */
 @Pipe({
-    name: 'memoize'
+  name: 'memoize',
 })
 export class MemoizePipe implements PipeTransform {
-    transform<T extends unknown[], R>(
-        handler: (...args: T) => R, 
-        context?: unknown,
-        ...args: T
-    ): R {
-        return handler.apply(context, args);
-    }
+  transform<T extends unknown[], R>(
+    handler: (...args: T) => R,
+    context?: unknown,
+    ...args: T
+  ): R {
+    return handler.apply(context, args);
+  }
 }
