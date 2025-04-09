@@ -1,12 +1,19 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { ChildrenOutletContexts, RouterOutlet } from '@angular/router';
+import { NgDocNavbarComponent, NgDocRootComponent, NgDocSidebarComponent } from '@ng-doc/app';
+import { routingAnimation } from './animations/routing.animation';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  animations: [routingAnimation()],
+  imports: [RouterOutlet, NgDocRootComponent, NgDocNavbarComponent, NgDocSidebarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'ngx-oneforall-docs';
+  private contexts = inject(ChildrenOutletContexts);
+
+  get routingAnimations() {
+    return this.contexts.getContext('primary')?.route?.snapshot?.title;
+  }
 }

@@ -12,6 +12,12 @@
     "paths": {
       "ngx-oneforall-lib": [
         "./dist/ngx-oneforall-lib"
+      ],
+      "@ng-doc/generated": [
+        "./ng-doc/ngx-oneforall-docs/index.ts"
+      ],
+      "@ng-doc/generated/*": [
+        "./ng-doc/ngx-oneforall-docs/*"
       ]
     },
     "skipLibCheck": true,

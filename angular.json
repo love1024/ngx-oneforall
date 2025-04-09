@@ -48,7 +48,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@ng-doc/builder:application",
           "options": {
             "outputPath": "dist/ngx-oneforall-docs",
             "index": "projects/ngx-oneforall-docs/src/index.html",
@@ -61,10 +61,41 @@
             "assets": [
               {
                 "glob": "**/*",
+                "input": "node_modules/@ng-doc/app/assets",
+                "output": "assets/ng-doc/app"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/ui-kit/assets",
+                "output": "assets/ng-doc/ui-kit"
+              },
+              {
+                "glob": "**/*",
+                "input": "ng-doc/ngx-oneforall-docs/assets",
+                "output": "assets/ng-doc"
+              },
+              {
+                "glob": "**/*",
                 "input": "projects/ngx-oneforall-docs/public"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/ui-kit/assets",
+                "output": "assets/ng-doc/ui-kit"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/app/assets",
+                "output": "assets/ng-doc/app"
+              },
+              {
+                "glob": "**/*",
+                "input": "ng-doc/<project-name>/assets",
+                "output": "assets/ng-doc"
               }
             ],
             "styles": [
+              "node_modules/@ng-doc/app/styles/global.css",
               "projects/ngx-oneforall-docs/src/styles.scss"
             ],
             "scripts": [],
@@ -72,7 +103,10 @@
             "prerender": true,
             "ssr": {
               "entry": "projects/ngx-oneforall-docs/src/server.ts"
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "@ng-doc/core"
+            ]
           },
           "configurations": {
             "production": {
@@ -99,7 +133,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@ng-doc/builder:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "ngx-oneforall-docs:build:production"
