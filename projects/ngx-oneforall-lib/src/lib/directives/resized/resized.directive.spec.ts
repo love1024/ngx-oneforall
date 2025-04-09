@@ -35,7 +35,7 @@ describe('ResizedDirective', () => {
     emitSpy = jest.spyOn(directive.resized, 'emit');
 
     // Mock ResizeObserver globally
-    global.ResizeObserver = jest.fn().mockImplementation((cb) => {
+    global.ResizeObserver = jest.fn().mockImplementation(cb => {
       cb([]);
       return mockResizeObserver;
     });
@@ -48,7 +48,7 @@ describe('ResizedDirective', () => {
   it('should initialize ResizeObserver and observe the element', () => {
     fixture.detectChanges();
     expect(mockResizeObserver.observe).toHaveBeenCalledWith(
-      elementRef.nativeElement,
+      elementRef.nativeElement
     );
   });
 
@@ -57,7 +57,7 @@ describe('ResizedDirective', () => {
       contentRect: { width: 100, height: 100 } as DOMRectReadOnly,
     } as ResizeObserverEntry;
 
-    global.ResizeObserver = jest.fn().mockImplementation((cb) => {
+    global.ResizeObserver = jest.fn().mockImplementation(cb => {
       cb([mockEntry]);
       return mockResizeObserver;
     });
@@ -79,7 +79,7 @@ describe('ResizedDirective', () => {
       contentRect: { width: 200, height: 200 } as DOMRectReadOnly,
     } as ResizeObserverEntry;
 
-    global.ResizeObserver = jest.fn().mockImplementation((cb) => {
+    global.ResizeObserver = jest.fn().mockImplementation(cb => {
       cb([mockEntry1]);
       cb([mockEntry2]);
       return mockResizeObserver;

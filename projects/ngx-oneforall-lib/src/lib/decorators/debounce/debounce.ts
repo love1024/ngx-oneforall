@@ -31,7 +31,7 @@ export function debounce(delay = 300): MethodDecorator {
   return (
     target: unknown,
     propertyKey: string | symbol,
-    descriptor: PropertyDescriptor,
+    descriptor: PropertyDescriptor
   ) => {
     const original = descriptor.value;
 
@@ -45,7 +45,7 @@ export function debounce(delay = 300): MethodDecorator {
       if (!self.__debouncedFns.has(propertyKey)) {
         self.__debouncedFns.set(
           propertyKey,
-          createDebouncedFunction(original.bind(this), delay),
+          createDebouncedFunction(original.bind(this), delay)
         );
       }
 
@@ -59,7 +59,7 @@ export function debounce(delay = 300): MethodDecorator {
 
 function createDebouncedFunction(
   fn: (...args: unknown[]) => void,
-  delay: number,
+  delay: number
 ) {
   let timeoutId: ReturnType<typeof setTimeout>;
   return (...args: unknown[]) => {
