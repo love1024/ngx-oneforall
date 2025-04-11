@@ -1,0 +1,13 @@
+// "first-error-key-control"
+<form>
+  <input [formControl]="formControl" placeholder="Enter value" />
+  @if (formControl | firstErrorKey as firstError) {
+    <div>First error key: {{ firstError }}</div>
+  }
+</form>
+
+// "first-error-key-validation"
+<form>
+  <input [formControl]="formControl" placeholder="Enter value" />
+  <div>First error key:{{ formControl.errors | firstErrorKey }}</div>
+</form>

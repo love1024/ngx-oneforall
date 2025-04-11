@@ -33,18 +33,20 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
   name: 'firstErrorKey',
 })
 export class FirstErrorKeyPipe implements PipeTransform {
-  transform(input?: ValidationErrors | AbstractControl | null): string | null {
+  transform(input?: ValidationErrors | AbstractControl | null): string {
+    // Return empty string instead of null to avoid null cannot be used as key error
     if (!input) {
-      return null;
+      return '';
     }
 
     const errors: ValidationErrors | null =
       input instanceof AbstractControl ? input.errors : input;
     if (!errors) {
-      return null;
+      return '';
     }
 
     const errorKeys = Object.keys(errors);
-    return errorKeys.length > 0 ? errorKeys[0] : null;
+
+    return errorKeys.length > 0 ? errorKeys[0] : '';
   }
 }
