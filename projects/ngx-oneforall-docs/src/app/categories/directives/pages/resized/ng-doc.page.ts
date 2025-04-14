@@ -4,7 +4,7 @@ import PipesCategory from '../../ng-doc.category';
 const ResizedDirective: NgDocPage = {
   title: 'Resized',
   mdFile: './index.md',
-  category: PipesCategory
+  category: PipesCategory,
 };
 
 export default ResizedDirective;
