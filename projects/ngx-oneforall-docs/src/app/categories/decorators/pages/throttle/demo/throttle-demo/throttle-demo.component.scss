@@ -1,0 +1,48 @@
+h2 {
+  color: #2c3e50;
+}
+button {
+  margin-top: 10px;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  background-color: #ecf0f1;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+p {
+  font-size: 16px;
+  color: #34495e;
+}
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #2980b9;
+}
+ul li {
+  background-color: #ecf0f1;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+  width: fit-content;
+}
+ul li:nth-child(odd) {
+  background-color: #bdc3c7;
+}
+ul li:nth-child(even) {
+  background-color: #95a5a6;
+}
+button:disabled {
+  background-color: #7f8c8d;
+  cursor: not-allowed;
+}

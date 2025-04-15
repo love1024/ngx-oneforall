@@ -2,4 +2,8 @@
  * Public API Surface of ngx-oneforall-lib
  */
 
-export * from './lib/pipes/first-error-key.pipe';
+// Pipes
+export * from './lib/pipes/index';
+
+// Decorators
+export * from './lib/decorators/index';

@@ -1,12 +1,12 @@
-# Throttle Decorator
+The `Throttle` decorator is a custom Angular method decorator designed to limit the frequency of method execution within a specified delay period. This is particularly beneficial for optimizing performance in scenarios such as handling frequent events like `click` or `scroll`, where excessive method calls can lead to performance bottlenecks.
 
-The `Throttle` decorator is a custom Angular method decorator that ensures a method is only invoked once within a specified delay period. This is particularly useful for event handlers like `click` or `scroll` to prevent excessive calls.
+## Overview
 
-## Usage
+By applying the `Throttle` decorator to a method, you can ensure that it is invoked at most once during the defined delay interval. This helps in reducing redundant executions and improves the efficiency of your application.
 
-The `Throttle` decorator can be applied to any method to throttle its execution. Below is an example demonstrating its usage.
+## Example: Throttling a Click Event Handler
 
-### Example: Throttling a Click Handler
+The following example demonstrates how to use the `Throttle` decorator to throttle a button click handler:
 
 ```typescript
 import { throttle } from 'ngx-oneforall-lib';
@@ -22,3 +22,11 @@ const example = new Example();
 example.handleClick(); // Executes immediately
 example.handleClick(); // Ignored if called within 500ms
 ```
+
+In this example, the `handleClick` method is throttled to execute at most once every 500 milliseconds. Any additional calls within this interval are ignored.
+
+## Live Demonstration
+
+Explore a live demonstration of the `Throttle` decorator in action:
+
+{{ NgDocActions.demo("ThrottleDemoComponent") }}
