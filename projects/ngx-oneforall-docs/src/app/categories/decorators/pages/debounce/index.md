@@ -1,32 +1,64 @@
-The `Throttle` decorator is a custom Angular method decorator designed to limit the frequency of method execution within a specified delay period. This is particularly beneficial for optimizing performance in scenarios such as handling frequent events like `click` or `scroll`, where excessive method calls can lead to performance bottlenecks.
+The `debounce` decorator is a powerful utility in Angular that helps to limit the rate at which a function is executed. This is particularly useful in scenarios where frequent user interactions, such as typing or scrolling, can trigger a function multiple times in quick succession. By using the `debounce` decorator, you can ensure that the function is executed only after a specified delay, improving performance and user experience.
 
-## Overview
+### How the `debounce` Decorator Works
 
-By applying the `Throttle` decorator to a method, you can ensure that it is invoked at most once during the defined delay interval. This helps in reducing redundant executions and improves the efficiency of your application.
+The `debounce` decorator wraps a method and delays its execution until after a specified amount of time has passed since the last time it was invoked. If the method is called again before the delay period ends, the timer resets. This behavior is ideal for handling events like:
 
-## Example: Throttling a Click Event Handler
+- Search input fields
+- Button clicks
+- Window resize events
 
-The following example demonstrates how to use the `Throttle` decorator to throttle a button click handler:
+### Usage Example
+
+Below is an example of how to use the `debounce` decorator in an Angular component:
 
 ```typescript
-import { throttle } from 'ngx-oneforall-lib';
+import { Component } from '@angular/core';
+import { debounce } from 'ngx-oneforall';
 
-class Example {
-  @throttle(500)
-  handleClick() {
-    console.log('Button clicked');
+@Component({
+  selector: 'app-debounce-demo',
+  template: `
+    <div>
+      <h2>Debounce Decorator Example</h2>
+      <input
+        type="text"
+        placeholder="Type something..."
+        (input)="onInputChange($event)" />
+      <p>Debounced Value: {{ debouncedValue }}</p>
+    </div>
+  `,
+})
+export class DebounceDemoComponent {
+  debouncedValue: string = '';
+
+  @debounce(300) // 300ms delay
+  onInputChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.debouncedValue = input.value;
+    console.log('Debounced Input:', this.debouncedValue);
   }
 }
-
-const example = new Example();
-example.handleClick(); // Executes immediately
-example.handleClick(); // Ignored if called within 500ms
 ```
 
-In this example, the `handleClick` method is throttled to execute at most once every 500 milliseconds. Any additional calls within this interval are ignored.
+### Key Points in the Example
 
-## Live Demonstration
+1. **Decorator Usage**: The `@debounce(300)` decorator is applied to the `onInputChange` method, specifying a delay of 300 milliseconds.
+2. **Input Handling**: The `onInputChange` method is triggered by the `input` event on the text field. However, the actual execution of the method is delayed by the debounce timer.
+3. **Improved Performance**: Without the debounce decorator, the method would be called on every keystroke, potentially leading to performance issues. The decorator ensures that the method is executed only after the user stops typing for 300 milliseconds.
 
-Explore a live demonstration of the `Throttle` decorator in action:
+### Live Demonstration
 
-{{ NgDocActions.demo("ThrottleDemoComponent") }}
+Explore a live demonstration of the `debounce` decorator in action:
+
+{{ NgDocActions.demo("DebounceDemoComponent") }}
+
+### Benefits of Using the `debounce` Decorator
+
+- **Performance Optimization**: Reduces the frequency of method calls, especially for high-frequency events.
+- **Cleaner Code**: Eliminates the need to manually implement debounce logic in your methods.
+- **Reusability**: The decorator can be reused across multiple components and methods, promoting consistency.
+
+### Conclusion
+
+The `debounce` decorator is a simple yet effective tool for managing high-frequency events in Angular applications. By incorporating it into your codebase, you can enhance both performance and maintainability. Try it out in your projects and experience the difference it makes!
