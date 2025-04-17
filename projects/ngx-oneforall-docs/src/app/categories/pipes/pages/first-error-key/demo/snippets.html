@@ -1,7 +1,7 @@
 // "first-error-key-control"
 <form>
   <input [formControl]="formControl" placeholder="Enter value" />
-  @if (formControl | firstErrorKey as firstError) {
+  @if (formControl | firstErrorKey; as firstError) {
     <div>First error key: {{ firstError }}</div>
   }
 </form>
