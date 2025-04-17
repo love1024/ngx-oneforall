@@ -31,7 +31,7 @@ import { ResizedDirective } from './resized.directive';
 export class SharedModule {}
 ```
 
-### Example 1: Adjusting Layout on Resize
+### Apply the Directive
 
 In this example, the `ResizedDirective` is used to detect size changes and adjust the layout dynamically.
 
@@ -43,12 +43,12 @@ In this example, the `ResizedDirective` is used to detect size changes and adjus
 >
   Resize this box to see the dimensions update.
 </div>
-<p>Width: {{ width }}px</p>
-<p>Height: {{ height }}px</p>
+<p>Width: { { width }}px</p>
+<p>Height: { { height }}px</p>
 ```
 
 ```typescript
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ResizedEvent } from './resized-event.model';
 
 @Component({
@@ -57,73 +57,22 @@ import { ResizedEvent } from './resized-event.model';
   styleUrls: ['./resized-demo.component.css']
 })
 export class ResizedDemoComponent {
-  width: number = 0;
-  height: number = 0;
+  width = signal(0);
+  height = signal(0);
 
   onResized(event: ResizedEvent): void {
-    this.width = event.newWidth;
-    this.height = event.newHeight;
+    this.width.set(event.newWidth);
+    this.height.set(event.newHeight);
   }
 }
 ```
 
-### Example 2: Responsive Chart
-
-The `ResizedDirective` can also be used to make charts responsive by redrawing them when their container is resized.
-
-```html
-<div appResized (resized)="onChartContainerResized($event)">
-  <canvas id="chart"></canvas>
-</div>
-```
-
-```typescript
-import { Component, AfterViewInit } from '@angular/core';
-import { ResizedEvent } from './resized-event.model';
-import { Chart } from 'chart.js';
-
-@Component({
-  selector: 'app-chart-demo',
-  templateUrl: './chart-demo.component.html',
-  styleUrls: ['./chart-demo.component.css']
-})
-export class ChartDemoComponent implements AfterViewInit {
-  private chart: Chart | undefined;
-
-  ngAfterViewInit(): void {
-    this.initializeChart();
-  }
-
-  initializeChart(): void {
-    const ctx = document.getElementById('chart') as HTMLCanvasElement;
-    this.chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['A', 'B', 'C'],
-        datasets: [
-          {
-            label: 'Sample Data',
-            data: [10, 20, 30],
-            backgroundColor: ['red', 'blue', 'green']
-          }
-        ]
-      }
-    });
-  }
-
-  onChartContainerResized(event: ResizedEvent): void {
-    if (this.chart) {
-      this.chart.resize();
-    }
-  }
-}
-```
 
 ## API
 
 ### Selector
 
-- `[appResized]`: Apply this directive to any HTML element to enable resize detection.
+- `[resized]`: Apply this directive to any HTML element to enable resize detection.
 
 ### Outputs
 
@@ -133,13 +82,13 @@ export class ChartDemoComponent implements AfterViewInit {
 
 The `ResizedEvent` object contains the following properties:
 
-- `newWidth`: The new width of the element in pixels.
-- `newHeight`: The new height of the element in pixels.
+- `current`: A `DOMRectReadOnly` object representing the current dimensions and position of the element.
+- `previous`: A `DOMRectReadOnly` object representing the previous dimensions and position of the element, or `null` if no previous size is available.
 
 ```typescript
 export interface ResizedEvent {
-  newWidth: number;
-  newHeight: number;
+  current: DOMRectReadOnly;
+  previous: DOMRectReadOnly | null;
 }
 ```
 
