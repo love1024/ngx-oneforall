@@ -1,7 +1,7 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../dist/ngx-oneforall-lib",
+  "dest": "../../dist/@ngx-oneforall",
   "lib": {
-    "entryFile": "src/public-api.ts"
+    "entryFile": "src/public_api.ts"
   }
 }

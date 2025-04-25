@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { throttle } from 'ngx-oneforall';
+import { throttle } from '@ngx-oneforall/decorators';
 // Create array of fruit names
 const fruits = ['Apple', 'Banana', 'Orange', 'Grapes', 'Mango'];
 

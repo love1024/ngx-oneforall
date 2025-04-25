@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { ResizedDirective, ResizedEvent } from 'ngx-oneforall';
+import { ResizedDirective, ResizedEvent } from '@ngx-oneforall/directives';
 
 @Component({
   selector: 'lib-resized-demo',

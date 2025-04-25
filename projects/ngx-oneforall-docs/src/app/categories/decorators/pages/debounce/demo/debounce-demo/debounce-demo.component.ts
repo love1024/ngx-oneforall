@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { debounce } from 'ngx-oneforall';
+import { debounce } from '@ngx-oneforall/decorators';
 
 @Component({
   selector: 'lib-debounce-demo',
