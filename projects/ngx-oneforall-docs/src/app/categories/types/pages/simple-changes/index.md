@@ -1,54 +1,40 @@
-The `FirstErrorKeyPipe` is a custom Angular pipe that simplifies error handling in forms by extracting the first error key from an `AbstractControl` instance or a `ValidationErrors` object. This pipe is particularly useful for displaying a single, clear error message to users, improving both usability and user experience.
+`SimpleChangesTyped` is a strongly-typed utility type in Angular that provides a way to represent and track changes to component input properties during the Angular lifecycle, specifically within the `ngOnChanges` lifecycle hook. This type enhances type safety and ensures that changes to component inputs are properly typed, making it easier to work with and reducing potential runtime errors.
 
-## Why Use FirstErrorKeyPipe?
+### Structure:
+- `SimpleChangesTyped<T>` is a mapped type that takes a generic type `T`, representing the component's input properties.
+- For each property `P` in `T`, it maps to an optional `ComponentChange<T, P>` object, which contains detailed information about the change for that specific property.
 
-When working with Angular forms, managing validation errors can become complex, especially when multiple validators are applied to a single form control. The `FirstErrorKeyPipe` helps streamline this process by focusing on the first error key, allowing developers to prioritize and display the most relevant error message.
+### `ComponentChange<T, P>`:
+This interface describes the structure of the change object for a specific property:
+- `previousValue: T[P]` - The previous value of the property before the change occurred.
+- `currentValue: T[P]` - The current value of the property after the change occurred.
+- `firstChange: boolean` - A boolean flag indicating whether this is the first time the property has changed.
 
-## How It Works
+### Usage:
+This type is particularly useful when you want to ensure that the `SimpleChanges` object passed to the `ngOnChanges` lifecycle hook is strongly typed. By using `SimpleChangesTyped<T>`, you can define the expected structure of the changes object based on the component's input properties.
 
-The `FirstErrorKeyPipe` can be applied in two primary scenarios:
+### Example:
+```typescript
+@Component({
+    selector: 'app-example',
+    template: `<p>Example Component</p>`
+})
+export class ExampleComponent implements OnChanges {
+    @Input() name: string;
+    @Input() age: number;
 
-1. **With a `FormControl`**: Extracts the first error key from the control's validation errors.
-2. **With a `ValidationErrors` object**: Directly processes a validation errors object, making it flexible for various use cases.
-
-## Usage Examples
-
-### Example 1: Applying the Pipe to a FormControl
-
-In this scenario, the pipe is used with a `FormControl` to retrieve the first error key. If the control has validation errors, the pipe returns the first error key; otherwise, it returns an empty string (`''`).
-
-#### Code Example
-
-```html file="./demo/snippets.html"#L2-L7 {3}
-
+    ngOnChanges(changes: SimpleChangesTyped<ExampleComponent>): void {
+        if (changes.name) {
+            console.log('Name changed from', changes.name.previousValue, 'to', changes.name.currentValue);
+        }
+        if (changes.age?.firstChange) {
+            console.log('Age was set for the first time:', changes.age.currentValue);
+        }
+    }
+}
 ```
 
-#### Live Demo
-
-Experience this example in action:
-
-{{ NgDocActions.demo("FirstErrorControlComponent") }}
-
-### Example 2: Using the Pipe with a ValidationErrors Object
-
-The `FirstErrorKeyPipe` can also be applied directly to a `ValidationErrors` object, making it versatile for scenarios where you need to process validation errors outside of a `FormControl`.
-
-#### Code Example
-
-```html file="./demo/snippets.html"#L10-L13 {3}
-
-```
-
-#### Live Demo
-
-Explore this example in a live demonstration:
-
-{{ NgDocActions.demo("FirstErrorValidationComponent") }}
-
-## Benefits of Using FirstErrorKeyPipe
-
-- **Simplifies Error Handling**: Focuses on the first error, reducing complexity in form validation logic.
-- **Improves User Experience**: Displays a single, clear error message, avoiding confusion caused by multiple error messages.
-- **Flexible and Reusable**: Works seamlessly with both `FormControl` and `ValidationErrors` objects.
-
-By incorporating the `FirstErrorKeyPipe` into your Angular applications, you can enhance the clarity and usability of your forms, ensuring a smoother experience for your users.
+### Benefits:
+- **Type Safety**: Ensures that the `SimpleChanges` object is strongly typed, reducing the risk of accessing undefined or incorrect properties.
+- **Improved Developer Experience**: Provides better autocompletion and type checking in IDEs, making it easier to work with Angular's lifecycle hooks.
+- **Readability and Maintainability**: Makes the code more self-documenting and easier to understand for other developers.
