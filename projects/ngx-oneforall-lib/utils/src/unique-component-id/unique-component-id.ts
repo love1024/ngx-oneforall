@@ -1,4 +1,4 @@
-let lastId = 0;
+export let lastId = 0;
 
 export function uniqueComponentId(prefix = 'id'): string {
   lastId++;
