@@ -4,9 +4,9 @@ import { TimeAgoPipe } from '@ngx-oneforall/pipes';
 @Component({
   selector: 'lib-time-ago-demo',
   imports: [TimeAgoPipe],
-  template: ` {{ now | timeAgo: 'en' }} `,
+  template: ` {{ now | timeAgo }} `,
   styleUrl: './time-ago-demo.component.scss',
 })
 export class TimeAgoDemoComponent {
-  now = new Date(2023, 10, 1, 12, 0, 0); // Example date
+  now = new Date(); // Example date
 }
