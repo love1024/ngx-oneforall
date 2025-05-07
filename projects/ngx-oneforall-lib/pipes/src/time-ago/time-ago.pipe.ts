@@ -79,7 +79,7 @@ export class TimeAgoPipe implements PipeTransform {
   }
 
   private getTimestamp(value: string | Date): number {
-    if (typeof value === 'string') {
+    if (typeof value === 'string' && !isNaN(Date.parse(value))) {
       return new Date(value).getTime();
     } else if (value instanceof Date) {
       return value.getTime();
