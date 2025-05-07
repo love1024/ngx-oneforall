@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, inject, Pipe, PipeTransform } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  DestroyRef,
+  inject,
+  Pipe,
+  PipeTransform,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   DAY,
   getSecondsPassed,
@@ -25,6 +32,7 @@ export class TimeAgoPipe implements PipeTransform {
   private readonly cd = inject(ChangeDetectorRef);
   private readonly clock = inject(TIME_AGO_PIPE_CLOCK);
   private readonly labels = inject(TIME_AGO_PIPE_LABELS);
+  private readonly destroyRef = inject(DestroyRef);
   private clockSubscription: Subscription | null = null;
 
   transform(value: string | Date, live = true): string {
@@ -33,20 +41,23 @@ export class TimeAgoPipe implements PipeTransform {
     const secondsPassed = getSecondsPassed(timestamp);
 
     if (live) {
-      this.startInterval(timestamp);
+      this.startUpdateTimer(timestamp);
     }
 
     return this.constructResponse(secondsPassed);
   }
 
-  private startInterval(then: number) {
+  private startUpdateTimer(then: number) {
     if (this.clockSubscription) {
       this.clockSubscription.unsubscribe();
       this.clockSubscription = null;
     }
-    this.clockSubscription = this.clock.tick(then).subscribe(() => {
-      this.cd.markForCheck();
-    });
+    this.clockSubscription = this.clock
+      .tick(then)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.cd.markForCheck();
+      });
   }
 
   private constructResponse(secondsPassed: number): string {

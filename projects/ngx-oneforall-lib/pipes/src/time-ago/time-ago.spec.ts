@@ -1,9 +1,10 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { TimeAgoPipe } from './time-ago.pipe';
 import { ChangeDetectorRef } from '@angular/core';
 
 describe('TimeAgoPipe', () => {
   let pipe: TimeAgoPipe;
+  let changeDetectorRef: ChangeDetectorRef;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -19,6 +20,7 @@ describe('TimeAgoPipe', () => {
       ],
     });
     pipe = TestBed.inject(TimeAgoPipe);
+    changeDetectorRef = TestBed.inject(ChangeDetectorRef);
   });
 
   it('should create an instance', () => {
@@ -28,6 +30,12 @@ describe('TimeAgoPipe', () => {
   it('should return "0 second ago" for dates very close to the current time', () => {
     const now = new Date();
     expect(pipe.transform(now)).toBe('0 second ago');
+  });
+
+  it('should should accept the input as string as well', () => {
+    const now = new Date();
+    const dateString = now.toISOString();
+    expect(pipe.transform(dateString)).toBe('0 second ago');
   });
 
   it('should return "x seconds ago" for dates within the last minute', () => {
@@ -82,4 +90,31 @@ describe('TimeAgoPipe', () => {
       }
     }
   });
+
+  it('should unsubscribe from the clock first before subscribing again', fakeAsync(() => {
+    const now = new Date();
+    const secondsAgo = new Date(now.getTime() - 15 * 1000); // 15 seconds ago
+
+    pipe.transform(secondsAgo, true);
+    pipe.transform(secondsAgo, true);
+
+    const transformSpy = jest.spyOn(changeDetectorRef, 'markForCheck');
+
+    tick(1000);
+
+    expect(transformSpy).toHaveBeenCalledTimes(1);
+  }));
+
+  it('should trigger mark for check after calculated time', fakeAsync(() => {
+    const now = new Date();
+    const secondsAgo = new Date(now.getTime() - 5 * 1000); // 5 seconds ago
+
+    pipe.transform(secondsAgo, true);
+
+    const transformSpy = jest.spyOn(changeDetectorRef, 'markForCheck');
+
+    tick(1000);
+
+    expect(transformSpy).toHaveBeenCalled();
+  }));
 });
