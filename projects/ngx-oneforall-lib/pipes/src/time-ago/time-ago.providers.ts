@@ -7,7 +7,7 @@ import {
   MINUTE,
   TimeAgoLabels,
 } from './time-ago.util';
-import { timer } from 'rxjs';
+import { Observable, timer } from 'rxjs';
 
 export const TIME_AGO_PIPE_CLOCK = new InjectionToken('TIME_AGO_PIPE_CLOCK', {
   providedIn: 'root',
@@ -40,3 +40,21 @@ export const TIME_AGO_PIPE_LABELS = new InjectionToken<TimeAgoLabels>(
     },
   }
 );
+
+export const provideTimeAgoPipeLabels = (fn: () => TimeAgoLabels) => {
+  return {
+    provide: TIME_AGO_PIPE_LABELS,
+    useValue: fn(),
+  };
+};
+
+export const provideTimeAgoPipeClock = (
+  fn: (then?: number) => Observable<unknown>
+) => {
+  return {
+    provide: TIME_AGO_PIPE_CLOCK,
+    useValue: {
+      tick: fn,
+    },
+  };
+};

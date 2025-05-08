@@ -40,16 +40,15 @@ By default, the pipe updates dynamically. You can disable live updates by passin
 ```
 
 ### Custom Labels
-You can provide custom labels for the pipe by using the TIME_AGO_PIPE_LABELS injection token. For example:
+You can provide custom labels for the pipe by using the `provideTimeAgoPipeLabels` provider which returns new labels. For example:
 
 ```ts
-import { TIME_AGO_PIPE_LABELS, TimeAgoLabels } from './time-ago.providers';
+import { provideTimeAgoPipeLabels, TimeAgoLabels } from './time-ago.providers';
 @Component({
   ...
   providers: [
-    {
-      provide: TIME_AGO_PIPE_LABELS,
-      useValue: {
+     provideTimeAgoPipeLabels(() => {
+      return {
         prefix: '',
         suffix: 'ago',
         second: 'sec',
@@ -66,8 +65,8 @@ import { TIME_AGO_PIPE_LABELS, TimeAgoLabels } from './time-ago.providers';
         months: 'mos',
         year: 'yr',
         years: 'yrs',
-      } as TimeAgoLabels,
-    },
+      } as TimeAgoLabels;
+    }),
   ],
 })
 export class PostComponent {}
@@ -78,24 +77,18 @@ export class PostComponent {}
 {{ NgDocActions.demo("TimeAgoCustomClockDemoComponent") }}
 
 ### Custom Clock
-You can provide a custom clock implementation by using the TIME_AGO_PIPE_CLOCK injection token. This is useful for scenarios where the clock needs to be controlled. The clock takes a single method `tick` which should return an observable. The click will get updated whenever that observable will emit a value. 
+You can provide a custom clock implementation by using the `provideTimeAgoPipeClock` provider. This is useful for scenarios where the clock needs to be controlled. The custom implementation should return an observable and the pipe will update whenever that observable will emit a value. 
 
 ```ts
-import { TIME_AGO_PIPE_CLOCK } from '@ngx-oneforall/pipes';
+import { provideTimeAgoPipeClock } from '@ngx-oneforall/pipes';
 import { timer } from 'rxjs';
 
 @Component({
   ...
   providers: [
-    {
-      provide: TIME_AGO_PIPE_CLOCK,
-      useValue: {
-        tick: () => {
-          // update time every 5 seconds
-          return timer(5000);
-        },
-      },
-    },
+    provideTimeAgoPipeClock(() => {
+      return timer(5000);
+    }),
   ],
 })
 export class PostComponent {}

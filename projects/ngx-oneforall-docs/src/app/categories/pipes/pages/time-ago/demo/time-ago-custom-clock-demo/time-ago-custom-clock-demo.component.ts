@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TIME_AGO_PIPE_CLOCK, TimeAgoPipe } from '@ngx-oneforall/pipes';
+import { provideTimeAgoPipeClock, TimeAgoPipe } from '@ngx-oneforall/pipes';
 import { timer } from 'rxjs';
 
 @Component({
@@ -11,15 +11,9 @@ import { timer } from 'rxjs';
     <p>Current time: {{ now | timeAgo }}</p>
   `,
   providers: [
-    {
-      provide: TIME_AGO_PIPE_CLOCK,
-      useValue: {
-        tick: () => {
-          // update time every 5 seconds
-          return timer(5000);
-        },
-      },
-    },
+    provideTimeAgoPipeClock(() => {
+      return timer(5000);
+    }),
   ],
   styleUrl: './time-ago-custom-clock-demo.component.scss',
 })

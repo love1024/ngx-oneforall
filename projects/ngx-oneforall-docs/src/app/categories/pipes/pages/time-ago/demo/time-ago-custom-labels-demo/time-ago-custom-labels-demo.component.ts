@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {
-  TIME_AGO_PIPE_LABELS,
+  provideTimeAgoPipeLabels,
   TimeAgoLabels,
   TimeAgoPipe,
 } from '@ngx-oneforall/pipes';
@@ -13,9 +13,8 @@ import {
     <p>Current time: {{ now | timeAgo }}</p>
   `,
   providers: [
-    {
-      provide: TIME_AGO_PIPE_LABELS,
-      useValue: {
+    provideTimeAgoPipeLabels(() => {
+      return {
         prefix: '',
         suffix: 'ago',
         second: 'sec',
@@ -32,8 +31,8 @@ import {
         months: 'mos',
         year: 'yr',
         years: 'yrs',
-      } as TimeAgoLabels,
-    },
+      } as TimeAgoLabels;
+    }),
   ],
   styleUrl: './time-ago-custom-labels-demo.component.scss',
 })
