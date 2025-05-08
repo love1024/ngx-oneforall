@@ -1,3 +1,5 @@
+import { timer } from 'rxjs';
+
 export const MINUTE = 60;
 export const HOUR = MINUTE * 60;
 export const DAY = HOUR * 24;
@@ -52,3 +54,22 @@ export function mergeLabels(labels?: TimeAgoLabels): TimeAgoLabels {
     years: labels?.years ?? 'years',
   };
 }
+
+export const defaultClock = {
+  tick: (then: number) => {
+    const secondsPassed = getSecondsPassed(then);
+    let interval = 0;
+
+    if (secondsPassed < MINUTE) {
+      interval = 1000;
+    } else if (secondsPassed < HOUR) {
+      interval = MINUTE * 1000;
+    } else if (secondsPassed < DAY) {
+      interval = HOUR * 1000;
+    }
+
+    return timer(interval);
+  },
+};
+
+export const defaultLabels: TimeAgoLabels = mergeLabels();

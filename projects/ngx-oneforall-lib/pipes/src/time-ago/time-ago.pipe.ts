@@ -8,6 +8,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   DAY,
+  defaultClock,
+  defaultLabels,
   getSecondsPassed,
   HOUR,
   mergeLabels,
@@ -30,8 +32,10 @@ import {
 })
 export class TimeAgoPipe implements PipeTransform {
   private readonly cd = inject(ChangeDetectorRef);
-  private readonly clock = inject(TIME_AGO_PIPE_CLOCK);
-  private readonly labels = inject(TIME_AGO_PIPE_LABELS);
+  private readonly clock =
+    inject(TIME_AGO_PIPE_CLOCK, { optional: true }) ?? defaultClock;
+  private readonly labels =
+    inject(TIME_AGO_PIPE_LABELS, { optional: true }) ?? defaultLabels;
   private readonly destroyRef = inject(DestroyRef);
   private clockSubscription: Subscription | null = null;
 
