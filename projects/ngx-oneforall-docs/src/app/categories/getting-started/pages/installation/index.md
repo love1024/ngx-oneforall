@@ -36,7 +36,7 @@ import { MemoizePipe, SomeService } from 'ngx-oneforall';
 export class AppComponent {
 }
 ```
-```
+
 
 This approach allows you to include only the features you need, keeping your application lightweight and optimized.
 
@@ -53,6 +53,4 @@ If you encounter any issues during installation, consider the following:
    ```
 3. Check for any peer dependency warnings during installation and resolve them.
 
-## Additional Resources
 
-For more details, refer to the official documentation of `ngx-oneforall` or visit the [GitHub repository](https://github.com/your-repo-link).
