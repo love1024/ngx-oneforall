@@ -12,7 +12,7 @@ export const unsavedChangesGuard = (
   const window = inject(DOCUMENT).defaultView;
 
   return (component: HasUnsavedChanges) => {
-    if (!window) {
+    if (!window || !window.confirm) {
       return true;
     }
     const result = component.hasUnsavedChanges();
