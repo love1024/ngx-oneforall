@@ -2,15 +2,43 @@
 
 Unsaved changes guards are essential for protecting users from accidentally losing their work when navigating away from a page with unsaved modifications. These guards are commonly used in forms, editors, or any interactive components where users can input or modify data.
 
-#### Example
-```typescript {4}
-  {
-    path: '/form',
-    canDeactivate: [
-      unsavedChangesGuard()
-    ]
-  }
-```
+#### How to Use
+
+1. **Register the Guard in Route Configuration**  
+    Add the unsaved changes guard to the `canDeactivate` property of the relevant route:
+    ```typescript {4}
+    {
+      path: '/form',
+      canDeactivate: [
+         unsavedChangesGuard()
+      ]
+    }
+    ```
+
+2. **Implement the `HasUnsavedChanges` Interface**  
+    In the component that should be protected, implement the `HasUnsavedChanges` interface:
+    ```typescript
+    export class UnsavedChangesDemoComponent implements HasUnsavedChanges {
+      ...
+      hasUnsavedChanges() {
+         return true;
+      }
+    }
+    ```
+
+3. **Customize the `hasUnsavedChanges` Method**  
+    Define the logic within `hasUnsavedChanges` to determine if there are unsaved changes. This method can return a boolean, a `Promise`, or an `Observable`:
+    > **Note** The guard supports synchronous and asynchronous checks.
+    
+    ```typescript
+    export class UnsavedChangesDemoComponent implements HasUnsavedChanges {
+      ...
+      hasUnsavedChanges(): Observable<boolean> {
+         // Example: resolve after 3 seconds
+         return timer(3000).pipe(map(() => true));
+      }
+    }
+    ```
 
 #### Use Cases
 - Preventing navigation away from a form with unsaved data.
@@ -41,6 +69,4 @@ The unsaved changes guard allows you to override the default confirmation messag
   }
 ```
 
-
-> **Note:** The guard is designed to work with both synchronous and asynchronous checks for unsaved changes, supporting boolean, Promise, and Observable return types.
 
