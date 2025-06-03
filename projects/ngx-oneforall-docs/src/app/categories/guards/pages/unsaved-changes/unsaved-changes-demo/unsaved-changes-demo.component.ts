@@ -4,7 +4,10 @@ import { HasUnsavedChanges, unsavedChangesGuard } from '@ngx-oneforall/guards';
 @Component({
   selector: 'lib-unsaved-changes-demo',
   imports: [],
-  template: ` <p>unsaved-changes-demo works!</p> `,
+  template: `
+    <h2>Unsaved Guard Demo</h2>
+    <p>Try to navigate away to run this guard.</p>
+  `,
   styles: ``,
 })
 export class UnsavedChangesDemoComponent
@@ -17,6 +20,6 @@ export class UnsavedChangesDemoComponent
   }
 
   hasUnsavedChanges() {
-    return false;
+    return true;
   }
 }
