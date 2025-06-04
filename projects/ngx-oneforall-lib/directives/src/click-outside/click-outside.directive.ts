@@ -42,7 +42,7 @@ export class ClickOutsideDirective implements OnDestroy {
   }
 
   private onClickListener(evt: Event) {
-    if (!this.clickOutsideEnabled) {
+    if (!this.clickOutsideEnabled()) {
       return;
     }
 
