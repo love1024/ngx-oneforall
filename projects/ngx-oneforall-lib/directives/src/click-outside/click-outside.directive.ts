@@ -23,7 +23,9 @@ export class ClickOutsideDirective implements OnDestroy {
   private readonly hostEl = inject(ElementRef);
 
   constructor() {
+    // Needed this so that we can pass this to add and remove listener
     this.onClickListener = this.onClickListener.bind(this);
+    // Run it when in browser
     afterNextRender(() => this.initListener());
   }
 
