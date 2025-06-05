@@ -1,11 +1,11 @@
 import { NgDocPage } from '@ng-doc/core';
-import PipesCategory from '../../ng-doc.category';
 import { ResizedDemoComponent } from './demo/resized-demo/resized-demo.component';
+import DirectivesCategory from '../../ng-doc.category';
 
 const ResizedDirective: NgDocPage = {
   title: 'Resized',
   mdFile: './index.md',
-  category: PipesCategory,
+  category: DirectivesCategory,
   demos: {
     ResizedDemoComponent,
   },
