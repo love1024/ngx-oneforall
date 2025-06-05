@@ -1,0 +1,22 @@
+div {
+    padding: 32px;
+    border: 2px solid #1976d2;
+    border-radius: 8px;
+    background: #e3f2fd;
+    text-align: center;
+    font-size: 18px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: box-shadow 0.2s;
+}
+
+div:hover {
+    box-shadow: 0 2px 12px rgba(25, 118, 210, 0.15);
+}
+
+p {
+    font-weight: 500;
+    color: #1976d2;
+    text-align: center;
+    margin: 0;
+}
