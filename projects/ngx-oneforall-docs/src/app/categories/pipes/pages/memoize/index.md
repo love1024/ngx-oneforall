@@ -1,5 +1,4 @@
 
-### Memoize Pipe in Angular
 
 The `memoize` pipe is a powerful utility in Angular that optimizes performance by caching the results of expensive computations. It ensures that a function is only executed when its input changes, thereby reducing redundant calculations and improving application efficiency.
 
