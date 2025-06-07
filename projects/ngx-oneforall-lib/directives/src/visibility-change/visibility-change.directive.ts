@@ -19,9 +19,9 @@ export type VisibilityChange =
     };
 
 @Directive({
-  selector: '[visibilityObserver]',
+  selector: '[visibilityChange]',
 })
-export class VisibilityObserverDirective implements OnDestroy {
+export class VisibilityChangeDirective implements OnDestroy {
   threshold = input<number>(1.0);
   root = input<HTMLElement | null>(null);
   visibilityChange = output<VisibilityChange>();
