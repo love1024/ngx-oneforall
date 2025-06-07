@@ -46,6 +46,7 @@ export class VisibilityChangeDirective implements OnDestroy {
     this.disconnectObserver();
 
     this.observer = new IntersectionObserver(entries => {
+      console.log(entries);
       entries.forEach(
         entry => {
           const { isIntersecting: isVisible, target } = entry;
@@ -55,6 +56,7 @@ export class VisibilityChangeDirective implements OnDestroy {
               isVisible,
               target: target as HTMLElement,
             });
+            this.isVisible = isVisible;
           }
         },
         {
