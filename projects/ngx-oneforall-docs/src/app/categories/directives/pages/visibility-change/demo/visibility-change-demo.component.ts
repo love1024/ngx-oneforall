@@ -9,7 +9,7 @@ import {
   imports: [VisibilityChangeDirective],
   template: `
     @if (show()) {
-      <p (visibilityChange)="visibilityChange($event)">Hide me</p>
+      <div (visibilityChange)="visibilityChange($event)"></div>
     }
 
     <button (click)="hide()">Hide</button>

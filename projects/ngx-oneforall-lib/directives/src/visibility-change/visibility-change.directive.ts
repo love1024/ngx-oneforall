@@ -45,10 +45,9 @@ export class VisibilityChangeDirective implements OnDestroy {
   private connectObserver() {
     this.disconnectObserver();
 
-    this.observer = new IntersectionObserver(entries => {
-      console.log(entries);
-      entries.forEach(
-        entry => {
+    this.observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
           const { isIntersecting: isVisible, target } = entry;
           const hasChangedVisibility = isVisible !== this.isVisible;
           if (hasChangedVisibility) {
@@ -58,13 +57,13 @@ export class VisibilityChangeDirective implements OnDestroy {
             });
             this.isVisible = isVisible;
           }
-        },
-        {
-          root: this.root(),
-          threshold: this.threshold(),
-        }
-      );
-    });
+        });
+      },
+      {
+        root: this.root(),
+        threshold: this.threshold(),
+      }
+    );
 
     this.observer.observe(this.hostEl.nativeElement);
   }
