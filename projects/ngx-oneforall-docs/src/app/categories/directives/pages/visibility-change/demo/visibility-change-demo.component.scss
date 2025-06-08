@@ -84,3 +84,32 @@ button {
         }
     }
 }
+
+.threshold-slider {
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    label {
+        font-size: 16px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    input[type="range"] {
+        margin: 0 12px;
+        width: 120px;
+        accent-color: #408cd4;
+        height: 4px;
+        background: #e0e0e0;
+        border-radius: 2px;
+
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #408cd433;
+        }
+    }
+}

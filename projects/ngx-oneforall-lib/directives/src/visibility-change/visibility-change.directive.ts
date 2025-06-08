@@ -1,6 +1,7 @@
 import {
   afterNextRender,
   Directive,
+  effect,
   ElementRef,
   inject,
   input,
@@ -31,7 +32,10 @@ export class VisibilityChangeDirective implements OnDestroy {
   private isVisible = false;
 
   constructor() {
-    afterNextRender(() => this.connectObserver());
+    afterNextRender(() => {
+      this.connectObserver();
+      effect(() => this.connectObserver());
+    });
   }
 
   ngOnDestroy(): void {
