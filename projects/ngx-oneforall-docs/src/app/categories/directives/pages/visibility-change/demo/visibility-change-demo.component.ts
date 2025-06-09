@@ -48,6 +48,7 @@ import {
 export class VisibilityChangeDemoComponent {
   show = signal(true);
   evt = signal<VisibilityChange | null>(null);
+  // Threshold to control visiblity
   threshold = signal(1.0);
 
   showHide() {
