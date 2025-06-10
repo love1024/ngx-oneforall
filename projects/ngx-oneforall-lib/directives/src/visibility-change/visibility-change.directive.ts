@@ -3,10 +3,12 @@ import {
   Directive,
   effect,
   ElementRef,
+  EnvironmentInjector,
   inject,
   input,
   OnDestroy,
   output,
+  runInInjectionContext,
 } from '@angular/core';
 
 export type VisibilityChange =
@@ -28,13 +30,16 @@ export class VisibilityChangeDirective implements OnDestroy {
   visibilityChange = output<VisibilityChange>();
 
   private readonly hostEl = inject(ElementRef);
+  private readonly environment = inject(EnvironmentInjector);
   private observer: IntersectionObserver | undefined;
   private isVisible = false;
 
   constructor() {
     afterNextRender(() => {
       this.connectObserver();
-      effect(() => this.connectObserver());
+      runInInjectionContext(this.environment, () => {
+        effect(() => this.connectObserver());
+      });
     });
   }
 
