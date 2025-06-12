@@ -1,0 +1,66 @@
+.demo-section {
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: #f9fafd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+
+    label {
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: #22223b;
+        letter-spacing: 0.01em;
+    }
+
+    input {
+        margin-bottom: 8px;
+        padding: 8px 14px;
+        font-size: 16px;
+        border: 1.5px solid #d1d5db;
+        border-radius: 5px;
+        outline: none;
+        transition:
+            border-color 0.2s,
+            box-shadow 0.2s;
+        background: #fff;
+
+        &:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+            background: #f0f6ff;
+        }
+
+        &.auto-focus {
+            background-color: #e6f4ff;
+            border-color: #60a5fa;
+        }
+
+        &.auto-focus-click {
+            background-color: #fffbe6;
+            border-color: #facc15;
+        }
+    }
+
+    .focus-button {
+        align-self: flex-start;
+        margin-top: 4px;
+        padding: 7px 18px;
+        font-size: 15px;
+        border: none;
+        border-radius: 4px;
+        background: #2563eb;
+        color: #fff;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: 0 1px 4px rgba(37, 99, 235, 0.08);
+        transition: background 0.2s, box-shadow 0.2s;
+
+        &:hover {
+            background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.13);
+        }
+    }
+}

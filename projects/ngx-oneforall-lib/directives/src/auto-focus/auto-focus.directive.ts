@@ -41,6 +41,7 @@ export class AutoFocusDirective {
   }
 
   private focus() {
+    console.log(this.isFocused());
     if (this.isFocused()) {
       this.hostEl?.nativeElement.focus();
     }
