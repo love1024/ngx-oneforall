@@ -2,14 +2,17 @@ import {
   afterNextRender,
   DestroyRef,
   Directive,
+  effect,
   ElementRef,
+  EnvironmentInjector,
   inject,
   input,
   numberAttribute,
   output,
+  runInInjectionContext,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { fromEvent, throttleTime } from 'rxjs';
+import { fromEvent, Subscription, throttleTime } from 'rxjs';
 
 @Directive({
   selector: '[clickThrottle]',
@@ -20,16 +23,25 @@ export class ClickThrottleDirective {
   clickThrottle = output<Event>();
 
   private hostEl = inject(ElementRef);
+  private environment = inject(EnvironmentInjector);
   private destroyRef = inject(DestroyRef);
+  private subscription?: Subscription;
 
   constructor() {
     afterNextRender(() => {
       this.subscribeToClickEvent();
+      runInInjectionContext(this.environment, () => {
+        effect(() => this.subscribeToClickEvent());
+      });
     });
   }
 
   private subscribeToClickEvent() {
-    fromEvent(this.hostEl.nativeElement, 'click')
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+
+    this.subscription = fromEvent(this.hostEl.nativeElement, 'click')
       .pipe(
         throttleTime(this.throttleTime()),
         takeUntilDestroyed(this.destroyRef)
