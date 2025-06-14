@@ -4,4 +4,4 @@
 
 See the directive in action with the following live demonstration:
 
-{{ NgDocActions.demoPane("ClickThrottleDirective") }}
+{{ NgDocActions.demoPane("ClickThrottleDemoComponent") }}
