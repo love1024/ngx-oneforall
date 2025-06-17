@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
+import { HoverClassDirective } from '@ngx-oneforall/directives';
 
 @Component({
-  selector: 'app-hover-class-demo',
-  imports: [],
+  selector: 'lib-hover-class-demo',
+  standalone: true,
+  imports: [HoverClassDirective],
   template: `
-    <p>
-      hover-class-demo works!
-    </p>
-  `,
-  styleUrl: './hover-class-demo.component.scss'
-})
-export class HoverClassDemoComponent {
+    <h2>Hover class directive demo</h2>
 
-}
+    <div hoverClass="change-color change-background" class="hover-demo-box">
+      Hover to apply styles using directive
+    </div>
+  `,
+  styleUrl: 'hover-class-demo.component.scss',
+})
+export class HoverClassDemoComponent {}

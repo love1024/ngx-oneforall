@@ -1,0 +1,16 @@
+ .change-color {
+    color: #fff;
+}
+.change-background {
+    background-color: #007bff;
+}
+
+.hover-demo-box {
+    padding: 16px;
+    border: 1px solid #ccc;
+    transition:
+        background 0.3s,
+        color 0.3s;
+    cursor: pointer;
+    width: fit-content;
+}
