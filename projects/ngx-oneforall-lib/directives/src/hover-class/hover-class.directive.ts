@@ -1,10 +1,13 @@
 import {
+  afterNextRender,
   Directive,
   effect,
   ElementRef,
+  EnvironmentInjector,
   inject,
   input,
   Renderer2,
+  runInInjectionContext,
   signal,
 } from '@angular/core';
 
@@ -19,16 +22,20 @@ export class HoverClassDirective {
   hoverClass = input.required<string>();
   elementClass = signal<string>('');
 
-  private readonly hostEl = inject(ElementRef);
-  private readonly renderer = inject(Renderer2);
   private classesToToggle = signal<string[]>([]);
 
+  private readonly environment = inject(EnvironmentInjector);
+  private readonly hostEl = inject(ElementRef);
+  private readonly renderer = inject(Renderer2);
+
   constructor() {
-    effect(() => {
-      const classes = this.hoverClass()
-        .split(' ')
-        .filter(c => !!c.trim());
-      this.classesToToggle.set(classes);
+    afterNextRender(() => {
+      this.setClasses();
+      runInInjectionContext(this.environment, () => {
+        effect(() => {
+          this.setClasses();
+        });
+      });
     });
   }
 
@@ -42,5 +49,12 @@ export class HoverClassDirective {
     this.classesToToggle().forEach(cls => {
       this.renderer.removeClass(this.hostEl.nativeElement, cls);
     });
+  }
+
+  private setClasses() {
+    const classes = this.hoverClass()
+      .split(' ')
+      .filter(c => !!c.trim());
+    this.classesToToggle.set(classes);
   }
 }
