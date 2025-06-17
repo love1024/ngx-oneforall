@@ -4,10 +4,13 @@ import { HoverClassDirective } from './hover-class.directive';
 
 @Component({
   imports: [HoverClassDirective],
-  template: `<div [hoverClass]="classes()"></div>`,
+  template: `<div
+    [hoverClass]="classes()"
+    [hoverClassEnabled]="enabled()"></div>`,
 })
 class TestHostComponent {
   classes = signal('hovered active');
+  enabled = signal(true);
 }
 
 describe('HoverClassDirective', () => {
@@ -66,5 +69,39 @@ describe('HoverClassDirective', () => {
 
     expect(hostEl.classList).toContain('foo');
     expect(hostEl.classList).toContain('bar');
+  });
+
+  it('should add classes on mouseenter if enabled', () => {
+    const addClassSpy = jest.spyOn(renderer, 'addClass');
+    component.enabled.set(true);
+    directive.onMouseEnter();
+    expect(addClassSpy).toHaveBeenCalledWith(hostEl, 'hovered');
+    expect(addClassSpy).toHaveBeenCalledWith(hostEl, 'active');
+  });
+
+  it('should not add classes on mouseenter if hoverClassEnabled is false', () => {
+    const addClassSpy = jest.spyOn(renderer, 'addClass');
+    component.enabled.set(false);
+    fixture.detectChanges();
+    directive.onMouseEnter();
+    expect(addClassSpy).not.toHaveBeenCalled();
+    expect(hostEl.classList).not.toContain('hovered');
+    expect(hostEl.classList).not.toContain('active');
+  });
+
+  it('should remove classes on mouseleave if enabled', () => {
+    const removeClassSpy = jest.spyOn(renderer, 'removeClass');
+    component.enabled.set(true);
+    directive.onMouseLeave();
+    expect(removeClassSpy).toHaveBeenCalledWith(hostEl, 'hovered');
+    expect(removeClassSpy).toHaveBeenCalledWith(hostEl, 'active');
+  });
+
+  it('should not remove classes on mouseleave if hoverClassEnabled is false', () => {
+    const removeClassSpy = jest.spyOn(renderer, 'removeClass');
+    component.enabled.set(false);
+    fixture.detectChanges();
+    directive.onMouseLeave();
+    expect(removeClassSpy).not.toHaveBeenCalled();
   });
 });

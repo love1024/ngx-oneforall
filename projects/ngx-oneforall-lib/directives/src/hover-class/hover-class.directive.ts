@@ -20,6 +20,7 @@ import {
 })
 export class HoverClassDirective {
   hoverClass = input.required<string>();
+  hoverClassEnabled = input<boolean>(true);
   elementClass = signal<string>('');
 
   private classesToToggle = signal<string[]>([]);
@@ -35,17 +36,30 @@ export class HoverClassDirective {
         effect(() => {
           this.setClasses();
         });
+
+        effect(() => {
+          // Remove classes if disabled
+          if (!this.hoverClassEnabled()) {
+            this.classesToToggle.set([]);
+          }
+        });
       });
     });
   }
 
   onMouseEnter() {
+    if (!this.hoverClassEnabled()) {
+      return;
+    }
     this.classesToToggle().forEach(cls => {
       this.renderer.addClass(this.hostEl.nativeElement, cls);
     });
   }
 
   onMouseLeave() {
+    if (!this.hoverClassEnabled()) {
+      return;
+    }
     this.classesToToggle().forEach(cls => {
       this.renderer.removeClass(this.hostEl.nativeElement, cls);
     });
