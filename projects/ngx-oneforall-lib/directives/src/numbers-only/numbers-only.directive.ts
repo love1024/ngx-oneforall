@@ -14,16 +14,11 @@ import { distinctUntilChanged, pairwise } from 'rxjs';
 export class NumbersOnlyDirective implements OnInit {
   decimals = input(0, { transform: numberAttribute });
   negative = input<boolean>(false);
-  separator = input<string>(',');
+  separator = input<string>('.');
 
   private ngControl = inject(NgControl);
 
   ngOnInit() {
-    if (!this.ngControl) {
-      throw new Error(
-        'Control must be a NgControl to use NumbersOnlyDirective'
-      );
-    }
     this.ngControl.valueChanges
       ?.pipe(distinctUntilChanged(), pairwise())
       .subscribe(([oldValue, newvalue]) => {
@@ -49,13 +44,13 @@ export class NumbersOnlyDirective implements OnInit {
     } else {
       const regExpString =
         '^-?\\s*((\\d+(\\' +
-        this.separator +
+        this.separator() +
         '\\d{0,' +
-        this.decimals +
+        this.decimals() +
         '})?)|((\\d*(\\' +
-        this.separator +
+        this.separator() +
         '\\d{1,' +
-        this.decimals +
+        this.decimals() +
         '}))))\\s*$';
       return new RegExp(regExpString).exec(String(value));
     }
@@ -67,13 +62,13 @@ export class NumbersOnlyDirective implements OnInit {
     } else {
       const regExpString =
         '^\\s*((\\d+(\\' +
-        this.separator +
+        this.separator() +
         '\\d{0,' +
-        this.decimals +
+        this.decimals() +
         '})?)|((\\d*(\\' +
-        this.separator +
+        this.separator() +
         '\\d{1,' +
-        this.decimals +
+        this.decimals() +
         '}))))\\s*$';
       return new RegExp(regExpString).exec(String(value));
     }
