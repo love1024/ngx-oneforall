@@ -1,33 +1,51 @@
 import {
   Directive,
+  ElementRef,
   inject,
   input,
   numberAttribute,
   OnInit,
+  signal,
 } from '@angular/core';
 import { NgControl } from '@angular/forms';
-import { distinctUntilChanged, pairwise } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs';
 
 @Directive({
   selector: '[numbersOnly]',
+  host: {
+    '(input)': 'onInputChanges()',
+    '(paste)': 'onInputChanges()',
+  },
 })
 export class NumbersOnlyDirective implements OnInit {
   decimals = input(0, { transform: numberAttribute });
   negative = input<boolean>(false);
   separator = input<string>('.');
 
-  private ngControl = inject(NgControl);
+  private oldValue = signal('');
+  private readonly hostEl = inject(ElementRef);
+  private readonly ngControl = inject(NgControl, { optional: true });
 
-  ngOnInit() {
-    this.ngControl.valueChanges
-      ?.pipe(distinctUntilChanged(), pairwise())
-      .subscribe(([oldValue, newValue]) => {
-        this.sanitizeAndUpdate(oldValue, newValue);
+  ngOnInit(): void {
+    // This is needed first time if the control is not ngcontrol
+    this.onInputChanges();
+
+    // We need to get updates for an ngcontrol
+    this.ngControl?.valueChanges
+      ?.pipe(distinctUntilChanged())
+      .subscribe(newValue => {
+        this.sanitizeAndUpdate(this.oldValue(), newValue);
       });
   }
 
+  onInputChanges() {
+    const newValue = this.hostEl.nativeElement.value;
+    this.sanitizeAndUpdate(this.oldValue(), newValue);
+  }
+
   private sanitizeAndUpdate(oldValue: string, newValue: string) {
-    if (!newValue || newValue === '-') {
+    if (!newValue || (newValue === '-' && this.negative())) {
+      this.oldValue.set(newValue);
       return;
     }
     const isValid =
@@ -35,7 +53,10 @@ export class NumbersOnlyDirective implements OnInit {
         ? this.isValidInteger(newValue, this.negative())
         : this.isValidNumber(newValue, this.negative());
     if (!isValid) {
-      this.ngControl.control?.setValue(oldValue);
+      // Replace new value with old, as it is not valid
+      this.hostEl.nativeElement.value = oldValue;
+    } else {
+      this.oldValue.set(newValue);
     }
   }
 
