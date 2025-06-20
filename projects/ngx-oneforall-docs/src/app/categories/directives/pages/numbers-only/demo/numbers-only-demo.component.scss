@@ -1,0 +1,38 @@
+ .demo-container {
+    max-width: 500px;
+    margin: 32px auto;
+    padding: 24px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.demo-block {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+.demo-block:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.demo-input {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #bdbdbd;
+    border-radius: 4px;
+    margin-top: 8px;
+    transition: border-color 0.2s;
+}
+.demo-input:focus {
+    border-color: #1976d2;
+    outline: none;
+    background: #fff;
+}
+h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    color: #333;
+}
