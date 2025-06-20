@@ -21,56 +21,40 @@ export class NumbersOnlyDirective implements OnInit {
   ngOnInit() {
     this.ngControl.valueChanges
       ?.pipe(distinctUntilChanged(), pairwise())
-      .subscribe(([oldValue, newvalue]) => {
-        this.sanitizeAndUpdate(oldValue, newvalue);
+      .subscribe(([oldValue, newValue]) => {
+        this.sanitizeAndUpdate(oldValue, newValue);
       });
   }
 
   private sanitizeAndUpdate(oldValue: string, newValue: string) {
-    if (this.negative()) {
-      if (!['', '-'].includes(newValue) && !this.checkAllowNegative(newValue)) {
-        this.ngControl.control?.setValue(oldValue);
-      }
-    } else {
-      if (newValue !== '' && !this.check(newValue)) {
-        this.ngControl.control?.setValue(oldValue);
-      }
+    if (!newValue || newValue === '-') {
+      return;
+    }
+    const isValid =
+      this.decimals() <= 0
+        ? this.isValidInteger(newValue, this.negative())
+        : this.isValidNumber(newValue, this.negative());
+    if (!isValid) {
+      this.ngControl.control?.setValue(oldValue);
     }
   }
 
-  private checkAllowNegative(value: string) {
-    if (this.decimals() <= 0) {
-      return new RegExp(/^-?\d+$/).exec(String(value));
-    } else {
-      const regExpString =
-        '^-?\\s*((\\d+(\\' +
-        this.separator() +
-        '\\d{0,' +
-        this.decimals() +
-        '})?)|((\\d*(\\' +
-        this.separator() +
-        '\\d{1,' +
-        this.decimals() +
-        '}))))\\s*$';
-      return new RegExp(regExpString).exec(String(value));
-    }
+  private isValidInteger(value: string, isNegative = false) {
+    const regExpString = `^${isNegative ? '-?' : ''}\\d+$`;
+    return new RegExp(regExpString).exec(String(value));
   }
 
-  private check(value: string) {
-    if (this.decimals() <= 0) {
-      return new RegExp(/^\d+$/).exec(String(value));
-    } else {
-      const regExpString =
-        '^\\s*((\\d+(\\' +
-        this.separator() +
-        '\\d{0,' +
-        this.decimals() +
-        '})?)|((\\d*(\\' +
-        this.separator() +
-        '\\d{1,' +
-        this.decimals() +
-        '}))))\\s*$';
-      return new RegExp(regExpString).exec(String(value));
-    }
+  private isValidNumber(value: string, isNegative = false) {
+    const regExpString =
+      `^${isNegative ? '-?' : ''}\\s*((\\d+(\\` +
+      this.separator() +
+      '\\d{0,' +
+      this.decimals() +
+      '})?)|((\\d*(\\' +
+      this.separator() +
+      '\\d{1,' +
+      this.decimals() +
+      '}))))\\s*$';
+    return new RegExp(regExpString).exec(String(value));
   }
 }
