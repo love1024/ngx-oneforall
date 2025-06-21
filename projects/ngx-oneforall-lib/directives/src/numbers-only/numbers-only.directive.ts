@@ -1,4 +1,5 @@
 import {
+  DestroyRef,
   Directive,
   ElementRef,
   inject,
@@ -7,6 +8,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
 import { distinctUntilChanged } from 'rxjs';
 
@@ -25,6 +27,7 @@ export class NumbersOnlyDirective implements OnInit {
   private oldValue = signal('');
   private readonly hostEl = inject(ElementRef);
   private readonly ngControl = inject(NgControl, { optional: true });
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     // This is needed first time if the control is not ngcontrol
@@ -32,7 +35,7 @@ export class NumbersOnlyDirective implements OnInit {
 
     // We need to get updates for an ngcontrol
     this.ngControl?.valueChanges
-      ?.pipe(distinctUntilChanged())
+      ?.pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe(newValue => {
         this.sanitizeAndUpdate(this.oldValue(), newValue);
       });
@@ -60,12 +63,12 @@ export class NumbersOnlyDirective implements OnInit {
     }
   }
 
-  private isValidInteger(value: string, isNegative = false) {
+  private isValidInteger(value: string, isNegative: boolean) {
     const regExpString = `^${isNegative ? '-?' : ''}\\d+$`;
     return new RegExp(regExpString).exec(String(value));
   }
 
-  private isValidNumber(value: string, isNegative = false) {
+  private isValidNumber(value: string, isNegative: boolean) {
     const regExpString =
       `^${isNegative ? '-?' : ''}\\s*((\\d+(\\` +
       this.separator() +
