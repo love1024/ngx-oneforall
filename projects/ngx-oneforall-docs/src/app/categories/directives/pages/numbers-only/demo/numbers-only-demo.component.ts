@@ -9,17 +9,32 @@ import { NumbersOnlyDirective } from '@ngx-oneforall/directives';
     <div class="demo-container">
       <div class="demo-block">
         <h3>Positive integers only</h3>
-        <input numbersOnly type="text" class="demo-input" value="abc" />
+        <input
+          numbersOnly
+          type="text"
+          class="demo-input"
+          value="abc"
+          [value]="123" />
       </div>
 
       <div class="demo-block">
         <h3>Positive & negative integers</h3>
-        <input numbersOnly type="text" [negative]="true" class="demo-input" />
+        <input
+          numbersOnly
+          type="text"
+          [negative]="true"
+          class="demo-input"
+          value="-123" />
       </div>
 
       <div class="demo-block">
         <h3>Positive decimal numbers (2 digits)</h3>
-        <input numbersOnly type="text" [decimals]="2" class="demo-input" />
+        <input
+          numbersOnly
+          type="text"
+          [decimals]="2"
+          class="demo-input"
+          value="123.12" />
       </div>
 
       <div class="demo-block">
@@ -29,7 +44,8 @@ import { NumbersOnlyDirective } from '@ngx-oneforall/directives';
           type="text"
           [decimals]="2"
           [negative]="true"
-          class="demo-input" />
+          class="demo-input"
+          value="-123.12" />
       </div>
 
       <div class="demo-block">
@@ -39,7 +55,8 @@ import { NumbersOnlyDirective } from '@ngx-oneforall/directives';
           type="text"
           [decimals]="2"
           separator=","
-          class="demo-input" />
+          class="demo-input"
+          value="123,12" />
       </div>
 
       <div class="demo-block">
