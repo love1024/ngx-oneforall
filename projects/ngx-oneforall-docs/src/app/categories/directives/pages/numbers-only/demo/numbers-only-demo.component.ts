@@ -7,6 +7,7 @@ import { NumbersOnlyDirective } from '@ngx-oneforall/directives';
   imports: [NumbersOnlyDirective, FormsModule],
   template: `
     <div class="demo-container">
+      <h2>Numbers Only Directive Demo</h2>
       <div class="demo-block">
         <h3>Positive integers only</h3>
         <input
