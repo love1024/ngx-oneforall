@@ -1,0 +1,37 @@
+.repeat-demo-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 320px;
+    margin: 32px auto;
+}
+.box {
+    background: #f5f7fa;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+.index-label {
+    font-weight: 500;
+    color: #374151;
+}
+.badge {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    background: #6366f1;
+}
+.badge.first {
+    background: #10b981;
+}
+.badge.last {
+    background: #ef4444;
+}
