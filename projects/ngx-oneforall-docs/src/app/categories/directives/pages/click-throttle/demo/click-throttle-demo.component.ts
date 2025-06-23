@@ -39,50 +39,7 @@ import { ClickThrottleDirective } from '@ngx-oneforall/directives';
       </p>
     </div>
   `,
-  styles: `
-    .throttle-demo-container {
-      max-width: 400px;
-      margin: 2rem auto;
-      padding: 2rem;
-      border-radius: 8px;
-      background: #f9f9f9;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      font-family: 'Segoe UI', Arial, sans-serif;
-    }
-    .throttle-demo-container h2 {
-      margin-bottom: 1rem;
-      color: #1976d2;
-    }
-    .throttle-slider {
-      margin: 1.5rem 0;
-    }
-    .throttle-slider label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-    .throttle-btn {
-      background: #1976d2;
-      color: #fff;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .throttle-btn:hover {
-      background: #1565c0;
-    }
-    .count-display {
-      margin-top: 1.5rem;
-      font-size: 1.1rem;
-    }
-    .count-display strong {
-      color: #388e3c;
-      margin-left: 0.5rem;
-    }
-  `,
+  styleUrl: 'click-throttle-demo.component.scss',
 })
 export class ClickThrottleDemoComponent {
   count = signal(0);
