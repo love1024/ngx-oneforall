@@ -5,3 +5,4 @@ export * from './auto-focus/auto-focus.directive';
 export * from './click-throttle/click-throttle.directive';
 export * from './hover-class/hover-class.directive';
 export * from './numbers-only/numbers-only.directive';
+export * from './repeat/repeat.directive';
