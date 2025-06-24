@@ -1,7 +1,3 @@
-
-
-
-
 The `RepeatDirective` is a structural directive for Angular that allows you to dynamically repeat a template a specified number of times. This directive is useful when you need to render a block of HTML multiple times based on a numeric value, similar to the `ngFor` directive but with a focus on repeating a template a fixed number of times rather than iterating over a collection.
 
 ### Selector
