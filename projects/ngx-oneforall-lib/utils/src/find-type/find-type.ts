@@ -1,40 +1,40 @@
-import { Type } from '../../../constants/src/types';
+import { Types } from '../../../constants/src/types';
 
-export const findType = (value: unknown): Type => {
-  if (isNull(value)) return Type.Null;
-  if (isUndefined(value)) return Type.Undefined;
+export const findType = (value: unknown): Types => {
+  if (isNull(value)) return Types.Null;
+  if (isUndefined(value)) return Types.Undefined;
 
-  if (isBoolean(value)) return Type.Boolean;
-  if (isString(value)) return Type.String;
-  if (isNumber(value)) return Type.Number;
-  if (isSymbol(value)) return Type.Symbol;
-  if (isGeneratorFn(value)) return Type.GeneratorFunction;
-  if (isFunction(value)) return Type.Function;
-  if (isMap(value)) return Type.Map;
-  if (isWeakMap(value)) return Type.WeakMap;
-  if (isSet(value)) return Type.Set;
-  if (isWeakSet(value)) return Type.WeakSet;
+  if (isBoolean(value)) return Types.Boolean;
+  if (isString(value)) return Types.String;
+  if (isNumber(value)) return Types.Number;
+  if (isSymbol(value)) return Types.Symbol;
+  if (isGeneratorFn(value)) return Types.GeneratorFunction;
+  if (isFunction(value)) return Types.Function;
+  if (isMap(value)) return Types.Map;
+  if (isWeakMap(value)) return Types.WeakMap;
+  if (isSet(value)) return Types.Set;
+  if (isWeakSet(value)) return Types.WeakSet;
 
-  if (isInt8Array(value)) return Type.Int8Array;
-  if (isUint8Array(value)) return Type.Uint8Array;
-  if (isUint8ClampedArray(value)) return Type.Uint8ClampedArray;
-  if (isInt16Array(value)) return Type.Int16Array;
-  if (isUint16Array(value)) return Type.Uint16Array;
-  if (isInt32Array(value)) return Type.Int32Array;
-  if (isUint32Array(value)) return Type.Uint32Array;
-  if (isFloat32Array(value)) return Type.Float32Array;
-  if (isFloat64Array(value)) return Type.Float64Array;
+  if (isInt8Array(value)) return Types.Int8Array;
+  if (isUint8Array(value)) return Types.Uint8Array;
+  if (isUint8ClampedArray(value)) return Types.Uint8ClampedArray;
+  if (isInt16Array(value)) return Types.Int16Array;
+  if (isUint16Array(value)) return Types.Uint16Array;
+  if (isInt32Array(value)) return Types.Int32Array;
+  if (isUint32Array(value)) return Types.Uint32Array;
+  if (isFloat32Array(value)) return Types.Float32Array;
+  if (isFloat64Array(value)) return Types.Float64Array;
 
-  if (isGeneratorObject(value)) return Type.GeneratorObject;
+  if (isGeneratorObject(value)) return Types.GeneratorObject;
 
-  if (isObject(value)) return Type.Object;
+  if (isObject(value)) return Types.Object;
 
-  if (isMapIterator(value)) return Type.MapIterator;
-  if (isSetIterator(value)) return Type.SetIterator;
-  if (isStringIterator(value)) return Type.StringIterator;
-  if (isArrayIterator(value)) return Type.ArrayIterator;
+  if (isMapIterator(value)) return Types.MapIterator;
+  if (isSetIterator(value)) return Types.SetIterator;
+  if (isStringIterator(value)) return Types.StringIterator;
+  if (isArrayIterator(value)) return Types.ArrayIterator;
 
-  return Type.Unknown;
+  return Types.Unknown;
 };
 
 //--------------------HELPER--------------------------

@@ -1,4 +1,4 @@
-export enum Type {
+export enum Types {
   Undefined = 'UNDEFINED',
   Null = 'NULL',
   Boolean = 'BOOLEAN',
