@@ -6,6 +6,7 @@ export enum Types {
   Number = 'NUMBER',
   Symbol = 'SYMBOL',
   Function = 'FUNCTION',
+  Array = 'ARRAY',
   GeneratorFunction = 'GENERATOR_FUNCTION"',
   Unknown = 'UNKNOWN',
   Map = 'MAP',

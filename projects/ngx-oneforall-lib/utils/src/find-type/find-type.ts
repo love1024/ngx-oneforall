@@ -15,6 +15,8 @@ export const findType = (value: unknown): Types => {
   if (isSet(value)) return Types.Set;
   if (isWeakSet(value)) return Types.WeakSet;
 
+  if (isArray(value)) return Types.Array;
+
   if (isInt8Array(value)) return Types.Int8Array;
   if (isUint8Array(value)) return Types.Uint8Array;
   if (isUint8ClampedArray(value)) return Types.Uint8ClampedArray;
@@ -27,14 +29,12 @@ export const findType = (value: unknown): Types => {
 
   if (isGeneratorObject(value)) return Types.GeneratorObject;
 
-  if (isObject(value)) return Types.Object;
-
   if (isMapIterator(value)) return Types.MapIterator;
   if (isSetIterator(value)) return Types.SetIterator;
   if (isStringIterator(value)) return Types.StringIterator;
   if (isArrayIterator(value)) return Types.ArrayIterator;
 
-  return Types.Unknown;
+  return Types.Object;
 };
 
 //--------------------HELPER--------------------------
