@@ -1,0 +1,35 @@
+=
+The `Types` enum above provides a comprehensive list of possible JavaScript and TypeScript types, including primitives like `String` and `Number`, complex structures like `Map` and `Set`, as well as iterators and typed arrays. Using such enums can help with type checking, validation, and implementing utility functions that depend on type information.
+``` typescript
+export enum Types {
+  Undefined = 'UNDEFINED',
+  Null = 'NULL',
+  Boolean = 'BOOLEAN',
+  String = 'STRING',
+  Number = 'NUMBER',
+  Symbol = 'SYMBOL',
+  Function = 'FUNCTION',
+  Array = 'ARRAY',
+  GeneratorFunction = 'GENERATOR_FUNCTION"',
+  Unknown = 'UNKNOWN',
+  Map = 'MAP',
+  WeakMap = 'WEAK_MAP',
+  Set = 'SET',
+  WeakSet = 'WeakSet',
+  Int8Array = 'INT8ARRAY',
+  Uint8Array = 'UINT8ARRAY',
+  Uint8ClampedArray = 'UINT8CLAMPEDARRAY',
+  Int16Array = 'INT16ARRAY',
+  Uint16Array = 'UINT16ARRAY',
+  Int32Array = 'INT32ARRAY',
+  Uint32Array = 'UINT32ARRAY',
+  Float32Array = 'FLOAT32ARRAY',
+  Float64Array = 'FLOAT64ARRAY',
+  GeneratorObject = 'GENERATOR_OBJECT',
+  Object = 'OBJECT',
+  MapIterator = 'MAP_ITERATOR',
+  SetIterator = 'SET_ITERATOR',
+  StringIterator = 'STRING_ITERATOR',
+  ArrayIterator = 'ARRAY_ITERATOR',
+}
+```
