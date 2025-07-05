@@ -30,7 +30,7 @@ export function storageSignal<T>(
 
   afterNextRender(
     () => {
-      init<T>(state, key, defaultValue, options, injector);
+      init<T>(state, key, options, injector);
     },
     { injector }
   );
@@ -41,7 +41,6 @@ export function storageSignal<T>(
 function init<T>(
   state: WritableSignal<T>,
   key: string,
-  defaultValue: T,
   options: StorageSignalOptions<T>,
   injector: Injector
 ) {
