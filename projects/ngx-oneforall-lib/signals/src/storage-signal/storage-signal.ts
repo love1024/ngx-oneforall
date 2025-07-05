@@ -1,4 +1,5 @@
 import {
+  afterNextRender,
   assertInInjectionContext,
   DestroyRef,
   effect,
@@ -24,15 +25,33 @@ export function storageSignal<T>(
   defaultValue: T,
   options: StorageSignalOptions<T> = {}
 ): WritableSignal<T> {
-  const providedInjector = assertAndGetInjector<T>(options);
-  const destroyRef = providedInjector(DestroyRef);
+  const injector = assertAndGetInjector<T>(options);
+  const state = signal<T>(defaultValue);
 
+  afterNextRender(
+    () => {
+      init<T>(state, key, defaultValue, options, injector);
+    },
+    { injector }
+  );
+
+  return state;
+}
+
+function init<T>(
+  state: WritableSignal<T>,
+  key: string,
+  defaultValue: T,
+  options: StorageSignalOptions<T>,
+  injector: Injector
+) {
   const {
     storage = localStorage,
     serializer = JSON.stringify,
     deserializer = JSON.parse,
     crossTabSync = false,
   } = options;
+  const destroyRef = injector.get(DestroyRef);
 
   let initialValue = defaultValue;
   try {
@@ -44,14 +63,18 @@ export function storageSignal<T>(
     // ignore initial get item error
   }
 
-  const state = signal<T>(initialValue);
-  effect(() => {
-    try {
-      storage.setItem(key, serializer(state()));
-    } catch (err) {
-      console.log(`[storageSignal] failed to store ${key}`, err);
-    }
-  });
+  state.set(initialValue);
+
+  effect(
+    () => {
+      try {
+        storage.setItem(key, serializer(state()));
+      } catch (err) {
+        console.log(`[storageSignal] failed to store ${key}`, err);
+      }
+    },
+    { injector }
+  );
 
   if (crossTabSync && typeof window !== 'undefined') {
     fromEvent(window, 'storage')
@@ -71,20 +94,21 @@ export function storageSignal<T>(
         }
       });
   }
-
-  return state;
 }
 
-function assertAndGetInjector<T>(options: StorageSignalOptions<T>) {
-  let providedInjector;
+function assertAndGetInjector<T>(options: StorageSignalOptions<T>): Injector {
+  let providedInjector: Injector;
   try {
     assertInInjectionContext(storageSignal);
-    providedInjector = inject;
+    providedInjector = inject(Injector);
   } catch (err) {
     if (options.injector) {
-      providedInjector = inject;
+      providedInjector = options.injector;
     } else {
-      throw err;
+      throw (
+        err +
+        '. Other than above options, You can also pass the injector in the options.'
+      );
     }
   }
 
