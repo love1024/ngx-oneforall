@@ -84,8 +84,9 @@ function init<T>(
           event.key !== key ||
           event.storageArea !== storage ||
           event.newValue === null
-        )
+        ) {
           return;
+        }
         try {
           state.set(deserializer(event.newValue));
         } catch {
