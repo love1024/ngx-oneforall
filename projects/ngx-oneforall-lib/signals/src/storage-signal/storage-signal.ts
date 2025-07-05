@@ -16,7 +16,6 @@ export interface StorageSignalOptions<T> {
   serializer?: (v: T) => string;
   deserializer?: (data: string) => T;
   crossTabSync?: boolean;
-  syncInterval?: number;
   injector?: Injector;
 }
 
