@@ -53,18 +53,17 @@ function init<T>(
   } = options;
   const destroyRef = injector.get(DestroyRef);
 
-  let initialValue = defaultValue;
+  // Try to get initial value out of storage
   try {
     const data = storage.getItem(key);
     if (data !== null) {
-      initialValue = deserializer(data);
+      state.set(deserializer(data));
     }
   } catch {
     // ignore initial get item error
   }
 
-  state.set(initialValue);
-
+  // Listen for signal changes
   effect(
     () => {
       try {
@@ -76,6 +75,7 @@ function init<T>(
     { injector }
   );
 
+  // Check if cross tab sync is required and start listening
   if (crossTabSync && typeof window !== 'undefined') {
     fromEvent(window, 'storage')
       .pipe(takeUntilDestroyed(destroyRef))
@@ -107,7 +107,7 @@ function assertAndGetInjector<T>(options: StorageSignalOptions<T>): Injector {
     } else {
       throw (
         err +
-        '. Other than above options, You can also pass the injector in the options.'
+        '. You can also pass the injector in the options to use this outside the injection context.'
       );
     }
   }
