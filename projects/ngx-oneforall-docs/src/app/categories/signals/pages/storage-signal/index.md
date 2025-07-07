@@ -1,6 +1,3 @@
-
-### Storage Signal in Angular
-
 The `storageSignal` utility in Angular provides a reactive way to synchronize application state with browser storage mechanisms such as `localStorage` or `sessionStorage`. It leverages Angular signals to keep your data in sync with storage, enabling seamless state persistence and cross-tab communication.
 
 
