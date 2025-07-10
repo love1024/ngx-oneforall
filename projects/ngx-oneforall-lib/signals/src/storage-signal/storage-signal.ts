@@ -29,6 +29,7 @@ export function storageSignal<T>(
   const state = signal<T>(defaultValue);
   const platformId = injector.get(PLATFORM_ID);
 
+  // Only run in browser, and not in SSR
   if (isPlatformBrowser(platformId)) {
     init<T>(state, key, options, injector);
   }
