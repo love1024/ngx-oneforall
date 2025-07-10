@@ -1,10 +1,11 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
-  afterNextRender,
   assertInInjectionContext,
   DestroyRef,
   effect,
   inject,
   Injector,
+  PLATFORM_ID,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -26,13 +27,11 @@ export function storageSignal<T>(
 ): WritableSignal<T> {
   const injector = assertAndGetInjector<T>(options);
   const state = signal<T>(defaultValue);
+  const platformId = injector.get(PLATFORM_ID);
 
-  afterNextRender(
-    () => {
-      init<T>(state, key, options, injector);
-    },
-    { injector }
-  );
+  if (isPlatformBrowser(platformId)) {
+    init<T>(state, key, options, injector);
+  }
 
   return state;
 }
