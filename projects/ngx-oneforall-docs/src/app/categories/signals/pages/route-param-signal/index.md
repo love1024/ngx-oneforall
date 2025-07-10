@@ -1,5 +1,7 @@
 The `routeParamSignal` utility in Angular provides a reactive and declarative way to access and respond to changes in route parameters within your components. By leveraging Angular signals and the router, it enables seamless synchronization between the URL's route parameters and your component state, ensuring your UI always reflects the current navigation context.
 
+#### Access a Single Param
+
 ```typescript
 import { routeParamSignal } from 'path-to-your-utils';
 
@@ -9,6 +11,20 @@ import { routeParamSignal } from 'path-to-your-utils';
 export class ExampleComponent {
     // Reactively tracks the value of the 'id' route parameter
     id = routeParamSignal('id');
+}
+```
+
+#### Access Params Map
+
+```typescript
+import { routeParamSignal } from 'path-to-your-utils';
+
+@Component({
+    ...
+})
+export class ExampleComponent {
+    // get all params
+    paramsMap = routeParamsMapSignal();
 }
 ```
 
