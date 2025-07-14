@@ -6,7 +6,7 @@ In TypeScript and Angular applications, validating data types is essential for m
 
 ## Overview of Utility Functions
 
-### 1. `isNumber`
+### 1. `isNumberValue`
 
 This function determines if a value is a finite number.
 
@@ -17,7 +17,7 @@ This function determines if a value is a finite number.
 #### Example Usage:
 ```typescript
 const value = 42;
-if (isNumber(value)) {
+if (isNumberValue(value)) {
     console.log(`${value} is a valid number.`);
 } else {
     console.log(`${value} is not a valid number.`);
@@ -86,7 +86,7 @@ if (isNumberString(inputValue)) {
 ```typescript
 const value: unknown = 100;
 
-if (isNumber(value)) {
+if (isNumberValue(value)) {
     const result = value * 2; // TypeScript infers `value` as a number
     console.log('Result:', result);
 }
