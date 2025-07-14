@@ -1,4 +1,4 @@
-export const isNumber = (value: unknown): value is number => {
+export const isNumberValue = (value: unknown): value is number => {
   return typeof value === 'number' && isFinite(value);
 };
 

@@ -1,22 +1,22 @@
-import { isNumber, isNumberString, isNumberObject } from './is-number';
+import { isNumberValue, isNumberString, isNumberObject } from './is-number';
 
-describe('isNumber', () => {
+describe('isNumberValue', () => {
   it('should return true for finite numbers', () => {
-    expect(isNumber(42)).toBe(true);
-    expect(isNumber(-42)).toBe(true);
-    expect(isNumber(0)).toBe(true);
-    expect(isNumber(3.14)).toBe(true);
+    expect(isNumberValue(42)).toBe(true);
+    expect(isNumberValue(-42)).toBe(true);
+    expect(isNumberValue(0)).toBe(true);
+    expect(isNumberValue(3.14)).toBe(true);
   });
 
   it('should return false for non-number values', () => {
-    expect(isNumber('42')).toBe(false);
-    expect(isNumber(null)).toBe(false);
-    expect(isNumber(undefined)).toBe(false);
-    expect(isNumber(NaN)).toBe(false);
-    expect(isNumber(Infinity)).toBe(false);
-    expect(isNumber(-Infinity)).toBe(false);
-    expect(isNumber({})).toBe(false);
-    expect(isNumber([])).toBe(false);
+    expect(isNumberValue('42')).toBe(false);
+    expect(isNumberValue(null)).toBe(false);
+    expect(isNumberValue(undefined)).toBe(false);
+    expect(isNumberValue(NaN)).toBe(false);
+    expect(isNumberValue(Infinity)).toBe(false);
+    expect(isNumberValue(-Infinity)).toBe(false);
+    expect(isNumberValue({})).toBe(false);
+    expect(isNumberValue([])).toBe(false);
   });
 });
 
