@@ -1,4 +1,4 @@
-import { Types } from '../../../constants/src/types';
+import { Types } from '@ngx-oneforall/constants';
 
 export const findType = (value: unknown): Types => {
   if (isNull(value)) return Types.Null;
