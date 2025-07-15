@@ -1,46 +1,52 @@
 
-
-The `NetworkStatusService` monitors and provides the current network connectivity status in an Angular application. It leverages the browser's `navigator.onLine` property and listens to `online` and `offline` events to determine the network status in real-time. The service offers both reactive and signal-based APIs for accessing the network status.
+The `EventService` enables event-based communication within an Angular application. It provides a simple API for dispatching and listening to custom events using RxJS observables. This service is useful for decoupling components and services by allowing them to react to events without direct references.
 
 #### Features
-- Detects whether the application is online or offline.
-- Provides reactive streams (`isOnline$`) for observing network status changes.
-- Offers signal-based APIs (`isOnlineSignal`) for Angular's signal-based reactivity.
-- Automatically updates the network status when the browser's connectivity changes.
+- Dispatch custom events with optional payloads.
+- Subscribe to an observable event stream.
+- Decouples event producers and consumers for better modularity.
 
 #### Usage
-1. Import and provide the `NetworkStatusService` in your Angular module or component.
-2. Inject the service into your component or service to access its properties and methods.
+1. Import and provide the `EventService` in your Angular module or component.
+2. Inject the service into your component or service to dispatch or listen for events.
 
 #### Example
 ```typescript
-...
-import { NetworkStatusService } from './network-status.service';
+import { Component, inject } from '@angular/core';
+import { EventService } from './event.service';
 
 @Component({
     ...
     template: `
-        @if(isOnline()) {
-            <p>You are online</p>
-        } @else {
-            <p>You are offline</p> 
-        }
+        <button (click)="sendEvent()">Send Event</button>
+        <div *ngIf="lastEvent">
+            Last event: {{ lastEvent.name }} - {{ lastEvent.data }}
+        </div>
     `
 })
-export class NetworkStatusComponent {
-  isOnline = computed(() => this.networkStatuService.isOnlineSignal());
-  private readonly networkStatuService = inject(NetworkStatusService);
+export class EventDemoComponent {
+    private eventService = inject(EventService);
+    lastEvent?: { name: string; data?: unknown };
+
+    constructor() {
+        this.eventService.getEventEmitter().subscribe(event => {
+            this.lastEvent = event;
+        });
+    }
+
+    sendEvent() {
+        this.eventService.dispatchEvent('myEvent', { foo: 'bar' });
+    }
 }
 ```
 
-#### Properties
-- **`isOnline`**: A boolean getter that returns `true` if the application is online, otherwise `false`.
-- **`isOffline`**: A boolean getter that returns `true` if the application is offline, otherwise `false`.
-- **`isOnline$`**: An observable stream that emits the current network status (`true` for online, `false` for offline).
-- **`isOnlineSignal`**: A readonly signal that reflects the current network status.
+#### Properties & Methods
+- **`dispatchEvent(name: string, data?: unknown)`**: Dispatches an event with a name and optional data.
+- **`getEventEmitter(): Observable<AppEvent>`**: Returns an observable stream of dispatched events.
 
 #### Notes
-- This service assumes it is running in a browser environment where the `window` object is available.
+- Events are broadcast to all subscribers of the event stream.
+- Use event names to distinguish between different event types.
 
 #### Live Demo
 
