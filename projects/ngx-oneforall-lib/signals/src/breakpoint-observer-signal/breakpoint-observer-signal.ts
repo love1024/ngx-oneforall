@@ -1,10 +1,7 @@
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import {
-  Breakpoint,
-  BreakpointQueries,
-} from '../../../constants/src/breakpoints';
+import { Breakpoint, BreakpointQueries } from '@ngx-oneforall/constants';
 import { isKeyDefined } from '@ngx-oneforall/utils';
 
 export function breakpointObserverSignal(
