@@ -18,8 +18,8 @@ export const BreakpointQueries = {
   [Breakpoint.LG]: '(width >= 992px)',
   [Breakpoint.XL]: '(width >= 1200px)',
   [Breakpoint.XXL]: 'width >= 1400px)',
-  [Breakpoint.SMOnly]: '(width >= 576px and width < 768px)',
-  [Breakpoint.MDOnly]: '(width >= 768px and width < 992px)',
-  [Breakpoint.LGOnly]: '(width >= 992px and width < 1200px)',
-  [Breakpoint.XLONly]: '(width >= 1200px and width < 1400px)',
+  [Breakpoint.SMOnly]: '(576px <= width < 768px)',
+  [Breakpoint.MDOnly]: '(768px <= width < 992px)',
+  [Breakpoint.LGOnly]: '(992px <= width < 1200px)',
+  [Breakpoint.XLONly]: '(1200px <= width < 1400px)',
 };
