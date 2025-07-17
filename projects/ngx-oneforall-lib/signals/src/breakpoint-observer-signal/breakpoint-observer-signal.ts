@@ -1,5 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { computed, inject, Signal } from '@angular/core';
+import { Platform } from '@angular/cdk/platform';
+import { computed, inject, signal, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Breakpoint, BreakpointQueries } from '@ngx-oneforall/constants';
 
@@ -11,6 +12,14 @@ export interface BreakpointResult {
 export function breakpointObserverSignal(
   breakpoints: Breakpoint | string | (Breakpoint | string)[]
 ): Signal<BreakpointResult> {
+  const platform = inject(Platform);
+  if (!platform.isBrowser || !window.matchMedia) {
+    return signal({
+      matches: false,
+      breakpoints: {},
+    } satisfies BreakpointResult);
+  }
+
   const breakpointObserver = inject(BreakpointObserver);
   const reverseMap = new Map<string, Breakpoint>();
 
@@ -49,6 +58,7 @@ export function breakpointObserverSignal(
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isBreakpoint(value: any): value is Breakpoint {
   return value in Breakpoint;
 }
