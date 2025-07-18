@@ -1,6 +1,6 @@
 import { Component, effect } from '@angular/core';
 import { Breakpoint } from '@ngx-oneforall/constants';
-import { breakpointObserverSignal } from '@ngx-oneforall/signals';
+import { breakpointMatcherSignal } from '@ngx-oneforall/signals';
 
 @Component({
   selector: 'lib-breakpoint-observer-signal-demo',
@@ -9,15 +9,11 @@ import { breakpointObserverSignal } from '@ngx-oneforall/signals';
   styleUrl: './breakpoint-observer-signal-demo.component.scss',
 })
 export class BreakpointObserverSignalDemoComponent {
-  mobileDevice = breakpointObserverSignal([
-    Breakpoint.XS,
-    Breakpoint.LG,
-    '(min-width: 700px)',
-  ]);
+  mobileDevice = breakpointMatcherSignal(Breakpoint.XS);
 
   constructor() {
     effect(() => {
-      console.log(this.mobileDevice().breakpoints);
+      console.log(this.mobileDevice());
     });
   }
 }
