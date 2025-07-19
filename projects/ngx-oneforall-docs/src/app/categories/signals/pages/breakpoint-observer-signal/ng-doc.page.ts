@@ -3,8 +3,8 @@ import SignalsCategory from '../../ng-doc.category';
 import { BreakpointMatcherSignalDemoComponent } from './demo/breakpoint-matcher-signal-demo.component';
 import { BreakpointMatcherMultipleSignalDemoComponent } from './demo/breakpoint-matcher-multiple-demo.component';
 
-const BreakpointObserverSignal: NgDocPage = {
-  title: 'Breakpoint Observer',
+const BreakpointMatcherSignal: NgDocPage = {
+  title: 'Breakpoint Matcher',
   mdFile: './index.md',
   category: SignalsCategory,
   demos: {
@@ -13,4 +13,4 @@ const BreakpointObserverSignal: NgDocPage = {
   },
 };
 
-export default BreakpointObserverSignal;
+export default BreakpointMatcherSignal;
