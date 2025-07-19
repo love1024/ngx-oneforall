@@ -8,7 +8,7 @@ export interface BreakpointResult {
   breakpoints: Record<string, boolean>;
 }
 
-export function breakpointMatcherSignal(
+export function breakpointMatcher(
   breakpoint: BreakpointInput
 ): Signal<boolean> {
   const platformId = inject(PLATFORM_ID);
@@ -23,83 +23,87 @@ export function breakpointMatcherSignal(
 
     const handler = (event: MediaQueryListEvent) => state.set(event.matches);
 
-    // Added just for unsubscription
-    effect(() => {
-      if ('addEventListener' in mediaQuery) {
-        mediaQuery.addEventListener('change', handler);
-      } else {
-        // @ts-expect-error deprecated API
-        mediaQuery.addListener(handler);
-      }
-
-      return () => {
-        if ('removeEventListener' in mediaQuery) {
-          mediaQuery.removeEventListener('change', handler);
-        } else {
-          // @ts-expect-error deprecated API
-          mediaQuery.removeListener(handler);
-        }
-      };
-    });
+    startListener(mediaQuery, handler);
   }
 
   return state.asReadonly();
 }
 
-export function breakpointMatcherMultipleSignal(
+export function breakpointMatcherMultiple(
   breakpoints: BreakpointInput[]
 ): Signal<BreakpointResult> {
   const platformId = inject(PLATFORM_ID);
   const state = signal<BreakpointResult>({ matches: false, breakpoints: {} });
   if (isPlatformBrowser(platformId) && window.matchMedia) {
-    const queries = breakpoints.map(b =>
-      isBreakpoint(b) ? BreakpointQueries[b] : b
-    );
+    const reverseMap = new Map<string, Breakpoint>();
+    const queries = breakpoints.map(b => {
+      if (isBreakpoint(b)) {
+        // Store for later reverse mapping
+        reverseMap.set(BreakpointQueries[b], b);
+        return BreakpointQueries[b];
+      }
+      return b;
+    });
 
     queries.forEach(query => {
       const mediaQuery = window.matchMedia(query);
+
+      const updatedBreakpoints = {
+        ...state().breakpoints,
+        [reverseMap.get(query)!]: mediaQuery.matches,
+      };
+      // Set initial state
       state.set({
-        matches: state().matches || mediaQuery.matches,
-        breakpoints: {
-          ...state().breakpoints,
-          query: mediaQuery.matches,
-        },
+        matches: someBreakpointMatch(updatedBreakpoints),
+        breakpoints: updatedBreakpoints,
       });
 
       const handler = (event: MediaQueryListEvent) => {
+        const updatedBreakpoints = {
+          ...state().breakpoints,
+          [reverseMap.get(query)!]: event.matches,
+        };
         state.set({
-          matches: state().matches || event.matches,
-          breakpoints: {
-            ...state().breakpoints,
-            query: event.matches,
-          },
+          matches: someBreakpointMatch(updatedBreakpoints),
+          breakpoints: updatedBreakpoints,
         });
       };
 
-      // Added just for unsubscription
-      effect(() => {
-        if ('addEventListener' in mediaQuery) {
-          mediaQuery.addEventListener('change', handler);
-        } else {
-          // @ts-expect-error deprecated API
-          mediaQuery.addListener(handler);
-        }
-
-        return () => {
-          if ('removeEventListener' in mediaQuery) {
-            mediaQuery.removeEventListener('change', handler);
-          } else {
-            // @ts-expect-error deprecated API
-            mediaQuery.removeListener(handler);
-          }
-        };
-      });
+      startListener(mediaQuery, handler);
     });
   }
   return state;
 }
 
+function startListener(
+  mediaQuery: MediaQueryList,
+  handler: (event: MediaQueryListEvent) => void
+) {
+  // Added just for unsubscription
+  effect(onCleanup => {
+    if ('addEventListener' in mediaQuery) {
+      mediaQuery.addEventListener('change', handler);
+    } else {
+      // @ts-expect-error deprecated API
+      mediaQuery.addListener(handler);
+    }
+
+    onCleanup(() => {
+      if ('removeEventListener' in mediaQuery) {
+        mediaQuery.removeEventListener('change', handler);
+      } else {
+        // @ts-expect-error deprecated API
+        mediaQuery.removeListener(handler);
+      }
+    });
+  });
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isBreakpoint(value: any): value is Breakpoint {
   return value in Breakpoint;
+}
+
+function someBreakpointMatch(breakpoints: Record<string, boolean>): boolean {
+  return Object.values(breakpoints).some(v => v);
 }
