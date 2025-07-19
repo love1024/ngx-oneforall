@@ -1,0 +1,47 @@
+.demo-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    font-family: Arial, sans-serif;
+}
+h2 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+.result-box {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: border-color 0.2s;
+}
+.result-box.active {
+    border-color: #3498db;
+    background: #eaf6fb;
+}
+code {
+    background: #eef;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.95em;
+}
+.yes {
+    color: #27ae60;
+    font-weight: bold;
+}
+.no {
+    color: #c0392b;
+    font-weight: bold;
+}
+small {
+    display: block;
+    margin-top: 1rem;
+    color: #888;
+}

@@ -1,13 +1,15 @@
 import { NgDocPage } from '@ng-doc/core';
 import SignalsCategory from '../../ng-doc.category';
-import { BreakpointObserverSignalDemoComponent } from './demo/breakpoint-observer-signal-demo.component';
+import { BreakpointMatcherSignalDemoComponent } from './demo/breakpoint-matcher-signal-demo.component';
+import { BreakpointMatcherMultipleSignalDemoComponent } from './demo/breakpoint-matcher-multiple-demo.component';
 
 const BreakpointObserverSignal: NgDocPage = {
   title: 'Breakpoint Observer',
   mdFile: './index.md',
   category: SignalsCategory,
   demos: {
-    BreakpointObserverSignalDemoComponent,
+    BreakpointMatcherSignalDemoComponent,
+    BreakpointMatcherMultipleSignalDemoComponent,
   },
 };
 

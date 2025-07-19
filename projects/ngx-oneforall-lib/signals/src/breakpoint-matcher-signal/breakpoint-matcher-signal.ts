@@ -4,7 +4,8 @@ import { Breakpoint, BreakpointQueries } from '@ngx-oneforall/constants';
 
 type BreakpointInput = Breakpoint | string;
 export interface BreakpointResult {
-  matches: boolean;
+  some: boolean;
+  all: boolean;
   breakpoints: Record<string, boolean>;
 }
 
@@ -33,7 +34,11 @@ export function breakpointMatcherMultiple(
   breakpoints: BreakpointInput[]
 ): Signal<BreakpointResult> {
   const platformId = inject(PLATFORM_ID);
-  const state = signal<BreakpointResult>({ matches: false, breakpoints: {} });
+  const state = signal<BreakpointResult>({
+    some: false,
+    all: false,
+    breakpoints: {},
+  });
   if (isPlatformBrowser(platformId) && window.matchMedia) {
     const reverseMap = new Map<string, Breakpoint>();
     const queries = breakpoints.map(b => {
@@ -54,7 +59,8 @@ export function breakpointMatcherMultiple(
       };
       // Set initial state
       state.set({
-        matches: someBreakpointMatch(updatedBreakpoints),
+        some: someBreakpointMatch(updatedBreakpoints),
+        all: allBreakpointMatch(updatedBreakpoints),
         breakpoints: updatedBreakpoints,
       });
 
@@ -64,7 +70,8 @@ export function breakpointMatcherMultiple(
           [reverseMap.get(query)!]: event.matches,
         };
         state.set({
-          matches: someBreakpointMatch(updatedBreakpoints),
+          some: someBreakpointMatch(updatedBreakpoints),
+          all: allBreakpointMatch(updatedBreakpoints),
           breakpoints: updatedBreakpoints,
         });
       };
@@ -106,4 +113,8 @@ function isBreakpoint(value: any): value is Breakpoint {
 
 function someBreakpointMatch(breakpoints: Record<string, boolean>): boolean {
   return Object.values(breakpoints).some(v => v);
+}
+
+function allBreakpointMatch(breakpoints: Record<string, boolean>): boolean {
+  return Object.values(breakpoints).every(v => v);
 }

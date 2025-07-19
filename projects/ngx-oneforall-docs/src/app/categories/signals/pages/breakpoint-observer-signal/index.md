@@ -70,7 +70,13 @@ export class ProductDetailComponent {
 
 Explore this example in a live demonstration:
 
-{{ NgDocActions.demo("BreakpointObserverSignalDemoComponent") }}
+{{ NgDocActions.demo("BreakpointMatcherSignalDemoComponent") }}
+
+#### Live Demo
+
+Explore this example in a live demonstration:
+
+{{ NgDocActions.demo("BreakpointMatcherMultipleSignalDemoComponent") }}
 
 
 
