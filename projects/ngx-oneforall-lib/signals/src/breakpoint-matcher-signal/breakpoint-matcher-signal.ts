@@ -13,7 +13,7 @@ export function breakpointMatcher(
   breakpoint: BreakpointInput
 ): Signal<boolean> {
   const platformId = inject(PLATFORM_ID);
-  const state = signal<boolean>(breakpoint === 'all' || breakpoint === '');
+  const state = signal<boolean>(false);
   if (isPlatformBrowser(platformId) && window.matchMedia) {
     const query = isBreakpoint(breakpoint)
       ? BreakpointQueries[breakpoint]
@@ -55,7 +55,7 @@ export function breakpointMatcherMultiple(
 
       const updatedBreakpoints = {
         ...state().breakpoints,
-        [reverseMap.get(query)!]: mediaQuery.matches,
+        [reverseMap.get(query) || query]: mediaQuery.matches,
       };
       // Set initial state
       state.set({
@@ -67,7 +67,7 @@ export function breakpointMatcherMultiple(
       const handler = (event: MediaQueryListEvent) => {
         const updatedBreakpoints = {
           ...state().breakpoints,
-          [reverseMap.get(query)!]: event.matches,
+          [reverseMap.get(query) || query]: event.matches,
         };
         state.set({
           some: someBreakpointMatch(updatedBreakpoints),
