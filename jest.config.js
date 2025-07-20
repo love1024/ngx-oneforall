@@ -1,3 +1,6 @@
+const { pathsToModuleNameMapper } = require('ts-jest');
+const { compilerOptions } = require('./tsconfig');
+
 module.exports = {
   preset: 'jest-preset-angular',
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
@@ -16,8 +19,8 @@ module.exports = {
       },
     ],
   },
-  moduleNameMapper: {
-    'ngx-oneforall-lib/(.*)': 'projects/ngx-oneforall-lib/src/app/$1',
-  },
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
+    prefix: '<rootDir>/',
+  }),
   testEnvironment: 'jsdom',
 };
