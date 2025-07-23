@@ -3,7 +3,7 @@ import ServicesCategory from '../../ng-doc.category';
 import { SessionStorageServiceDemoComponent } from './demo/session-storage-service-demo.component';
 
 const SessionStorageService: NgDocPage = {
-  title: 'Session Storage Service',
+  title: 'Session Storage',
   mdFile: './index.md',
   category: ServicesCategory,
   demos: {
