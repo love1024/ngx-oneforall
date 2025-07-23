@@ -1,4 +1,5 @@
-export interface StorageEngine<T = unknown> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface StorageEngine<T = any> {
   has(key: string): boolean;
 
   get(key: string): T | undefined;

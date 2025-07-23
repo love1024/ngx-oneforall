@@ -1,13 +1,33 @@
-import { InjectionToken } from '@angular/core';
+import { inject, InjectionToken, PLATFORM_ID } from '@angular/core';
 import { StorageEngine } from './storage-engine';
-import { StorageService } from './storage.service';
+import { WebStorageService } from './web-storage.service';
+import { isPlatformBrowser } from '@angular/common';
+import { MemoryStorageService } from './memory-storage.service';
 
 export const SessionStorageService = new InjectionToken<StorageEngine>(
   'SESSION_STORAGE',
-  { providedIn: 'root', factory: () => new StorageService(sessionStorage) }
+  {
+    providedIn: 'root',
+    factory: () => {
+      const platformId = inject(PLATFORM_ID);
+      if (isPlatformBrowser(platformId)) {
+        return new WebStorageService(sessionStorage);
+      }
+      return new MemoryStorageService();
+    },
+  }
 );
 
 export const LocalStorageService = new InjectionToken<StorageEngine>(
   'LOCAL_STORAGE',
-  { providedIn: 'root', factory: () => new StorageService(localStorage) }
+  {
+    providedIn: 'root',
+    factory: () => {
+      const platformId = inject(PLATFORM_ID);
+      if (isPlatformBrowser(platformId)) {
+        return new WebStorageService(localStorage);
+      }
+      return new MemoryStorageService();
+    },
+  }
 );
