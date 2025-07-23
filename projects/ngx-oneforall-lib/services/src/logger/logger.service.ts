@@ -12,9 +12,7 @@ export interface CustomLogger {
 export const DISABLE_LOGGER = new InjectionToken<boolean>('DISABLE_LOGGER');
 export const CUSTOM_LOGGER = new InjectionToken<CustomLogger>('CUSTOM_LOGGER');
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class LoggerService {
   public log: LogMethod;
   public error: LogMethod;
