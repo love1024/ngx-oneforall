@@ -5,21 +5,35 @@ import { SessionStorageService } from '@ngx-oneforall/services';
   selector: 'lib-session-storage-service-demo',
   imports: [],
   template: `
-    <p>Count: {{ count() }}</p>
-    <button (click)="increaseCount()">Increase</button>
+    <div class="storage-signal-demo">
+      <h2>Session Storage Service</h2>
+      <p>
+        This demo shows a counter value synchronized with
+        <strong>sessionStorage</strong> using
+        <code>SessionStorageService</code>.
+        <br />
+        Increase the count, then refresh or open this page in another tab to see
+        the value persist and sync.
+      </p>
+      <div class="counter-container">
+        <span class="count-label">Count:</span>
+        <span class="count-value">{{ count() }}</span>
+        <button class="increase-btn" (click)="increaseCount()">Increase</button>
+      </div>
+    </div>
   `,
   styleUrl: './session-storage-service-demo.component.scss',
 })
 export class SessionStorageServiceDemoComponent {
+  key = 'SESSION_STORAGE_DEMO_COUNT';
   count = linkedSignal<number>(
-    () => this.sessionStorageService.get('Count') ?? 0
+    () => this.sessionStorageService.get(this.key) ?? 0
   );
 
   private readonly sessionStorageService = inject(SessionStorageService);
 
   increaseCount() {
     this.count.update(c => c + 1);
-
-    this.sessionStorageService.set('Count', this.count());
+    this.sessionStorageService.set(this.key, this.count());
   }
 }
