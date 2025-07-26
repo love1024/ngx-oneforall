@@ -1,46 +1,64 @@
 
-
-The `NetworkStatusService` monitors and provides the current network connectivity status in an Angular application. It leverages the browser's `navigator.onLine` property and listens to `online` and `offline` events to determine the network status in real-time. The service offers both reactive and signal-based APIs for accessing the network status.
+The `SessionStorageService` is an Angular service designed to provide a robust, type-safe interface for interacting with the browser's session storage. It implements the `StorageEngine` interface, ensuring a consistent API for storing, retrieving, and managing data within the session storage scope. This service is ideal for scenarios where you need to persist data only for the duration of the browser session, such as temporary user preferences, authentication tokens, or transient application state.
 
 #### Features
-- Detects whether the application is online or offline.
-- Provides reactive streams (`isOnline$`) for observing network status changes.
-- Offers signal-based APIs (`isOnlineSignal`) for Angular's signal-based reactivity.
-- Automatically updates the network status when the browser's connectivity changes.
+
+- **Type Safety**: Supports generic types, allowing you to store and retrieve strongly-typed data.
+- **CRUD Operations**: Provides methods to get, set, check, remove, and clear session storage entries.
+- **Encapsulation**: Abstracts direct access to the browser's `sessionStorage`, promoting cleaner and more maintainable code.
+- **Serialization**: Automatically serializes and deserializes data using JSON, enabling storage of complex objects.
 
 #### Usage
-1. Import and provide the `NetworkStatusService` in your Angular module or component.
-2. Inject the service into your component or service to access its properties and methods.
+
+1. Import and provide the `SessionStorageService` in your Angular module or component.
+2. Inject the service where you need to interact with session storage.
 
 #### Example
+
 ```typescript
-...
-import { NetworkStatusService } from './network-status.service';
+import { Component, inject } from '@angular/core';
+import { SessionStorageService } from '@ngx-oneforall/services';
 
 @Component({
     ...
-    template: `
-        @if(isOnline()) {
-            <p>You are online</p>
-        } @else {
-            <p>You are offline</p> 
-        }
-    `
 })
-export class NetworkStatusComponent {
-  isOnline = computed(() => this.networkStatuService.isOnlineSignal());
-  private readonly networkStatuService = inject(NetworkStatusService);
+export class SessionStorageDemoComponent {
+  key = 'SESSION_STORAGE_DEMO_COUNT';
+  count = linkedSignal<number>(
+    () => this.sessionStorageService.get(this.key) ?? 0
+  );
+
+  private readonly sessionStorageService = inject(SessionStorageService);
+
+  increaseCount() {
+    this.count.update(c => c + 1);
+    this.sessionStorageService.set(this.key, this.count());
+  }
 }
 ```
 
-#### Properties
-- **`isOnline`**: A boolean getter that returns `true` if the application is online, otherwise `false`.
-- **`isOffline`**: A boolean getter that returns `true` if the application is offline, otherwise `false`.
-- **`isOnline$`**: An observable stream that emits the current network status (`true` for online, `false` for offline).
-- **`isOnlineSignal`**: A readonly signal that reflects the current network status.
+#### API
+
+- **`get(key: string): T | undefined`**  
+    Retrieves and deserializes the value associated with the given key. Returns `undefined` if the key does not exist.
+
+- **`set(key: string, value: T): void`**  
+    Serializes and stores the value under the specified key.
+
+- **`has(key: string): boolean`**  
+    Checks if a key exists in session storage.
+
+- **`remove(key: string): void`**  
+    Removes the entry associated with the given key.
+
+- **`clear(): void`**  
+    Clears all entries from session storage.
 
 #### Notes
-- This service assumes it is running in a browser environment where the `window` object is available.
+
+- The service operates on the browser's `sessionStorage` object, meaning data persists only for the duration of the page session and is cleared when the browser tab is closed.
+- All stored values are serialized to JSON, so only serializable data types should be used.
+- For persistent storage across sessions, consider using a similar service with `localStorage`.
 
 #### Live Demo
 
