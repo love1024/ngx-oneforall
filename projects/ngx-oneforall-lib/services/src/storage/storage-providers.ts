@@ -8,6 +8,10 @@ export const SessionStorageService = new InjectionToken<StorageEngine>(
   'SESSION_STORAGE'
 );
 
+export function injectSessionStorage<T>(): StorageEngine<T> {
+  return inject(SessionStorageService) as StorageEngine<T>;
+}
+
 export function provideSessionStorage(): Provider {
   return {
     provide: SessionStorageService,
@@ -21,9 +25,15 @@ export function provideSessionStorage(): Provider {
   };
 }
 
+// Local Storage
+
 export const LocalStorageService = new InjectionToken<StorageEngine>(
   'LOCAL_STORAGE'
 );
+
+export function injectLocalStorage<T>(): StorageEngine<T> {
+  return inject(LocalStorageService) as StorageEngine<T>;
+}
 
 export function provideLocalStorage(): Provider {
   return {
