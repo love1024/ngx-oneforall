@@ -1,5 +1,8 @@
 import { Component, inject, linkedSignal } from '@angular/core';
-import { SessionStorageService } from '@ngx-oneforall/services';
+import {
+  provideSessionStorage,
+  SessionStorageService,
+} from '@ngx-oneforall/services';
 
 @Component({
   selector: 'lib-session-storage-service-demo',
@@ -23,6 +26,7 @@ import { SessionStorageService } from '@ngx-oneforall/services';
     </div>
   `,
   styleUrl: './session-storage-service-demo.component.scss',
+  providers: [provideSessionStorage()],
 })
 export class SessionStorageServiceDemoComponent {
   key = 'SESSION_STORAGE_DEMO_COUNT';

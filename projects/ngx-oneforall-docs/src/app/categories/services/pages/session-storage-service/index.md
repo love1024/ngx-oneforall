@@ -10,17 +10,18 @@ The `SessionStorageService` is an Angular service designed to provide a robust, 
 
 #### Usage
 
-1. Import and provide the `SessionStorageService` in your Angular module or component.
+1. Import and provide the `provideSessionStorage` in your Angular module or component.
 2. Inject the service where you need to interact with session storage.
 
 #### Example
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { SessionStorageService } from '@ngx-oneforall/services';
+import { SessionStorageService, provideSessionStorage } from '@ngx-oneforall/services';
 
 @Component({
     ...
+    providers: [provideSessionStorage()]
 })
 export class SessionStorageDemoComponent {
   key = 'SESSION_STORAGE_DEMO_COUNT';
@@ -29,6 +30,36 @@ export class SessionStorageDemoComponent {
   );
 
   private readonly sessionStorageService = inject(SessionStorageService);
+
+  increaseCount() {
+    this.count.update(c => c + 1);
+    this.sessionStorageService.set(this.key, this.count());
+  }
+}
+```
+
+#### Type Safe Usage
+
+1. Import and provide the `provideSessionStorage` in your Angular module or component.
+2. Use the `injectSessionStorage` function with type to have a type safe session storage.
+
+#### Example
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { SessionStorageService, provideSessionStorage } from '@ngx-oneforall/services';
+
+@Component({
+    ...
+    providers: [provideSessionStorage()]
+})
+export class SessionStorageDemoComponent {
+  key = 'SESSION_STORAGE_DEMO_COUNT';
+  count = linkedSignal<number>(
+    () => this.sessionStorageService.get(this.key) ?? 0
+  );
+
+  private readonly sessionStorageService = injectSessionStorage<number>();
 
   increaseCount() {
     this.count.update(c => c + 1);
