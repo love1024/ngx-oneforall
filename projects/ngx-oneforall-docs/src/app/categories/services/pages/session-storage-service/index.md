@@ -38,6 +38,13 @@ export class SessionStorageDemoComponent {
 }
 ```
 
+#### Live Demo
+
+Explore this example in a live demonstration:
+
+{{ NgDocActions.demo("SessionStorageServiceDemoComponent") }}
+
+
 #### Type Safe Usage
 
 1. Import and provide the `provideSessionStorage` in your Angular module or component.
@@ -63,10 +70,17 @@ export class SessionStorageDemoComponent {
 
   increaseCount() {
     this.count.update(c => c + 1);
-    this.sessionStorageService.set(this.key, this.count());
+    // This will throw an error as assigning string to a number
+    this.sessionStorageService.set(this.key, '1');
   }
 }
 ```
+
+#### Live Demo
+
+Explore this example in a live demonstration:
+
+{{ NgDocActions.demo("SessionStorageTypedServiceDemoComponent") }}
 
 #### API
 
@@ -91,9 +105,5 @@ export class SessionStorageDemoComponent {
 - All stored values are serialized to JSON, so only serializable data types should be used.
 - For persistent storage across sessions, consider using a similar service with `localStorage`.
 
-#### Live Demo
 
-Explore this example in a live demonstration:
-
-{{ NgDocActions.demo("SessionStorageServiceDemoComponent") }}
 
