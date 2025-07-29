@@ -9,7 +9,7 @@ import {
   imports: [],
   template: `
     <div class="storage-signal-demo">
-      <h2>Session Storage Service</h2>
+      <h2>Typed Session Storage</h2>
       <p>
         This demo shows a counter value synchronized with
         <strong>sessionStorage</strong> using
