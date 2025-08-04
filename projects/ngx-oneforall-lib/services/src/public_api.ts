@@ -1,4 +1,7 @@
 export * from './network-status/network-status.service';
+export * from './network-status/network-status-provider';
 export * from './event/event.service';
+export * from './event/event-provider';
 export * from './logger/logger.service';
+export * from './logger/logger-provider';
 export * from './storage/storage-providers';
