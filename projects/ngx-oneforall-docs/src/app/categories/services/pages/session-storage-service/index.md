@@ -70,7 +70,7 @@ export class SessionStorageDemoComponent {
 
   increaseCount() {
     this.count.update(c => c + 1);
-    // This will throw an error as assigning string to a number
+    // Typescript will throw an error as assigning string to a number
     this.sessionStorageService.set(this.key, '1');
   }
 }
