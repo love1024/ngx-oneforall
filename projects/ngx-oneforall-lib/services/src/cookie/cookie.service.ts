@@ -7,6 +7,9 @@ export interface CookieOptions {
   domain?: string;
   path?: string;
   secure?: boolean;
+  partitioned?: boolean;
+  // Date or the number of seconds after which cookie expires
+  expires?: number | Date;
 }
 
 @Injectable()
@@ -44,12 +47,18 @@ export class CookieService {
     if (mergedOptions?.domain) {
       cookieString += `domain=${mergedOptions.domain};`;
     }
+    if (mergedOptions?.partitioned) {
+      cookieString += `partitioned;`;
+    }
+    if (mergedOptions?.expires) {
+      cookieString += `expires=${this.getExpiryTime(mergedOptions.expires)}`;
+    }
 
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies#security
     if (mergedOptions?.secure === false && mergedOptions.sameSite === 'None') {
       mergedOptions.secure = true;
       console.warn(
-        '[ngx-oneforall] - Cookie Service: Setting secure flag. As per Mozilla security document, if SameSite=None is set then the Secure attribute must also be set.'
+        '[ngx-oneforall: Cookie Service] - Setting secure flag. As per Mozilla security document, if SameSite=None is set then the Secure attribute must also be set.'
       );
     }
 
@@ -71,6 +80,14 @@ export class CookieService {
     } catch {
       return encodedString;
     }
+  }
+
+  private getExpiryTime(expires: number | Date) {
+    if (typeof expires === 'number') {
+      expires = new Date(new Date().getTime() + expires * 1000);
+    }
+
+    return expires.toUTCString();
   }
 
   private mergeDefaultCookieOptions(options?: CookieOptions): CookieOptions {
