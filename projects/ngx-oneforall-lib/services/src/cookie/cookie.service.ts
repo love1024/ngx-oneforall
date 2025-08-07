@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 
 export type SameSiteOption = 'Strict' | 'Lax' | 'None';
 
+const deleteDate = new Date('Thu, 01 Jan 1970 00:00:01 GMT');
+
 export interface CookieOptions {
   sameSite?: SameSiteOption;
   domain?: string;
@@ -58,7 +60,7 @@ export class CookieService {
     if (mergedOptions?.secure === false && mergedOptions.sameSite === 'None') {
       mergedOptions.secure = true;
       console.warn(
-        '[ngx-oneforall: Cookie Service] - Setting secure flag. As per Mozilla security document, if SameSite=None is set then the Secure attribute must also be set.'
+        `[ngx-oneforall: Cookie Service] - Setting secure flag for ${name}. As per Mozilla security document, if SameSite=None is set then the Secure attribute must also be set.`
       );
     }
 
@@ -67,6 +69,20 @@ export class CookieService {
     }
 
     document.cookie = cookieString;
+  }
+
+  delete(name: string, options?: CookieOptions) {
+    this.set(name, '', { path: '/', ...options, expires: deleteDate });
+  }
+
+  deleteAll(options?: CookieOptions) {
+    const cookies = this.getAll();
+
+    Object.keys(cookies).forEach(name => {
+      if (Object.hasOwn(cookies, name)) {
+        this.delete(name, options);
+      }
+    });
   }
 
   private getCookieUsingRegex(name: string): RegExp {
