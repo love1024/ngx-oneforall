@@ -1,10 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, PLATFORM_ID } from '@angular/core';
+import { getCurrentPlatformId } from './platform-context';
 
 export function OnlyInBrowser() {
-  const platformId = inject(PLATFORM_ID);
-  const isBrowser = isPlatformBrowser(platformId);
-
   return function (
     target: unknown,
     propertyKey: string,
@@ -13,6 +10,9 @@ export function OnlyInBrowser() {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: unknown[]) {
+      const platformId = getCurrentPlatformId();
+      const isBrowser = isPlatformBrowser(platformId ?? {});
+
       if (isBrowser) {
         return originalMethod.apply(this, args);
       }
