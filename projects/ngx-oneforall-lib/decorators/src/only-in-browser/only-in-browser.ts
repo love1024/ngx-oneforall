@@ -11,7 +11,7 @@ export function OnlyInBrowser() {
 
     descriptor.value = function (...args: unknown[]) {
       const platformId = getCurrentPlatformId();
-      const isBrowser = isPlatformBrowser(platformId ?? {});
+      const isBrowser = platformId ? isPlatformBrowser(platformId) : false;
 
       if (isBrowser) {
         return originalMethod.apply(this, args);

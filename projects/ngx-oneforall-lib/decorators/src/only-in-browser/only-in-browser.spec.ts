@@ -23,7 +23,6 @@ describe('OnlyInBrowser Decorator', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [TestComponent],
-        providers: [{ provide: 'PLATFORM_ID', useValue: 'browser' }],
       });
       component = TestBed.createComponent(TestComponent).componentInstance;
     });
@@ -41,13 +40,14 @@ describe('OnlyInBrowser Decorator', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [TestComponent],
-        providers: [{ provide: 'PLATFORM_ID', useValue: 'server' }],
       });
       component = TestBed.createComponent(TestComponent).componentInstance;
     });
 
     it('should not call the method in non-browser platform', () => {
-      jest.spyOn(platformContext, 'getCurrentPlatformId').mockReturnValue({});
+      jest
+        .spyOn(platformContext, 'getCurrentPlatformId')
+        .mockReturnValue(undefined);
 
       const result = component.browserMethod();
       expect(component.called).toBe(false);
