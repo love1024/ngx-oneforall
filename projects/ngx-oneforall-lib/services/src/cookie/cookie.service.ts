@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { OnlyInBrowser } from '@ngx-oneforall/decorators';
 
 export type SameSiteOption = 'Strict' | 'Lax' | 'None';
 
@@ -16,6 +17,7 @@ export interface CookieOptions {
 
 @Injectable()
 export class CookieService {
+  @OnlyInBrowser()
   get(name: string): string {
     name = encodeURIComponent(name);
     const regExp = this.getCookieUsingRegex(name);
@@ -23,6 +25,7 @@ export class CookieService {
     return result?.[1] ? this.safeDecodeURIComponent(result[1]) : '';
   }
 
+  @OnlyInBrowser()
   getAll(): Record<string, string> {
     return Object.fromEntries(
       document.cookie.split(';').map(cookie => {
@@ -37,6 +40,7 @@ export class CookieService {
     );
   }
 
+  @OnlyInBrowser()
   set(name: string, value: string, options?: CookieOptions) {
     const mergedOptions = this.mergeDefaultCookieOptions(options);
     let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)};`;
@@ -71,10 +75,12 @@ export class CookieService {
     document.cookie = cookieString;
   }
 
+  @OnlyInBrowser()
   delete(name: string, options?: CookieOptions) {
     this.set(name, '', { path: '/', ...options, expires: deleteDate });
   }
 
+  @OnlyInBrowser()
   deleteAll(options?: CookieOptions) {
     const cookies = this.getAll();
 
