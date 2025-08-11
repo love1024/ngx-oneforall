@@ -119,7 +119,7 @@ describe('base64', () => {
   describe('base64UrlEncode', () => {
     it('should encode a string to base64 URL-safe format', () => {
       const input = 'Hello, World!';
-      const expectedOutput = base64Encode(encodeURIComponent(input))
+      const expectedOutput = base64Encode(input)
         .replace(/\+/g, '-')
         .replace(/\//g, '_')
         .replace(/=+$/, '');
@@ -140,7 +140,7 @@ describe('base64', () => {
 
   describe('base64UrlDecode', () => {
     it('should decode a base64 URL-safe string', () => {
-      const input = base64Encode(encodeURIComponent('Hello, World!'))
+      const input = base64Encode('Hello, World!')
         .replace(/\+/g, '-')
         .replace(/\//g, '_')
         .replace(/=+$/, '');
