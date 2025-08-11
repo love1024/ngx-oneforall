@@ -5,3 +5,5 @@ export * from './event/event-provider';
 export * from './logger/logger.service';
 export * from './logger/logger-provider';
 export * from './storage/storage-providers';
+export * from './cookie/cookie-provider';
+export * from './cookie/cookie.service';

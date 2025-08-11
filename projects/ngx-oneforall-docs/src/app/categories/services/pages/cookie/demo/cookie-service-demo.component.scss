@@ -1,0 +1,25 @@
+.cookie-demo-container {
+    border: 1px solid #ccc;
+    padding: 24px;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 32px auto;
+    background: #f9f9f9;
+    text-align: center;
+}
+button {
+    margin: 8px;
+    padding: 8px 16px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background: #0056b3;
+}
+p {
+    margin-top: 16px;
+    font-size: 16px;
+}
