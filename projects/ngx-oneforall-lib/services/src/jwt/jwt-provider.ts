@@ -4,7 +4,7 @@ import { JwtService } from './jwt.service';
 export type tokenGetterFn = () => string;
 
 export interface JwtOptions {
-  tokenGetter: tokenGetterFn;
+  tokenGetter?: tokenGetterFn;
 }
 
 export interface JwtBody {
@@ -14,7 +14,7 @@ export interface JwtBody {
   nbf?: number;
 }
 
-export function provideJwtService(options: JwtOptions): Provider {
+export function provideJwtService(options?: JwtOptions): Provider {
   return {
     provide: JwtService,
     useValue: new JwtService(options),

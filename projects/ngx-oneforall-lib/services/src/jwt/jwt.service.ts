@@ -4,8 +4,8 @@ import { JwtBody, JwtOptions, tokenGetterFn } from './jwt-provider';
 export class JwtService {
   private tokenGetter: tokenGetterFn;
 
-  constructor(private readonly config: JwtOptions) {
-    this.tokenGetter = config.tokenGetter ?? (() => '');
+  constructor(private readonly config?: JwtOptions) {
+    this.tokenGetter = config?.tokenGetter ?? (() => '');
   }
 
   public decodeHeader<T = Record<string, unknown>>(
@@ -15,7 +15,6 @@ export class JwtService {
     if (parts.length !== 3) throw new Error('Token is not a valid JWT.');
 
     const decodedHeader = base64UrlDecode(parts[0]);
-    if (!decodedHeader) throw new Error('Cannot decode the token header');
 
     return JSON.parse(decodedHeader) as T;
   }
@@ -27,7 +26,6 @@ export class JwtService {
     if (parts.length !== 3) throw new Error('Token is not a valid JWT.');
 
     const decodedBody = base64UrlDecode(parts[1]);
-    if (!decodedBody) throw new Error('Cannot decode the token body');
 
     return JSON.parse(decodedBody) as T;
   }
