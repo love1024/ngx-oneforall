@@ -1,0 +1,75 @@
+import { base64UrlDecode } from '@ngx-oneforall/utils';
+import { JwtBody, JwtOptions, tokenGetterFn } from './jwt-provider';
+
+export class JwtService {
+  private tokenGetter: tokenGetterFn;
+
+  constructor(private readonly config: JwtOptions) {
+    this.tokenGetter = config.tokenGetter ?? (() => '');
+  }
+
+  public decodeHeader<T = Record<string, unknown>>(
+    token = this.tokenGetter()
+  ): T {
+    const parts = token.split('.');
+    if (parts.length !== 3) throw new Error('Token is not a valid JWT.');
+
+    const decodedHeader = base64UrlDecode(parts[0]);
+    if (!decodedHeader) throw new Error('Cannot decode the token header');
+
+    return JSON.parse(decodedHeader) as T;
+  }
+
+  public decodeBody<T extends JwtBody = JwtBody>(
+    token = this.tokenGetter()
+  ): T {
+    const parts = token.split('.');
+    if (parts.length !== 3) throw new Error('Token is not a valid JWT.');
+
+    const decodedBody = base64UrlDecode(parts[1]);
+    if (!decodedBody) throw new Error('Cannot decode the token body');
+
+    return JSON.parse(decodedBody) as T;
+  }
+
+  public getClaim<T = unknown>(
+    claim: string,
+    token = this.tokenGetter()
+  ): T | undefined {
+    const body = this.decodeBody(token);
+    return body[claim] as T | undefined;
+  }
+
+  public getExpirationDate(token = this.tokenGetter()): Date | null {
+    const exp = this.getClaim<number>('exp', token);
+    return exp ? new Date(exp * 1000) : null;
+  }
+
+  public getIssuedAtDate(token = this.tokenGetter()): Date | null {
+    const iat = this.getClaim<number>('iat', token);
+    return iat ? new Date(iat * 1000) : null;
+  }
+
+  public isExpired(token = this.tokenGetter(), offsetSeconds = 0): boolean {
+    const exp = this.getExpirationDate(token);
+    return exp ? exp.getTime() <= Date.now() + offsetSeconds * 1000 : false;
+  }
+
+  public isNotYetValid(token = this.tokenGetter()): boolean {
+    const nbf = this.getClaim<number>('nbf', token);
+    return nbf ? Date.now() < nbf * 1000 : false;
+  }
+
+  public getTimeUntilExpiration(token = this.tokenGetter()): number | null {
+    const exp = this.getExpirationDate(token);
+    return exp ? exp.getTime() - Date.now() : null;
+  }
+
+  public isValid(token = this.tokenGetter(), offsetSeconds = 0): boolean {
+    return (
+      token.split('.').length === 3 &&
+      !this.isExpired(token, offsetSeconds) &&
+      !this.isNotYetValid(token)
+    );
+  }
+}
