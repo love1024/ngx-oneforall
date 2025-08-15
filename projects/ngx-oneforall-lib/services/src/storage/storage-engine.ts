@@ -1,12 +1,38 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface StorageEngine<T = any> {
-  has(key: string): boolean;
+import {
+  BaseStorageTransformer,
+  StorageTransformers,
+} from './storage-transformer';
 
-  get(key: string): T | undefined;
+export abstract class StorageEngine {
+  public get<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    T extends BaseStorageTransformer<any> = BaseStorageTransformer<string>,
+  >(
+    key: string,
+    transformer: T = StorageTransformers.STRING as T
+  ): ReturnType<T['deserialize']> | undefined {
+    const data = this.getItem(key);
+    return data !== undefined ? transformer.deserialize(data) : undefined;
+  }
 
-  set(key: string, value: T): void;
+  public set<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    T extends BaseStorageTransformer<any> = BaseStorageTransformer<string>,
+  >(
+    key: string,
+    value: ReturnType<T['deserialize']>,
+    transformer: T = StorageTransformers.STRING as T
+  ): void {
+    this.setItem(key, transformer.serialize(value));
+  }
 
-  remove(key: string): void;
+  abstract has(key: string): boolean;
 
-  clear(): void;
+  abstract remove(key: string): void;
+
+  abstract clear(): void;
+
+  protected abstract getItem(key: string): string | undefined;
+
+  protected abstract setItem(key: string, value: string): void;
 }

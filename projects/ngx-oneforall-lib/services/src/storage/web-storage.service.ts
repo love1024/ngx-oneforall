@@ -1,16 +1,8 @@
 import { StorageEngine } from './storage-engine';
 
-export class WebStorageService<T = unknown> implements StorageEngine<T> {
-  constructor(private readonly storage: Storage) {}
-
-  get(key: string): T | undefined {
-    const value = this.getItem(key);
-
-    return value !== undefined ? JSON.parse(value) : undefined;
-  }
-
-  set(key: string, value: T): void {
-    this.setItem(key, JSON.stringify(value));
+export class WebStorageService extends StorageEngine {
+  constructor(private readonly storage: Storage) {
+    super();
   }
 
   has(key: string): boolean {

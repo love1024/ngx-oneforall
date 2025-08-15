@@ -2,6 +2,7 @@ import { Component, inject, linkedSignal } from '@angular/core';
 import {
   provideSessionStorage,
   SessionStorageService,
+  StorageTransformers,
 } from '@ngx-oneforall/services';
 
 @Component({
@@ -31,13 +32,18 @@ import {
 export class SessionStorageServiceDemoComponent {
   key = 'SESSION_STORAGE_DEMO_COUNT';
   count = linkedSignal<number>(
-    () => this.sessionStorageService.get(this.key) ?? 0
+    () =>
+      this.sessionStorageService.get(this.key, StorageTransformers.NUMBER) ?? 0
   );
 
   private readonly sessionStorageService = inject(SessionStorageService);
 
   increaseCount() {
     this.count.update(c => c + 1);
-    this.sessionStorageService.set(this.key, this.count());
+    this.sessionStorageService.set(
+      this.key,
+      this.count(),
+      StorageTransformers.NUMBER
+    );
   }
 }

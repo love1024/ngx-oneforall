@@ -1,8 +1,9 @@
+import { StorageTransformers } from './storage-transformer';
 import { WebStorageService } from './web-storage.service';
 
 describe('WebStorageService', () => {
   let storage: Storage;
-  let service: WebStorageService<unknown>;
+  let service: WebStorageService;
 
   beforeEach(() => {
     const store: Record<string, string> = {};
@@ -24,12 +25,12 @@ describe('WebStorageService', () => {
   });
 
   it('should set and get a value', () => {
-    service.set('foo', { bar: 123 });
+    service.set('foo', { bar: 123 }, StorageTransformers.JSON);
     expect(storage.setItem).toHaveBeenCalledWith(
       'foo',
       JSON.stringify({ bar: 123 })
     );
-    expect(service.get('foo')).toEqual({ bar: 123 });
+    expect(service.get('foo', StorageTransformers.JSON)).toEqual({ bar: 123 });
   });
 
   it('should return undefined for missing key', () => {
@@ -37,7 +38,7 @@ describe('WebStorageService', () => {
   });
 
   it('should return true for has() if key exists', () => {
-    service.set('foo', 1);
+    service.set('foo', 1, StorageTransformers.NUMBER);
     expect(service.has('foo')).toBe(true);
   });
 
@@ -46,15 +47,15 @@ describe('WebStorageService', () => {
   });
 
   it('should remove a key', () => {
-    service.set('foo', 1);
+    service.set('foo', 1, StorageTransformers.NUMBER);
     service.remove('foo');
     expect(storage.removeItem).toHaveBeenCalledWith('foo');
     expect(service.get('foo')).toBeUndefined();
   });
 
   it('should clear all keys', () => {
-    service.set('foo', 1);
-    service.set('bar', 2);
+    service.set('foo', 1, StorageTransformers.NUMBER);
+    service.set('bar', 2, StorageTransformers.NUMBER);
     service.clear();
     expect(storage.clear).toHaveBeenCalled();
     expect(service.get('foo')).toBeUndefined();

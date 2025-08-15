@@ -2,6 +2,7 @@ import { Component, inject, linkedSignal } from '@angular/core';
 import {
   LocalStorageService,
   provideLocalStorage,
+  StorageTransformers,
 } from '@ngx-oneforall/services';
 
 @Component({
@@ -28,13 +29,18 @@ import {
 export class LocalStorageServiceDemoComponent {
   key = 'LOCAL_STORAGE_DEMO_COUNT';
   count = linkedSignal<number>(
-    () => this.localStorageService.get(this.key) ?? 0
+    () =>
+      this.localStorageService.get(this.key, StorageTransformers.NUMBER) ?? 0
   );
 
   private readonly localStorageService = inject(LocalStorageService);
 
   increaseCount() {
     this.count.update(c => c + 1);
-    this.localStorageService.set(this.key, this.count());
+    this.localStorageService.set(
+      this.key,
+      this.count(),
+      StorageTransformers.NUMBER
+    );
   }
 }

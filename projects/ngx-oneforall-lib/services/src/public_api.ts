@@ -7,3 +7,4 @@ export * from './logger/logger-provider';
 export * from './storage/storage-providers';
 export * from './cookie/cookie-provider';
 export * from './cookie/cookie.service';
+export * from './storage/storage-transformer';

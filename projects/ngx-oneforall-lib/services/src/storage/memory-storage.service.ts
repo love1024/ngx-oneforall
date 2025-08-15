@@ -1,16 +1,7 @@
 import { StorageEngine } from './storage-engine';
 
-export class MemoryStorageService<T = unknown> implements StorageEngine<T> {
+export class MemoryStorageService extends StorageEngine {
   private readonly storage = new Map<string, string>();
-
-  get(key: string): T | undefined {
-    const value = this.getItem(key);
-    return value !== undefined ? JSON.parse(value) : undefined;
-  }
-
-  set(key: string, value: T): void {
-    this.setItem(key, JSON.stringify(value));
-  }
 
   has(key: string): boolean {
     return this.storage.has(key);
@@ -29,6 +20,6 @@ export class MemoryStorageService<T = unknown> implements StorageEngine<T> {
   }
 
   protected setItem(key: string, value: string): void {
-    this.storage.set(key, value);
+    this.setItem(key, value);
   }
 }
