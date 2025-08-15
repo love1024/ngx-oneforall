@@ -1,4 +1,4 @@
-import { StorageEngine } from './storage-engine';
+import { StorageEngine } from '../storage-engine';
 
 export class MemoryStorageService extends StorageEngine {
   private readonly storage = new Map<string, string>();

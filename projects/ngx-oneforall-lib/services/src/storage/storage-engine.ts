@@ -1,7 +1,7 @@
 import {
   BaseStorageTransformer,
   StorageTransformers,
-} from './storage-transformer';
+} from './transformers/storage-transformer';
 
 export abstract class StorageEngine {
   public get<

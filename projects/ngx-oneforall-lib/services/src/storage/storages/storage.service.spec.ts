@@ -1,4 +1,4 @@
-import { StorageTransformers } from './storage-transformer';
+import { StorageTransformers } from '../transformers/storage-transformer';
 import { WebStorageService } from './web-storage.service';
 
 describe('WebStorageService', () => {

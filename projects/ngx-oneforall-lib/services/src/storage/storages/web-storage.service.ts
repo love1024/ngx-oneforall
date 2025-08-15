@@ -1,4 +1,4 @@
-import { StorageEngine } from './storage-engine';
+import { StorageEngine } from '../storage-engine';
 
 export class WebStorageService extends StorageEngine {
   constructor(private readonly storage: Storage) {

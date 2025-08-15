@@ -1,8 +1,8 @@
 import { inject, InjectionToken, PLATFORM_ID, Provider } from '@angular/core';
 import { StorageEngine } from './storage-engine';
-import { WebStorageService } from './web-storage.service';
+import { WebStorageService } from './storages/web-storage.service';
 import { isPlatformBrowser } from '@angular/common';
-import { MemoryStorageService } from './memory-storage.service';
+import { MemoryStorageService } from './storages/memory-storage.service';
 
 export const SessionStorageService = new InjectionToken<StorageEngine>(
   'SESSION_STORAGE'
