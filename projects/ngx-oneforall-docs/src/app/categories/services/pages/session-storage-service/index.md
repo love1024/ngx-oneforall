@@ -13,10 +13,12 @@ The `SessionStorageService` is an Angular service designed to provide a robust, 
 1. Import and provide the `provideSessionStorage` in your Angular module or component.
 2. Inject the service where you need to interact with session storage.
 
-> **Note**
-> By default, all calls to get and set assume that the data is of type string.
+
 
 #### Example
+
+> **Note**
+> By default, all calls to get and set are of type string.
 
 ```typescript
 import { Component, inject } from '@angular/core';
@@ -51,13 +53,17 @@ Storage service provides inbuilt support for various data types other than a str
 5. Base64
 6. String (Default)
 
-These transformers can be provided as the second parameter and will enforce the given type.
+These transformers can be provided as the second parameter and will enforce the mentioned type.
 
-```typescript
+```typescript {4,8}
   import { StorageTransformers } from '@ngx-oneforall/services';
   ...
   constructor() {
     this.count = this.sessionStorageService.get(this.key, StorageTransformers.NUMBER)
+  }
+
+  updateCount(count: number) {
+    this.sessionStorageService.set(this.key, count, StorageTransformers.NUMBER);
   }
 }
 ```
@@ -70,66 +76,10 @@ Explore this example in a live demonstration:
 {{ NgDocActions.demo("SessionStorageServiceDemoComponent") }}
 
 
-#### Type Safe Usage
-
-1. Import and provide the `provideSessionStorage` in your Angular module or component.
-2. Use the `injectSessionStorage` function with type to have a type safe session storage.
-
-#### Example
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { SessionStorageService, provideSessionStorage } from '@ngx-oneforall/services';
-
-@Component({
-    ...
-    providers: [provideSessionStorage()]
-})
-export class SessionStorageDemoComponent {
-  key = 'SESSION_STORAGE_DEMO_COUNT';
-  count = linkedSignal<number>(
-    () => this.sessionStorageService.get(this.key) ?? 0
-  );
-
-  private readonly sessionStorageService = injectSessionStorage<number>();
-
-  increaseCount() {
-    this.count.update(c => c + 1);
-    // Typescript will throw an error as assigning string to a number
-    this.sessionStorageService.set(this.key, '1');
-  }
-}
-```
-
-
-
-#### Live Demo
-
-Explore this example in a live demonstration:
-
-{{ NgDocActions.demo("SessionStorageTypedServiceDemoComponent") }}
-
-#### API
-
-- **`get(key: string): T | undefined`**  
-    Retrieves and deserializes the value associated with the given key. Returns `undefined` if the key does not exist.
-
-- **`set(key: string, value: T): void`**  
-    Serializes and stores the value under the specified key.
-
-- **`has(key: string): boolean`**  
-    Checks if a key exists in session storage.
-
-- **`remove(key: string): void`**  
-    Removes the entry associated with the given key.
-
-- **`clear(): void`**  
-    Clears all entries from session storage.
 
 #### Notes
 
 - The service operates on the browser's `sessionStorage` object, meaning data persists only for the duration of the page session and is cleared when the browser tab is closed.
-- All stored values are serialized to JSON, so only serializable data types should be used.
 - For persistent storage across sessions, consider using a similar service with `localStorage`.
 
 
