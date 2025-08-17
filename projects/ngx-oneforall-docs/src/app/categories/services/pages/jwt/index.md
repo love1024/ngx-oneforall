@@ -33,7 +33,7 @@ export const authGuard: CanActivateFn = (
   const jwtService = inject(JwtService);
   const router = inject(Router);
 
-  if (jwtService.isTokenExpired(token))) {
+  if (jwtService.isExpired(token))) {
     router.navigateByUrl('/signin');
     return false;
   }
