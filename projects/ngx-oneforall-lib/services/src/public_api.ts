@@ -8,3 +8,5 @@ export * from './storage/storage-providers';
 export * from './cookie/cookie-provider';
 export * from './cookie/cookie.service';
 export * from './storage/transformers/storage-transformer';
+export * from './jwt/jwt.service';
+export * from './jwt/jwt-provider';

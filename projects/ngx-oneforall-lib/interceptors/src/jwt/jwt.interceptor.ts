@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { JwtService } from '../../../services/src/jwt/jwt.service';
+import { JwtService } from '@ngx-oneforall/services';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const jwtService = inject(JwtService);
