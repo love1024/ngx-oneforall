@@ -5,6 +5,10 @@ export type tokenGetterFn = () => string;
 
 export interface JwtOptions {
   tokenGetter?: tokenGetterFn;
+  authScheme?: string;
+  errorOnNoToken?: boolean;
+  skipAddingIfExpired?: boolean;
+  headerName?: string;
 }
 
 export interface JwtBody {

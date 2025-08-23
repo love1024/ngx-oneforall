@@ -70,4 +70,13 @@ export class JwtService {
       !this.isNotYetValid(token)
     );
   }
+
+  // Public functions for config access
+  public getConfig() {
+    return this.config;
+  }
+
+  public getToken() {
+    return this.tokenGetter();
+  }
 }
