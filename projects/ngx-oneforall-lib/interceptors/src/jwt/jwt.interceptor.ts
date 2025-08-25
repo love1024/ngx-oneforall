@@ -1,34 +1,105 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { JwtService } from '@ngx-oneforall/services';
+import { isRegexp } from '@ngx-oneforall/utils';
+
+const httpPorts = ['80', '443'];
+
+const getRequestUrl = (request: HttpRequest<unknown>) => {
+  return new URL(request.url, document.location.origin);
+};
+
+const isAllowedDomain = (
+  request: HttpRequest<unknown>,
+  allowedDomains: (string | RegExp)[]
+) => {
+  const requestUrl = getRequestUrl(request);
+
+  if (requestUrl.origin === document.location.origin) {
+    return true;
+  }
+
+  // If not the current domain, check the allowed list
+  const hostName = `${requestUrl.hostname}${
+    requestUrl.port && !httpPorts.includes(requestUrl.port)
+      ? ':' + requestUrl.port
+      : ''
+  }`;
+
+  return allowedDomains.some(domain =>
+    typeof domain === 'string'
+      ? domain === hostName
+      : domain instanceof RegExp && domain.test(hostName)
+  );
+};
+
+const isDisallowedRoute = (
+  request: HttpRequest<unknown>,
+  excludedRoutes: (string | RegExp)[]
+) => {
+  const requestUrl = getRequestUrl(request);
+
+  return excludedRoutes.some(route => {
+    if (typeof route === 'string') {
+      const parsedRoute = new URL(route, document.location.origin);
+
+      // Require same host, allow prefix match on path
+      return (
+        parsedRoute.hostname === requestUrl.hostname &&
+        requestUrl.pathname.startsWith(parsedRoute.pathname)
+      );
+    }
+
+    if (isRegexp(route)) {
+      return (route as RegExp).test(request.url);
+    }
+
+    return false;
+  });
+};
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const jwtService = inject(JwtService);
+  const config = jwtService.getConfig() ?? {};
 
-  const config = jwtService.getConfig();
+  const {
+    authScheme = 'Bearer ',
+    headerName = 'Authorization',
+    errorOnNoToken = false,
+    skipAddingIfExpired = false,
+    includedDomains = [],
+    excludedRoutes = [],
+  } = config;
+
   const token = jwtService.getToken();
-  const authScheme = config?.authScheme || 'Bearer ';
-  const headerName = config?.headerName || 'Authorization';
-  const errorOnNoToken = config?.errorOnNoToken;
-  const skipAddingIfExpired = config?.skipAddingIfExpired;
 
-  if (!token && errorOnNoToken) {
-    throw new Error(
-      '[NgxOneforall - JWT Interceptor]: Not able to get JWT token from token getter function'
-    );
+  if (isDisallowedRoute(req, excludedRoutes)) {
+    return next(req);
+  }
+
+  if (includedDomains.length && !isAllowedDomain(req, includedDomains)) {
+    return next(req);
+  }
+
+  if (!token) {
+    if (errorOnNoToken) {
+      throw new Error(
+        '[NgxOneforall - JWT Interceptor]: Token getter returned no token'
+      );
+    }
+    return next(req);
   }
 
   const isExpired = jwtService.isExpired(token);
-
   if (isExpired && skipAddingIfExpired) {
     return next(req);
   }
 
-  const clonedReq = req.clone({
-    setHeaders: {
-      [headerName]: `${authScheme}${token}`,
-    },
-  });
-
-  return next(clonedReq);
+  return next(
+    req.clone({
+      setHeaders: {
+        [headerName]: `${authScheme}${token}`,
+      },
+    })
+  );
 };

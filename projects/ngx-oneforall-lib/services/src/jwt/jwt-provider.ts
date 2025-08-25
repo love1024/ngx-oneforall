@@ -9,6 +9,8 @@ export interface JwtOptions {
   errorOnNoToken?: boolean;
   skipAddingIfExpired?: boolean;
   headerName?: string;
+  includedDomains?: (string | RegExp)[];
+  excludedRoutes?: (string | RegExp)[];
 }
 
 export interface JwtBody {
