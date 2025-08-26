@@ -20,6 +20,6 @@ export class MemoryStorageService extends StorageEngine {
   }
 
   protected setItem(key: string, value: string): void {
-    this.setItem(key, value);
+    this.storage.set(key, value);
   }
 }
