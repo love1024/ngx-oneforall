@@ -108,7 +108,7 @@ describe('jwtInterceptor', () => {
 
   it('should skip if request URL matches excludedRoutes', () => {
     mockJwtService.getConfig.mockReturnValue({
-      excludedRoutes: ['https://example.com/api/auth'],
+      skipUrls: ['https://example.com/api/auth'],
     });
     mockJwtService.getToken.mockReturnValue('abc123');
     mockJwtService.isExpired.mockReturnValue(false);
@@ -179,7 +179,7 @@ describe('jwtInterceptor', () => {
 
   it('should work with regex in disallowed routes', () => {
     mockJwtService.getConfig.mockReturnValue({
-      excludedRoutes: [/localhost:3000/],
+      skipUrls: [/localhost:3000/],
     });
     mockJwtService.getToken.mockReturnValue('abc');
     mockJwtService.isExpired.mockReturnValue(false);

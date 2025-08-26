@@ -62,12 +62,12 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     errorOnNoToken = false,
     skipAddingIfExpired = false,
     includedDomains = [],
-    excludedRoutes = [],
+    skipUrls = [],
   } = config;
 
   const token = jwtService.getToken();
 
-  if (isDisallowedRoute(req, excludedRoutes)) {
+  if (isDisallowedRoute(req, skipUrls)) {
     return next(req);
   }
 
