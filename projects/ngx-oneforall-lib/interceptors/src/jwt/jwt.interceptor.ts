@@ -27,9 +27,7 @@ const isAllowedDomain = (
   }`;
 
   return allowedDomains.some(domain =>
-    typeof domain === 'string'
-      ? domain === hostName
-      : domain instanceof RegExp && domain.test(hostName)
+    isRegexp(domain) ? (domain as RegExp).test(hostName) : domain === hostName
   );
 };
 
@@ -40,8 +38,10 @@ const isDisallowedRoute = (
   const requestUrl = getRequestUrl(request);
 
   return excludedRoutes.some(route => {
-    if (typeof route === 'string') {
-      const parsedRoute = new URL(route, document.location.origin);
+    if (isRegexp(route)) {
+      return (route as RegExp).test(request.url);
+    } else {
+      const parsedRoute = new URL(route as string, document.location.origin);
 
       // Require same host, allow prefix match on path
       return (
@@ -49,12 +49,6 @@ const isDisallowedRoute = (
         requestUrl.pathname.startsWith(parsedRoute.pathname)
       );
     }
-
-    if (isRegexp(route)) {
-      return (route as RegExp).test(request.url);
-    }
-
-    return false;
   });
 };
 

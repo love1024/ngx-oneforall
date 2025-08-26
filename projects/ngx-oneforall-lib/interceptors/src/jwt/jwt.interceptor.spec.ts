@@ -134,4 +134,72 @@ describe('jwtInterceptor', () => {
     expect(req.request.headers.get('X-Custom-Auth')).toBe('JWT xyz456');
     req.flush({});
   });
+
+  it('should add header if request origin is same as current location origin even if not given in domains', () => {
+    mockJwtService.getConfig.mockReturnValue({
+      includedDomains: ['http://gatherbits.com'],
+    });
+    mockJwtService.getToken.mockReturnValue('abc123');
+    mockJwtService.isExpired.mockReturnValue(false);
+
+    http.get(document.location.origin).subscribe();
+
+    const req = httpTesting.expectOne(document.location.origin);
+    expect(req.request.headers.has('Authorization')).toBe(true);
+    req.flush({});
+  });
+
+  it('should work with regex in included domains', () => {
+    mockJwtService.getConfig.mockReturnValue({
+      includedDomains: [/gatherbits.com/],
+    });
+    mockJwtService.getToken.mockReturnValue('abc');
+    mockJwtService.isExpired.mockReturnValue(false);
+
+    http.get('https://gatherbits.com').subscribe();
+
+    const req = httpTesting.expectOne('https://gatherbits.com');
+    expect(req.request.headers.has('Authorization')).toBe(true);
+    req.flush({});
+  });
+
+  it('should work with port in included domains', () => {
+    mockJwtService.getConfig.mockReturnValue({
+      includedDomains: ['localhost:3000'],
+    });
+    mockJwtService.getToken.mockReturnValue('abc');
+    mockJwtService.isExpired.mockReturnValue(false);
+
+    http.get('http://localhost:3000').subscribe();
+
+    const req = httpTesting.expectOne('http://localhost:3000');
+    expect(req.request.headers.has('Authorization')).toBe(true);
+    req.flush({});
+  });
+
+  it('should work with regex in disallowed routes', () => {
+    mockJwtService.getConfig.mockReturnValue({
+      excludedRoutes: [/localhost:3000/],
+    });
+    mockJwtService.getToken.mockReturnValue('abc');
+    mockJwtService.isExpired.mockReturnValue(false);
+
+    http.get('http://localhost:3000').subscribe();
+
+    const req = httpTesting.expectOne('http://localhost:3000');
+    expect(req.request.headers.has('Authorization')).toBe(false);
+    req.flush({});
+  });
+
+  it('should use default config if not provided', () => {
+    mockJwtService.getConfig.mockReturnValue(null);
+    mockJwtService.getToken.mockReturnValue('abc');
+    mockJwtService.isExpired.mockReturnValue(false);
+
+    http.get('http://localhost:3000').subscribe();
+
+    const req = httpTesting.expectOne('http://localhost:3000');
+    expect(req.request.headers.has('Authorization')).toBe(true);
+    req.flush({});
+  });
 });
