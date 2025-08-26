@@ -1,5 +1,6 @@
+import { isPlatformBrowser } from '@angular/common';
 import { HttpInterceptorFn, HttpRequest } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
 import { JwtService } from '@ngx-oneforall/services';
 import { isRegexp } from '@ngx-oneforall/utils';
 
@@ -53,6 +54,11 @@ const isDisallowedRoute = (
 };
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
+  const platformId = inject(PLATFORM_ID);
+  if (!isPlatformBrowser(platformId)) {
+    return next(req);
+  }
+
   const jwtService = inject(JwtService);
   const config = jwtService.getConfig() ?? {};
 

@@ -10,6 +10,7 @@ import {
 } from '@angular/common/http/testing';
 import { jwtInterceptor } from './jwt.interceptor';
 import { JwtService, provideJwtService } from '@ngx-oneforall/services';
+import { PLATFORM_ID } from '@angular/core';
 
 describe('jwtInterceptor', () => {
   let httpTesting: HttpTestingController;
@@ -200,6 +201,47 @@ describe('jwtInterceptor', () => {
 
     const req = httpTesting.expectOne('http://localhost:3000');
     expect(req.request.headers.has('Authorization')).toBe(true);
+    req.flush({});
+  });
+});
+
+describe('jwtInterceptor', () => {
+  let httpTesting: HttpTestingController;
+  let http: HttpClient;
+
+  const mockJwtService = {
+    getConfig: jest.fn(),
+    getToken: jest.fn(),
+    isExpired: jest.fn(),
+  };
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [],
+      providers: [
+        provideJwtService(),
+        provideHttpClient(withInterceptors([jwtInterceptor])),
+        provideHttpClientTesting(),
+        { provide: JwtService, useValue: mockJwtService },
+        { provide: PLATFORM_ID, useValue: 'server' },
+      ],
+    });
+
+    http = TestBed.inject(HttpClient);
+    httpTesting = TestBed.inject(HttpTestingController);
+
+    jest.clearAllMocks();
+  });
+
+  it('should skip adding authorization header if not browser', () => {
+    mockJwtService.getConfig.mockReturnValue({});
+    mockJwtService.getToken.mockReturnValue('abc123');
+    mockJwtService.isExpired.mockReturnValue(false);
+
+    http.get('/api/test').subscribe();
+
+    const req = httpTesting.expectOne('/api/test');
+    expect(req.request.headers.has('Authorization')).toBe(false);
     req.flush({});
   });
 });
