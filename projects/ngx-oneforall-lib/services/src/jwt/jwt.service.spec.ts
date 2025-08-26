@@ -1,3 +1,4 @@
+import { JwtOptions } from './jwt-provider';
 import { JwtService } from './jwt.service';
 
 // Helper to create a JWT token
@@ -152,5 +153,25 @@ describe('JwtService', () => {
       tokenGetter: () => createJwt({ exp: now + 100 }),
     });
     expect(service.isNotYetValid()).toBe(false);
+  });
+
+  it('should return config', () => {
+    const config: JwtOptions = {
+      tokenGetter: () => '',
+    };
+
+    service = new JwtService(config);
+
+    expect(service.getConfig()).toEqual(config);
+  });
+
+  it('should return token', () => {
+    const config: JwtOptions = {
+      tokenGetter: () => 'abc',
+    };
+
+    service = new JwtService(config);
+
+    expect(service.getToken()).toEqual('abc');
   });
 });
