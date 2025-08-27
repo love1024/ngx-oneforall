@@ -67,7 +67,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     headerName = 'Authorization',
     errorOnNoToken = false,
     skipAddingIfExpired = false,
-    includedDomains = [],
+    allowedDomains = [],
     skipUrls = [],
   } = config;
 
@@ -77,7 +77,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  if (includedDomains.length && !isAllowedDomain(req, includedDomains)) {
+  if (allowedDomains.length && !isAllowedDomain(req, allowedDomains)) {
     return next(req);
   }
 

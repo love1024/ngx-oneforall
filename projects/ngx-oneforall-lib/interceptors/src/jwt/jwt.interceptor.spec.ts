@@ -93,9 +93,9 @@ describe('jwtInterceptor', () => {
     req.flush({});
   });
 
-  it('should skip if request domain is not in includedDomains', () => {
+  it('should skip if request domain is not in allowedDomains', () => {
     mockJwtService.getConfig.mockReturnValue({
-      includedDomains: ['allowed.com'],
+      allowedDomains: ['allowed.com'],
     });
     mockJwtService.getToken.mockReturnValue('abc123');
     mockJwtService.isExpired.mockReturnValue(false);
@@ -138,7 +138,7 @@ describe('jwtInterceptor', () => {
 
   it('should add header if request origin is same as current location origin even if not given in domains', () => {
     mockJwtService.getConfig.mockReturnValue({
-      includedDomains: ['http://gatherbits.com'],
+      allowedDomains: ['http://gatherbits.com'],
     });
     mockJwtService.getToken.mockReturnValue('abc123');
     mockJwtService.isExpired.mockReturnValue(false);
@@ -152,7 +152,7 @@ describe('jwtInterceptor', () => {
 
   it('should work with regex in included domains', () => {
     mockJwtService.getConfig.mockReturnValue({
-      includedDomains: [/gatherbits.com/],
+      allowedDomains: [/gatherbits.com/],
     });
     mockJwtService.getToken.mockReturnValue('abc');
     mockJwtService.isExpired.mockReturnValue(false);
@@ -166,7 +166,7 @@ describe('jwtInterceptor', () => {
 
   it('should work with port in included domains', () => {
     mockJwtService.getConfig.mockReturnValue({
-      includedDomains: ['localhost:3000'],
+      allowedDomains: ['localhost:3000'],
     });
     mockJwtService.getToken.mockReturnValue('abc');
     mockJwtService.isExpired.mockReturnValue(false);
