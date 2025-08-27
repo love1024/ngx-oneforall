@@ -72,6 +72,12 @@ The interceptor supports several configuration options via the `JwtService`:
 - **authScheme**: Prefix for the token (default: `'Bearer '`).
 - **headerName**: Name of the header to set (default: `'Authorization'`).
 - **allowedDomains**: Array of domains or regular expressions where the token should be attached.
+> **Alert**
+> If no option is provided, then all domains are allowed by default.
+
+    > **Warning**
+    > The current origin is allowed by default as well.
+
 - **skipUrls**: Array of URLs or regex patterns to exclude from token attachment.
 - **errorOnNoToken**: Throws an error if no token is available.
 - **skipAddingIfExpired**: Skips adding the token if it is expired.
