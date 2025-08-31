@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
+import { StorageEngine } from '../storage/storage-engine';
 
 interface CacheEntry<T> {
   value: T;
   expiry: number | null;
 }
 
-@Injectable()
 export class CacheService {
-  private cache = new Map<string, CacheEntry<unknown>>();
+  constructor(private readonly storage: StorageEngine) {}
 
   /**
    * Set a value in the cache.
@@ -17,39 +16,48 @@ export class CacheService {
    */
   set<T>(key: string, value: T, ttl?: number): void {
     const expiry = ttl ? Date.now() + ttl : null;
-
-    this.cache.set(key, { value, expiry });
+    this.storage.set(key, JSON.stringify({ value, expiry }));
   }
 
   get<T>(key: string): T | null {
-    const entry = this.cache.get(key) as CacheEntry<T> | undefined;
+    const entry = this.storage.get(key);
     if (!entry) return null;
 
-    if (entry?.expiry && Date.now() > entry.expiry) {
-      this.cache.delete(key);
+    try {
+      const parsed = JSON.parse(entry) as CacheEntry<T>;
+      if (parsed?.expiry && Date.now() > parsed.expiry) {
+        this.storage.remove(key);
+        return null;
+      }
+
+      return parsed.value;
+    } catch {
       return null;
     }
-
-    return entry.value;
   }
 
   has(key: string): boolean {
-    const entry = this.cache.get(key);
+    const entry = this.storage.get(key);
     if (!entry) return false;
 
-    if (entry.expiry && Date.now() > entry.expiry) {
-      this.cache.delete(key);
+    try {
+      const parsed = JSON.parse(entry) as CacheEntry<unknown>;
+      if (parsed.expiry && Date.now() > parsed.expiry) {
+        this.storage.remove(key);
+        return false;
+      }
+
+      return true;
+    } catch {
       return false;
     }
-
-    return true;
   }
 
-  delete(key: string): void {
-    this.cache.delete(key);
+  remove(key: string): void {
+    this.storage.remove(key);
   }
 
   clear(): void {
-    this.cache.clear();
+    this.storage.clear();
   }
 }
