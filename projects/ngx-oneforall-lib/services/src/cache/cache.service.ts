@@ -6,7 +6,10 @@ interface CacheEntry<T> {
 }
 
 export class CacheService {
-  constructor(private readonly storage: StorageEngine) {}
+  constructor(
+    private readonly storage: StorageEngine,
+    private readonly ttlGlobal?: number
+  ) {}
 
   /**
    * Set a value in the cache.
@@ -15,7 +18,8 @@ export class CacheService {
    * @param ttl Time-to-live in ms (optional, default: no expiry)
    */
   set<T>(key: string, value: T, ttl?: number): void {
-    const expiry = ttl ? Date.now() + ttl : null;
+    const ttlTime = ttl || this.ttlGlobal;
+    const expiry = ttlTime ? Date.now() + ttlTime : null;
     this.storage.set(key, JSON.stringify({ value, expiry }));
   }
 

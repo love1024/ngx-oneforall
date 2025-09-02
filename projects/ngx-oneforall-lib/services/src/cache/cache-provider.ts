@@ -5,7 +5,8 @@ import { WebStorageService } from '../storage/storages/web-storage.service';
 import { MemoryStorageService } from '../storage/storages/memory-storage.service';
 
 export interface CacheOptions {
-  storage: CacheStorageType;
+  storage?: CacheStorageType;
+  ttl?: number;
 }
 
 export type CacheStorageType = 'memory' | 'local' | 'session';
@@ -26,7 +27,7 @@ export function provideSessionStorage(options?: CacheOptions): Provider {
       } else {
         storageEngine = new MemoryStorageService();
       }
-      return new InternalCacheService(storageEngine);
+      return new InternalCacheService(storageEngine, options?.ttl);
     },
   };
 }
