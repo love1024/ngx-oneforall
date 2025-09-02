@@ -15,7 +15,7 @@ export const CacheService = new InjectionToken<InternalCacheService>(
   'CACHE_SERVICE'
 );
 
-export function provideSessionStorage(options?: CacheOptions): Provider {
+export function provideCacheService(options?: CacheOptions): Provider {
   return {
     provide: CacheService,
     useFactory: () => {
