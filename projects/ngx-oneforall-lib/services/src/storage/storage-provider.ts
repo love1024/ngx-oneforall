@@ -8,13 +8,13 @@ export const SessionStorageService = new InjectionToken<StorageEngine>(
   'SESSION_STORAGE'
 );
 
-export function provideSessionStorage(): Provider {
+export function provideSessionStorage(prefix?: string): Provider {
   return {
     provide: SessionStorageService,
     useFactory: () => {
       const platformId = inject(PLATFORM_ID);
       if (isPlatformBrowser(platformId)) {
-        return new WebStorageService(sessionStorage);
+        return new WebStorageService(sessionStorage, prefix);
       }
       return new MemoryStorageService();
     },
@@ -27,13 +27,13 @@ export const LocalStorageService = new InjectionToken<StorageEngine>(
   'LOCAL_STORAGE'
 );
 
-export function provideLocalStorage(): Provider {
+export function provideLocalStorage(prefix?: string): Provider {
   return {
     provide: LocalStorageService,
     useFactory: () => {
       const platformId = inject(PLATFORM_ID);
       if (isPlatformBrowser(platformId)) {
-        return new WebStorageService(localStorage);
+        return new WebStorageService(localStorage, prefix);
       }
       return new MemoryStorageService();
     },

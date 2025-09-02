@@ -7,6 +7,7 @@ import { MemoryStorageService } from '../storage/storages/memory-storage.service
 export interface CacheOptions {
   storage?: CacheStorageType;
   ttl?: number;
+  storagePrefix?: string;
 }
 
 export type CacheStorageType = 'memory' | 'local' | 'session';
