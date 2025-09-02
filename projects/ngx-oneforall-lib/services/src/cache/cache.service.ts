@@ -8,7 +8,7 @@ interface CacheEntry<T> {
 export class CacheService {
   constructor(
     private readonly storage: StorageEngine,
-    private readonly ttlGlobal?: number
+    private readonly ttlGlobal = 3_600_000
   ) {}
 
   /**
