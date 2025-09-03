@@ -6,10 +6,15 @@ interface CacheEntry<T> {
 }
 
 export class CacheService {
+  private readonly versionKey = '__NGX_ONEFORALL_CACHE_VERSION__';
+
   constructor(
     private readonly storage: StorageEngine,
-    private readonly ttlGlobal = 3_600_000 // 1 hour,
-  ) {}
+    private readonly ttlGlobal = 3_600_000, // 1 hour,
+    private readonly version?: string
+  ) {
+    this.verifyVersion();
+  }
 
   /**
    * Set a value in the cache.
@@ -63,5 +68,15 @@ export class CacheService {
 
   clear(): void {
     this.storage.clear();
+  }
+
+  private verifyVersion() {
+    if (!this.version) return;
+
+    const storedVersion = this.storage.get(this.versionKey);
+    if (storedVersion !== this.version) {
+      this.storage.clear();
+      this.storage.set(this.versionKey, this.version);
+    }
   }
 }

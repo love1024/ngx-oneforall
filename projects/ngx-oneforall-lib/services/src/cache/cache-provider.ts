@@ -8,6 +8,7 @@ export interface CacheOptions {
   storage?: CacheStorageType;
   ttl?: number;
   storagePrefix?: string;
+  version?: string;
 }
 
 export type CacheStorageType = 'memory' | 'local' | 'session';
@@ -22,13 +23,23 @@ export function provideCacheService(options?: CacheOptions): Provider {
     useFactory: () => {
       let storageEngine: StorageEngine;
       if (options?.storage === 'local') {
-        storageEngine = new WebStorageService(localStorage);
+        storageEngine = new WebStorageService(
+          localStorage,
+          options.storagePrefix
+        );
       } else if (options?.storage === 'session') {
-        storageEngine = new WebStorageService(sessionStorage);
+        storageEngine = new WebStorageService(
+          sessionStorage,
+          options.storagePrefix
+        );
       } else {
         storageEngine = new MemoryStorageService();
       }
-      return new InternalCacheService(storageEngine, options?.ttl);
+      return new InternalCacheService(
+        storageEngine,
+        options?.ttl,
+        options?.version
+      );
     },
   };
 }

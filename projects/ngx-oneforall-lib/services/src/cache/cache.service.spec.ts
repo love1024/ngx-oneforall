@@ -95,6 +95,49 @@ describe('CacheService', () => {
       const entry = JSON.parse(storage.get('foo')!);
       expect(entry.expiry).toBeNull();
     });
+
+    it('should clear storage and set version if stored version is different', () => {
+      const storage = new MockStorageEngine();
+      storage.set('__NGX_ONEFORALL_CACHE_VERSION__', 'old-version');
+      const clearSpy = jest.spyOn(storage, 'clear');
+      const setSpy = jest.spyOn(storage, 'set');
+
+      // Instantiating CacheService with a new version triggers verifyVersion
+      new CacheService(storage, 1000, 'new-version');
+
+      expect(clearSpy).toHaveBeenCalled();
+      expect(setSpy).toHaveBeenCalledWith(
+        '__NGX_ONEFORALL_CACHE_VERSION__',
+        'new-version'
+      );
+    });
+
+    it('should not clear storage if stored version matches', () => {
+      const storage = new MockStorageEngine();
+      storage.set('__NGX_ONEFORALL_CACHE_VERSION__', 'same-version');
+      const clearSpy = jest.spyOn(storage, 'clear');
+      const setSpy = jest.spyOn(storage, 'set');
+
+      new CacheService(storage, 1000, 'same-version');
+
+      expect(clearSpy).not.toHaveBeenCalled();
+      // Should not set version again if already matches
+      expect(setSpy).not.toHaveBeenCalledWith(
+        '__NGX_ONEFORALL_CACHE_VERSION__',
+        'same-version'
+      );
+    });
+
+    it('should do nothing if version is not provided', () => {
+      const storage = new MockStorageEngine();
+      const clearSpy = jest.spyOn(storage, 'clear');
+      const setSpy = jest.spyOn(storage, 'set');
+
+      new CacheService(storage, 1000);
+
+      expect(clearSpy).not.toHaveBeenCalled();
+      expect(setSpy).not.toHaveBeenCalled();
+    });
   });
 
   describe('With default TTL', () => {
