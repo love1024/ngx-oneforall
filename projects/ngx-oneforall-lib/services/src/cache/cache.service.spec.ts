@@ -61,7 +61,7 @@ describe('CacheService', () => {
 
     it('should return false for has() if key is expired', () => {
       const now = Date.now();
-      const key = '[cache]:-foo';
+      const key = '[cache]:foo';
       storage.set(
         key,
         JSON.stringify({ value: 'bar', expiry: now - 1000, version: 'v1' })
@@ -70,9 +70,20 @@ describe('CacheService', () => {
       expect(storage.get(key)).toBeUndefined();
     });
 
+    it('should return false for has() if version is mismatched', () => {
+      const now = Date.now();
+      const key = '[cache]:foo';
+      storage.set(
+        key,
+        JSON.stringify({ value: 'bar', expiry: now + 1000, version: 'v2' })
+      );
+      expect(cache.has('foo')).toBe(false);
+      expect(storage.get(key)).toBeUndefined();
+    });
+
     it('should return null for get() if key is expired', () => {
       const now = Date.now();
-      const key = '[cache]:-foo';
+      const key = '[cache]:foo';
       storage.set(
         key,
         JSON.stringify({ value: 'bar', expiry: now - 1000, version: 'v1' })
@@ -82,7 +93,7 @@ describe('CacheService', () => {
     });
 
     it('should handle invalid JSON gracefully', () => {
-      const key = '[cache]:-bad';
+      const key = '[cache]:bad';
       storage.set(key, 'not-json');
       expect(cache.get('bad')).toBeNull();
       expect(cache.has('bad')).toBe(false);
@@ -90,19 +101,19 @@ describe('CacheService', () => {
 
     it('should use custom TTL if provided', () => {
       cache.set('foo', 'bar', { ttl: 5000 });
-      const entry = JSON.parse(storage.get('[cache]:-foo')!);
+      const entry = JSON.parse(storage.get('[cache]:foo')!);
       expect(entry.expiry).toBeGreaterThan(Date.now());
     });
 
     it('should store value with no expiry if ttlGlobal is falsy', () => {
       cache = new CacheService(storage, 0, 'v1');
       cache.set('foo', 'bar');
-      const entry = JSON.parse(storage.get('[cache]:-foo')!);
+      const entry = JSON.parse(storage.get('[cache]:foo')!);
       expect(entry.expiry).toBeNull();
     });
 
     it('should remove key if version does not match (verifyVersion)', () => {
-      const key = '[cache]:-foo';
+      const key = '[cache]:foo';
       storage.set(
         key,
         JSON.stringify({ value: 'bar', expiry: null, version: 'old-version' })
@@ -112,7 +123,7 @@ describe('CacheService', () => {
     });
 
     it('should not remove key if version matches (verifyVersion)', () => {
-      const key = '[cache]:-foo';
+      const key = '[cache]:foo';
       storage.set(
         key,
         JSON.stringify({ value: 'bar', expiry: null, version: 'v1' })
@@ -123,7 +134,7 @@ describe('CacheService', () => {
 
     it('should do nothing in verifyVersion if no version is set', () => {
       cache = new CacheService(storage, 1000);
-      const key = '[cache]:-foo';
+      const key = '[cache]:foo';
       storage.set(
         key,
         JSON.stringify({ value: 'bar', expiry: null, version: 'any' })

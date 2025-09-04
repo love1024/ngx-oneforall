@@ -12,6 +12,7 @@ type CacheConfig = Pick<CacheOptions, 'ttl' | 'version'>;
 export class CacheService {
   private readonly prefixKey = '[cache]:';
 
+  // Global config
   constructor(
     private readonly storage: StorageEngine,
     private readonly ttlGlobal = 3_600_000, // 1 hour,
@@ -27,15 +28,18 @@ export class CacheService {
   set<T>(key: string, value: T, config?: CacheConfig): void {
     const prefixedKey = this.getPrefixedKey(key);
 
-    const ttlTime = config?.ttl || this.ttlGlobal;
+    const ttlTime = config?.ttl ?? this.ttlGlobal;
     const expiry = ttlTime ? Date.now() + ttlTime : null;
     const version = config?.version || this.version;
 
-    this.storage.set(prefixedKey, JSON.stringify({ value, expiry, version }));
+    this.storage.set(
+      prefixedKey,
+      JSON.stringify({ value, expiry, version: version ?? null })
+    );
   }
 
   get<T>(key: string): T | null {
-    this.verifyVersion(key);
+    if (!this.verifyVersion(key)) return null;
 
     const prefixedKey = this.getPrefixedKey(key);
     const entry = this.storage.get(prefixedKey);
@@ -56,7 +60,7 @@ export class CacheService {
   }
 
   has(key: string): boolean {
-    this.verifyVersion(key);
+    if (!this.verifyVersion(key)) return false;
 
     const prefixedKey = this.getPrefixedKey(key);
 
@@ -83,24 +87,26 @@ export class CacheService {
   }
 
   private verifyVersion(key: string) {
-    if (!this.version) return;
+    if (!this.version) return true;
 
     const prefixedKey = this.getPrefixedKey(key);
     const cached = this.storage.get(prefixedKey);
-    if (!cached) return;
+    if (!cached) return true;
 
     try {
       const parsed = JSON.parse(cached) as CacheEntry<unknown>;
 
       if (parsed.version !== this.version) {
         this.storage.remove(prefixedKey);
+        return false;
       }
     } catch {
-      return;
+      return true;
     }
+    return true;
   }
 
   private getPrefixedKey(key: string) {
-    return `${this.prefixKey}-${key}`;
+    return `${this.prefixKey}${key}`;
   }
 }
