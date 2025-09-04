@@ -1,20 +1,22 @@
 import { StorageEngine } from '../storage/storage-engine';
+import { CacheOptions } from './cache-provider';
 
 interface CacheEntry<T> {
   value: T;
   expiry: number | null;
+  version: string;
 }
 
+type CacheConfig = Pick<CacheOptions, 'ttl' | 'version'>;
+
 export class CacheService {
-  private readonly versionKey = '__NGX_ONEFORALL_CACHE_VERSION__';
+  private readonly prefixKey = '[cache]:';
 
   constructor(
     private readonly storage: StorageEngine,
     private readonly ttlGlobal = 3_600_000, // 1 hour,
     private readonly version?: string
-  ) {
-    this.verifyVersion();
-  }
+  ) {}
 
   /**
    * Set a value in the cache.
@@ -22,20 +24,28 @@ export class CacheService {
    * @param value Value to cache
    * @param ttl Time-to-live in ms (optional, default: no expiry)
    */
-  set<T>(key: string, value: T, ttl?: number): void {
-    const ttlTime = ttl || this.ttlGlobal;
+  set<T>(key: string, value: T, config?: CacheConfig): void {
+    const prefixedKey = this.getPrefixedKey(key);
+
+    const ttlTime = config?.ttl || this.ttlGlobal;
     const expiry = ttlTime ? Date.now() + ttlTime : null;
-    this.storage.set(key, JSON.stringify({ value, expiry }));
+    const version = config?.version || this.version;
+
+    this.storage.set(prefixedKey, JSON.stringify({ value, expiry, version }));
   }
 
   get<T>(key: string): T | null {
-    const entry = this.storage.get(key);
+    this.verifyVersion(key);
+
+    const prefixedKey = this.getPrefixedKey(key);
+    const entry = this.storage.get(prefixedKey);
     if (!entry) return null;
 
     try {
       const parsed = JSON.parse(entry) as CacheEntry<T>;
+
       if (parsed?.expiry && Date.now() > parsed.expiry) {
-        this.storage.remove(key);
+        this.storage.remove(prefixedKey);
         return null;
       }
 
@@ -46,13 +56,17 @@ export class CacheService {
   }
 
   has(key: string): boolean {
-    const entry = this.storage.get(key);
+    this.verifyVersion(key);
+
+    const prefixedKey = this.getPrefixedKey(key);
+
+    const entry = this.storage.get(prefixedKey);
     if (!entry) return false;
 
     try {
       const parsed = JSON.parse(entry) as CacheEntry<unknown>;
       if (parsed.expiry && Date.now() > parsed.expiry) {
-        this.storage.remove(key);
+        this.storage.remove(prefixedKey);
         return false;
       }
 
@@ -63,20 +77,30 @@ export class CacheService {
   }
 
   remove(key: string): void {
-    this.storage.remove(key);
+    const prefixedKey = this.getPrefixedKey(key);
+
+    this.storage.remove(prefixedKey);
   }
 
-  clear(): void {
-    this.storage.clear();
-  }
-
-  private verifyVersion() {
+  private verifyVersion(key: string) {
     if (!this.version) return;
 
-    const storedVersion = this.storage.get(this.versionKey);
-    if (storedVersion !== this.version) {
-      this.storage.clear();
-      this.storage.set(this.versionKey, this.version);
+    const prefixedKey = this.getPrefixedKey(key);
+    const cached = this.storage.get(prefixedKey);
+    if (!cached) return;
+
+    try {
+      const parsed = JSON.parse(cached) as CacheEntry<unknown>;
+
+      if (parsed.version !== this.version) {
+        this.storage.remove(prefixedKey);
+      }
+    } catch {
+      return;
     }
+  }
+
+  private getPrefixedKey(key: string) {
+    return `${this.prefixKey}-${key}`;
   }
 }
