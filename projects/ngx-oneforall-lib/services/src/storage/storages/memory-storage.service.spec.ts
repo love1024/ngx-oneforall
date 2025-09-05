@@ -40,4 +40,16 @@ describe('MemoryStorageService', () => {
     service['setItem']('key', 'value');
     expect(service['storage'].get('key')).toBe('value');
   });
+
+  it('should return length', () => {
+    service['storage'].set('a', '1');
+
+    expect(service.length()).toBe(1);
+  });
+
+  it('should return key by index', () => {
+    service['storage'].set('a', '1');
+
+    expect(service.key(0)).toBe('1');
+  });
 });

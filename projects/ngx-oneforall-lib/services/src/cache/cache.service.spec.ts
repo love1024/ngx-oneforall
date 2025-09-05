@@ -16,12 +16,26 @@ class MockStorageEngine extends StorageEngine {
     this.store = {};
   }
 
+  length(): number {
+    return Object.keys(this.store).length;
+  }
+
+  key(index: number): string | null {
+    const keys = Object.keys(this.store);
+    return keys[index] ?? null;
+  }
+
   protected getItem(key: string): string | undefined {
     return this.store[key];
   }
 
   protected setItem(key: string, value: string): void {
     this.store[key] = value;
+  }
+
+  // Add keys() method to mock the interface
+  keys(): string[] {
+    return Object.keys(this.store);
   }
 }
 
@@ -141,6 +155,23 @@ describe('CacheService', () => {
       );
       expect(cache.get('foo')).toBe('bar');
       expect(storage.get(key)).toBeDefined();
+    });
+
+    it('should clear all cache keys using keys() if available', () => {
+      storage.set('[cache]:foo', '1');
+      storage.set('[cache]:bar', '2');
+      storage.set('other', 'not cache');
+      const removeSpy = jest.spyOn(storage, 'remove');
+      cache.clear();
+      expect(removeSpy).toHaveBeenCalledWith('[cache]:foo');
+      expect(removeSpy).toHaveBeenCalledWith('[cache]:bar');
+      expect(removeSpy).not.toHaveBeenCalledWith('other');
+    });
+
+    it('should do nothing if there are no cache keys', () => {
+      const removeSpy = jest.spyOn(storage, 'remove');
+      cache.clear();
+      expect(removeSpy).not.toHaveBeenCalled();
     });
   });
 

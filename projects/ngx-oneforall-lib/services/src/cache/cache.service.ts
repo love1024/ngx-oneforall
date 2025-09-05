@@ -86,6 +86,19 @@ export class CacheService {
     this.storage.remove(prefixedKey);
   }
 
+  clear() {
+    const keysToRemove: string[] = [];
+
+    for (let i = 0; i < this.storage.length(); i++) {
+      const key = this.storage.key(i);
+      if (key && key.startsWith(this.prefixKey)) {
+        keysToRemove.push(key);
+      }
+    }
+
+    keysToRemove.forEach(key => this.storage.remove(key));
+  }
+
   private verifyVersion(key: string) {
     if (!this.version) return true;
 

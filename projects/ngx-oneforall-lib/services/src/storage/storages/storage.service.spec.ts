@@ -61,4 +61,14 @@ describe('WebStorageService', () => {
     expect(service.get('foo')).toBeUndefined();
     expect(service.get('bar')).toBeUndefined();
   });
+
+  it('should return length', () => {
+    expect(service.length()).toBe(0);
+  });
+
+  it('should return key by index', () => {
+    const spy = jest.spyOn(storage, 'key');
+    service.key(0);
+    expect(spy).toHaveBeenCalledWith(0);
+  });
 });

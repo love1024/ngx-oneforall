@@ -15,6 +15,14 @@ export class MemoryStorageService extends StorageEngine {
     this.storage.clear();
   }
 
+  length(): number {
+    return this.storage.size;
+  }
+
+  key(index: number): string | null {
+    return Array.from(this.storage.values())[index];
+  }
+
   protected getItem(key: string): string | undefined {
     return this.storage.get(key);
   }

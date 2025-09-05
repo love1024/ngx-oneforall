@@ -32,6 +32,10 @@ export abstract class StorageEngine {
 
   abstract clear(): void;
 
+  abstract length(): number;
+
+  abstract key(index: number): string | null;
+
   protected abstract getItem(key: string): string | undefined;
 
   protected abstract setItem(key: string, value: string): void;

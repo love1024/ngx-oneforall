@@ -20,6 +20,14 @@ export class WebStorageService extends StorageEngine {
     this.storage.clear();
   }
 
+  length(): number {
+    return this.storage.length;
+  }
+
+  key(index: number) {
+    return this.storage.key(index);
+  }
+
   protected getItem(key: string): string | undefined {
     const value = this.storage.getItem(this.prefix + key);
 
