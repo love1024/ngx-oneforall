@@ -1,89 +1,95 @@
 
-The `CookieService` is a robust Angular service designed to manage browser cookies efficiently and securely. It provides a comprehensive API for reading, writing, and deleting cookies, supporting advanced options such as SameSite policies, domain, path, secure flags, and expiration settings.
+The `CacheService` is a versatile Angular service for efficient client-side caching, supporting multiple storage engines and advanced cache management features. It enables developers to store, retrieve, and manage data in memory, localStorage, or sessionStorage, with configurable expiration and versioning.
 
-#### Features
+#### Key Features
 
-- **Read Cookies:** Retrieve the value of a specific cookie or all cookies as a key-value object.
-- **Write Cookies:** Set cookies with customizable options, including expiration, path, domain, SameSite, secure, and partitioned attributes.
-- **Delete Cookies:** Remove individual cookies or all cookies at once.
-- **Browser-Only Execution:** Ensures cookie operations are performed only in browser environments.
-- **Security Compliance:** Automatically enforces secure attributes when required by SameSite policies.
+- **Flexible Storage:** Choose between in-memory, localStorage, or sessionStorage for cache persistence.
+- **Time-to-Live (TTL):** Set global or per-entry expiration to automatically invalidate stale data.
+- **Versioning:** Associate cache entries with a version to ensure data consistency across deployments.
+- **Cache Operations:** Easily set, get, check, remove, and clear cached values.
+- **Customizable Prefix:** Optionally set a prefix for cache keys to avoid collisions.
 
 #### Usage
 
-1. **Provide the Service:** Register `CookieService` in your Angular module or component using the `provideCookieService()` function.
-2. **Inject the Service:** Use Angular's dependency injection to access `CookieService` in your components or services.
+1. **Provide the Service:** Register `CacheService` in your Angular module or component using `provideCacheService(options)`. Configure storage type, TTL, version, and key prefix as needed.
+2. **Inject the Service:** Use Angular's dependency injection to access `CacheService` in your components or services.
 
 #### Example
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { CookieService, provideCookieService } from '@ngx-oneforall/services';
+import { CacheService, provideCacheService } from '@ngx-oneforall/services';
 
 @Component({
-    selector: 'app-cookie-demo',
+    selector: 'app-cache-demo',
     template: `
-        <button (click)="setCookie()">Set Cookie</button>
-        <button (click)="getCookie()">Get Cookie</button>
-        <button (click)="deleteCookie()">Delete Cookie</button>
-        <p>Cookie Value: {{ cookieValue }}</p>
+        <button (click)="setCache()">Set Cache</button>
+        <button (click)="getCache()">Get Cache</button>
+        <button (click)="removeCache()">Remove Cache</button>
+        <button (click)="clearCache()">Clear All</button>
+        <p>Cached Value: {{ cachedValue }}</p>
     `,
-    providers: [provideCookieService()],
+    providers: [provideCacheService({ storage: 'local', ttl: 60000, version: 'v1' })],
 })
-export class CookieDemoComponent {
-    private readonly cookieService = inject(CookieService);
-    cookieValue = '';
+export class CacheDemoComponent {
+    private readonly cacheService = inject(CacheService);
+    cachedValue = '';
 
-    setCookie() {
-        this.cookieService.set('user', 'JohnDoe', { sameSite: 'Lax', secure: true, expires: 3600 });
+    setCache() {
+        this.cacheService.set('user', 'JohnDoe');
     }
 
-    getCookie() {
-        this.cookieValue = this.cookieService.get('user');
+    getCache() {
+        this.cachedValue = this.cacheService.get('user') ?? '';
     }
 
-    deleteCookie() {
-        this.cookieService.delete('user');
-        this.cookieValue = '';
+    removeCache() {
+        this.cacheService.remove('user');
+        this.cachedValue = '';
+    }
+
+    clearCache() {
+        this.cacheService.clear();
+        this.cachedValue = '';
     }
 }
 ```
 
 #### API Overview
 
-- **`get(name: string): string`**  
-    Returns the value of the specified cookie, or an empty string if not found.
+- **`set<T>(key: string, value: T, config?: { ttl?: number; version?: string }): void`**  
+    Stores a value in the cache with optional TTL and version.
 
-- **`getAll(): Record<string, string>`**  
-    Retrieves all cookies as an object with key-value pairs.
+- **`get<T>(key: string): T | null`**  
+    Retrieves a cached value, or `null` if not found or expired.
 
-- **`set(name: string, value: string, options?: CookieOptions): void`**  
-    Sets a cookie with the given name, value, and options.
+- **`has(key: string): boolean`**  
+    Checks if a valid cache entry exists for the given key.
 
-- **`delete(name: string, options?: CookieOptions): void`**  
-    Deletes the specified cookie.
+- **`remove(key: string): void`**  
+    Removes a specific cache entry.
 
-- **`deleteAll(options?: CookieOptions): void`**  
-    Deletes all cookies.
+- **`clear(): void`**  
+    Clears all cache entries managed by the service.
 
-#### CookieOptions
+#### Configuration Options
 
-Customize cookie behavior with the following options:
+Customize cache behavior via `CacheOptions`:
 
-- `sameSite`: `'Strict' | 'Lax' | 'None'` (default: `'Lax'`)
-- `domain`: string
-- `path`: string
-- `secure`: boolean
-- `partitioned`: boolean
-- `expires`: number (seconds) or `Date`
+- `storage`: `'memory' | 'local' | 'session'` (default: `'memory'`)
+- `ttl`: number (global time-to-live in milliseconds, default: 1 hour)
+- `version`: string (optional, for cache versioning)
+- `storagePrefix`: string (optional, prefix for cache keys)
 
 #### Notes
 
-- The service is intended for use in browser environments only.
-- When using `SameSite=None`, the `secure` flag is automatically enforced for security compliance.
+- Expired or mismatched version entries are automatically purged.
+- The service is suitable for browser environments and supports both persistent and volatile caching.
+- Use versioning to invalidate outdated cache after deployments or data schema changes.
 
 #### Live Demo
 
 Explore a live demonstration of cache service:
 
 {{ NgDocActions.demo("CacheServiceDemoComponent") }}
+
