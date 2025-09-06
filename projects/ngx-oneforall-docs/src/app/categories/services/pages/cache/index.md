@@ -83,7 +83,9 @@ Customize cache behavior via `CacheOptions`:
 
 #### Notes
 
-- Expired or mismatched version entries are automatically purged.
+> **Warning**
+> When a version mismatch is detected, all entries are automatically purged.
+
 - The service is suitable for browser environments and supports both persistent and volatile caching.
 - Use versioning to invalidate outdated cache after deployments or data schema changes.
 
