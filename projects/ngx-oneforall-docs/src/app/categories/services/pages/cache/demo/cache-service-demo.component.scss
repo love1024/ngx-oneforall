@@ -1,0 +1,52 @@
+.cache-demo-container {
+    max-width: 350px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: #f8fafc;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    text-align: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+.promo-code {
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #2563eb;
+    margin-bottom: 0.5rem;
+}
+.promo-info {
+    display: block;
+    margin-bottom: 1rem;
+    color: #64748b;
+    font-size: 0.95rem;
+}
+.availability {
+    margin: 1rem 0;
+    font-size: 1.1rem;
+}
+.availability .label {
+    font-weight: 500;
+    margin-right: 0.5rem;
+}
+.available {
+    color: #16a34a;
+    font-weight: bold;
+}
+.unavailable {
+    color: #dc2626;
+    font-weight: bold;
+}
+.check-btn {
+    padding: 0.5rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.check-btn:hover {
+    background: #1d4ed8;
+}
