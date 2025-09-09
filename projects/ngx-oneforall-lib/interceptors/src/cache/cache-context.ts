@@ -2,6 +2,7 @@ import { HttpContext, HttpContextToken } from '@angular/common/http';
 
 export interface CacheContextOptions {
   enabled?: boolean;
+  ttl?: number;
 }
 
 export const CACHE_CONTEXT = new HttpContextToken<CacheContextOptions>(

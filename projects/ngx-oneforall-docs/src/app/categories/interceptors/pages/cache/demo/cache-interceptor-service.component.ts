@@ -20,14 +20,7 @@ interface Todo {
     }
   `,
   styles: ``,
-  providers: [
-    provideCacheService(),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useExisting: cacheInterceptor,
-      multi: true,
-    },
-  ],
+  providers: [],
 })
 export class CacheInterceptorServiceComponent {
   private readonly http = inject(HttpClient);
@@ -36,7 +29,7 @@ export class CacheInterceptorServiceComponent {
   fetchTodos() {
     this.http
       .get<Todo[]>('https://jsonplaceholder.typicode.com/todos', {
-        context: cache(),
+        context: cache({ ttl: 5000 }),
       })
       .subscribe(res => {
         this.todos.set(res.slice(0, 10));
