@@ -1,7 +1,6 @@
-import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { cache, cacheInterceptor } from '@ngx-oneforall/interceptors';
-import { provideCacheService } from '@ngx-oneforall/services';
+import { cache } from '@ngx-oneforall/interceptors';
 
 interface Todo {
   title: string;
