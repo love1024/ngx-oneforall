@@ -17,24 +17,27 @@ export const CacheService = new InjectionToken<InternalCacheService>(
   'CACHE_SERVICE'
 );
 
+export function getStorageEngine(storage?: string, prefix?: string) {
+  let storageEngine: StorageEngine;
+  if (storage === 'local') {
+    storageEngine = new WebStorageService(localStorage, prefix);
+  } else if (storage === 'session') {
+    storageEngine = new WebStorageService(sessionStorage, prefix);
+  } else {
+    storageEngine = new MemoryStorageService();
+  }
+
+  return storageEngine;
+}
+
 export function provideCacheService(options?: CacheOptions): Provider {
   return {
     provide: CacheService,
     useFactory: () => {
-      let storageEngine: StorageEngine;
-      if (options?.storage === 'local') {
-        storageEngine = new WebStorageService(
-          localStorage,
-          options.storagePrefix
-        );
-      } else if (options?.storage === 'session') {
-        storageEngine = new WebStorageService(
-          sessionStorage,
-          options.storagePrefix
-        );
-      } else {
-        storageEngine = new MemoryStorageService();
-      }
+      const storageEngine = getStorageEngine(
+        options?.storage,
+        options?.storagePrefix
+      );
       return new InternalCacheService(
         storageEngine,
         options?.ttl,

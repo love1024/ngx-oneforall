@@ -1,5 +1,9 @@
 import { StorageEngine } from '../storage/storage-engine';
-import { CacheOptions } from './cache-provider';
+import {
+  CacheOptions,
+  CacheStorageType,
+  getStorageEngine,
+} from './cache-provider';
 
 interface CacheEntry<T> {
   value: T;
@@ -7,7 +11,7 @@ interface CacheEntry<T> {
   version: string;
 }
 
-type CacheConfig = Pick<CacheOptions, 'ttl' | 'version'>;
+type CacheConfig = Omit<CacheOptions, 'storagePrefix'>;
 
 export class CacheService {
   private readonly prefixKey = '[cache]:';
@@ -31,25 +35,32 @@ export class CacheService {
     const ttlTime = config?.ttl ?? this.ttlGlobal;
     const expiry = ttlTime ? Date.now() + ttlTime : null;
     const version = config?.version || this.version;
+    const storage = config?.storage
+      ? getStorageEngine(config?.storage)
+      : this.storage;
 
-    this.storage.set(
+    storage.set(
       prefixedKey,
       JSON.stringify({ value, expiry, version: version ?? null })
     );
   }
 
-  get<T>(key: string): T | null {
-    if (!this.verifyVersion(key)) return null;
+  get<T>(key: string, storageEngine?: CacheStorageType): T | null {
+    if (!this.verifyVersion(key, storageEngine)) return null;
+
+    const storage = storageEngine
+      ? getStorageEngine(storageEngine)
+      : this.storage;
 
     const prefixedKey = this.getPrefixedKey(key);
-    const entry = this.storage.get(prefixedKey);
+    const entry = storage.get(prefixedKey);
     if (!entry) return null;
 
     try {
       const parsed = JSON.parse(entry) as CacheEntry<T>;
 
       if (parsed?.expiry && Date.now() > parsed.expiry) {
-        this.storage.remove(prefixedKey);
+        storage.remove(prefixedKey);
         return null;
       }
 
@@ -59,18 +70,22 @@ export class CacheService {
     }
   }
 
-  has(key: string): boolean {
-    if (!this.verifyVersion(key)) return false;
+  has(key: string, storageEngine?: CacheStorageType): boolean {
+    if (!this.verifyVersion(key, storageEngine)) return false;
+
+    const storage = storageEngine
+      ? getStorageEngine(storageEngine)
+      : this.storage;
 
     const prefixedKey = this.getPrefixedKey(key);
 
-    const entry = this.storage.get(prefixedKey);
+    const entry = storage.get(prefixedKey);
     if (!entry) return false;
 
     try {
       const parsed = JSON.parse(entry) as CacheEntry<unknown>;
       if (parsed.expiry && Date.now() > parsed.expiry) {
-        this.storage.remove(prefixedKey);
+        storage.remove(prefixedKey);
         return false;
       }
 
@@ -80,37 +95,49 @@ export class CacheService {
     }
   }
 
-  remove(key: string): void {
+  remove(key: string, storageEngine?: CacheStorageType): void {
+    const storage = storageEngine
+      ? getStorageEngine(storageEngine)
+      : this.storage;
+
     const prefixedKey = this.getPrefixedKey(key);
 
-    this.storage.remove(prefixedKey);
+    storage.remove(prefixedKey);
   }
 
-  clear() {
+  clear(storageEngine?: CacheStorageType) {
+    const storage = storageEngine
+      ? getStorageEngine(storageEngine)
+      : this.storage;
+
     const keysToRemove: string[] = [];
 
-    for (let i = 0; i < this.storage.length(); i++) {
-      const key = this.storage.key(i);
+    for (let i = 0; i < storage.length(); i++) {
+      const key = storage.key(i);
       if (key && key.startsWith(this.prefixKey)) {
         keysToRemove.push(key);
       }
     }
 
-    keysToRemove.forEach(key => this.storage.remove(key));
+    keysToRemove.forEach(key => storage.remove(key));
   }
 
-  private verifyVersion(key: string) {
+  private verifyVersion(key: string, storageEngine?: CacheStorageType) {
     if (!this.version) return true;
 
+    const storage = storageEngine
+      ? getStorageEngine(storageEngine)
+      : this.storage;
+
     const prefixedKey = this.getPrefixedKey(key);
-    const cached = this.storage.get(prefixedKey);
+    const cached = storage.get(prefixedKey);
     if (!cached) return true;
 
     try {
       const parsed = JSON.parse(cached) as CacheEntry<unknown>;
 
       if (parsed.version !== this.version) {
-        this.storage.remove(prefixedKey);
+        storage.remove(prefixedKey);
         return false;
       }
     } catch {

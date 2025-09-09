@@ -17,7 +17,10 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req).pipe(
       tap(event => {
         if (event instanceof HttpResponse) {
-          cacheService.set(key, event, { ttl: context.ttl });
+          cacheService.set(key, event, {
+            ttl: context.ttl,
+            storage: context.storage,
+          });
         }
       })
     );
