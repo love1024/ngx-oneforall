@@ -1,7 +1,16 @@
 import { HttpContext, HttpContextToken } from '@angular/common/http';
 
-export const CACHE_CONTEXT = new HttpContextToken<boolean>(() => true);
+export interface CacheContextOptions {
+  enabled?: boolean;
+}
 
-export function cache() {
-  return new HttpContext().set(CACHE_CONTEXT, true);
+export const CACHE_CONTEXT = new HttpContextToken<CacheContextOptions>(
+  () => ({})
+);
+
+export function cache(options: CacheContextOptions = {}) {
+  return new HttpContext().set(CACHE_CONTEXT, {
+    enabled: true,
+    ...options,
+  });
 }
