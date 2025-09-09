@@ -12,6 +12,7 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
   withFetch,
+  withInterceptors,
 } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
@@ -22,14 +23,20 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { cacheInterceptor } from '@ngx-oneforall/interceptors';
+import { provideCacheService } from '@ngx-oneforall/services';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideCacheService(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideAnimations(),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(
+      withInterceptorsFromDi(),
+      withInterceptors([cacheInterceptor])
+    ),
     provideRouter(
       NG_DOC_ROUTING,
       withInMemoryScrolling({
