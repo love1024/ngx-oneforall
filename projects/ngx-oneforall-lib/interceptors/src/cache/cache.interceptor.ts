@@ -21,6 +21,7 @@ function resolveKey(req: HttpRequest<unknown>, context: CacheContextOptions) {
 export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
   const cacheService = inject(CacheService);
   const context = req.context.get(CACHE_CONTEXT);
+
   const key = resolveKey(req, context);
 
   if (context.enabled === true) {
