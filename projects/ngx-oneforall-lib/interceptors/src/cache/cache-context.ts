@@ -1,8 +1,13 @@
-import { HttpContext, HttpContextToken } from '@angular/common/http';
+import {
+  HttpContext,
+  HttpContextToken,
+  HttpRequest,
+} from '@angular/common/http';
 import { CacheOptions } from '@ngx-oneforall/services';
 
 export type CacheContextOptions = Omit<CacheOptions, 'storagePrefix'> & {
   enabled?: boolean;
+  key?: string | ((req: HttpRequest<unknown>) => string);
 };
 
 export const CACHE_CONTEXT = new HttpContextToken<CacheContextOptions>(
