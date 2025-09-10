@@ -15,7 +15,7 @@ export const CACHE_CONTEXT = new HttpContextToken<CacheContextOptions>(
   () => ({})
 );
 
-export function cache(options: CacheContextOptions = {}) {
+export function useCache(options: CacheContextOptions = {}) {
   const { context, ...restOptions } = options;
   return (context ?? new HttpContext()).set(CACHE_CONTEXT, {
     enabled: true,

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { cache } from '@ngx-oneforall/interceptors';
+import { useCache } from '@ngx-oneforall/interceptors';
 
 interface Todo {
   title: string;
@@ -28,7 +28,7 @@ export class CacheInterceptorServiceComponent {
   fetchTodos() {
     this.http
       .get<Todo[]>('https://jsonplaceholder.typicode.com/todos', {
-        context: cache({ ttl: 5000 }),
+        context: useCache({ ttl: 5000 }),
       })
       .subscribe(res => {
         this.todos.set(res.slice(0, 10));
