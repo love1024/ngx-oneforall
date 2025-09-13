@@ -17,7 +17,7 @@ export const CacheService = new InjectionToken<InternalCacheService>(
   'CACHE_SERVICE'
 );
 
-export function getStorageEngine(storage?: string, prefix?: string) {
+export function getStorageEngine(storage?: CacheStorageType, prefix?: string) {
   let storageEngine: StorageEngine;
   if (storage === 'local') {
     storageEngine = new WebStorageService(localStorage, prefix);

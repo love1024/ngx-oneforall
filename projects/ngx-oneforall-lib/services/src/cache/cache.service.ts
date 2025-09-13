@@ -106,20 +106,27 @@ export class CacheService {
   }
 
   clear(storageEngine?: CacheStorageType) {
-    const storage = storageEngine
-      ? getStorageEngine(storageEngine)
-      : this.storage;
+    // Clear all storages if not given
+    const storages: StorageEngine[] = storageEngine
+      ? [getStorageEngine(storageEngine)]
+      : [
+          getStorageEngine('local'),
+          getStorageEngine('session'),
+          getStorageEngine('memory'),
+        ];
 
-    const keysToRemove: string[] = [];
+    storages.forEach(storage => {
+      const keysToRemove: string[] = [];
 
-    for (let i = 0; i < storage.length(); i++) {
-      const key = storage.key(i);
-      if (key && key.startsWith(this.prefixKey)) {
-        keysToRemove.push(key);
+      for (let i = 0; i < storage.length(); i++) {
+        const key = storage.key(i);
+        if (key && key.startsWith(this.prefixKey)) {
+          keysToRemove.push(key);
+        }
       }
-    }
 
-    keysToRemove.forEach(key => storage.remove(key));
+      keysToRemove.forEach(key => storage.remove(key));
+    });
   }
 
   private verifyVersion(key: string, storageEngine?: CacheStorageType) {
