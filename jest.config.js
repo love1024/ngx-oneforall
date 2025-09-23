@@ -10,6 +10,7 @@ module.exports = {
     '/src/test.ts',
     '<rootDir>/projects/ngx-oneforall-docs/',
     '.*-provider\\.ts$',
+    '.*-context\\.ts$',
   ],
   transform: {
     '^.+\\.(ts|js|html)$': [
@@ -23,6 +24,7 @@ module.exports = {
   collectCoverageFrom: [
     '<rootDir>/projects/ngx-oneforall-lib/**/*.ts',
     '!<rootDir>/projects/ngx-oneforall-lib/**/*-provider.ts',
+    '!<rootDir>/projects/ngx-oneforall-lib/**/*-context.ts',
     '!<rootDir>/projects/ngx-oneforall-lib/**/public_api.ts',
   ],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
