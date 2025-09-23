@@ -1,8 +1,10 @@
-import { InjectionToken, Provider } from '@angular/core';
+import {
+  EnvironmentProviders,
+  InjectionToken,
+  makeEnvironmentProviders,
+} from '@angular/core';
 import { CacheService as InternalCacheService } from './cache.service';
-import { StorageEngine } from '../storage/storage-engine';
-import { WebStorageService } from '../storage/storages/web-storage.service';
-import { MemoryStorageService } from '../storage/storages/memory-storage.service';
+import { getStorageEngine } from './cache.util';
 
 export interface CacheOptions {
   storage?: CacheStorageType;
@@ -17,32 +19,24 @@ export const CacheService = new InjectionToken<InternalCacheService>(
   'CACHE_SERVICE'
 );
 
-export function getStorageEngine(storage?: CacheStorageType, prefix?: string) {
-  let storageEngine: StorageEngine;
-  if (storage === 'local') {
-    storageEngine = new WebStorageService(localStorage, prefix);
-  } else if (storage === 'session') {
-    storageEngine = new WebStorageService(sessionStorage, prefix);
-  } else {
-    storageEngine = new MemoryStorageService();
-  }
-
-  return storageEngine;
-}
-
-export function provideCacheService(options?: CacheOptions): Provider {
-  return {
-    provide: CacheService,
-    useFactory: () => {
-      const storageEngine = getStorageEngine(
-        options?.storage,
-        options?.storagePrefix
-      );
-      return new InternalCacheService(
-        storageEngine,
-        options?.ttl,
-        options?.version
-      );
+export function provideCacheService(
+  options?: CacheOptions
+): EnvironmentProviders {
+  return makeEnvironmentProviders([
+    {
+      provide: CacheService,
+      useFactory: () => {
+        const storageEngine = getStorageEngine(
+          options?.storage,
+          options?.storagePrefix
+        );
+        return new InternalCacheService(
+          storageEngine,
+          getStorageEngine,
+          options?.ttl,
+          options?.version
+        );
+      },
     },
-  };
+  ]);
 }

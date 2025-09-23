@@ -1,9 +1,5 @@
 import { StorageEngine } from '../storage/storage-engine';
-import {
-  CacheOptions,
-  CacheStorageType,
-  getStorageEngine,
-} from './cache-provider';
+import { CacheOptions, CacheStorageType } from './cache-provider';
 
 interface CacheEntry<T> {
   value: T;
@@ -13,14 +9,19 @@ interface CacheEntry<T> {
 
 type CacheConfig = Omit<CacheOptions, 'storagePrefix'>;
 
+const INTERNAL_VERSION = Symbol.for('[int-v1]');
+
 export class CacheService {
   private readonly prefixKey = '[cache]:';
 
   // Global config
   constructor(
     private readonly storage: StorageEngine,
+    private readonly storageEngineProvider: (
+      type: CacheStorageType
+    ) => StorageEngine,
     private readonly ttlGlobal = 3_600_000, // 1 hour,
-    private readonly version?: string
+    private readonly version = INTERNAL_VERSION.toString()
   ) {}
 
   /**
@@ -36,20 +37,17 @@ export class CacheService {
     const expiry = ttlTime ? Date.now() + ttlTime : null;
     const version = config?.version || this.version;
     const storage = config?.storage
-      ? getStorageEngine(config?.storage)
+      ? this.storageEngineProvider(config?.storage)
       : this.storage;
 
-    storage.set(
-      prefixedKey,
-      JSON.stringify({ value, expiry, version: version ?? null })
-    );
+    storage.set(prefixedKey, JSON.stringify({ value, expiry, version }));
   }
 
   get<T>(key: string, storageEngine?: CacheStorageType): T | null {
     if (!this.verifyVersion(key, storageEngine)) return null;
 
     const storage = storageEngine
-      ? getStorageEngine(storageEngine)
+      ? this.storageEngineProvider(storageEngine)
       : this.storage;
 
     const prefixedKey = this.getPrefixedKey(key);
@@ -74,7 +72,7 @@ export class CacheService {
     if (!this.verifyVersion(key, storageEngine)) return false;
 
     const storage = storageEngine
-      ? getStorageEngine(storageEngine)
+      ? this.storageEngineProvider(storageEngine)
       : this.storage;
 
     const prefixedKey = this.getPrefixedKey(key);
@@ -97,7 +95,7 @@ export class CacheService {
 
   remove(key: string, storageEngine?: CacheStorageType): void {
     const storage = storageEngine
-      ? getStorageEngine(storageEngine)
+      ? this.storageEngineProvider(storageEngine)
       : this.storage;
 
     const prefixedKey = this.getPrefixedKey(key);
@@ -108,11 +106,12 @@ export class CacheService {
   clear(storageEngine?: CacheStorageType) {
     // Clear all storages if not given
     const storages: StorageEngine[] = storageEngine
-      ? [getStorageEngine(storageEngine)]
+      ? [this.storageEngineProvider(storageEngine)]
       : [
-          getStorageEngine('local'),
-          getStorageEngine('session'),
-          getStorageEngine('memory'),
+          this.storageEngineProvider('local'),
+          this.storageEngineProvider('session'),
+          this.storageEngineProvider('memory'),
+          this.storage,
         ];
 
     storages.forEach(storage => {
@@ -130,10 +129,8 @@ export class CacheService {
   }
 
   private verifyVersion(key: string, storageEngine?: CacheStorageType) {
-    if (!this.version) return true;
-
     const storage = storageEngine
-      ? getStorageEngine(storageEngine)
+      ? this.storageEngineProvider(storageEngine)
       : this.storage;
 
     const prefixedKey = this.getPrefixedKey(key);
