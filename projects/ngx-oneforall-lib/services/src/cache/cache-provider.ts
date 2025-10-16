@@ -1,8 +1,4 @@
-import {
-  EnvironmentProviders,
-  InjectionToken,
-  makeEnvironmentProviders,
-} from '@angular/core';
+import { InjectionToken, Provider } from '@angular/core';
 import { CacheService as InternalCacheService } from './cache.service';
 import { getStorageEngine } from './cache.util';
 
@@ -19,10 +15,8 @@ export const CacheService = new InjectionToken<InternalCacheService>(
   'CACHE_SERVICE'
 );
 
-export function provideCacheService(
-  options?: CacheOptions
-): EnvironmentProviders {
-  return makeEnvironmentProviders([
+export function provideCacheService(options?: CacheOptions): Provider {
+  return [
     {
       provide: CacheService,
       useFactory: () => {
@@ -38,5 +32,5 @@ export function provideCacheService(
         );
       },
     },
-  ]);
+  ];
 }
