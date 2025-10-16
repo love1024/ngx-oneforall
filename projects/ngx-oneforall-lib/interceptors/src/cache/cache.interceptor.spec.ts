@@ -9,7 +9,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { cacheInterceptor } from './cache.interceptor';
+import { withCacheInterceptor } from './cache.interceptor';
 import { CacheService } from '@ngx-oneforall/services';
 import { useCache } from './cache-context';
 
@@ -28,7 +28,7 @@ describe('cacheInterceptor', () => {
       imports: [],
       providers: [
         { provide: CacheService, useValue: mockCacheService },
-        provideHttpClient(withInterceptors([cacheInterceptor])),
+        provideHttpClient(withInterceptors([withCacheInterceptor()])),
         provideHttpClientTesting(),
       ],
     });
