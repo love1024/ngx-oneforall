@@ -12,6 +12,7 @@ import {
 import { withCacheInterceptor } from './cache.interceptor';
 import { CacheService } from '@ngx-oneforall/services';
 import { useCache } from './cache-context';
+import { PLATFORM_ID } from '@angular/core';
 
 describe('cacheInterceptor', () => {
   let httpTesting: HttpTestingController;
@@ -130,6 +131,104 @@ describe('cacheInterceptor', () => {
     http
       .get('/api/data', {
         context: useCache({ enabled: false }),
+      })
+      .subscribe();
+
+    const req = httpTesting.expectOne('/api/data');
+    req.flush({ body: 'not-cached' });
+
+    expect(mockCacheService.has).not.toHaveBeenCalled();
+    expect(mockCacheService.get).not.toHaveBeenCalled();
+    expect(mockCacheService.set).not.toHaveBeenCalled();
+  });
+});
+
+describe('cacheInterceptor - auto strategy', () => {
+  let httpTesting: HttpTestingController;
+  let http: HttpClient;
+
+  const mockCacheService = {
+    has: jest.fn(),
+    get: jest.fn(),
+    set: jest.fn(),
+  };
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [],
+      providers: [
+        { provide: CacheService, useValue: mockCacheService },
+        provideHttpClient(withInterceptors([withCacheInterceptor('auto')])),
+        provideHttpClientTesting(),
+      ],
+    });
+
+    http = TestBed.inject(HttpClient);
+    httpTesting = TestBed.inject(HttpTestingController);
+
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    httpTesting.verify();
+  });
+
+  it('should only cache if the request is GET and response type is json', () => {
+    http
+      .get('/api/data', {
+        context: useCache(),
+      })
+      .subscribe();
+
+    const req = httpTesting.expectOne('/api/data');
+    req.flush({ body: 'fresh' });
+
+    expect(mockCacheService.set).toHaveBeenCalledWith(
+      '/api/data',
+      expect.any(Object),
+      {
+        ttl: undefined,
+        storage: undefined,
+      }
+    );
+  });
+});
+
+describe('cacheInterceptor - Platform server', () => {
+  let httpTesting: HttpTestingController;
+  let http: HttpClient;
+
+  const mockCacheService = {
+    has: jest.fn(),
+    get: jest.fn(),
+    set: jest.fn(),
+  };
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [],
+      providers: [
+        { provide: CacheService, useValue: mockCacheService },
+        { provide: PLATFORM_ID, useValue: 'server' },
+        provideHttpClient(withInterceptors([withCacheInterceptor()])),
+        provideHttpClientTesting(),
+      ],
+    });
+
+    http = TestBed.inject(HttpClient);
+    httpTesting = TestBed.inject(HttpTestingController);
+
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    httpTesting.verify();
+  });
+
+  it('should not cache for platform server', () => {
+    http
+      .get('/api/data', {
+        context: useCache({ enabled: true }),
       })
       .subscribe();
 
