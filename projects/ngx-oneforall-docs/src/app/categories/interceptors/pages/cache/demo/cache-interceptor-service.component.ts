@@ -9,16 +9,36 @@ interface Todo {
 
 @Component({
   selector: 'lib-cache-interceptor-service',
-  imports: [],
   template: `
-    <button (click)="fetchTodos()">Fetch Todos</button>
-    @for (todo of todos(); track todo.title) {
-      <span>{{ todo.title }}</span
-      >&nbsp;<span>{{ todo.completed }}</span>
-      <br />
-    }
+    <div class="container">
+      <button class="fetch-btn" (click)="fetchTodos()">
+        Load Todos with Cache
+      </button>
+      <p>
+        Todos will be cached for 5 seconds. You will not see any network call
+        for 5 seconds even if you click again.
+      </p>
+      @if (todos().length === 0) {
+        <div class="empty-msg">
+          No todos loaded. Click the button above to fetch data.
+        </div>
+      }
+
+      @if (todos().length > 0) {
+        <ul class="todo-list">
+          @for (todo of todos(); track todo.title) {
+            <li class="todo-item">
+              <span class="todo-title">{{ todo.title }}</span>
+              <span class="todo-status" [class.completed]="todo.completed">
+                {{ todo.completed ? '✔️ Completed' : '❌ Pending' }}
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
   `,
-  styles: ``,
+  styleUrls: ['./cache-interceptor-service.scss'],
   providers: [],
 })
 export class CacheInterceptorServiceComponent {
@@ -31,7 +51,7 @@ export class CacheInterceptorServiceComponent {
         context: useCache({ ttl: 5000 }),
       })
       .subscribe(res => {
-        this.todos.set(res.slice(0, 10));
+        this.todos.set(res.slice(0, 5));
       });
   }
 }

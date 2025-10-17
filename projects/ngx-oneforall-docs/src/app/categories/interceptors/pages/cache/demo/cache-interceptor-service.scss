@@ -1,0 +1,56 @@
+.container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: #f9f9f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    font-family: Arial, sans-serif;
+}
+.fetch-btn {
+    padding: 0.5rem 1.2rem;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: background 0.2s;
+}
+.fetch-btn:hover {
+    background: #125ea8;
+}
+.empty-msg {
+    color: #888;
+    margin-top: 1rem;
+    text-align: center;
+}
+.todo-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0 0;
+}
+.todo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+.todo-title {
+    font-weight: 500;
+    color: #333;
+}
+.todo-status {
+    font-size: 0.95rem;
+    padding-left: 1rem;
+}
+.todo-status.completed {
+    color: #388e3c;
+    font-weight: bold;
+}
+.todo-status:not(.completed) {
+    color: #d32f2f;
+    font-weight: bold;
+}

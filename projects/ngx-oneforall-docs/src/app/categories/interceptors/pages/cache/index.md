@@ -1,98 +1,101 @@
-The `jwtInterceptor` is a robust Angular HTTP interceptor designed to automatically attach JSON Web Tokens (JWT) to outgoing HTTP requests, streamlining authentication and authorization in Angular applications. This interceptor is essential for securing API calls and ensuring that only authenticated users can access protected resources.
+The `cacheInterceptor` is an Angular HTTP interceptor that transparently caches HTTP responses for GET requests, improving performance and reducing unnecessary network calls. It is highly configurable and integrates seamlessly with Angular's HTTP client.
 
-## Why Use a JWT Interceptor?
+## Why Use a Cache Interceptor?
 
-In modern web applications, JWTs are commonly used for stateless authentication. Manually adding tokens to every HTTP request can be error-prone and repetitive. The `jwtInterceptor` automates this process, ensuring that tokens are consistently and securely included in requests to allowed domains, while providing flexibility to exclude specific routes or handle token expiration.
+Caching HTTP responses can significantly improve the speed and efficiency of your application by avoiding repeated requests for the same data. The `cacheInterceptor` automates this process, allowing you to control which requests are cached, for how long, and in which storage engine (memory, localStorage, or sessionStorage).
 
-## How It Works
+## How to use
+Register the interceptor and `CacheService` in your Angular application's providers:
 
 > **Alert**
-> [JwtService](/services/jwt) (@ngxoneforall/services) is a mandatory dependency for JwtInterceptor. Please include that as well.
-
-The `jwtInterceptor` operates as an Angular `HttpInterceptorFn`, intercepting outgoing HTTP requests and conditionally appending the JWT to the request headers. Its workflow includes:
-
-1. **Platform Check**: Ensures interception only occurs in browser environments.
-2. **Configuration Retrieval**: Fetches settings such as the authentication scheme, header name, allowed domains, and excluded routes from the `JwtService`.
-3. **Token Extraction**: Obtains the JWT from the `JwtService`.
-4. **Domain and Route Filtering**: 
-    - **Allowed Domains**: Only attaches the token to requests targeting specified domains.
-    - **Excluded Routes**: Skips token attachment for routes explicitly excluded.
-5. **Token Validation**: 
-    - Throws an error if a token is required but missing.
-    - Optionally skips adding expired tokens.
-
-## Usage Example
-
-You need to include `JwtService` as well with Interceptor. The configuration options can be provided in the service
-
-Register these in your Angular application's providers:
+> [CacheService](/services/cache) (`@ngx-oneforall/services`) is a required dependency for the CacheInterceptor. Make sure to provide it in your application.
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { jwtInterceptor } from '@ngx-oneforall/interceptors';
-import { JwtService } from '@ngx-oneforall/services';
+import { withCacheInterceptor } from '@ngx-oneforall/interceptors';
+import { provideCacheService } from '@ngx-oneforall/services';
 
 @NgModule({
   providers: [
-    provideJwtService({
-        tokenGetter: () => localStorage.get('access_token'),
-        errorOnNoToken: true,
-        allowedDomains: ['ngxoneforall.com', /gatherbits.com\/*/]
-        ...Other options
-    }),
-    { provide: HTTP_INTERCEPTORS, useValue: jwtInterceptor, multi: true }
+     provideCacheService(),,
+    { provide: HTTP_INTERCEPTORS, useValue: withCacheInterceptor(), multi: true }
   ]
 })
 export class AppModule {}
 ```
 
-or 
+or provide it in app configuration:
 
 ```typescript
-import { provideHttpClient, withInterceptors} from '@angular/common/http';
-import { jwtInterceptor } from '@ngx-oneforall/interceptors';
-
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideJwtService({
-        tokenGetter: () => localStorage.get('access_token'),
-        errorOnNoToken: true,
-        allowedDomains: ['ngxoneforall.com', /gatherbits.com\/*/]
-        ...Other options
-    }),
-    provideHttpClient(withInterceptors([jwtInterceptor]))
-  ]
-}
+    provideCacheService(),
+    provideHttpClient(
+      withInterceptors([withCacheInterceptor()])
+    ),
+  ],
+};
+```
+## Strategies
+The `cacheInterceptor` supports two main caching strategies:
+
+### 1. Manual (Default)
+
+By default, the interceptor does **not** cache any requests unless explicitly instructed. To cache a specific request, provide the `useCache` context:
+
+```typescript
+this.http.get<Todo[]>('https://jsonplaceholder.typicode.com/todos', {
+  context: useCache(),
+});
 ```
 
-## Configuration Options
+This approach gives you fine-grained control over which requests are cached.
 
-The interceptor supports several configuration options via the `JwtService`:
+### 2. Auto
 
-- **authScheme**: Prefix for the token (default: `'Bearer '`).
-- **headerName**: Name of the header to set (default: `'Authorization'`).
-- **allowedDomains**: Array of domains or regular expressions where the token should be attached.
+With the **auto** strategy enabled, the interceptor automatically caches all GET requests that expect a JSON response. No additional context is required—caching happens transparently for all eligible requests.
+
+You can enable the auto strategy via configuration when registering the interceptor:
+
+```typescript
+withCacheInterceptor('auto')
+```
+
+Choose the strategy that best fits your application's needs for flexibility or convenience.
+
+## Options
+You can customize caching behavior for individual requests by passing options to the `useCache` context. These options override the global settings of the cache service for that specific request:
+
 > **Alert**
-> If no option is provided, then all domains are allowed by default.
-
-    > **Warning**
-    > The current origin is allowed by default as well.
-
-- **skipUrls**: Array of URLs or regex patterns to exclude from token attachment.
-- **errorOnNoToken**: Throws an error if no token is available.
-- **skipAddingIfExpired**: Skips adding the token if it is expired.
-
-## Benefits of Using jwtInterceptor
-
-- **Automated Token Management**: Eliminates manual token handling for HTTP requests.
-- **Fine-Grained Control**: Easily configure which requests should include the JWT.
-- **Enhanced Security**: Ensures tokens are only sent to trusted domains and routes.
-- **Seamless Integration**: Works transparently with Angular's HTTP client.
-
-By integrating the `jwtInterceptor` into your Angular application, you can significantly improve the security and maintainability of your authentication logic, providing a seamless experience for both developers and users.
+> By default, the global settings of cache service are used.
 
 
+| Option        | Type                                                  | Description                                                                                                  |
+|--------------|-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| enabled      | `boolean`                                             | Enables or disables caching for this request. Set to `false` to bypass cache even if globally enabled.       |
+| key          | `string` or `(req: HttpRequest<unknown>) => string`   | Custom cache key for this request. Useful for differentiating cache entries or dynamic key generation.        |
+| context      | `HttpContext`                                         | Allows passing a custom `HttpContext` for advanced scenarios.                                                |
+| storage      | `'memory' \| 'localStorage' \| 'sessionStorage'`      | Selects the storage engine for this request's cache. Overrides the global storage setting.                   |
+| ttl          | `number`                                              | Time-to-live for the cache entry in milliseconds. Overrides the global TTL for this request.                 |
+| storagePrefix| `string`                                              | Custom prefix for cache keys in storage. Useful for namespacing or versioning cache entries.                 |
+| version      | `string`                                              | Version identifier for the cache entry. Changing the version will invalidate previous cache entries.         |
 
-Explore a live demonstration of cookie management:
+**Example:**
+
+```typescript
+this.http.get<Todo[]>('https://api.example.com/todos', {
+  context: useCache({
+    enabled: true,
+    key: (req) => `todos-${req.params.get('userId')}`,
+    ttl: 3600
+  }),
+});
+```
+
+This flexibility lets you fine-tune caching on a per-request basis.
+
+## Demo
+
+Explore a live demonstration of cache interceptor:
 
 {{ NgDocActions.demo("CacheInterceptorServiceComponent") }}
