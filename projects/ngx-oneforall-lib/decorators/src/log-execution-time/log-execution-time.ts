@@ -9,7 +9,10 @@ export function LogExecutionTime(label?: string): MethodDecorator {
       const result = originalMethod.apply(this, args);
 
       // Handle both synchronous and asynchronous methods
-      if (result instanceof Promise || result.constructor.name === 'Promise') {
+      if (
+        result instanceof Promise ||
+        result?.constructor?.name === 'Promise'
+      ) {
         return result.finally(() => {
           const end = performance.now();
           console.log(
