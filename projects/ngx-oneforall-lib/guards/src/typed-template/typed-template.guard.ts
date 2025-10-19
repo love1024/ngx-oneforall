@@ -8,7 +8,7 @@ type TypedContext<T> = T & { $implicit: T; typedTemplate: T };
 export class TypedTemplateDirective<T> {
   typedTemplate = input<T>();
 
-  private template = inject(TemplateRef<TypedContext<T>>);
+  public template = inject(TemplateRef<TypedContext<T>>);
 
   static ngTemplateGuard_typedTemplate = 'binding' as const;
 
