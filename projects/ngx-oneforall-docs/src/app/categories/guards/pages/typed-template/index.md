@@ -1,72 +1,94 @@
 
 
-Unsaved changes guards are essential for protecting users from accidentally losing their work when navigating away from a page with unsaved modifications. These guards are commonly used in forms, editors, or any interactive components where users can input or modify data.
 
-#### How to Use
+The `TypedTemplateDirective` enables strict type safety for Angular templates, allowing you to define and enforce the shape of the context passed to an `ng-template`. This approach improves maintainability and reduces runtime errors by leveraging TypeScript's type system directly within your templates.
 
-1. **Register the Guard in Route Configuration**  
-    Add the unsaved changes guard to the `canDeactivate` property of the relevant route:
-    ```typescript {4}
-    {
-      path: '/form',
-      canDeactivate: [
-         unsavedChangesGuard()
-      ]
-    }
-    ```
+---
 
-2. **Implement the `HasUnsavedChanges` Interface**  
-    In the component that should be protected, implement the `HasUnsavedChanges` interface:
-    ```typescript
-    export class UnsavedChangesDemoComponent implements HasUnsavedChanges {
-      ...
-      hasUnsavedChanges() {
-         return true;
-      }
-    }
-    ```
+### Overview
 
-3. **Customize the `hasUnsavedChanges` Method**  
-    Define the logic within `hasUnsavedChanges` to determine if there are unsaved changes. This method can return a boolean, a `Promise`, or an `Observable`:
-    > **Note** The guard supports synchronous and asynchronous checks.
-    
-    ```typescript
-    export class UnsavedChangesDemoComponent implements HasUnsavedChanges {
-      ...
-      hasUnsavedChanges(): Observable<boolean> {
-         // Example: resolve after 3 seconds
-         return timer(3000).pipe(map(() => true));
-      }
-    }
-    ```
+With the `TypedTemplateDirective`, you can bind a type to an `ng-template` context, ensuring that only the specified properties are accessible inside the template. This is especially useful for complex UI components, reusable templates, and scenarios where context shape consistency is critical.
 
-#### Use Cases
-- Preventing navigation away from a form with unsaved data.
-- Alerting users before closing a tab or browser window if changes haven't been saved.
-- Guarding against accidental loss of progress in multi-step wizards or editors.
-- Providing a consistent user experience across different routes or modules that involve user input.
+---
 
-#### Live Demo
-> **Warning**
-> Note that this demo will not block you from moving away.
+### How to Use
+
+#### 1. Import the Directive
+
+First, import the directive into your component:
+
+```typescript
+import { TypedTemplateDirective } from '@ngx-oneforall/guards';
+```
+
+#### 2. Define a Typed Context
+
+Create an interface representing the context you want to pass to your template:
+
+```typescript
+interface User {
+  id: number;
+  fullName: string;
+  years: number;
+}
+```
+
+#### 3. Define a property in your TS
+This is just a getter which returns an empty object typecased to the required context type.
+
+```typescript
+get userType() {
+  return {} as User;
+}
+```
+
+#### 4. Apply the Directive in Your Template
+
+Use the directive on an `ng-template`, binding the desired type. The context provided to the template will be strictly typed:
+
+```html
+<ng-template
+  #userTemplate
+  let-fullName="fullName"
+  let-years="years"
+  [typedTemplate]="userType">
+  <div class="user-card">
+    <span class="label">Full Name:</span>
+    <span class="value">{{ fullName }}</span>
+    <br />
+    <span class="label">Age:</span>
+    <span class="value">{{ years }}</span>
+  </div>
+</ng-template>
+```
+
+---
+
+### Benefits
+
+- **Type Safety:** Only properties defined in your interface are accessible within the template.
+- **Clarity:** Template context is explicit, reducing ambiguity and improving code readability.
+- **Maintainability:** Changes to context shape are enforced by TypeScript, minimizing runtime errors.
+
+---
+
+### Example Use Cases
+
+- Rendering user profiles, cards, or lists with a consistent context shape.
+- Building reusable templates for dashboards, tables, or detail views.
+- Enforcing context contracts in shared or library components.
+
+---
+
+### Live Demo
 
 {{ NgDocActions.demo("TypedTemplateGuardDemoComponent") }}
 
+---
 
+### Customization
 
+You can define any interface for your context, and the directive will enforce its shape within the template. This flexibility allows you to tailor templates for a wide range of scenarios while maintaining strict type contracts.
 
-#### Customizing the Confirmation Message
-The unsaved changes guard allows you to override the default confirmation message. By supplying a custom message, you can tailor the prompt to fit the context of your application or provide more specific guidance to users. This flexibility ensures that users receive clear and relevant information before making a decision to leave the page.
-
-
-#### Example
-```typescript {4}
-  {
-    path: '/form',
-    canDeactivate: [
-      unsavedChangesGuard('The form changes will be lost. Are you sure?')
-    ]
-  }
-```
-
+---
 
