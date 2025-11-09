@@ -1,4 +1,4 @@
-import { Observable, of, shareReplay, tap } from 'rxjs';
+import { finalize, Observable, of, shareReplay, tap } from 'rxjs';
 import { CacheStorageType } from '../../../services/src/cache/cache-provider';
 import { getStorageEngine } from '../../../services/src/cache/cache.util';
 import { StorageTransformers } from '../../../services/src/storage/transformers/storage-transformer';
@@ -55,6 +55,7 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
       (target?.constructor?.name || 'ROOT') + '-' + propertyKey;
     const storageKey = options.storageKey;
     const cacheService = getStorageEngine(options.storage);
+    const pendingRequests: CacheData<Observable<unknown>>[] = [];
     const originalMethod = propertyDescriptor.value;
     if (!originalMethod) {
       return;
@@ -100,6 +101,9 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
       let foundCachedItem = cachedItems.find(item =>
         options.cacheMatcher(item.parameters, parametersHash)
       );
+      const foundPendingRequest = pendingRequests.find(item =>
+        options.cacheMatcher(item.parameters, parametersHash)
+      );
 
       // If item is found, user has not provided null for ttl, and time is expired
       if (
@@ -115,10 +119,23 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
       if (foundCachedItem) {
         saveCachedItems();
         return of(foundCachedItem.response);
+      } else if (foundPendingRequest) {
+        return foundPendingRequest.response;
       } else {
         const response$ = (
           originalMethod.call(this, ...parameters) as Observable<unknown>
         ).pipe(
+          finalize(() => {
+            // Remove request from pending requests
+            const foundPendingRequest = pendingRequests.find(item =>
+              options.cacheMatcher(item.parameters, parametersHash)
+            );
+            if (foundPendingRequest) {
+              pendingRequests.splice(
+                pendingRequests.indexOf(foundPendingRequest)
+              );
+            }
+          }),
           tap((res: unknown) => {
             if (
               options.maxItems !== null &&
@@ -138,6 +155,12 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
           }),
           shareReplay({ bufferSize: 1, refCount: true })
         );
+
+        pendingRequests.push({
+          parameters,
+          response: response$,
+          savedAt: Date.now(),
+        });
 
         return response$;
       }
