@@ -13,7 +13,7 @@ jest.mock('../../../services/src/cache/cache.util', () => ({
   getStorageEngine: () => mockStorage,
 }));
 
-import { Cache } from './cache';
+import { Cache, DEFAULT_PARAMS_HASHER } from './cache';
 import { Observable, of, delay } from 'rxjs';
 
 describe('Cache Decorator (with mock component)', () => {
@@ -160,5 +160,73 @@ describe('Cache Decorator (with mock component)', () => {
     const desc: PropertyDescriptor = {};
     const decorator = Cache();
     expect(() => decorator({}, 'missing', desc)).not.toThrow();
+  });
+
+  it('should call enforceMaxItems and trim cache when maxItems is exceeded', () => {
+    mockStorage._store['CACHE_DECORATOR'] = {
+      data: {
+        'MockComponent-getLimited': [
+          {
+            parameters: [3],
+            response: 3,
+          },
+          {
+            parameters: [3],
+            response: 3,
+          },
+          {
+            parameters: [3],
+            response: 3,
+          },
+          {
+            parameters: [3],
+            response: 3,
+          },
+        ],
+      },
+    };
+    const comp = new MockComponent();
+
+    // Fill cache with maxItems (2) + 1
+    comp.getLimited(100).subscribe();
+    comp.getLimited(200).subscribe();
+    comp.getLimited(300).subscribe();
+
+    // The cache should only keep the last 2 items
+    const lastCache = mockStorage._store['CACHE_DECORATOR'];
+    const data = lastCache.data as Record<string, unknown[]>;
+    const cachedItems = Object.values(data)[Object.values(data).length - 1];
+    expect(cachedItems.length).toBe(2);
+    expect(cachedItems).toEqual(
+      expect.not.arrayContaining([expect.objectContaining({ parameters: [1] })])
+    );
+  });
+
+  it("should use 'ROOT' as cacheKey if target.constructor.name is not available", () => {
+    // Create a dummy target without a constructor name
+    const dummyTarget = Object.create(null);
+    const desc: PropertyDescriptor = {
+      value: jest.fn(() => of(42)),
+    };
+
+    // Patch getStorageEngine to return our mockStorage
+    const decorator = Cache();
+    decorator(dummyTarget, 'someMethod', desc);
+
+    // Call the decorated method
+    desc.value(1, 2).subscribe((result: number) => {
+      expect(result).toBe(42);
+    });
+
+    // The cacheKey should be 'ROOT-someMethod'
+    // So the storage should have a data property with that key
+    const lastCache = mockStorage._store['CACHE_DECORATOR'];
+    expect(Object.keys(lastCache.data)).toContain('ROOT-someMethod');
+  });
+
+  it('should use param directly in DEFAULT_PARAMS_HASHER if param is undefined', () => {
+    const params = [1, undefined, 'test'];
+    const result = DEFAULT_PARAMS_HASHER(params);
+    expect(result).toEqual([1, undefined, 'test']);
   });
 });
