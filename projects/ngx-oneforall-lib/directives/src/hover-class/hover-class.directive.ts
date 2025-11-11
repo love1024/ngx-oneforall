@@ -9,6 +9,7 @@ import {
   Renderer2,
   runInInjectionContext,
   signal,
+  VERSION,
 } from '@angular/core';
 
 @Directive({
@@ -33,16 +34,30 @@ export class HoverClassDirective {
     afterNextRender(() => {
       this.setClasses();
       runInInjectionContext(this.environment, () => {
-        effect(() => {
-          this.setClasses();
-        });
-
-        effect(() => {
-          // Remove classes if disabled
-          if (!this.hoverClassEnabled()) {
-            this.classesToToggle.set([]);
+        effect(
+          () => {
+            this.setClasses();
+          },
+          {
+            // Set allowSignalWrites to support Angular < v19
+            // Set to undefined to avoid warning on newer versions
+            allowSignalWrites: VERSION.major < '19' || undefined,
           }
-        });
+        );
+
+        effect(
+          () => {
+            // Remove classes if disabled
+            if (!this.hoverClassEnabled()) {
+              this.classesToToggle.set([]);
+            }
+          },
+          {
+            // Set allowSignalWrites to support Angular < v19
+            // Set to undefined to avoid warning on newer versions
+            allowSignalWrites: VERSION.major < '19' || undefined,
+          }
+        );
       });
     });
   }
