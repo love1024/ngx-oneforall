@@ -15,18 +15,22 @@ interface Response {
     <div class="cache-demo-container">
       <h2>Cache Decorator Demo</h2>
       <p>
-        This demo demonstrates the <code>@Cache</code> decorator in action. The method below simulates a data fetch with a delay, but repeated calls with the same parameter are served instantly from cache.
+        This demo demonstrates the <code>Cache</code> decorator in action. The
+        method below simulates a data fetch with a delay, but repeated calls
+        with the same parameter are served instantly from cache within
+        <strong>5 seconds</strong>.
       </p>
       <button (click)="fetchData('Angular')">Fetch "Angular"</button>
       <button (click)="fetchData('RxJS')">Fetch "RxJS"</button>
       <button (click)="clear()">Clear Results</button>
-      @if(result()) {
+      @if (result()) {
         <h3>Result:</h3>
         <pre>{{ result() | json }}</pre>
       }
 
       <div class="note">
-        <strong>Note:</strong> Try clicking the same button multiple times to see caching in effect!
+        <strong>Note:</strong> Try clicking the same button multiple times to
+        see caching in effect!
       </div>
     </div>
   `,

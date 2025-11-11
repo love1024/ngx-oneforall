@@ -1,64 +1,72 @@
-The `debounce` decorator is a powerful utility in Angular that helps to limit the rate at which a function is executed. This is particularly useful in scenarios where frequent user interactions, such as typing or scrolling, can trigger a function multiple times in quick succession. By using the `debounce` decorator, you can ensure that the function is executed only after a specified delay, improving performance and user experience.
+The `Cache` decorator in Angular is a robust utility designed to optimize data retrieval and improve application performance by transparently caching the results of method calls. This decorator is particularly useful for methods that return observables, such as those making HTTP requests or performing expensive computations, ensuring that repeated calls with the same parameters return cached results instead of triggering redundant operations.
 
-### How the `debounce` Decorator Works
+### How the `Cache` Decorator Works
 
-The `debounce` decorator wraps a method and delays its execution until after a specified amount of time has passed since the last time it was invoked. If the method is called again before the delay period ends, the timer resets. This behavior is ideal for handling events like:
+When applied to a method, the `Cache` decorator intercepts calls to that method and manages a cache of responses based on the method's input parameters. If a cached response exists and is still valid (i.e., not expired), the decorator returns the cached value as an observable. If not, it executes the original method, caches the result, and then returns it. This mechanism reduces unnecessary network requests or computations, leading to faster response times and reduced resource consumption.
 
-- Search input fields
-- Button clicks
-- Window resize events
+### Key Features
+
+- **Parameter-Based Caching**: The decorator caches results based on the method's input parameters, ensuring that different parameter sets are cached independently.
+- **Time-to-Live (TTL) Support**: You can specify how long a cached item remains valid. Once expired, the cache is refreshed on the next method call.
+- **Storage Flexibility**: Supports multiple storage engines (e.g., in-memory, localStorage, sessionStorage), allowing you to choose the most appropriate storage for your use case.
+- **Custom Cache Keys and Matching**: Offers options to customize how cache keys are generated and how parameter equality is determined.
+- **Versioning**: Supports cache versioning, making it easy to invalidate old caches when the underlying data structure or logic changes.
+- **Maximum Items**: Allows limiting the number of cached items to prevent unbounded memory or storage usage.
+- **Pending Request Deduplication**: Ensures that concurrent calls with the same parameters share the same observable, preventing duplicate requests.
 
 ### Usage Example
 
-Below is an example of how to use the `debounce` decorator in an Angular component:
+Below is an example of how to use the `Cache` decorator in an Angular service:
 
 ```typescript
-import { Component } from '@angular/core';
-import { debounce } from 'ngx-oneforall';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Cache } from 'ngx-oneforall';
 
-@Component({
-  selector: 'app-debounce-demo',
-  template: `
-    <div>
-      <h2>Debounce Decorator Example</h2>
-      <input
-        type="text"
-        placeholder="Type something..."
-        (input)="onInputChange($event)" />
-      <p>Debounced Value: {{ debouncedValue }}</p>
-    </div>
-  `,
-})
-export class DebounceDemoComponent {
-  debouncedValue: string = '';
-
-  @debounce(300) // 300ms delay
-  onInputChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.debouncedValue = input.value;
-    console.log('Debounced Input:', this.debouncedValue);
+@Injectable({ providedIn: 'root' })
+export class DataService {
+  @Cache({ ttl: 60000, maxItems: 10 }) // Cache for 60 seconds, up to 10 items
+  fetchData(param: string): Observable<any> {
+    // Typically, this would be an HTTP request
+    return this.http.get(`/api/data/${param}`);
   }
 }
 ```
 
-### Key Points in the Example
+### Configuration Options
 
-1. **Decorator Usage**: The `@debounce(300)` decorator is applied to the `onInputChange` method, specifying a delay of 300 milliseconds.
-2. **Input Handling**: The `onInputChange` method is triggered by the `input` event on the text field. However, the actual execution of the method is delayed by the debounce timer.
-3. **Improved Performance**: Without the debounce decorator, the method would be called on every keystroke, potentially leading to performance issues. The decorator ensures that the method is executed only after the user stops typing for 300 milliseconds.
+The `Cache` decorator accepts a configuration object with the following options:
+
+- **storage**: Type of storage to use (`'memory'`, `'localStorage'`, `'sessionStorage'`, etc.).
+- **storageKey**: Key under which cached data is stored.
+- **ttl**: Time-to-live in milliseconds for each cached item.
+- **itemCacheKey**: Custom cache key for the method.
+- **maxItems**: Maximum number of items to cache.
+- **version**: Cache version string for invalidation.
+- **cacheMatcher**: Custom function to compare parameter sets.
+- **paramsHasher**: Custom function to hash parameters for cache keys.
+
+### Benefits of Using the `Cache` Decorator
+
+- **Performance Optimization**: Reduces redundant data fetching and computation, leading to faster and more responsive applications.
+- **Resource Efficiency**: Minimizes network traffic and server load by reusing cached responses.
+- **Simplified Codebase**: Eliminates the need for manual cache management logic, promoting cleaner and more maintainable code.
+- **Consistency**: Ensures consistent data retrieval behavior across your application.
+
+### Best Practices
+
+- Use the `ttl` option to ensure cached data remains fresh and relevant.
+- Limit the number of cached items with `maxItems` to avoid excessive memory or storage usage.
+- Leverage versioning to invalidate outdated caches after significant changes.
+- Choose the appropriate storage engine based on your application's requirements and data sensitivity.
 
 ### Live Demonstration
 
-Explore a live demonstration of the `debounce` decorator in action:
+Explore a live demonstration of the `cache` decorator in action:
 
-{{ NgDocActions.demo("CacheServiceDemoComponent") }}
-
-### Benefits of Using the `debounce` Decorator
-
-- **Performance Optimization**: Reduces the frequency of method calls, especially for high-frequency events.
-- **Cleaner Code**: Eliminates the need to manually implement debounce logic in your methods.
-- **Reusability**: The decorator can be reused across multiple components and methods, promoting consistency.
+{{ NgDocActions.demo("CacheDecoratorComponent") }}
 
 ### Conclusion
 
-The `debounce` decorator is a simple yet effective tool for managing high-frequency events in Angular applications. By incorporating it into your codebase, you can enhance both performance and maintainability. Try it out in your projects and experience the difference it makes!
+The `Cache` decorator is a powerful tool for Angular developers seeking to enhance application performance and user experience. By abstracting away the complexities of caching, it allows you to focus on business logic while ensuring efficient and reliable data access. Integrate the `Cache` decorator into your services to take full advantage of its capabilities and streamline your application's data management.
+

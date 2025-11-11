@@ -1,13 +1,13 @@
 import { NgDocPage } from '@ng-doc/core';
 import DecoratorsCategory from '../../ng-doc.category';
-import { CacheServiceDemoComponent } from '../../../services/pages/cache/demo/cache-service-demo.component';
+import { CacheDecoratorComponent } from './demo/cache-decorator-demo.component';
 
 const CachePage: NgDocPage = {
   title: 'Cache',
   mdFile: './index.md',
   category: DecoratorsCategory,
   demos: {
-    CacheServiceDemoComponent,
+    CacheDecoratorComponent,
   },
 };
 
