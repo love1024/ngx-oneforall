@@ -5,13 +5,6 @@ import { Pipe, PipeTransform } from '@angular/core';
   pure: true,
 })
 export class TruncatePipe implements PipeTransform {
-  /**
-   * Truncates a string to a given length and optionally adds an ellipsis.
-   * @param value - The string to truncate.
-   * @param limit - The maximum length (default: 100).
-   * @param completeWords - Whether to truncate at whole words (default: false).
-   * @param ellipsis - The string to append after truncation (default: '…').
-   */
   transform(
     value: string | null | undefined,
     limit = 100,
@@ -27,10 +20,8 @@ export class TruncatePipe implements PipeTransform {
     if (completeWords) {
       const lastSpace = truncated.lastIndexOf(' ');
       if (lastSpace > 0) {
-        // cut at last whole word
         truncated = truncated.slice(0, lastSpace);
       } else {
-        // no whole-word fit (space at index 0 or no spaces) -> nothing meaningful to show
         truncated = '';
       }
     }

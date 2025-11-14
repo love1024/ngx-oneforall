@@ -1,7 +1,9 @@
+import {
+  CacheStorageType,
+  getStorageEngine,
+  StorageTransformers,
+} from '@ngx-oneforall/services';
 import { finalize, Observable, of, shareReplay, tap } from 'rxjs';
-import { CacheStorageType } from '../../../services/src/cache/cache-provider';
-import { getStorageEngine } from '../../../services/src/cache/cache.util';
-import { StorageTransformers } from '../../../services/src/storage/transformers/storage-transformer';
 
 interface CacheData<T> {
   parameters: unknown[];

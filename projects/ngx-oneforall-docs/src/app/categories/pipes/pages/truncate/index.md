@@ -1,62 +1,52 @@
+## TruncatePipe
 
+The `TruncatePipe` is a custom Angular pipe that shortens long strings to a specified character limit. It can optionally preserve whole words and append a customizable ellipsis or suffix. This is useful for displaying previews or summaries of longer text content in user interfaces, such as article snippets, titles, or descriptions where space is limited.
 
-The `memoize` pipe is a powerful utility in Angular that optimizes performance by caching the results of expensive computations. It ensures that a function is only executed when its input changes, thereby reducing redundant calculations and improving application efficiency.
+### Usage
 
-#### What is Memoization?
+Apply the pipe in Angular templates:
 
-Memoization is a programming technique used to speed up function execution by storing the results of expensive function calls and returning the cached result when the same inputs occur again. This is particularly useful in scenarios where the same computation is performed repeatedly with identical inputs.
-
-#### Why Use the Memoize Pipe?
-
-In Angular applications, pipes are often used to transform data in templates. However, some transformations can be computationally intensive, especially when dealing with large datasets or complex calculations. The `memoize` pipe helps mitigate this by caching the results of these transformations, ensuring that the function is only re-evaluated when the input changes.
-
-#### How Does the Memoize Pipe Work?
-
-The `memoize` pipe wraps a function and tracks its input arguments. If the same input is passed again, the pipe retrieves the result from its cache instead of re-executing the function. This behavior is particularly beneficial in Angular's change detection mechanism, where templates are re-evaluated frequently.
-
-#### Example Usage
-
-Below is an example of how to use the `memoize` pipe in an Angular application:
-
-```html name="component.html" file="./demo/memoize-demo/snippets.html" 
-
+```html
+{{ longText | truncate:limit:completeWords:ellipsis }}
 ```
 
+- **longText**: The string to be truncated.
+- **limit** (optional): Maximum number of characters to retain. Defaults to `100`.
+- **completeWords** (optional): If `true`, truncation will not cut words in half; instead, it trims to the last full word within the limit. Defaults to `false`.
+- **ellipsis** (optional): String to append to the truncated text. Defaults to `'…'`.
 
+### Parameters
 
-```typescript name="component.ts"
-// Component
-export class MemoizeDemoComponent {
-    value = 42;
+- `value: string | null | undefined`  
+    The input string to be truncated. If `null` or `undefined`, an empty string is returned.
+- `limit: number`  
+    Maximum number of characters to display before truncation. If less than or equal to zero, only the ellipsis is returned.
+- `completeWords: boolean`  
+    If `true`, ensures truncation does not split words. Trims to the last space within the limit.
+- `ellipsis: string`  
+    String appended to the end of the truncated text. Defaults to the Unicode ellipsis character.
 
-    expensiveCalculation(input: number): number {
-        console.log('Expensive calculation executed');
-        return input * 2; // Simulate a costly operation
-    }
-}
+### Behavior
+
+- If the input string is shorter than or equal to the specified limit, it is returned unchanged.
+- If `completeWords` is enabled and the truncation point falls in the middle of a word, the pipe trims back to the last full word.
+- If no complete word fits within the limit, only the ellipsis is returned.
+- The pipe is marked as `pure`, so it only recalculates when its inputs change.
+
+### Example
+
+```html
+<!-- Truncate to 20 characters, preserving whole words, and using a custom ellipsis -->
+{{ 'Angular pipes are powerful tools for transforming data.' | truncate:20:true:'...' }}
+<!-- Output: "Angular pipes are..." -->
 ```
 
-In this example, the `expensiveCalculation` function is executed only when the `value` changes. For subsequent evaluations with the same `value`, the cached result is used, avoiding redundant computations. Additionally, the `this` context is passed to the function, ensuring it has access to the necessary scope if required.
+> See the [Angular Pipes Guide](https://angular.io/guide/pipes) for more information.
+
+---
 
 #### Live Demo
 
 Explore this example in a live demonstration:
 
-{{ NgDocActions.demo("MemoizeDemoComponent") }}
-
-#### Benefits of Using the Memoize Pipe
-
-- **Performance Optimization**: Reduces redundant computations, especially in large-scale applications.
-- **Improved Responsiveness**: Enhances the user experience by minimizing delays caused by expensive operations.
-- **Ease of Use**: Integrates seamlessly into Angular templates with minimal configuration.
-
-#### When to Use the Memoize Pipe?
-
-The `memoize` pipe is ideal for scenarios where:
-
-- The same transformation is applied repeatedly to identical inputs.
-- The transformation involves computationally expensive operations.
-- Performance bottlenecks are observed due to frequent recalculations.
-
-By leveraging the `memoize` pipe, you can ensure that your Angular application remains performant and responsive, even under heavy computational loads.
-
+{{ NgDocActions.demo("TruncatePipeDemoComponent") }}

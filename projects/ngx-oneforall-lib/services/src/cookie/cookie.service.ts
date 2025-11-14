@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { OnlyInBrowser } from '@ngx-oneforall/decorators';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { OnlyInBrowser } from '../shared/only-in-browser';
 
 export type SameSiteOption = 'Strict' | 'Lax' | 'None';
 
@@ -17,6 +18,8 @@ export interface CookieOptions {
 
 @Injectable()
 export class CookieService {
+  private readonly platformId = inject(PLATFORM_ID);
+
   @OnlyInBrowser()
   get(name: string): string {
     name = encodeURIComponent(name);
@@ -117,5 +120,9 @@ export class CookieService {
       sameSite: options?.sameSite ?? 'Lax',
       ...options,
     } satisfies CookieOptions;
+  }
+
+  private isBrowser() {
+    return isPlatformBrowser(this.platformId) ?? false;
   }
 }

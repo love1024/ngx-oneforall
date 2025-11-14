@@ -19,6 +19,15 @@ class TestStorageEngine extends StorageEngine {
     this.store = {};
   }
 
+  length(): number {
+    return Object.keys(this.store).length;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  key(index: number): string | null {
+    return '';
+  }
+
   protected getItem(key: string): string | undefined {
     return this.store[key];
   }
