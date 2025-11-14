@@ -6,8 +6,7 @@ The `TruncatePipe` is a custom Angular pipe that shortens long strings to a spec
 
 Apply the pipe in Angular templates:
 
-```html
-{{ longText | truncate:limit:completeWords:ellipsis }}
+```html file="./snippets.html"#L1-L1
 ```
 
 - **longText**: The string to be truncated.
@@ -35,10 +34,7 @@ Apply the pipe in Angular templates:
 
 ### Example
 
-```html
-<!-- Truncate to 20 characters, preserving whole words, and using a custom ellipsis -->
-{{ 'Angular pipes are powerful tools for transforming data.' | truncate:20:true:'...' }}
-<!-- Output: "Angular pipes are..." -->
+```html file="./snippets.html"#L3-L3
 ```
 
 > See the [Angular Pipes Guide](https://angular.io/guide/pipes) for more information.
