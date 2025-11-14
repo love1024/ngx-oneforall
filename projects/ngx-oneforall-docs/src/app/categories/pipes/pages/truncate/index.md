@@ -1,5 +1,3 @@
-## TruncatePipe
-
 The `TruncatePipe` is a custom Angular pipe that shortens long strings to a specified character limit. It can optionally preserve whole words and append a customizable ellipsis or suffix. This is useful for displaying previews or summaries of longer text content in user interfaces, such as article snippets, titles, or descriptions where space is limited.
 
 ### Usage
