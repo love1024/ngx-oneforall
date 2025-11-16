@@ -1,9 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { getPlatform, PLATFORM_ID } from '@angular/core';
-
-function getCurrentPlatformId() {
-  return getPlatform()?.injector.get(PLATFORM_ID);
-}
+import { getCurrentPlatformId } from './platform-context';
 
 export function OnlyInBrowser() {
   return function (
