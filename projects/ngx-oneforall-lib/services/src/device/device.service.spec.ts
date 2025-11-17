@@ -30,8 +30,16 @@ describe('DeviceService', () => {
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).ontouchstart = true;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (navigator as any).userAgentData = undefined;
+      // Start with an empty userAgent and no userAgentData; tests will set
+      // specific UA values when needed.
+      Object.defineProperty(navigator, 'userAgent', {
+        value: '',
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'userAgentData', {
+        value: undefined,
+        configurable: true,
+      });
       service = TestBed.inject(DeviceService);
     });
 
@@ -39,7 +47,12 @@ describe('DeviceService', () => {
       expect(service).toBeTruthy();
     });
 
-    it('should return correct deviceInfo, deviceType, orientation', () => {
+    it('should return correct deviceInfo, deviceType, orientation', fakeAsync(() => {
+      // Ensure UA blank so touch detection controls mobile behavior
+      Object.defineProperty(navigator, 'userAgent', {
+        value: '',
+        configurable: true,
+      });
       // Simulate a mobile device
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -53,17 +66,26 @@ describe('DeviceService', () => {
       (window as any).ontouchstart = true;
       window.dispatchEvent(new Event('resize'));
 
-      // Wait for the event loop to process the event
-      setTimeout(() => {
-        expect(service.deviceInfo?.type).toBe('mobile');
-        expect(service.deviceInfo?.orientation).toBe('portrait');
-        expect(service.deviceType).toBe('mobile');
-        expect(service.orientation).toBe('portrait');
-      }, 0);
-    });
+      // Process the event
+      tick();
 
-    it('should return correct isMobile, isTablet, isDesktop', () => {
-      // Simulate a mobile device
+      expect(service.deviceInfo?.type).toBe('mobile');
+      expect(service.deviceInfo?.orientation).toBe('portrait');
+      expect(service.deviceType).toBe('mobile');
+      expect(service.orientation).toBe('portrait');
+    }));
+
+    it('should detect mobile when touch small', fakeAsync(() => {
+      // Recreate TestBed with mobile-like environment
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          DeviceService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+          { provide: DestroyRef, useValue: {} },
+        ],
+      });
+
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         value: 500,
@@ -72,46 +94,111 @@ describe('DeviceService', () => {
         writable: true,
         value: 900,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).ontouchstart = true;
+      Object.defineProperty(window, 'ontouchstart', {
+        value: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 1,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'userAgent', {
+        value: '',
+        configurable: true,
+      });
+
+      service = TestBed.inject(DeviceService);
       window.dispatchEvent(new Event('resize'));
+      tick();
 
-      setTimeout(() => {
-        expect(service.isMobile()).toBe(true);
-        expect(service.isTablet()).toBe(false);
-        expect(service.isDesktop()).toBe(false);
+      expect(service.isMobile()).toBe(true);
+      expect(service.isTablet()).toBe(false);
+      expect(service.isDesktop()).toBe(false);
+    }));
 
-        // Simulate a tablet device
-        Object.defineProperty(window, 'innerWidth', {
-          writable: true,
-          value: 800,
-        });
-        window.dispatchEvent(new Event('resize'));
+    it('should detect tablet when touch and large', fakeAsync(() => {
+      // Recreate TestBed with tablet-like environment
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          DeviceService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+          { provide: DestroyRef, useValue: {} },
+        ],
+      });
 
-        setTimeout(() => {
-          expect(service.isMobile()).toBe(false);
-          expect(service.isTablet()).toBe(true);
-          expect(service.isDesktop()).toBe(false);
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 800,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        writable: true,
+        value: 900,
+      });
+      Object.defineProperty(window, 'ontouchstart', {
+        value: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 2,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'userAgent', {
+        value:
+          'Mozilla/5.0 (iPad; CPU OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/604.1',
+        configurable: true,
+      });
 
-          // Simulate a desktop device
-          Object.defineProperty(window, 'innerWidth', {
-            writable: true,
-            value: 1200,
-          });
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (window as any).ontouchstart = false;
-          window.dispatchEvent(new Event('resize'));
+      service = TestBed.inject(DeviceService);
+      window.dispatchEvent(new Event('resize'));
+      tick();
 
-          setTimeout(() => {
-            expect(service.isMobile()).toBe(false);
-            expect(service.isTablet()).toBe(false);
-            expect(service.isDesktop()).toBe(true);
-          }, 0);
-        }, 0);
-      }, 0);
-    });
+      expect(service.isMobile()).toBe(false);
+      expect(service.isTablet()).toBe(true);
+      expect(service.isDesktop()).toBe(false);
+    }));
 
-    it('should return correct isPortrait and isLandscape', () => {
+    it('should detect desktop when non-touch and wide', fakeAsync(() => {
+      // Recreate TestBed with desktop-like environment
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          DeviceService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+          { provide: DestroyRef, useValue: {} },
+        ],
+      });
+
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 1200,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        writable: true,
+        value: 900,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 0,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'userAgent', {
+        value:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
+        configurable: true,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).ontouchstart;
+
+      service = TestBed.inject(DeviceService);
+      window.dispatchEvent(new Event('resize'));
+      tick();
+
+      expect(service.isMobile()).toBe(false);
+      expect(service.isTablet()).toBe(false);
+      expect(service.isDesktop()).toBe(true);
+    }));
+
+    it('should return correct isPortrait and isLandscape', fakeAsync(() => {
       // Portrait
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -123,50 +210,67 @@ describe('DeviceService', () => {
       });
       window.dispatchEvent(new Event('resize'));
 
-      setTimeout(() => {
-        expect(service.isPortrait()).toBe(true);
-        expect(service.isLandscape()).toBe(false);
+      tick();
 
-        // Landscape
-        Object.defineProperty(window, 'innerWidth', {
-          writable: true,
-          value: 900,
-        });
-        Object.defineProperty(window, 'innerHeight', {
-          writable: true,
-          value: 500,
-        });
-        window.dispatchEvent(new Event('resize'));
+      expect(service.isPortrait()).toBe(true);
+      expect(service.isLandscape()).toBe(false);
 
-        setTimeout(() => {
-          expect(service.isPortrait()).toBe(false);
-          expect(service.isLandscape()).toBe(true);
-        }, 0);
-      }, 0);
-    });
-
-    it('should emit deviceInfo$ and update deviceInfoSignal on resize', done => {
-      const sub = service.deviceInfo$.subscribe(info => {
-        if (info) {
-          expect(info.type).toBe('mobile');
-          expect(info.orientation).toBe('portrait');
-          sub.unsubscribe();
-        }
-        done();
+      // Landscape
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 900,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        writable: true,
+        value: 500,
       });
       window.dispatchEvent(new Event('resize'));
-    });
 
-    it('should emit deviceInfo$ and update deviceInfoSignal on orientationchange', done => {
-      const sub = service.deviceInfo$.subscribe(info => {
-        if (info) {
-          expect(info.orientation).toBe('portrait');
-          sub.unsubscribe();
-        }
-        done();
+      tick();
+
+      expect(service.isPortrait()).toBe(false);
+      expect(service.isLandscape()).toBe(true);
+    }));
+
+    it('should emit deviceInfo and update signal on resize', fakeAsync(() => {
+      // Ensure UA blank so touch detection controls mobile behavior
+      Object.defineProperty(navigator, 'userAgent', {
+        value: '',
+        configurable: true,
       });
+      // Simulate resize and assert deviceInfo updated
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 500,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        writable: true,
+        value: 900,
+      });
+      // keep mobile UA from beforeEach
+      window.dispatchEvent(new Event('resize'));
+
+      tick();
+
+      expect(service.deviceInfo?.type).toBe('mobile');
+      expect(service.deviceInfo?.orientation).toBe('portrait');
+    }));
+
+    it('should emit deviceInfo and update signal on orientationchange', fakeAsync(() => {
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 500,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        writable: true,
+        value: 900,
+      });
+
       window.dispatchEvent(new Event('orientationchange'));
-    });
+      tick();
+
+      expect(service.deviceInfo?.orientation).toBe('portrait');
+    }));
 
     it('should return correct deviceType, devices and orientation after resize event', fakeAsync(() => {
       Object.defineProperty(window, 'innerWidth', {
@@ -208,8 +312,10 @@ describe('DeviceService', () => {
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).ontouchstart = false;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (navigator as any).userAgentData = { mobile: true };
+      Object.defineProperty(navigator, 'userAgentData', {
+        value: { mobile: true },
+        configurable: true,
+      });
 
       window.dispatchEvent(new Event('resize'));
       tick();
@@ -227,8 +333,10 @@ describe('DeviceService', () => {
         writable: true,
         value: 600,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (navigator as any).userAgentData = undefined;
+      Object.defineProperty(navigator, 'userAgentData', {
+        value: undefined,
+        configurable: true,
+      });
 
       window.dispatchEvent(new Event('resize'));
       tick();
@@ -237,19 +345,40 @@ describe('DeviceService', () => {
     }));
 
     it('should return table if width is between 768 and 1024', fakeAsync(() => {
+      // Recreate TestBed with tablet-like environment
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          DeviceService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+          { provide: DestroyRef, useValue: {} },
+        ],
+      });
+
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         value: 800,
       });
+      // ensure height is large enough so minSide >= 768 for touch detection
       Object.defineProperty(window, 'innerHeight', {
         writable: true,
-        value: 600,
+        value: 900,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (window as any).ontouchstart;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (navigator as any).userAgentData = undefined;
+      Object.defineProperty(window, 'ontouchstart', {
+        value: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 2,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'userAgent', {
+        value:
+          'Mozilla/5.0 (iPad; CPU OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/604.1',
+        configurable: true,
+      });
 
+      service = TestBed.inject(DeviceService);
       window.dispatchEvent(new Event('resize'));
       tick();
 
@@ -257,6 +386,16 @@ describe('DeviceService', () => {
     }));
 
     it('should return desktop if width is more than or equal 1024', fakeAsync(() => {
+      // Recreate TestBed with desktop-like environment
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          DeviceService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+          { provide: DestroyRef, useValue: {} },
+        ],
+      });
+
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         value: 1024,
@@ -265,15 +404,166 @@ describe('DeviceService', () => {
         writable: true,
         value: 800,
       });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 0,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'userAgent', {
+        value:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
+        configurable: true,
+      });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (window as any).ontouchstart;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (navigator as any).userAgentData = undefined;
 
+      service = TestBed.inject(DeviceService);
       window.dispatchEvent(new Event('resize'));
       tick();
 
       expect(service.deviceInfo?.type).toBe('desktop');
+    }));
+
+    it('should detect iPadOS (Macintosh + touch points) as tablet', fakeAsync(() => {
+      // Recreate TestBed with iPadOS-like environment (Macintosh UA + touch points)
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          DeviceService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+          { provide: DestroyRef, useValue: {} },
+        ],
+      });
+
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 820,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        writable: true,
+        value: 1180,
+      });
+
+      // iPadOS 13+ reports as Macintosh but is touch-capable; maxTouchPoints > 1
+      Object.defineProperty(navigator, 'userAgent', {
+        value:
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)',
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 5,
+        configurable: true,
+      });
+      // ensure ontouchstart exists
+      Object.defineProperty(window, 'ontouchstart', {
+        value: true,
+        configurable: true,
+      });
+
+      service = TestBed.inject(DeviceService);
+
+      // trigger detection
+      window.dispatchEvent(new Event('resize'));
+      tick();
+
+      expect(service.deviceInfo?.type).toBe('tablet');
+    }));
+
+    it('should detect mobile when UA matches MOBILE_RE regex', fakeAsync(() => {
+      // Recreate TestBed with environment where UA indicates mobile
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          DeviceService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+          { provide: DestroyRef, useValue: {} },
+        ],
+      });
+
+      // Make window large so width-based detection would normally pick desktop
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 1200,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        writable: true,
+        value: 800,
+      });
+
+      // Provide a UA string that matches MOBILE_RE (Android.*Mobile / Mobile)
+      Object.defineProperty(navigator, 'userAgent', {
+        value:
+          'Mozilla/5.0 (Linux; Android 10; Pixel 3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Mobile Safari/537.36',
+        configurable: true,
+      });
+      // Ensure userAgentData doesn't override
+      Object.defineProperty(navigator, 'userAgentData', {
+        value: undefined,
+        configurable: true,
+      });
+      // ensure ontouchstart is present (optional)
+      Object.defineProperty(window, 'ontouchstart', {
+        value: true,
+        configurable: true,
+      });
+
+      service = TestBed.inject(DeviceService);
+
+      // trigger detection
+      window.dispatchEvent(new Event('resize'));
+      tick();
+
+      expect(service.deviceInfo?.type).toBe('mobile');
+    }));
+
+    it('should return tablet when touch device minSide >= 768 (touch fallback)', fakeAsync(() => {
+      // Recreate TestBed with a non-mobile UA so regex branches don't trigger
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          DeviceService,
+          { provide: PLATFORM_ID, useValue: 'browser' },
+          { provide: DestroyRef, useValue: {} },
+        ],
+      });
+
+      // Set window size so the smaller side is >= 768
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        value: 900,
+      });
+      Object.defineProperty(window, 'innerHeight', {
+        writable: true,
+        value: 800,
+      });
+
+      // Ensure UA is non-mobile and userAgentData not present
+      Object.defineProperty(navigator, 'userAgent', {
+        value:
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)',
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'userAgentData', {
+        value: undefined,
+        configurable: true,
+      });
+
+      // Ensure touch is detected (ontouchstart present)
+      Object.defineProperty(window, 'ontouchstart', {
+        value: true,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 1,
+        configurable: true,
+      });
+
+      service = TestBed.inject(DeviceService);
+
+      // trigger detection
+      window.dispatchEvent(new Event('resize'));
+      tick();
+
+      expect(service.deviceInfo?.type).toBe('tablet');
     }));
   });
   describe('not in browser', () => {

@@ -6,8 +6,13 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, fromEvent, startWith } from 'rxjs';
+import { fromEvent, startWith } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+const MOBILE_RE =
+  /(iPhone|Android.*Mobile|Windows Phone|BlackBerry|webOS|Opera Mini|Mobile(\/|\s)|Mobile Safari)/i;
+const TABLET_RE =
+  /(iPad|Tablet|PlayBook|Silk|Kindle|KF[A-Z]+|Nexus 7|Nexus 9|Nexus 10|Android(?!.*Mobile))/i;
 
 export type DeviceType = 'mobile' | 'tablet' | 'desktop';
 export type Orientation = 'portrait' | 'landscape';
@@ -19,10 +24,11 @@ export interface DeviceInfo {
 
 @Injectable()
 export class DeviceService {
-  private readonly _deviceInfo$ = new BehaviorSubject<DeviceInfo | null>(null);
-  private readonly _deviceInfoSignal = signal<DeviceInfo | null>(null);
-  readonly deviceInfo$ = this._deviceInfo$.asObservable();
-  readonly deviceInfoSignal = this._deviceInfoSignal.asReadonly();
+  private readonly _deviceInfo = signal<DeviceInfo | null>(null);
+  readonly deviceInfoSignal = this._deviceInfo.asReadonly();
+
+  // Remember whether the current runtime environment is a physical desktop.
+  // If true we will prefer 'desktop' even when the window is resized small.
 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
@@ -35,15 +41,15 @@ export class DeviceService {
   }
 
   get deviceInfo(): DeviceInfo | null {
-    return this._deviceInfo$.value;
+    return this._deviceInfo();
   }
 
   get deviceType(): DeviceType | null {
-    return this._deviceInfo$.value?.type ?? null;
+    return this._deviceInfo()?.type ?? null;
   }
 
   get orientation(): Orientation | null {
-    return this._deviceInfo$.value?.orientation ?? null;
+    return this._deviceInfo()?.orientation ?? null;
   }
 
   isMobile(): boolean {
@@ -66,35 +72,50 @@ export class DeviceService {
     return this.orientation === 'landscape';
   }
 
-  private detectDeviceInfo(): DeviceInfo {
+  detectDeviceInfo(): DeviceInfo {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const orientation: Orientation = width > height ? 'landscape' : 'portrait';
-    const isTouch = 'ontouchstart' in window;
 
-    // Chromium-based browsers support userAgentData
+    return {
+      orientation: width > height ? 'landscape' : 'portrait',
+      type: this.detectDeviceType(),
+    };
+  }
+
+  private isTouchDevice(): boolean {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  }
+
+  private detectDeviceType(): DeviceType {
+    const ua = navigator.userAgent;
+
+    // Chromium userAgentData (most accurate when available)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const uaData = (navigator as any).userAgentData;
-    if (uaData?.mobile) {
-      return { type: 'mobile', orientation };
+    if (uaData?.mobile) return 'mobile';
+
+    // iPadOS 13+ (reports as Macintosh)
+    const isIpadOs = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+    if (isIpadOs) return 'tablet';
+
+    // Regex-based detection
+    if (MOBILE_RE.test(ua)) return 'mobile';
+    if (TABLET_RE.test(ua)) return 'tablet';
+
+    // Fallback for touch devices (Android tablets, unknown UAs, WebViews)
+    if (this.isTouchDevice()) {
+      const minSide = Math.min(window.innerWidth, window.innerHeight);
+      return minSide >= 768 ? 'tablet' : 'mobile';
     }
 
-    // Fallback: width-based + touch detection
-    if (width < 768 || (isTouch && width < 900)) {
-      return { type: 'mobile', orientation };
-    } else if (width >= 768 && width < 1024) {
-      return { type: 'tablet', orientation };
-    } else {
-      return { type: 'desktop', orientation };
-    }
+    return 'desktop';
   }
 
   private subscribeToResizeChanges() {
     fromEvent(window, 'orientationchange')
       .pipe(startWith(null), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this._deviceInfo$.next(this.detectDeviceInfo());
-        this._deviceInfoSignal.set(this.detectDeviceInfo());
+        this._deviceInfo.set(this.detectDeviceInfo());
       });
   }
 
@@ -102,8 +123,7 @@ export class DeviceService {
     fromEvent(window, 'resize')
       .pipe(startWith(null), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this._deviceInfo$.next(this.detectDeviceInfo());
-        this._deviceInfoSignal.set(this.detectDeviceInfo());
+        this._deviceInfo.set(this.detectDeviceInfo());
       });
   }
 }
