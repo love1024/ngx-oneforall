@@ -1,9 +1,4 @@
-`DeviceService` provides a reliable, cross-platform way to detect the current device type (`mobile | tablet | desktop`) and screen orientation (`portrait | landscape`). It combines several detection strategies to be accurate across modern browsers and devices:
-
-- Prefer native hints when available (`navigator.userAgentData`).
-- Handle modern iPadOS which reports as `Macintosh` but is touch-capable.
-- Fall back to UA regex and touch/size heuristics (minimum side length) for tablet vs mobile.
-- Exposes a readonly signal for reactive templates (Angular signals) and classic getters for imperative use.
+`DeviceService` provides a reliable, cross-platform way to detect the current device type (`mobile | tablet | desktop`) and screen orientation (`portrait | landscape`). It combines several detection strategies to be accurate across modern browsers and devices.
 
 Features
 --------
