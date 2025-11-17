@@ -1,0 +1,24 @@
+import { Component, computed } from '@angular/core';
+import { DeviceService, provideDeviceService } from '@ngx-oneforall/services';
+
+@Component({
+  selector: 'device-status',
+  template: `
+    <div class="device-card">
+      <div>Device: {{ deviceType() }}</div>
+      <div>Orientation: {{ orientation() }}</div>
+    </div>
+  `,
+  providers: [provideDeviceService()],
+  standalone: true,
+})
+export class DeviceStatusComponent {
+  constructor(private readonly device: DeviceService) {}
+
+  deviceType = computed(
+    () => this.deviceService.deviceInfoSignal()?.type ?? 'unknown'
+  );
+  orientation = computed(
+    () => this.deviceService.deviceInfoSignal()?.orientation ?? 'unknown'
+  );
+}

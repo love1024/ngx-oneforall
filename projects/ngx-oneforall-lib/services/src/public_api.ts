@@ -12,3 +12,5 @@ export * from './jwt/jwt.service';
 export * from './jwt/jwt-provider';
 export * from './cache/cache-provider';
 export * from './cache/cache.util';
+export * from './device/device-provider';
+export * from './device/device.service';

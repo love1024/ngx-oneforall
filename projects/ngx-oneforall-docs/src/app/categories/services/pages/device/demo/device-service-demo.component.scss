@@ -1,0 +1,84 @@
+.device-demo-container {
+  max-width: 420px;
+  margin: 2rem auto;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.device-demo-container h2 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.device-demo-container .desc {
+  text-align: center;
+  color: #4a5568;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+.device-info-card {
+  background: #f7fafc;
+  border-radius: 0.8rem;
+  padding: 1.2rem 1rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.7rem;
+  font-size: 1.1rem;
+}
+.info-row:last-child {
+  margin-bottom: 0;
+}
+.label {
+  flex: 0 0 110px;
+  color: #718096;
+  font-weight: 500;
+}
+.value {
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 0.5rem;
+  background: #edf2f7;
+  color: #2d3748;
+  margin-left: 0.5rem;
+  text-transform: capitalize;
+  transition: background 0.2s, color 0.2s;
+}
+.value.mobile {
+  background: #e6fffa;
+  color: #319795;
+}
+.value.tablet {
+  background: #fefcbf;
+  color: #b7791f;
+}
+.value.desktop {
+  background: #ebf8ff;
+  color: #3182ce;
+}
+.value.unknown {
+  background: #f7fafc;
+  color: #a0aec0;
+}
+.tips {
+  text-align: center;
+  margin-top: 1.2rem;
+  font-size: 1.15rem;
+}
+.tips span {
+  display: block;
+  margin: 0.3rem 0;
+  font-weight: 500;
+}
