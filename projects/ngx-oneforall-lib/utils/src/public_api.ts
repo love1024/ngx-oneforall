@@ -5,3 +5,4 @@ export * from './safe-await/safe-await';
 export * from './is-key-defined/is-key-defined';
 export * from './find-type/find-type';
 export * from './is-number/is-number';
+export * from './safe-serialize/safe-serialize';
