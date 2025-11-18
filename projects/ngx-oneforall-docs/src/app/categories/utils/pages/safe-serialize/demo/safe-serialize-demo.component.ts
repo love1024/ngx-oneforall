@@ -40,10 +40,9 @@ export class SafeSerializeDemoComponent {
           },
         },
         () => 'arrow',
-        (a: number) => a * 2,
       ],
       label:
-        "[1, 'a', { fn: function hello() { console.log('NGX-ONEFORALL');} }]",
+        "[1, 'a', { fn: function hello() { console.log('NGX-ONEFORALL');}, () => 'arrow }]",
     },
     {
       title: 'Function, Symbol & BigInt',
