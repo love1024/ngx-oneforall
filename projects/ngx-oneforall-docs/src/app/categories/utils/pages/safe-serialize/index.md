@@ -15,6 +15,7 @@ const key = safeSerialize(args);
 
 ## Features
 - Handles all JavaScript value types, including functions, symbols, bigint, circular references, Maps, Sets, Dates, RegExps, Errors, and class instances
+- Serializes anonymous functions as `__fn:anonymous|h:HASH` (using a hash of their source and argument length)
 - Produces a stable, deterministic string for any array of arguments
 - Preserves class constructor names for class instances
 - Ensures stable key ordering for plain objects (object key order does not affect output)
@@ -33,6 +34,6 @@ See the interactive demo below for example inputs and their serialized outputs.
 
 - Not reversible: The output of `safeSerialize` cannot be reliably deserialized back to the original values, especially for functions, symbols, bigints, and circular references.
 - Not a full object diff: It is designed for stable stringification, not for deep equality or diffing complex objects.
-- Function and symbol representation is lossy: Functions are represented as `__fn:name` and symbols as `__sym:desc`, so their actual implementation or identity is lost.
+- Function and symbol representation is lossy: Functions are represented as `__fn:name` (or `__fn:anonymous|h:HASH` for anonymous functions) and symbols as `__sym:desc`, so their actual implementation or identity is lost.
 - Class name is preserved for class instances, but prototype methods and non-enumerable properties are not: Only enumerable own properties and the constructor name are serialized; methods and prototype are not restored.
 - May not distinguish between some edge cases: Different functions with the same name, or different symbols with the same description, will serialize to the same string.
