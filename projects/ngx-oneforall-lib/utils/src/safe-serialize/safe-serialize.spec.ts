@@ -62,4 +62,69 @@ describe('safeSerialize', () => {
     // circular will be replaced by __circular__ inside nested object
     expect(item.sub).toBe('__circular__');
   });
+
+  it('serializes Date, RegExp, and Error objects with type tags', () => {
+    const d = new Date('2020-01-01T12:00:00Z');
+    const r = /abc/gi;
+    const e = new Error('fail');
+    // Date as direct value (not inside array) is serialized as ISO string
+    expect(JSON.parse(safeSerialize(d))).toBe(d.toJSON());
+    // Date, RegExp, and Error inside an array are type-tagged
+    const parsed = JSON.parse(safeSerialize([d, r, e]));
+    expect(parsed[0]).toEqual(d.toJSON());
+    expect(parsed[1]).toEqual({ __type: 'RegExp', value: r.toString() });
+    expect(parsed[2].__type).toBe('Error');
+    expect(parsed[2].name).toBe(e.name);
+    expect(parsed[2].message).toBe('fail');
+  });
+
+  it('serializes Map and Set with type tags and contents', () => {
+    const m = new Map([
+      ['a', 1],
+      ['b', 2],
+    ]);
+    const s = new Set([1, 2, 3]);
+    const parsed = JSON.parse(safeSerialize([m, s]));
+    expect(parsed[0]).toEqual({
+      __type: 'Map',
+      entries: [
+        ['a', 1],
+        ['b', 2],
+      ],
+    });
+    expect(parsed[1]).toEqual({ __type: 'Set', values: [1, 2, 3] });
+  });
+
+  it('serializes class instances with constructor name and stable key order', () => {
+    class Point {
+      constructor(
+        public x: number,
+        public y: number
+      ) {}
+      method() {
+        return this.x + this.y;
+      }
+    }
+    const p = new Point(2, 3);
+    // Add an extra property out of order
+    (p as unknown as Record<string, unknown>)['z'] = 99;
+    const parsed = JSON.parse(safeSerialize([p]));
+    expect(parsed[0].__type).toBe('Point');
+    // keys should be sorted: x, y, z
+    expect(Object.keys(parsed[0])).toEqual(['__type', 'x', 'y', 'z']);
+    expect(parsed[0].x).toBe(2);
+    expect(parsed[0].y).toBe(3);
+    expect(parsed[0].z).toBe(99);
+    // method is not included
+    expect(parsed[0].method).toBeUndefined();
+  });
+
+  it('serializes plain objects with stable key ordering', () => {
+    const a = { b: 2, a: 1 };
+    const b = { a: 1, b: 2 };
+    const sa = safeSerialize(a);
+    const sb = safeSerialize(b);
+    expect(sa).toBe(sb);
+    expect(JSON.parse(sa)).toEqual({ a: 1, b: 2 });
+  });
 });
