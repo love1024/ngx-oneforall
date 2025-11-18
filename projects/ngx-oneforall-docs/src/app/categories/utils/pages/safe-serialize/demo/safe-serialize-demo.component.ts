@@ -64,6 +64,31 @@ export class SafeSerializeDemoComponent {
       label:
         '{ n: 42, arr: [1, 2, 3], map: new Map([["k", "v"]]), set: new Set([1, 2, 3]) }',
     },
+    {
+      title: 'Date and RegExp',
+      value: [new Date('2020-01-01T12:00:00Z'), /abc/i],
+      label: '[new Date("2020-01-01T12:00:00Z"), /abc/i]',
+    },
+    {
+      title: 'Class instance',
+      value: [
+        new (class Point {
+          constructor(
+            public x = 1,
+            public y = 2
+          ) {}
+        })(),
+      ],
+      label: '[new Point(1, 2)]',
+    },
+    {
+      title: 'Object key order (should serialize same)',
+      value: [
+        { a: 1, b: 2 },
+        { b: 2, a: 1 },
+      ],
+      label: '[{ a: 1, b: 2 }, { b: 2, a: 1 }]',
+    },
   ] as { title: string; value: unknown; label: string }[];
 
   outputs = signal<Record<number, string>>({});
