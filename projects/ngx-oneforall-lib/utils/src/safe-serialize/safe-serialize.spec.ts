@@ -27,6 +27,18 @@ describe('safeSerialize', () => {
     expect(parsed[1].startsWith('__fn:')).toBe(true);
   });
 
+  it('serializes anonymous functions as __fn:anonymous|h:HASH', () => {
+    const result = safeSerialize(function (a: number, b: number) {
+      return a + b;
+    });
+    // Should be a string like __fn:anonymous|h:HASH
+    expect(result.startsWith('"__fn:anonymous|h:')).toBe(true);
+    // Should parse as a string
+    expect(typeof JSON.parse(result)).toBe('string');
+    // Should include the hash part
+    expect(result).toMatch(/\|h:[0-9-]+/);
+  });
+
   it('serializes symbol and bigint to string tokens', () => {
     const s = Symbol('sym');
     const b = BigInt(9007199254740991);

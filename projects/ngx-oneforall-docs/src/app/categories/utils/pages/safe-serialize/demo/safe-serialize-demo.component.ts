@@ -31,8 +31,19 @@ export class SafeSerializeDemoComponent {
   examples = [
     {
       title: 'Simple array',
-      value: [1, 'a', { fn: null }],
-      label: '[1, "a", { fn: null }]',
+      value: [
+        1,
+        'a',
+        {
+          fn: function hello() {
+            console.log('NGX-ONEFORALL');
+          },
+        },
+        () => 'arrow',
+        (a: number) => a * 2,
+      ],
+      label:
+        "[1, 'a', { fn: function hello() { console.log('NGX-ONEFORALL');} }]",
     },
     {
       title: 'Function, Symbol & BigInt',

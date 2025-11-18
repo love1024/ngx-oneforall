@@ -1,3 +1,5 @@
+import { hashCode } from '../hash/hash';
+
 export function safeSerialize(value: unknown): string;
 export function safeSerialize(...args: unknown[]): string;
 export function safeSerialize(...args: unknown[]): string {
@@ -7,7 +9,18 @@ export function safeSerialize(...args: unknown[]): string {
   return JSON.stringify(input, (_key, value) => {
     if (typeof value === 'function') {
       const fn = value as { name?: string };
-      return `__fn:${fn.name || 'anonymous'}`;
+      const name = fn.name || 'anonymous';
+
+      // Only hash when anonymous
+      if (!fn.name) {
+        const source = value.toString();
+        const length = value.length;
+        const hash = hashCode(source + '|' + length);
+        return `__fn:${name}|h:${hash}`;
+      }
+
+      // Named function → no hash
+      return `__fn:${name}`;
     }
     if (typeof value === 'symbol') {
       return `__sym:${String(value)}`;
