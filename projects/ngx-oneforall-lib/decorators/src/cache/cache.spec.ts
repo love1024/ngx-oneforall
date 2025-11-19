@@ -13,7 +13,7 @@ jest.mock('../../../services/src/cache/cache.util', () => ({
   getStorageEngine: () => mockStorage,
 }));
 
-import { Cache, DEFAULT_PARAMS_HASHER } from './cache';
+import { Cache, DEFAULT_CACHE_KEY_SELECTOR } from './cache';
 import { Observable, of, delay } from 'rxjs';
 
 describe('Cache Decorator (with mock component)', () => {
@@ -49,14 +49,14 @@ describe('Cache Decorator (with mock component)', () => {
       return of(a);
     }
 
-    @Cache({ paramsHasher: params => [params[0]] })
+    @Cache({ cacheKeySelector: params => [params[0]] })
     getCustomHashed(a: number): Observable<number> {
       this.callCount++;
       return of(a).pipe(delay(100));
     }
 
     @Cache({
-      cacheMatcher: (a, b) => (a as number[])[0] === (b as number[])[0],
+      cacheKeyMatcher: (a, b) => (a as number[])[0] === (b as number[])[0],
     })
     getCustomMatcher(a: number): Observable<number> {
       this.callCount++;
@@ -105,7 +105,7 @@ describe('Cache Decorator (with mock component)', () => {
     expect(Object.values(data)[0].length).toBeLessThanOrEqual(2);
   });
 
-  it('should use custom paramsHasher', () => {
+  it('should use custom cacheKeySelector', () => {
     const comp = new MockComponent();
     const obs1 = comp.getCustomHashed(1);
     const obs2 = comp.getCustomHashed(1);
@@ -113,7 +113,7 @@ describe('Cache Decorator (with mock component)', () => {
     expect(comp.callCount).toBe(1);
   });
 
-  it('should use custom cacheMatcher', () => {
+  it('should use custom cacheKeyMatcher', () => {
     const comp = new MockComponent();
     const obs1 = comp.getCustomMatcher(1);
     const obs2 = comp.getCustomMatcher(1);
@@ -224,9 +224,9 @@ describe('Cache Decorator (with mock component)', () => {
     expect(Object.keys(lastCache.data)).toContain('ROOT-someMethod');
   });
 
-  it('should use param directly in DEFAULT_PARAMS_HASHER if param is undefined', () => {
+  it('should use param directly in DEFAULT_CACHE_KEY_SELECTOR if param is undefined', () => {
     const params = [1, undefined, 'test'];
-    const result = DEFAULT_PARAMS_HASHER(params);
+    const result = DEFAULT_CACHE_KEY_SELECTOR(params);
     expect(result).toEqual([1, undefined, 'test']);
   });
 });

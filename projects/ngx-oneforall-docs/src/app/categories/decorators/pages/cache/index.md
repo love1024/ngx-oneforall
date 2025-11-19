@@ -43,8 +43,8 @@ The `Cache` decorator accepts a configuration object with the following options:
 - **itemCacheKey**: Custom cache key for the method.
 - **maxItems**: Maximum number of items to cache.
 - **version**: Cache version string for invalidation.
-- **cacheMatcher**: Custom function to compare parameter sets.
-- **paramsHasher**: Custom function to hash parameters for cache keys.
+- **cacheKeyMatcher**: Custom function to compare parameter sets.
+- **cacheKeySelector**: Custom function to select/transform parameters for cache keys.
 
 ### Benefits of Using the `Cache` Decorator
 

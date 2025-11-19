@@ -3,6 +3,7 @@ import {
   getStorageEngine,
   StorageTransformers,
 } from '@ngx-oneforall/services';
+import { safeSerialize } from '@ngx-oneforall/utils';
 import { finalize, Observable, of, shareReplay, tap } from 'rxjs';
 
 interface CacheData<T> {
@@ -28,22 +29,19 @@ export interface CacheDecoratorOptions {
   itemCacheKey?: string;
   maxItems?: number | null;
   version?: string;
-  cacheMatcher?: (oldParams: unknown, newParams: unknown) => boolean;
-  paramsHasher?: (params: unknown[]) => unknown;
+  cacheKeyMatcher?: (oldParams: unknown, newParams: unknown) => boolean;
+  cacheKeySelector?: (params: unknown[]) => unknown;
 }
 
 const DEFAULT_STORAGE_KEY = 'CACHE_DECORATOR';
 const DEFAULT_VERSION = Symbol.for('Interval-v1');
 
-const DEFAULT_CACHE_MATCHER = (
+const DEFAULT_CACHE_KEY_MATCHER = (
   existingParams: unknown,
   currentParams: unknown
-) => JSON.stringify(existingParams) === JSON.stringify(currentParams);
+) => safeSerialize(existingParams) === safeSerialize(currentParams);
 
-export const DEFAULT_PARAMS_HASHER = (parameters: unknown[]) =>
-  parameters.map(param =>
-    param !== undefined ? JSON.parse(JSON.stringify(param)) : param
-  );
+export const DEFAULT_CACHE_KEY_SELECTOR = (parameters: unknown[]) => parameters;
 
 export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
   return function (
@@ -99,12 +97,12 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
       // Enforce updated maxItems immediately
       enforceMaxItems();
 
-      const parametersHash = options.paramsHasher(parameters);
+      const parametersHash = options.cacheKeySelector(parameters);
       let foundCachedItem = cachedItems.find(item =>
-        options.cacheMatcher(item.parameters, parametersHash)
+        options.cacheKeyMatcher(item.parameters, parametersHash)
       );
       const foundPendingRequest = pendingRequests.find(item =>
-        options.cacheMatcher(item.parameters, parametersHash)
+        options.cacheKeyMatcher(item.parameters, parametersHash)
       );
 
       // If item is found, user has not provided null for ttl, and time is expired
@@ -130,7 +128,7 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
           finalize(() => {
             // Remove request from pending requests
             const foundPendingRequest = pendingRequests.find(item =>
-              options.cacheMatcher(item.parameters, parametersHash)
+              options.cacheKeyMatcher(item.parameters, parametersHash)
             );
             if (foundPendingRequest) {
               pendingRequests.splice(
@@ -179,8 +177,8 @@ const mergeWithDefaultConfig = (
     ttl: config.ttl ?? null,
     itemCacheKey: config.itemCacheKey || '',
     maxItems: config.maxItems ?? null,
-    cacheMatcher: config.cacheMatcher || DEFAULT_CACHE_MATCHER,
-    paramsHasher: config.paramsHasher || DEFAULT_PARAMS_HASHER,
+    cacheKeyMatcher: config.cacheKeyMatcher || DEFAULT_CACHE_KEY_MATCHER,
+    cacheKeySelector: config.cacheKeySelector || DEFAULT_CACHE_KEY_SELECTOR,
     version: config.version || DEFAULT_VERSION.toString(),
   };
 };
