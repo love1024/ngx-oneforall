@@ -109,6 +109,29 @@ describe('ClipboardService', () => {
             expect(result).toBe('');
         });
 
+        it('should return empty string if navigator.clipboard is not available', async () => {
+            TestBed.resetTestingModule();
+
+            // Set navigator without clipboard property before creating service
+            Object.defineProperty(window, 'navigator', {
+                value: {},
+                writable: true,
+                configurable: true,
+            });
+
+            TestBed.configureTestingModule({
+                providers: [
+                    ClipboardService,
+                    { provide: DOCUMENT, useValue: documentMock },
+                    { provide: PLATFORM_ID, useValue: 'browser' },
+                ],
+            });
+            const serviceWithoutClipboard = TestBed.inject(ClipboardService);
+
+            const result = await serviceWithoutClipboard.read();
+            expect(result).toBe('');
+        });
+
         it('should return empty string if not in browser', async () => {
             TestBed.resetTestingModule();
             TestBed.configureTestingModule({

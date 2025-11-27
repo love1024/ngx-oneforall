@@ -47,7 +47,7 @@ export class InfiniteScrollDirective implements AfterViewInit, OnDestroy {
     if (this.disabled()) return;
 
     this.addTargetElement();
-    this.setScrollParent
+    this.setScrollParent();
     this.setupObserver();
   }
 

@@ -39,7 +39,11 @@ export class ClipboardService {
         }
 
         if (navigator.clipboard && navigator.clipboard.readText) {
-            return await navigator.clipboard.readText();
+            try {
+                return await navigator.clipboard.readText();
+            } catch (error) {
+                return '';
+            }
         }
 
         return '';
@@ -58,7 +62,12 @@ export class ClipboardService {
         textArea.focus();
         textArea.select();
 
-        const success = this.document.execCommand('copy');
+        let success = false;
+        try {
+            success = this.document.execCommand('copy');
+        } catch (err) {
+            // execCommand failed
+        }
 
         this.document.body.removeChild(textArea);
         return success;
