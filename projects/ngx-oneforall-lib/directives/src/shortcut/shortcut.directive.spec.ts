@@ -176,10 +176,10 @@ describe('ShortcutDirective', () => {
         });
 
         it('should trigger on second shortcut in comma-separated list', () => {
-            component.shortcut = 'ctrl.s, meta.s';
+            component.shortcut = 'ctrl.s, ctrl.shift.s';
             fixture.detectChanges();
 
-            const event = new KeyboardEvent('keydown', { key: 's', metaKey: true });
+            const event = new KeyboardEvent('keydown', { key: 's', ctrlKey: true, shiftKey: true });
             jest.spyOn(event, 'preventDefault');
 
             window.dispatchEvent(event);

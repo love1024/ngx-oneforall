@@ -16,6 +16,8 @@ export type ModifierKey =
     | 'space'
     | 'escape';
 
+import { getHostPlatform, normalizeKey } from '@ngx-oneforall/utils';
+
 @Directive({
     selector: '[shortcut]',
     standalone: true
@@ -35,7 +37,8 @@ export class ShortcutDirective {
     action = output<void>();
 
     private pressedKeys = new Set<string>();
-    private readonly host = inject(ElementRef<HTMLElement>)
+    private readonly host = inject(ElementRef<HTMLElement>);
+    private readonly platform = getHostPlatform();
 
     // Element Scoped Listeners
     @HostListener('keydown', ['$event'])
@@ -73,20 +76,6 @@ export class ShortcutDirective {
     }
 
 
-    private readonly keyAliases: Record<string, string> = {
-        'space': ' ',
-        'up': 'arrowup',
-        'down': 'arrowdown',
-        'left': 'arrowleft',
-        'right': 'arrowright',
-        'esc': 'escape',
-        'altleft': 'alt', // mapping to generic alt for now as event.key is 'Alt'
-        'meta': 'meta', // ensure meta stays meta (event.key is 'Meta' -> 'meta')
-        'control': 'control',
-        'shift': 'shift',
-        'alt': 'alt'
-    };
-
     private handleKey(event: KeyboardEvent): void {
         // If element-scoped, ensure focus is inside host element
         if (!this.isGlobal()) {
@@ -97,12 +86,17 @@ export class ShortcutDirective {
 
         this.pressedKeys.add(event.key.toLowerCase());
 
-        const shortcuts = this.shortcut()
+        const normalizedShortcuts = this.shortcut()
             .split(',')
-            .map(s => s.trim())
+            .map(s =>
+                s
+                    .split('.')
+                    .map((s) => normalizeKey(s, this.platform))
+                    .join('.')
+            )
             .filter(Boolean);
 
-        for (const sc of shortcuts) {
+        for (const sc of normalizedShortcuts) {
             if (this.matchesShortcut(sc, event)) {
                 event.preventDefault();
                 this.action.emit();
@@ -112,11 +106,7 @@ export class ShortcutDirective {
     }
 
     private matchesShortcut(shortcut: string, event: KeyboardEvent): boolean {
-        const parts = shortcut.split('.').map(p => {
-            const trimmed = p.trim().toLowerCase();
-            return this.keyAliases[trimmed] || trimmed;
-        });
-
+        const parts = shortcut.split('.');
         const mainKey = parts.at(-1)!;
         const modifiers = parts.slice(0, -1);
 
