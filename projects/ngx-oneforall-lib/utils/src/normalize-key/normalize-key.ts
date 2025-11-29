@@ -1,5 +1,5 @@
 import { HostPlatform } from "@ngx-oneforall/constants";
-import { getHostPlatform } from "@ngx-oneforall/utils";
+import { getHostPlatform } from "../host-platform/host-platform";
 
 // Static transform map - created once and reused
 const TRANSFORM_MAP: Record<string, string> = {
