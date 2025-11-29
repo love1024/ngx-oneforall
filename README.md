@@ -1,4 +1,4 @@
-![Project Image](https://github.com/love1024/ngx-oneforall/blob/main/projects/ngx-oneforall-docs/public/oneforall.png)
+![Project Image](https://github.com/love1024/ngx-oneforall/blob/main/projects/ngx-oneforall-docs/public/brand.png)
 
 `ngx-oneforall` is a comprehensive Angular library designed to streamline development by providing a collection of reusable utilities. It includes a wide range of features such as pipes, directives, services, decorators, constants, and more to enhance productivity and maintainability in Angular projects.
 
