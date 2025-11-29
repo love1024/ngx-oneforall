@@ -25,7 +25,7 @@ To use the **Shortcut** directive, import it and add the `shortcut` attribute to
 
 | Input | Type | Default | Description |
 |-------|------|---------|-------------|
-| `shortcut` | `string` | **Required** | The keyboard shortcut(s) to listen for. <br><br> **Format:** <br> - Single: `modifier.key` (e.g., `ctrl.s`, `ctrl.shift.s`) <br> - Multiple: Comma-separated (e.g., `ctrl.s, meta.s`) <br><br> Modifiers are case-insensitive. |
+| `shortcut` | `string` | **Required** | The keyboard shortcut(s) to listen for. <br><br> **Format:** <br> - Single: `modifier.key` (e.g., `ctrl.s`, `ctrl.shift.s`) <br> - Multiple: Comma-separated (e.g., `ctrl.s, meta.s`) <br><br> **Supported Modifiers:** <br> `shift`, `control` (ctrl), `alt`, `meta` (cmd), `altleft`, `backspace`, `tab`, `left`, `right`, `up`, `down`, `enter`, `space`, `escape` (esc). |
 | `isGlobal` | `boolean` | `false` | If `true`, listens for shortcuts globally on the window. If `false`, listens only when the element is focused. |
 
 ## Example Usage

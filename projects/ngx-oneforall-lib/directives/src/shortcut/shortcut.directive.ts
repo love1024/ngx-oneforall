@@ -1,5 +1,21 @@
 import { Directive, ElementRef, HostListener, inject, input, output } from '@angular/core';
 
+export type ModifierKey =
+    | 'shift'
+    | 'control'
+    | 'alt'
+    | 'meta'
+    | 'altleft'
+    | 'backspace'
+    | 'tab'
+    | 'left'
+    | 'right'
+    | 'up'
+    | 'down'
+    | 'enter'
+    | 'space'
+    | 'escape';
+
 @Directive({
     selector: '[shortcut]',
     standalone: true
@@ -57,6 +73,20 @@ export class ShortcutDirective {
     }
 
 
+    private readonly keyAliases: Record<string, string> = {
+        'space': ' ',
+        'up': 'arrowup',
+        'down': 'arrowdown',
+        'left': 'arrowleft',
+        'right': 'arrowright',
+        'esc': 'escape',
+        'altleft': 'alt', // mapping to generic alt for now as event.key is 'Alt'
+        'meta': 'meta', // ensure meta stays meta (event.key is 'Meta' -> 'meta')
+        'control': 'control',
+        'shift': 'shift',
+        'alt': 'alt'
+    };
+
     private handleKey(event: KeyboardEvent): void {
         // If element-scoped, ensure focus is inside host element
         if (!this.isGlobal()) {
@@ -82,11 +112,16 @@ export class ShortcutDirective {
     }
 
     private matchesShortcut(shortcut: string, event: KeyboardEvent): boolean {
-        const parts = shortcut.split('.').map(p => p.trim().toLowerCase());
+        const parts = shortcut.split('.').map(p => {
+            const trimmed = p.trim().toLowerCase();
+            return this.keyAliases[trimmed] || trimmed;
+        });
+
         const mainKey = parts.at(-1)!;
         const modifiers = parts.slice(0, -1);
 
-        if (event.key.toLowerCase() !== mainKey) return false;
+        const eventKey = event.key.toLowerCase();
+        if (eventKey !== mainKey) return false;
 
         const expectCtrl = modifiers.includes('ctrl') || modifiers.includes('control');
         const expectShift = modifiers.includes('shift');
@@ -98,10 +133,26 @@ export class ShortcutDirective {
         if (event.altKey !== expectAlt) return false;
         if (event.metaKey !== expectMeta) return false;
 
+        // Check for other modifiers (non-standard modifiers like space, enter, arrows)
+        // These keys must be present in pressedKeys as not present in event
+        const otherModifiers = modifiers.filter(m =>
+            !['ctrl', 'control', 'shift', 'alt', 'meta', 'cmd', 'command'].includes(m)
+        );
+
+        for (const mod of otherModifiers) {
+            if (!this.pressedKeys.has(mod)) return false;
+        }
+
         // Reject extra pressed non-modifier keys
+        // Allowed keys = mainKey + standard modifiers + other modifiers
+        const allowedKeys = new Set<string>([
+            mainKey,
+            'control', 'shift', 'alt', 'meta',
+            ...otherModifiers
+        ]);
+
         for (const key of this.pressedKeys) {
-            if (key === mainKey) continue;
-            if (['control', 'shift', 'alt', 'meta'].includes(key)) continue;
+            if (allowedKeys.has(key)) continue;
             return false;
         }
 

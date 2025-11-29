@@ -248,6 +248,94 @@ describe('ShortcutDirective', () => {
         });
     });
 
+    describe('Expanded modifiers', () => {
+        beforeEach(() => {
+            component.isGlobal = true;
+            fixture.detectChanges();
+        });
+
+        it('should trigger with space as modifier (space.enter)', () => {
+            component.shortcut = 'space.enter';
+            fixture.detectChanges();
+
+            // Press Space
+            const spaceEvent = new KeyboardEvent('keydown', { key: ' ', code: 'Space' });
+            window.dispatchEvent(spaceEvent);
+
+            // Press Enter
+            const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+            jest.spyOn(enterEvent, 'preventDefault');
+            window.dispatchEvent(enterEvent);
+
+            expect(component.actionTriggered).toBe(true);
+            expect(enterEvent.preventDefault).toHaveBeenCalled();
+        });
+
+        it('should trigger with arrow keys as modifiers (up.down)', () => {
+            component.shortcut = 'up.down';
+            fixture.detectChanges();
+
+            // Press Up
+            const upEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+            window.dispatchEvent(upEvent);
+
+            // Press Down
+            const downEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+            jest.spyOn(downEvent, 'preventDefault');
+            window.dispatchEvent(downEvent);
+
+            expect(component.actionTriggered).toBe(true);
+            expect(downEvent.preventDefault).toHaveBeenCalled();
+        });
+
+        it('should trigger with left/right arrows (left.right)', () => {
+            component.shortcut = 'left.right';
+            fixture.detectChanges();
+
+            // Press Left
+            const leftEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+            window.dispatchEvent(leftEvent);
+
+            // Press Right
+            const rightEvent = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+            jest.spyOn(rightEvent, 'preventDefault');
+            window.dispatchEvent(rightEvent);
+
+            expect(component.actionTriggered).toBe(true);
+            expect(rightEvent.preventDefault).toHaveBeenCalled();
+        });
+
+        it('should trigger with escape as modifier (esc.enter)', () => {
+            component.shortcut = 'esc.enter';
+            fixture.detectChanges();
+
+            // Press Escape
+            const escEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+            window.dispatchEvent(escEvent);
+
+            // Press Enter
+            const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+            jest.spyOn(enterEvent, 'preventDefault');
+            window.dispatchEvent(enterEvent);
+
+            expect(component.actionTriggered).toBe(true);
+            expect(enterEvent.preventDefault).toHaveBeenCalled();
+        });
+
+        it('should NOT trigger if non-standard modifier is missing (space.enter)', () => {
+            component.shortcut = 'space.enter';
+            fixture.detectChanges();
+
+            // Press Enter WITHOUT pressing Space first
+            const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+            jest.spyOn(enterEvent, 'preventDefault');
+            window.dispatchEvent(enterEvent);
+
+            expect(component.actionTriggered).toBe(false);
+            expect(enterEvent.preventDefault).not.toHaveBeenCalled();
+        });
+    });
+
     describe('Key tracking and cleanup', () => {
         beforeEach(() => {
             component.isGlobal = true;
