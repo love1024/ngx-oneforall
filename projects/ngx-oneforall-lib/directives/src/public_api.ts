@@ -8,3 +8,4 @@ export * from './numbers-only/numbers-only.directive';
 export * from './repeat/repeat.directive';
 export * from './infinite-scroll/infinite-scroll.directive';
 export * from './press-enter/press-enter.directive';
+export * from './shortcut/shortcut.directive';
