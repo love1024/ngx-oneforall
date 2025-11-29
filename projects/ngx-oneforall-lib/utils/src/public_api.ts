@@ -6,3 +6,5 @@ export * from './is-key-defined/is-key-defined';
 export * from './find-type/find-type';
 export * from './is-number/is-number';
 export * from './safe-serialize/safe-serialize';
+export * from './normalize-key/normalize-key';
+export * from './host-platform/host-platform';
