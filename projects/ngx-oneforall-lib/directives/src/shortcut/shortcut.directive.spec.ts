@@ -501,4 +501,49 @@ describe('ShortcutDirective', () => {
             expect(component.actionTriggered).toBe(false);
         });
     });
+
+    describe('macOS Option key behavior', () => {
+        beforeEach(() => {
+            component.isGlobal = true;
+            fixture.detectChanges();
+        });
+
+        it('should handle macOS Option key producing special characters (alt.s)', () => {
+            component.shortcut = 'alt.s';
+            fixture.detectChanges();
+
+            // Simulate macOS Option+s which produces 'ß'
+            const event = new KeyboardEvent('keydown', {
+                key: 'ß',
+                code: 'KeyS',
+                altKey: true
+            });
+            jest.spyOn(event, 'preventDefault');
+
+            window.dispatchEvent(event);
+            fixture.detectChanges();
+
+            expect(component.actionTriggered).toBe(true);
+            expect(event.preventDefault).toHaveBeenCalled();
+        });
+
+        it('should handle macOS Option key with different letters (alt.a)', () => {
+            component.shortcut = 'alt.a';
+            fixture.detectChanges();
+
+            // Simulate macOS Option+a which produces 'å'
+            const event = new KeyboardEvent('keydown', {
+                key: 'å',
+                code: 'KeyA',
+                altKey: true
+            });
+            jest.spyOn(event, 'preventDefault');
+
+            window.dispatchEvent(event);
+            fixture.detectChanges();
+
+            expect(component.actionTriggered).toBe(true);
+            expect(event.preventDefault).toHaveBeenCalled();
+        });
+    });
 });

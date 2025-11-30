@@ -1,4 +1,14 @@
-import { Directive, ElementRef, HostListener, inject, input, output } from '@angular/core';
+import { Injectable, NgZone, inject, OnDestroy } from '@angular/core';
+import { Observable, fromEvent } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
+import { getHostPlatform, normalizeKey } from '@ngx-oneforall/utils';
+
+export interface ShortcutOptions {
+    key: string;
+    isGlobal?: boolean;
+    preventDefault?: boolean;
+    element?: HTMLElement;
+}
 
 export type ModifierKey =
     | 'shift'
@@ -16,77 +26,48 @@ export type ModifierKey =
     | 'space'
     | 'escape';
 
-import { getHostPlatform, normalizeKey } from '@ngx-oneforall/utils';
-
-@Directive({
-    selector: '[shortcut]',
-    standalone: true
-})
-export class ShortcutDirective {
-    /**
-     * Example usage:
-     * [shortcut]="'ctrl.s, meta.s, ctrl.shift.s'"
-     */
-    shortcut = input.required<string>();
-
-    /**
-     * If true → listen globally (window)
-     * Default → element scope only
-     */
-    isGlobal = input<boolean>(false);
-    action = output<void>();
-
-    private pressedKeys = new Set<string>();
-    private readonly host = inject(ElementRef<HTMLElement>);
+@Injectable()
+export class ShortcutService implements OnDestroy {
+    private readonly zone = inject(NgZone);
+    private readonly pressedKeys = new Set<string>();
     private readonly platform = getHostPlatform();
 
-    // Element Scoped Listeners
-    @HostListener('keydown', ['$event'])
-    onElementKeyDown(event: KeyboardEvent): void {
-        if (!this.isGlobal()) {
-            this.handleKey(event);
-        }
+    private readonly keydownHandler = (e: KeyboardEvent) => this.pressedKeys.add(e.key.toLowerCase());
+    private readonly keyupHandler = (e: KeyboardEvent) => this.pressedKeys.delete(e.key.toLowerCase());
+    private readonly blurHandler = () => this.pressedKeys.clear();
+
+    constructor() {
+        // Track keys globally to ensure we know what's pressed even if focus changes
+        this.zone.runOutsideAngular(() => {
+            window.addEventListener('keydown', this.keydownHandler);
+            window.addEventListener('keyup', this.keyupHandler);
+            window.addEventListener('blur', this.blurHandler);
+        });
     }
 
-    @HostListener('keyup', ['$event'])
-    onElementKeyUp(event: KeyboardEvent): void {
-        if (!this.isGlobal()) {
-            this.pressedKeys.delete(event.key.toLowerCase());
-        }
+    ngOnDestroy(): void {
+        window.removeEventListener('keydown', this.keydownHandler);
+        window.removeEventListener('keyup', this.keyupHandler);
+        window.removeEventListener('blur', this.blurHandler);
     }
 
-    // Global Listeners
-    @HostListener('window:keydown', ['$event'])
-    onWindowKeyDown(event: KeyboardEvent): void {
-        if (this.isGlobal()) {
-            this.handleKey(event);
-        }
+    observe(options: ShortcutOptions): Observable<KeyboardEvent> {
+        const { key, isGlobal = false, preventDefault = true, element } = options;
+
+        const target = isGlobal ? window : (element || window);
+
+        return fromEvent<KeyboardEvent>(target, 'keydown').pipe(
+            filter(event => this.matchesShortcut(key, event)),
+            tap(event => {
+                if (preventDefault) {
+                    event.preventDefault();
+                }
+            })
+        );
     }
 
-    @HostListener('window:keyup', ['$event'])
-    onWindowKeyUp(event: KeyboardEvent): void {
-        if (this.isGlobal()) {
-            this.pressedKeys.delete(event.key.toLowerCase());
-        }
-    }
-
-    @HostListener('window:blur')
-    onBlur(): void {
-        this.pressedKeys.clear();
-    }
-
-
-    private handleKey(event: KeyboardEvent): void {
-        // If element-scoped, ensure focus is inside host element
-        if (!this.isGlobal()) {
-            if (!this.host.nativeElement.contains(document.activeElement)) {
-                return;
-            }
-        }
-
-        this.pressedKeys.add(event.key.toLowerCase());
-
-        const normalizedShortcuts = this.shortcut()
+    private matchesShortcut(shortcut: string, event: KeyboardEvent): boolean {
+        const normalizedShortcuts = shortcut
             .split(',')
             .map(s =>
                 s
@@ -96,16 +77,15 @@ export class ShortcutDirective {
             )
             .filter(Boolean);
 
-        for (const sc of normalizedShortcuts) {
-            if (this.matchesShortcut(sc, event)) {
-                event.preventDefault();
-                this.action.emit();
-                return;
+        for (const s of normalizedShortcuts) {
+            if (this.checkSingleShortcut(s, event)) {
+                return true;
             }
         }
+        return false;
     }
 
-    private matchesShortcut(shortcut: string, event: KeyboardEvent): boolean {
+    private checkSingleShortcut(shortcut: string, event: KeyboardEvent): boolean {
         const parts = shortcut.split('.');
         const mainKey = parts.at(-1)!;
         const modifiers = parts.slice(0, -1);
@@ -132,8 +112,6 @@ export class ShortcutDirective {
         if (event.altKey !== expectAlt) return false;
         if (event.metaKey !== expectMeta) return false;
 
-        // Check for other modifiers (non-standard modifiers like space, enter, arrows)
-        // These keys must be present in pressedKeys as not present in event
         const otherModifiers = modifiers.filter(m =>
             !['ctrl', 'control', 'shift', 'alt', 'meta', 'cmd', 'command'].includes(m)
         );
@@ -142,8 +120,6 @@ export class ShortcutDirective {
             if (!this.pressedKeys.has(mod)) return false;
         }
 
-        // Reject extra pressed non-modifier keys
-        // Allowed keys = mainKey + standard modifiers + other modifiers
         const allowedKeys = new Set<string>([
             mainKey,
             'control', 'shift', 'alt', 'meta',

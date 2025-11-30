@@ -15,4 +15,5 @@ export * from './cache/cache.util';
 export * from './device/device-provider';
 export * from './device/device.service';
 export * from './clipboard/clipboard.service';
-export * from './clipboard/clipboard-provider';
+export * from './shortcut/shortcut.service';
+export * from './shortcut/shortcut-provider';
