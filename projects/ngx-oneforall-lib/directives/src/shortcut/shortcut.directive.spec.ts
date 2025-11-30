@@ -545,5 +545,24 @@ describe('ShortcutDirective', () => {
             expect(component.actionTriggered).toBe(true);
             expect(event.preventDefault).toHaveBeenCalled();
         });
+
+        it('should handle Shift+number producing special characters (shift.1)', () => {
+            component.shortcut = 'shift.1';
+            fixture.detectChanges();
+
+            // Simulate Shift+1 which produces '!'
+            const event = new KeyboardEvent('keydown', {
+                key: '!',
+                code: 'Digit1',
+                shiftKey: true
+            });
+            jest.spyOn(event, 'preventDefault');
+
+            window.dispatchEvent(event);
+            fixture.detectChanges();
+
+            expect(component.actionTriggered).toBe(true);
+            expect(event.preventDefault).toHaveBeenCalled();
+        });
     });
 });

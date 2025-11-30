@@ -261,5 +261,18 @@ describe('ShortcutService', () => {
                 altKey: true
             }));
         });
+
+        it('should handle Shift+number producing special characters (shift.1)', (done) => {
+            subscription = service.observe({ key: 'shift.1', isGlobal: true }).subscribe(() => {
+                done();
+            });
+
+            // Simulate Shift+1 which produces '!'
+            window.dispatchEvent(new KeyboardEvent('keydown', {
+                key: '!',
+                code: 'Digit1',
+                shiftKey: true
+            }));
+        });
     });
 });

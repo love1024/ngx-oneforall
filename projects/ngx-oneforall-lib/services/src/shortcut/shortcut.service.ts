@@ -91,15 +91,15 @@ export class ShortcutService implements OnDestroy {
         const modifiers = parts.slice(0, -1);
 
         const eventKey = event.key.toLowerCase();
+        const eventCode = event.code.toLowerCase();
 
-        // On macOS, Option + Key often produces special characters (e.g. Option+s = ß)
-        // If the key doesn't match and Alt is pressed, try matching against event.code
-        if (eventKey !== mainKey) {
-            if (event.altKey && event.code.toLowerCase() === `key${mainKey}`) {
-                // Match found via code
-            } else {
-                return false;
-            }
+        // Try to match the key using hybrid approach:
+        // 1. First try event.key (what the user sees/types)
+        // 2. Then try event.code (physical key position)
+        const keyMatches = eventKey === mainKey || this.matchesCode(mainKey, eventCode);
+
+        if (!keyMatches) {
+            return false;
         }
 
         const expectCtrl = modifiers.includes('ctrl') || modifiers.includes('control');
@@ -126,8 +126,9 @@ export class ShortcutService implements OnDestroy {
             ...otherModifiers
         ]);
 
-        // If we matched via code (e.g. Option+s = ß), we must allow the actual key produced
-        if (eventKey !== mainKey && event.altKey && event.code.toLowerCase() === `key${mainKey}`) {
+        // If we matched via code (physical key), we must allow the actual key produced
+        // Examples: Shift+1 = !, Option+s = ß, etc.
+        if (eventKey !== mainKey) {
             allowedKeys.add(eventKey);
         }
 
@@ -137,5 +138,37 @@ export class ShortcutService implements OnDestroy {
         }
 
         return true;
+    }
+
+    /**
+     * Check if the mainKey matches the event.code (physical key position)
+     * This allows shortcuts to work regardless of keyboard layout
+     */
+    private matchesCode(mainKey: string, eventCode: string): boolean {
+        // Letter keys: a-z → KeyA-KeyZ
+        if (mainKey.match(/^[a-z]$/)) {
+            return eventCode === `key${mainKey}`;
+        }
+
+        // Number keys: 0-9 → Digit0-Digit9
+        if (mainKey.match(/^[0-9]$/)) {
+            return eventCode === `digit${mainKey}`;
+        }
+
+        // Special keys that have the same code
+        const specialKeys: Record<string, string> = {
+            'space': 'space',
+            ' ': 'space',
+            'enter': 'enter',
+            'tab': 'tab',
+            'escape': 'escape',
+            'backspace': 'backspace',
+            'arrowup': 'arrowup',
+            'arrowdown': 'arrowdown',
+            'arrowleft': 'arrowleft',
+            'arrowright': 'arrowright',
+        };
+
+        return specialKeys[mainKey] === eventCode;
     }
 }

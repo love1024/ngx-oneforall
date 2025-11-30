@@ -6,7 +6,7 @@ import { provideShortcutService, ShortcutService } from '@ngx-oneforall/services
   template: `
     <div class="demo-container">
       <h3>Service Demo</h3>
-      <p>Press <strong>Alt + S</strong> to trigger a service-based shortcut.</p>
+      <p>Press <strong>Ctrl + S</strong> to trigger a service-based shortcut.</p>
       
       @if (message()) {
         <div class="message">
@@ -46,8 +46,8 @@ export class ShortcutServiceDemoComponent {
   message = signal('');
 
   constructor() {
-    this.shortcutService.observe({ key: 'alt.s', isGlobal: true }).subscribe(() => {
-      this.message.set('Alt + S triggered via ShortcutService!');
+    this.shortcutService.observe({ key: 'ctrl.s', isGlobal: true }).subscribe(() => {
+      this.message.set('Ctrl + S triggered via ShortcutService!');
       setTimeout(() => this.message.set(''), 2000);
     });
   }
