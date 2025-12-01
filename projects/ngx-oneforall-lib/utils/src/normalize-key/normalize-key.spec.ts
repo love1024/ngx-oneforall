@@ -28,8 +28,8 @@ describe('normalizeKey', () => {
     });
 
     describe('Special key transformations', () => {
-        it('should transform "space" to " " (space character)', () => {
-            expect(normalizeKey('space')).toBe(' ');
+        it('should transform "space" to "space"', () => {
+            expect(normalizeKey('space')).toBe('space');
         });
 
         it('should transform "esc" to "escape"', () => {
@@ -41,7 +41,7 @@ describe('normalizeKey', () => {
         });
 
         it('should handle uppercase special keys', () => {
-            expect(normalizeKey('SPACE')).toBe(' ');
+            expect(normalizeKey('SPACE')).toBe('space');
             expect(normalizeKey('ESC')).toBe('escape');
             expect(normalizeKey('AltLeft')).toBe('alt');
         });
@@ -68,16 +68,16 @@ describe('normalizeKey', () => {
             expect(normalizeKey('meta', HostPlatform.MAC)).toBe('meta');
         });
 
-        it('should keep "cmd" as "cmd" on Mac', () => {
-            expect(normalizeKey('cmd', HostPlatform.MAC)).toBe('cmd');
+        it('should keep "cmd" as "meta" on Mac', () => {
+            expect(normalizeKey('cmd', HostPlatform.MAC)).toBe('meta');
         });
 
         it('should keep "meta" as "meta" on iOS', () => {
             expect(normalizeKey('meta', HostPlatform.IOS)).toBe('meta');
         });
 
-        it('should keep "command" as "command" on iOS', () => {
-            expect(normalizeKey('command', HostPlatform.IOS)).toBe('command');
+        it('should keep "command" as "meta" on iOS', () => {
+            expect(normalizeKey('command', HostPlatform.IOS)).toBe('meta');
         });
 
         it('should handle uppercase meta keys on non-Apple platforms', () => {
@@ -104,7 +104,7 @@ describe('normalizeKey', () => {
 
         it('should handle modifier keys that are not transformed', () => {
             expect(normalizeKey('shift')).toBe('shift');
-            expect(normalizeKey('ctrl')).toBe('ctrl');
+            expect(normalizeKey('ctrl')).toBe('control');
             expect(normalizeKey('control')).toBe('control');
             expect(normalizeKey('alt')).toBe('alt');
         });
@@ -112,7 +112,7 @@ describe('normalizeKey', () => {
 
     describe('Whitespace handling', () => {
         it('should trim whitespace from keys', () => {
-            expect(normalizeKey('  space  ')).toBe(' ');
+            expect(normalizeKey('  space  ')).toBe('space');
             expect(normalizeKey('  up  ')).toBe('arrowup');
             expect(normalizeKey(' a ')).toBe('a');
         });
@@ -155,9 +155,9 @@ describe('normalizeKey', () => {
 
     describe('Case sensitivity', () => {
         it('should be case-insensitive for all transformations', () => {
-            expect(normalizeKey('Space')).toBe(' ');
-            expect(normalizeKey('SPACE')).toBe(' ');
-            expect(normalizeKey('sPaCe')).toBe(' ');
+            expect(normalizeKey('Space')).toBe('space');
+            expect(normalizeKey('SPACE')).toBe('space');
+            expect(normalizeKey('sPaCe')).toBe('space');
 
             expect(normalizeKey('Up')).toBe('arrowup');
             expect(normalizeKey('UP')).toBe('arrowup');
