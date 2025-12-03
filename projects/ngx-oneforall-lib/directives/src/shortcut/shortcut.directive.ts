@@ -51,7 +51,12 @@ export class ShortcutDirective {
     @HostListener('keyup', ['$event'])
     onElementKeyUp(event: KeyboardEvent): void {
         if (!this.isGlobal()) {
-            this.pressedKeys.delete(event.key.toLowerCase());
+            // Filter out dead keys, IME composition, and unidentified keys
+            if (this.isDeadOrIgnoredKey(event.key)) {
+                return;
+            }
+            const normalizedKey = normalizeKey(event.key, this.platform);
+            this.pressedKeys.delete(normalizedKey);
         }
     }
 
@@ -66,7 +71,12 @@ export class ShortcutDirective {
     @HostListener('window:keyup', ['$event'])
     onWindowKeyUp(event: KeyboardEvent): void {
         if (this.isGlobal()) {
-            this.pressedKeys.delete(event.key.toLowerCase());
+            // Filter out dead keys, IME composition, and unidentified keys
+            if (this.isDeadOrIgnoredKey(event.key)) {
+                return;
+            }
+            const normalizedKey = normalizeKey(event.key, this.platform);
+            this.pressedKeys.delete(normalizedKey);
         }
     }
 
@@ -75,16 +85,33 @@ export class ShortcutDirective {
         this.pressedKeys.clear();
     }
 
+    @HostListener('document:visibilitychange')
+    onVisibilityChange(): void {
+        // Clear pressed keys when tab becomes hidden (user switches to another app/tab)
+        // This catches cases that blur doesn't, like switching to DevTools or another application
+        if (document.hidden) {
+            this.pressedKeys.clear();
+        }
+    }
+
 
     private handleKey(event: KeyboardEvent): void {
-        // If element-scoped, ensure focus is inside host element
+        // If element-scoped, ensure event originated from host element
         if (!this.isGlobal()) {
-            if (!this.host.nativeElement.contains(document.activeElement)) {
+            if (!event.composedPath().includes(this.host.nativeElement)) {
                 return;
             }
         }
 
-        this.pressedKeys.add(event.key.toLowerCase());
+        // Filter out dead keys, IME composition, and unidentified keys
+        if (this.isDeadOrIgnoredKey(event.key)) {
+            return;
+        }
+
+        // Normalize the key before storing
+        // Special handling for space: don't lowercase it first as normalizeKey will handle it
+        const normalizedKey = normalizeKey(event.key, this.platform);
+        this.pressedKeys.add(normalizedKey);
 
         const normalizedShortcuts = this.shortcut()
             .split(',')
@@ -110,13 +137,11 @@ export class ShortcutDirective {
         const mainKey = parts.at(-1)!;
         const modifiers = parts.slice(0, -1);
 
-        const eventKey = event.key.toLowerCase();
-        const eventCode = event.code.toLowerCase();
+        const eventKey = normalizeKey(event.key, this.platform);
+        const eventCode = this.normalizeCode(event.code?.toLowerCase() ?? '');
 
-        // Try to match the key using hybrid approach:
-        // 1. First try event.key (what the user sees/types)
-        // 2. Then try event.code (physical key position)
-        const keyMatches = eventKey === mainKey || this.matchesCode(mainKey, eventCode);
+        // Main key match: eventKey or layout-independent event.code
+        const keyMatches = eventKey === mainKey || eventCode === mainKey;
 
         if (!keyMatches) {
             return false;
@@ -142,57 +167,60 @@ export class ShortcutDirective {
             if (!this.pressedKeys.has(mod)) return false;
         }
 
-        // Reject extra pressed non-modifier keys
-        // Allowed keys = mainKey + standard modifiers + other modifiers
-        const allowedKeys = new Set<string>([
-            mainKey,
-            'control', 'shift', 'alt', 'meta',
-            ...otherModifiers
-        ]);
 
-        // If we matched via code (physical key), we must allow the actual key produced
-        // Examples: Shift+1 = !, Option+s = ß, etc.
-        if (eventKey !== mainKey) {
-            allowedKeys.add(eventKey);
-        }
-
-        for (const key of this.pressedKeys) {
-            if (allowedKeys.has(key)) continue;
-            return false;
-        }
 
         return true;
     }
 
-    /**
-     * Check if the mainKey matches the event.code (physical key position)
-     * This allows shortcuts to work regardless of keyboard layout
-     */
-    private matchesCode(mainKey: string, eventCode: string): boolean {
-        // Letter keys: a-z → KeyA-KeyZ
-        if (mainKey.match(/^[a-z]$/)) {
-            return eventCode === `key${mainKey}`;
-        }
+    private normalizeCode(code: string): string | null {
+        if (!code) return null;
+        const c = code.toLowerCase();
 
-        // Number keys: 0-9 → Digit0-Digit9
-        if (mainKey.match(/^[0-9]$/)) {
-            return eventCode === `digit${mainKey}`;
-        }
+        // KeyA → "a"
+        if (/^key[a-z]$/.test(c)) return c.slice(3);
 
-        // Special keys that have the same code
-        const specialKeys: Record<string, string> = {
-            'space': 'space',
-            ' ': 'space',
-            'enter': 'enter',
-            'tab': 'tab',
-            'escape': 'escape',
-            'backspace': 'backspace',
-            'arrowup': 'arrowup',
-            'arrowdown': 'arrowdown',
-            'arrowleft': 'arrowleft',
-            'arrowright': 'arrowright',
+        // Digit5 → "5"
+        if (/^digit[0-9]$/.test(c)) return c.slice(5);
+
+        // Numpad0 → "0"
+        if (/^numpad[0-9]$/.test(c)) return c.slice(6);
+
+        // Named keys matching our normalized names
+        const direct = [
+            'minus', 'equal', 'slash', 'backslash',
+            'semicolon', 'quote', 'comma', 'period',
+            'bracketleft', 'bracketright', 'backquote'
+        ];
+        if (direct.includes(c)) return c;
+
+        // Intl keys
+        if (c === 'intlbackslash') return 'backslash';
+        if (c === 'intlro') return 'slash';
+        if (c === 'intlyen') return 'backslash';
+
+        // Numpad extended keys
+        const numpadMap: Record<string, string> = {
+            'numpadadd': 'numpadadd',
+            'numpadsubtract': 'numpadsubtract',
+            'numpadmultiply': 'numpadmultiply',
+            'numpaddivide': 'numpaddivide',
+            'numpaddecimal': 'numpaddecimal',
+            'numpadequal': 'numpadequal',
+            'numpadcomma': 'numpadcomma',
+            'numpadenter': 'enter',
         };
+        if (numpadMap[c]) return numpadMap[c];
 
-        return specialKeys[mainKey] === eventCode;
+        // Modifiers from code
+        if (c.startsWith('shift')) return 'shift';
+        if (c.startsWith('control')) return 'control';
+        if (c.startsWith('alt')) return 'alt';
+        if (c.startsWith('meta')) return 'meta';
+
+        return null;
+    }
+
+    private isDeadOrIgnoredKey(key: string): boolean {
+        return ['Dead', 'Process', 'Unidentified'].includes(key);
     }
 }

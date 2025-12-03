@@ -1,174 +1,190 @@
-import { Injectable, NgZone, inject, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, inject, OnDestroy, PLATFORM_ID } from '@angular/core';
 import { Observable, fromEvent } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { getHostPlatform, normalizeKey } from '@ngx-oneforall/utils';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface ShortcutOptions {
-    key: string;
+    key: string; // e.g., "ctrl.s", "meta.shift.n"
     isGlobal?: boolean;
     preventDefault?: boolean;
     element?: HTMLElement;
 }
 
-export type ModifierKey =
-    | 'shift'
-    | 'control'
-    | 'alt'
-    | 'meta'
-    | 'altleft'
-    | 'backspace'
-    | 'tab'
-    | 'left'
-    | 'right'
-    | 'up'
-    | 'down'
-    | 'enter'
-    | 'space'
-    | 'escape';
-
 @Injectable()
 export class ShortcutService implements OnDestroy {
     private readonly zone = inject(NgZone);
+    private readonly platformId = inject(PLATFORM_ID);
     private readonly pressedKeys = new Set<string>();
+    private readonly pressedCodes = new Set<string>();
     private readonly platform = getHostPlatform();
 
-    private readonly keydownHandler = (e: KeyboardEvent) => this.pressedKeys.add(e.key.toLowerCase());
-    private readonly keyupHandler = (e: KeyboardEvent) => this.pressedKeys.delete(e.key.toLowerCase());
-    private readonly blurHandler = () => this.pressedKeys.clear();
+    private readonly keydownHandler = (event: KeyboardEvent) => {
+        if (this.isDeadOrIgnoredKey(event.key)) return;
+
+        const normalizedKey = normalizeKey(event.key, this.platform);
+        this.pressedKeys.add(normalizedKey);
+
+        this.pressedCodes.add(event.code?.toLowerCase());
+    };
+
+    private readonly keyupHandler = (event: KeyboardEvent) => {
+        if (this.isDeadOrIgnoredKey(event.key)) return;
+
+        const normalizedKey = normalizeKey(event.key, this.platform);
+        this.pressedKeys.delete(normalizedKey);
+
+        this.pressedCodes.delete(event.code?.toLowerCase());
+
+    };
+
+    private readonly blurHandler = () => this.clearPressed();
+    private readonly visibilityChangeHandler = () => {
+        if (document.hidden) this.clearPressed();
+    };
 
     constructor() {
-        // Track keys globally to ensure we know what's pressed even if focus changes
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
         this.zone.runOutsideAngular(() => {
             window.addEventListener('keydown', this.keydownHandler);
             window.addEventListener('keyup', this.keyupHandler);
             window.addEventListener('blur', this.blurHandler);
+            document.addEventListener('visibilitychange', this.visibilityChangeHandler);
         });
     }
 
     ngOnDestroy(): void {
+        if (!isPlatformBrowser(this.platformId)) {
+            return;
+        }
         window.removeEventListener('keydown', this.keydownHandler);
         window.removeEventListener('keyup', this.keyupHandler);
         window.removeEventListener('blur', this.blurHandler);
+        document.removeEventListener('visibilitychange', this.visibilityChangeHandler);
     }
 
     observe(options: ShortcutOptions): Observable<KeyboardEvent> {
         const { key, isGlobal = false, preventDefault = true, element } = options;
+        const target: EventTarget = isGlobal ? window : (element || window);
 
-        const target = isGlobal ? window : (element || window);
+        const descriptors = key
+            .split(',')
+            .map(s => s.trim())
+            .map(s => this.parseSingleShortcut(s));
 
         return fromEvent<KeyboardEvent>(target, 'keydown').pipe(
-            filter(event => this.matchesShortcut(key, event)),
-            tap(event => {
-                if (preventDefault) {
-                    event.preventDefault();
+            filter(event => {
+                // if element-scoped, event must originate from element
+                if (!isGlobal && element && !this.isEventFromElement(event, element)) {
+                    return false;
                 }
+
+                return descriptors.some(d => this.matchesDescriptor(d, event, isGlobal));
+            }),
+            tap(event => {
+                if (preventDefault) event.preventDefault();
             })
         );
     }
 
-    private matchesShortcut(shortcut: string, event: KeyboardEvent): boolean {
-        const normalizedShortcuts = shortcut
-            .split(',')
-            .map(s =>
-                s
-                    .split('.')
-                    .map((s) => normalizeKey(s, this.platform))
-                    .join('.')
-            )
-            .filter(Boolean);
-
-        for (const s of normalizedShortcuts) {
-            if (this.checkSingleShortcut(s, event)) {
-                return true;
-            }
-        }
-        return false;
+    private clearPressed(): void {
+        this.pressedKeys.clear();
+        this.pressedCodes.clear();
     }
 
-    private checkSingleShortcut(shortcut: string, event: KeyboardEvent): boolean {
-        const parts = shortcut.split('.');
-        const mainKey = parts.at(-1)!;
-        const modifiers = parts.slice(0, -1);
+    private isDeadOrIgnoredKey(key: string): boolean {
+        return ['Dead', 'Process', 'Unidentified'].includes(key);
+    }
 
-        const eventKey = event.key.toLowerCase();
-        const eventCode = event.code.toLowerCase();
+    private parseSingleShortcut(shortcut: string) {
+        const parts = shortcut.toLowerCase().split('.');
+        const mainKey = normalizeKey(parts.pop()!, this.platform);
+        const modifiers = new Set(parts.map(p => normalizeKey(p, this.platform)));
 
-        // Try to match the key using hybrid approach:
-        // 1. First try event.key (what the user sees/types)
-        // 2. Then try event.code (physical key position)
-        const keyMatches = eventKey === mainKey || this.matchesCode(mainKey, eventCode);
+        return { mainKey, modifiers };
+    }
 
-        if (!keyMatches) {
-            return false;
-        }
+    private isEventFromElement(event: KeyboardEvent, element: HTMLElement): boolean {
+        return event.composedPath().includes(element);
+    }
 
-        const expectCtrl = modifiers.includes('ctrl') || modifiers.includes('control');
-        const expectShift = modifiers.includes('shift');
-        const expectAlt = modifiers.includes('alt');
-        const expectMeta = modifiers.includes('meta') || modifiers.includes('cmd') || modifiers.includes('command');
+    private matchesDescriptor(descriptor: { mainKey: string; modifiers: Set<string> }, event: KeyboardEvent, isGlobal: boolean): boolean {
+        const { mainKey, modifiers } = descriptor;
+        const eventKey = normalizeKey(event.key, this.platform);
+        const eventCode = this.normalizeCode(event.code?.toLowerCase());
 
-        if (event.ctrlKey !== expectCtrl) return false;
-        if (event.shiftKey !== expectShift) return false;
-        if (event.altKey !== expectAlt) return false;
-        if (event.metaKey !== expectMeta) return false;
+        // Main key match: eventKey or layout-independent event.code
+        const mainKeyMatches =
+            eventKey === mainKey ||
+            eventCode === mainKey;
 
-        const otherModifiers = modifiers.filter(m =>
-            !['ctrl', 'control', 'shift', 'alt', 'meta', 'cmd', 'command'].includes(m)
-        );
+        if (!mainKeyMatches) return false;
 
-        for (const mod of otherModifiers) {
-            if (!this.pressedKeys.has(mod)) return false;
-        }
+        if (event.ctrlKey !== modifiers.has('control')) return false;
+        if (event.shiftKey !== modifiers.has('shift')) return false;
+        if (event.altKey !== modifiers.has('alt')) return false;
+        if (event.metaKey !== modifiers.has('meta')) return false;
 
-        const allowedKeys = new Set<string>([
-            mainKey,
-            'control', 'shift', 'alt', 'meta',
-            ...otherModifiers
-        ]);
-
-        // If we matched via code (physical key), we must allow the actual key produced
-        // Examples: Shift+1 = !, Option+s = ß, etc.
-        if (eventKey !== mainKey) {
-            allowedKeys.add(eventKey);
-        }
-
-        for (const key of this.pressedKeys) {
-            if (allowedKeys.has(key)) continue;
-            return false;
+        // Other keys check: pressedKeys must include all named modifiers
+        for (const mod of modifiers) {
+            if (!['control', 'shift', 'alt', 'meta'].includes(mod) && !this.pressedKeys.has(mod)) {
+                return false;
+            }
         }
 
         return true;
     }
 
-    /**
-     * Check if the mainKey matches the event.code (physical key position)
-     * This allows shortcuts to work regardless of keyboard layout
-     */
-    private matchesCode(mainKey: string, eventCode: string): boolean {
-        // Letter keys: a-z → KeyA-KeyZ
-        if (mainKey.match(/^[a-z]$/)) {
-            return eventCode === `key${mainKey}`;
-        }
+    private normalizeCode(code: string): string | null {
+        if (!code) return null;
+        const c = code.toLowerCase();
 
-        // Number keys: 0-9 → Digit0-Digit9
-        if (mainKey.match(/^[0-9]$/)) {
-            return eventCode === `digit${mainKey}`;
-        }
+        // KeyA → "a"
+        if (/^key[a-z]$/.test(c)) return c.slice(3);
 
-        // Special keys that have the same code
-        const specialKeys: Record<string, string> = {
-            'space': 'space',
-            ' ': 'space',
-            'enter': 'enter',
-            'tab': 'tab',
-            'escape': 'escape',
-            'backspace': 'backspace',
-            'arrowup': 'arrowup',
-            'arrowdown': 'arrowdown',
-            'arrowleft': 'arrowleft',
-            'arrowright': 'arrowright',
+        // Digit5 → "5"
+        if (/^digit[0-9]$/.test(c)) return c.slice(5);
+
+        // Numpad0 → "0"
+        if (/^numpad[0-9]$/.test(c)) return c.slice(6);
+
+        // Named keys matching our normalized names
+        const direct = [
+            'minus', 'equal', 'slash', 'backslash',
+            'semicolon', 'quote', 'comma', 'period',
+            'bracketleft', 'bracketright', 'backquote'
+        ];
+        if (direct.includes(c)) return c;
+
+        // Intl keys
+        if (c === 'intlbackslash') return 'backslash';
+        if (c === 'intlro') return 'slash';
+        if (c === 'intlyen') return 'backslash';
+
+        // Numpad extended keys
+        const numpadMap: Record<string, string> = {
+            'numpadadd': 'numpadadd',
+            'numpadsubtract': 'numpadsubtract',
+            'numpadmultiply': 'numpadmultiply',
+            'numpaddivide': 'numpaddivide',
+            'numpaddecimal': 'numpaddecimal',
+            'numpadequal': 'numpadequal',
+            'numpadcomma': 'numpadcomma',
+            'numpadenter': 'enter',
         };
+        if (numpadMap[c]) return numpadMap[c];
 
-        return specialKeys[mainKey] === eventCode;
+        // Modifiers from code
+        if (c.startsWith('shift')) return 'shift';
+        if (c.startsWith('control')) return 'control';
+        if (c.startsWith('alt')) return 'alt';
+        if (c.startsWith('meta')) return 'meta';
+
+        return null;
     }
+
 }
+
+
