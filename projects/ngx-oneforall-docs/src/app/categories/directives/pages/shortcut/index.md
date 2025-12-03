@@ -6,7 +6,6 @@ The **Shortcut** directive allows you to define keyboard shortcuts and trigger a
 - **Custom Shortcuts:** Define any key combination (e.g., `ctrl.s`, `shift.enter`).
 - **Modifier Support:** Supports `ctrl`, `shift`, `alt`, and `meta` (cmd) modifiers.
 - **Global & Scoped:** Listen globally (window) or scoped to the element.
-- **Strict Matching:** Ensures no extra keys are pressed (e.g., `Shift + K + Enter` won't trigger `Shift + Enter`).
 - **Prevent Default:** Automatically prevents the default behavior of the key combination.
 
 ## How to Use

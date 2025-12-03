@@ -4,7 +4,6 @@ The **ShortcutService** provides an Observable-based API for handling keyboard s
 
 - **Observable API:** Returns an Observable that emits when the shortcut is triggered.
 - **Global & Scoped:** Listen globally (window) or on specific elements.
-- **Strict Matching:** Ensures no extra keys are pressed.
 - **Prevent Default:** Automatically prevents default browser actions (configurable).
 - **Expanded Modifiers:** Supports standard and non-standard modifiers (e.g., `space`, `enter`, `up`, `down`).
 
