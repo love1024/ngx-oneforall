@@ -9,3 +9,4 @@ export {
 } from './time-ago/time-ago.providers';
 export type { TimeAgoLabels } from './time-ago/time-ago.util';
 export * from './pluralize/pluralize.pipe';
+export * from './bytes/bytes.pipe';

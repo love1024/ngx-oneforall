@@ -1,0 +1,13 @@
+<!-- snippet: basic-usage -->
+<p>{{ 1024 | bytes }}</p> <!-- 1 KB -->
+<p>{{ 1048576 | bytes }}</p> <!-- 1 MB -->
+
+<!-- snippet: custom-decimals -->
+<p>{{ 1500 | bytes: 0 }}</p> <!-- 1.5 KB -->
+<p>{{ 1500 | bytes: 3 }}</p> <!-- 1.500 KB -->
+
+<!-- snippet: large-numbers -->
+<p>{{ 1073741824 | bytes }}</p> <!-- 1 GB -->
+
+<!-- snippet: custom-units -->
+<p>{{ 1024 | bytes: 2 : ['b', 'kb', 'mb', 'gb', 'tb', 'pb'] }}</p> <!-- 1.00 KB -->
