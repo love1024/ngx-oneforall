@@ -1,0 +1,11 @@
+<!-- snippet: basic-usage -->
+<p>{{ sum | call: 1 : 2 }}</p>
+<!-- Output: 3 -->
+
+<!-- snippet: arrow-function -->
+<p>{{ getGreeting | call: 'World' }}</p>
+<!-- Output: Hello, World! -->
+
+<!-- snippet: bound-method -->
+<p>{{ getCounterBound | call }}</p>
+<!-- Output: 42 -->

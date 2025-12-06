@@ -11,3 +11,4 @@ export type { TimeAgoLabels } from './time-ago/time-ago.util';
 export * from './pluralize/pluralize.pipe';
 export * from './bytes/bytes.pipe';
 export * from './range/range.pipe';
+export * from './call/call.pipe';
