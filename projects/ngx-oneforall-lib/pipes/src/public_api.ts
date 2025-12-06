@@ -12,3 +12,4 @@ export * from './pluralize/pluralize.pipe';
 export * from './bytes/bytes.pipe';
 export * from './range/range.pipe';
 export * from './call/call.pipe';
+export * from './highlight-search/highlight-search.pipe';
