@@ -1,0 +1,17 @@
+<ng-doc-snippet name="usage">
+    import { intervalSignal } from '@ngx-oneforall/signals';
+
+    @Component({ ... })
+    export class MyComponent {
+    // Create an interval that ticks every 1000ms
+    interval = intervalSignal(1000);
+
+    start() {
+    this.interval.start();
+    }
+
+    stop() {
+    this.interval.stop();
+    }
+    }
+</ng-doc-snippet>
