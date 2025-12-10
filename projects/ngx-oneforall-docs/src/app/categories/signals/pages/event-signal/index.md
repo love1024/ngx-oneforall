@@ -17,10 +17,10 @@ export class MyComponent {
 }
 ```
 
-> [!NOTE]
+> **Note**
 > The signal returns `null` initially until the first event fires.
 
-> [!IMPORTANT]
+> **Important**
 > `eventSignal` uses `inject()` internally, so it must be called during component construction. If you need to attach to an element that is not available yet (like a `viewChild`), you might need to use `runInInjectionContext` in `ngAfterViewInit` or use the host element.
 
 ## API

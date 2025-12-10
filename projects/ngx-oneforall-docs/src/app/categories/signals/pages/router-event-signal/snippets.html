@@ -1,0 +1,17 @@
+<ng-doc-snippet name="usage">
+    import { routerEventSignal } from '@ngx-oneforall/signals';
+
+    @Component({ ... })
+    export class MyComponent {
+    // Track router events
+    router = routerEventSignal();
+
+    constructor() {
+    effect(() => {
+    if (this.router.isNavigationEnd()) {
+    console.log('Navigation finished!');
+    }
+    });
+    }
+    }
+</ng-doc-snippet>
