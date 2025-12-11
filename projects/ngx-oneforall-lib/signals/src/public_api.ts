@@ -7,3 +7,4 @@ export * from './interval-signal/interval-signal';
 export * from './router-event-signal/router-event-signal';
 export * from './debounced-signal/debounced-signal';
 export * from './throttled-signal/throttled-signal';
+export * from './websocket-signal/websocket-signal';
