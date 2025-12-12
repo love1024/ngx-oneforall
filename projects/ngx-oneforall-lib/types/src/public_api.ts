@@ -2,3 +2,8 @@ export * from './simple-changes/simple-changes';
 export * from './partial-only/partial-only';
 export * from './required-only/required-only';
 export * from './deep-partial/deep-partial';
+export * from './is-arrow-function/is-arrow-function';
+export * from './callable/callable';
+export * from './keys-of-type/keys-of-type';
+export * from './pick-by-value/pick-by-value';
+export * from './omit-by-value/omit-by-value';
