@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, NgForm } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { RangeLengthDirective } from './range-length.directive';
+import { RangeLengthValidator } from './range-length.directive';
 
 @Component({
     selector: 'test-component',
@@ -11,7 +11,7 @@ import { RangeLengthDirective } from './range-length.directive';
             <input name="testInput" [ngModel]="value" [rangeLength]="range">
         </form>
     `,
-    imports: [FormsModule, RangeLengthDirective],
+    imports: [FormsModule, RangeLengthValidator],
     standalone: true
 })
 class TestComponent {
@@ -19,13 +19,13 @@ class TestComponent {
     range: [number, number] | null = [2, 5];
 }
 
-describe('RangeLengthDirective', () => {
+describe('RangeLengthValidator', () => {
     let fixture: ComponentFixture<TestComponent>;
     let component: TestComponent;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [TestComponent, RangeLengthDirective, FormsModule]
+            imports: [TestComponent, RangeLengthValidator, FormsModule]
         }).compileComponents();
 
         fixture = TestBed.createComponent(TestComponent);

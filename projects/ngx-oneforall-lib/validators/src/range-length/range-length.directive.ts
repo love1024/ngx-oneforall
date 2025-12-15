@@ -13,18 +13,19 @@ import {
     ValidatorFn
 } from '@angular/forms';
 import { rangeLength } from './range-length.validator';
+import { isPresent } from '@ngx-oneforall/utils';
 
 @Directive({
     selector: '[rangeLength][formControlName],[rangeLength][formControl],[rangeLength][ngModel]',
     providers: [
         {
             provide: NG_VALIDATORS,
-            useExisting: forwardRef(() => RangeLengthDirective),
+            useExisting: forwardRef(() => RangeLengthValidator),
             multi: true
         }
     ]
 })
-export class RangeLengthDirective implements Validator {
+export class RangeLengthValidator implements Validator {
 
     /**
      * Usage:
@@ -39,14 +40,11 @@ export class RangeLengthDirective implements Validator {
         effect(() => {
             const value = this.range();
 
-            if (!value) {
+            if (!isPresent(value)) {
                 this.validator = null;
             } else {
                 const [min, max] = value;
-                this.validator =
-                    typeof min === 'number' && typeof max === 'number'
-                        ? rangeLength(min, max)
-                        : null;
+                this.validator = rangeLength(min, max);
             }
 
             this.onChange?.();

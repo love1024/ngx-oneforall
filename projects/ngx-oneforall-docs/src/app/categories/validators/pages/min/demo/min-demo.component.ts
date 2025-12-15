@@ -1,45 +1,44 @@
 import { Component } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { rangeLength, RangeLengthValidator } from '@ngx-oneforall/validators';
+import { min, MinValidator } from '@ngx-oneforall/validators';
 
 @Component({
-    selector: 'app-range-length-demo',
+    selector: 'app-min-demo',
     standalone: true,
-    imports: [ReactiveFormsModule, CommonModule, FormsModule, RangeLengthValidator],
+    imports: [ReactiveFormsModule, CommonModule, FormsModule, MinValidator],
     template: `
         <div class="demo-container">
             <h3>Reactive Form</h3>
             <label>
-                Enter text (length 5-10):
-                <input [formControl]="control" placeholder="Type here...">
+                Enter number (min 5):
+                <input type="number" [formControl]="control" placeholder="Type here...">
             </label>
             
-            <div *ngIf="control.errors?.['rangeLength'] as error" class="error">
-                Length must be between {{ error.requiredMinLength }} and {{ error.requiredMaxLength }}.
-                Current: {{ error.actualLength }}
+            <div *ngIf="control.errors?.['min'] as error" class="error">
+                Value must be at least {{ error.requiredValue }}.
+                Current: {{ error.actualValue }}
             </div>
             
             <div *ngIf="control.valid && control.value" class="success">
-                Valid length!
+                Valid value!
             </div>
         </div>
 
         <div class="demo-container">
             <h3>Template-Driven Form (Directive)</h3>
             <label>
-                Enter text (length 3-6):
-                <input [(ngModel)]="templateValue" [rangeLength]="[3, 6]" #templateCtrl="ngModel" placeholder="Type here...">
+                Enter number (min 10):
+                <input type="number" [(ngModel)]="templateValue" [min]="10" #templateCtrl="ngModel" placeholder="Type here...">
             </label>
             
-            <div *ngIf="templateCtrl.errors?.['rangeLength'] as error" class="error">
-                Length must be between {{ error.requiredMinLength }} and {{ error.requiredMaxLength }}.
-                Current: {{ error.actualLength }}
+            <div *ngIf="templateCtrl.errors?.['min'] as error" class="error">
+                Value must be at least {{ error.requiredValue }}.
+                Current: {{ error.actualValue }}
             </div>
             
             <div *ngIf="templateCtrl.valid && templateCtrl.value" class="success">
-                Valid length!
+                Valid value!
             </div>
         </div>
     `,
@@ -72,7 +71,7 @@ import { rangeLength, RangeLengthValidator } from '@ngx-oneforall/validators';
         }
     `]
 })
-export class RangeLengthDemoComponent {
-    control = new FormControl('', rangeLength(5, 10));
-    templateValue = '';
+export class MinDemoComponent {
+    control = new FormControl(null, min(5));
+    templateValue: number | null = null;
 }
