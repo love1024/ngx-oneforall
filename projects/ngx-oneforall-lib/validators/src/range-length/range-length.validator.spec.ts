@@ -1,5 +1,5 @@
 import { FormControl } from '@angular/forms';
-import { rangeLength } from './range-length';
+import { rangeLength } from './range-length.validator';
 
 describe('rangeLength', () => {
     it('should return null for null/undefined values', () => {

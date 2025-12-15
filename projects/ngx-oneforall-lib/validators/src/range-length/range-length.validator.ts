@@ -1,10 +1,10 @@
 import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { isPresent } from '@ngx-oneforall/utils';
 
 export function rangeLength(min: number, max: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-        if (min == null || max == null) return null;
-
-        if (Validators.required(control)) return null;
+        if (!isPresent(min) || !isPresent(max)) return null;
+        if (isPresent(Validators.required(control))) return null;
 
         const value = control.value;
 

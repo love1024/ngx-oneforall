@@ -12,7 +12,7 @@ import {
     Validator,
     ValidatorFn
 } from '@angular/forms';
-import { rangeLength } from './range-length';
+import { rangeLength } from './range-length.validator';
 
 @Directive({
     selector: '[rangeLength][formControlName],[rangeLength][formControl],[rangeLength][ngModel]',
