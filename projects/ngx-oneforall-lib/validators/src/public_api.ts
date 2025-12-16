@@ -9,3 +9,7 @@ export * from './url/url.validator';
 export * from './url/url.directive';
 export * from './date/date.validator';
 export * from './date/date.directive';
+export * from './min-date/min-date.validator';
+export * from './min-date/min-date.directive';
+export * from './max-date/max-date.validator';
+export * from './max-date/max-date.directive';
