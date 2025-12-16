@@ -5,3 +5,5 @@ export * from './range/range.directive';
 export * from './base/base.validator';
 export * from './number/number.validator';
 export * from './number/number.directive';
+export * from './url/url.validator';
+export * from './url/url.directive';
