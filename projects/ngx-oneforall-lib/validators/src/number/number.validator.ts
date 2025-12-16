@@ -2,7 +2,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from '@ang
 import { isNumberString, isNumberValue, isPresent } from '@ngx-oneforall/utils';
 
 export const number: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    if (Validators.required(control)) return null;
+    if (isPresent(Validators.required(control))) return null;
 
     const value = control.value;
 

@@ -7,3 +7,5 @@ export * from './number/number.validator';
 export * from './number/number.directive';
 export * from './url/url.validator';
 export * from './url/url.directive';
+export * from './date/date.validator';
+export * from './date/date.directive';
