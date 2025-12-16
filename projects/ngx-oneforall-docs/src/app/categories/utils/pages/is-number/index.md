@@ -6,7 +6,30 @@ In TypeScript and Angular applications, validating data types is essential for m
 
 ## Overview of Utility Functions
 
-### 1. `isNumberValue`
+### 1. `isNumeric`
+
+This function determines if a value is either a finite number or a string that represents a finite number.
+
+#### Key Features:
+- Combines the checks of `isNumberValue` and `isNumberString`.
+- Returns `true` for numbers, numeric strings, and `Number` objects that represent finite numbers.
+- Returns `false` for `NaN`, `Infinity`, and strings like `'NaN'` or `'Infinity'`.
+
+#### Example Usage:
+```typescript
+const num = 123;
+const numStr = '456';
+const notNum = 'abc';
+
+console.log(`Is ${num} numeric? ${isNumeric(num)}`);       // true
+console.log(`Is '${numStr}' numeric? ${isNumeric(numStr)}`); // true
+console.log(`Is '${notNum}' numeric? ${isNumeric(notNum)}`); // false
+```
+
+---
+
+
+### 2. `isNumberValue`
 
 This function determines if a value is a finite number.
 
@@ -26,7 +49,7 @@ if (isNumberValue(value)) {
 
 ---
 
-### 2. `isNumberString`
+### 3. `isNumberString`
 
 This function checks if a value is a string that represents a valid numeric value.
 
@@ -47,7 +70,7 @@ if (isNumberString(value)) {
 
 ---
 
-### 3. `isNumberObject`
+### 4. `isNumberObject`
 
 This function verifies if a value is an instance of the `Number` object.
 

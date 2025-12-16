@@ -1,4 +1,4 @@
-import { isNumberValue, isNumberString, isNumberObject } from './is-number';
+import { isNumberValue, isNumberString, isNumberObject, isNumeric } from './is-number';
 
 describe('isNumberValue', () => {
   it('should return true for finite numbers', () => {
@@ -57,3 +57,24 @@ describe('isNumberObject', () => {
     expect(isNumberObject(new String('42'))).toBe(false);
   });
 });
+
+
+describe('isNumeric', () => {
+  it('should return true for valid number strings', () => {
+    expect(isNumeric('42')).toBe(true);
+    expect(isNumeric('-42')).toBe(true);
+    expect(isNumeric('3.14')).toBe(true);
+    expect(isNumeric('0')).toBe(true);
+  });
+
+  it('should return false for invalid number strings or non-string values', () => {
+    expect(isNumeric('abc')).toBe(false);
+    expect(isNumeric('42abc')).toBe(false);
+    expect(isNumeric('')).toBe(false);
+    expect(isNumeric(null)).toBe(false);
+    expect(isNumeric(undefined)).toBe(false);
+    expect(isNumeric({})).toBe(false);
+    expect(isNumeric([])).toBe(false);
+  });
+
+})

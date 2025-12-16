@@ -14,3 +14,8 @@ export const isNumberString = (value: unknown): value is string => {
 export const isNumberObject = (value: unknown): value is Number => {
   return typeof value === 'object' && value instanceof Number;
 };
+
+
+export const isNumeric = (value: unknown): value is number | string => {
+  return isNumberValue(value) || isNumberString(value);
+};

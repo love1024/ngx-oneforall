@@ -5,14 +5,11 @@ import {
     input
 } from '@angular/core';
 import {
-    AbstractControl,
-    NG_VALIDATORS,
-    ValidationErrors,
-    Validator,
-    ValidatorFn
+    NG_VALIDATORS
 } from '@angular/forms';
 import { isPresent } from '@ngx-oneforall/utils';
 import { range } from './range.validator';
+import { BaseValidator } from '../base/base.validator';
 
 @Directive({
     selector: '[range][formControlName],[range][formControl],[range][ngModel]',
@@ -24,7 +21,7 @@ import { range } from './range.validator';
         }
     ]
 })
-export class RangeValidator implements Validator {
+export class RangeValidator extends BaseValidator {
 
     /**
      * Usage:
@@ -32,10 +29,8 @@ export class RangeValidator implements Validator {
      */
     range = input<[number, number] | null>(null);
 
-    private validator: ValidatorFn | null = null;
-    private onChange?: () => void;
-
     constructor() {
+        super();
         effect(() => {
             const value = this.range();
 
@@ -48,13 +43,5 @@ export class RangeValidator implements Validator {
 
             this.onChange?.();
         });
-    }
-
-    validate(control: AbstractControl): ValidationErrors | null {
-        return this.validator ? this.validator(control) : null;
-    }
-
-    registerOnValidatorChange(fn: () => void): void {
-        this.onChange = fn;
     }
 }
