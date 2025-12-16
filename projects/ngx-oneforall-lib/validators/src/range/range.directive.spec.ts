@@ -2,40 +2,40 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, NgForm } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { MinValidator } from './min.directive';
+import { RangeValidator } from './range.directive';
 
 @Component({
-    selector: 'test-min-component',
+    selector: 'test-range-component',
     template: `
         <form>
-            <input name="testInput" [ngModel]="value" [min]="minVal">
+            <input name="testInput" [ngModel]="value" [range]="rangeVal">
         </form>
     `,
-    imports: [FormsModule, MinValidator],
+    imports: [FormsModule, RangeValidator],
     standalone: true
 })
-class TestMinComponent {
+class TestRangeComponent {
     value: number | string | null = null;
-    minVal: number | null = 5;
+    rangeVal: [number, number] | null = [5, 10];
 }
 
-describe('MinValidator Directive', () => {
-    let fixture: ComponentFixture<TestMinComponent>;
-    let component: TestMinComponent;
+describe('RangeValidator Directive', () => {
+    let fixture: ComponentFixture<TestRangeComponent>;
+    let component: TestRangeComponent;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [TestMinComponent, MinValidator, FormsModule]
+            imports: [TestRangeComponent, RangeValidator, FormsModule]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(TestMinComponent);
+        fixture = TestBed.createComponent(TestRangeComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
         await fixture.whenStable();
     });
 
-    it('should validate based on min input', async () => {
-        component.value = 3; // Invalid < 5
+    it('should validate based on range input', async () => {
+        component.value = 4; // Invalid < 5
         fixture.detectChanges();
         await fixture.whenStable();
 
@@ -43,14 +43,11 @@ describe('MinValidator Directive', () => {
         const control = input.injector.get(NgForm).controls['testInput'];
 
         expect(control.errors).toEqual({
-            min: {
-                requiredValue: 5,
-                actualValue: 3
-            }
+            range: { min: 5, max: 10, actualValue: 4 }
         });
     });
 
-    it('should be valid if value >= min', async () => {
+    it('should be valid when value in range', async () => {
         component.value = 5;
         fixture.detectChanges();
         await fixture.whenStable();
@@ -65,8 +62,8 @@ describe('MinValidator Directive', () => {
         expect(control.errors).toBeNull();
     });
 
-    it('should update validator when min changes', async () => {
-        component.value = 3;
+    it('should update validator when range changes', async () => {
+        component.value = 4;
         fixture.detectChanges();
         await fixture.whenStable();
         const input = fixture.debugElement.query(By.css('input'));
@@ -75,46 +72,28 @@ describe('MinValidator Directive', () => {
         // Invalid initially
         expect(control.errors).toBeTruthy();
 
-        // Change min to 2
-        component.minVal = 2;
+        // Change range to [2, 10]
+        component.rangeVal = [2, 10];
         fixture.detectChanges();
         await fixture.whenStable();
 
-        // Should be valid now (3 >= 2)
+        // Should be valid now (4 >= 2)
         expect(control.errors).toBeNull();
     });
 
-    it('should disable validation and return null when min is null', async () => {
-        component.value = 3; // Invalid for min 5
+    it('should disable validation and return null when range is null', async () => {
+        component.value = 4; // Invalid for [5, 10]
         fixture.detectChanges();
         await fixture.whenStable();
 
         const input = fixture.debugElement.query(By.css('input'));
         const control = input.injector.get(NgForm).controls['testInput'];
-
-        // Confirm invalid
         expect(control.errors).toBeTruthy();
 
-        // Set min to null (Trigger line 26: this.validator = null)
-        component.minVal = null;
+        component.rangeVal = null;
         fixture.detectChanges();
         await fixture.whenStable();
 
-        // Confirm valid (Trigger line 35 branch: this.validator is null)
         expect(control.errors).toBeNull();
-    });
-
-    it('should register onChange', () => {
-        // Line 39 coverage implicitly, but explicit test ensures function is assigned
-        const directive = fixture.debugElement.query(By.directive(MinValidator)).injector.get(MinValidator);
-        const fn = jest.fn();
-        directive.registerOnValidatorChange!(fn);
-
-        // Trigger change
-        fixture.componentInstance.minVal = 10;
-        fixture.detectChanges(); // Trigger effect
-
-        // Effect calls onChange on line 29
-        expect(fn).toHaveBeenCalled();
     });
 });

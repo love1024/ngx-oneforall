@@ -1,22 +1,22 @@
 import { Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { min, MinValidator } from '@ngx-oneforall/validators';
+import { range, RangeValidator } from '@ngx-oneforall/validators';
 
 @Component({
-    selector: 'app-min-demo',
+    selector: 'app-range-demo',
     standalone: true,
-    imports: [ReactiveFormsModule, CommonModule, FormsModule, MinValidator],
+    imports: [ReactiveFormsModule, CommonModule, FormsModule, RangeValidator],
     template: `
         <div class="demo-container">
             <h3>Reactive Form</h3>
             <label>
-                Enter number (min 5):
+                Enter number (5-10):
                 <input type="number" [formControl]="control" placeholder="Type here...">
             </label>
             
-            <div *ngIf="control.errors?.['min'] as error" class="error">
-                Value must be at least {{ error.requiredValue }}.
+            <div *ngIf="control.errors?.['range'] as error" class="error">
+                Value must be between {{ error.min }} and {{ error.max }}.
                 Current: {{ error.actualValue }}
             </div>
             
@@ -28,12 +28,12 @@ import { min, MinValidator } from '@ngx-oneforall/validators';
         <div class="demo-container">
             <h3>Template-Driven Form (Directive)</h3>
             <label>
-                Enter number (min 10):
-                <input type="number" [(ngModel)]="templateValue" [min]="10" #templateCtrl="ngModel" placeholder="Type here...">
+                Enter number (10-20):
+                <input type="number" [(ngModel)]="templateValue" [range]="[10, 20]" #templateCtrl="ngModel" placeholder="Type here...">
             </label>
             
-            <div *ngIf="templateCtrl.errors?.['min'] as error" class="error">
-                Value must be at least {{ error.requiredValue }}.
+            <div *ngIf="templateCtrl.errors?.['range'] as error" class="error">
+                Value must be between {{ error.min }} and {{ error.max }}.
                 Current: {{ error.actualValue }}
             </div>
             
@@ -71,7 +71,7 @@ import { min, MinValidator } from '@ngx-oneforall/validators';
         }
     `]
 })
-export class MinDemoComponent {
-    control = new FormControl(null, min(5));
+export class RangeDemoComponent {
+    control = new FormControl(null, range(5, 10));
     templateValue: number | null = null;
 }
