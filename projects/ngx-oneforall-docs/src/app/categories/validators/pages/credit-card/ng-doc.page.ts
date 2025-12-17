@@ -3,7 +3,7 @@ import ValidatorsCategory from '../../ng-doc.category';
 import { CreditCardDemoComponent } from './demo/credit-card-demo.component';
 
 const CreditCardPage: NgDocPage = {
-    title: 'CreditCard',
+    title: 'Credit Card',
     mdFile: './index.md',
     category: ValidatorsCategory,
     demos: { CreditCardDemoComponent },
