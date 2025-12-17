@@ -3,7 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, NgForm } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { PhoneValidator } from './phone.directive';
-import { CountryCode } from '@ngx-oneforall/constants';
+import { CountryCode } from './phone.validator';
+
 
 @Component({
     selector: 'test-phone-component',
@@ -17,7 +18,7 @@ import { CountryCode } from '@ngx-oneforall/constants';
 })
 class TestPhoneComponent {
     value: string | null = null;
-    countryCode: any = CountryCode.UnitedStates;
+    countryCode: CountryCode | null = "US";
 }
 
 describe('PhoneValidator Directive', () => {
@@ -61,7 +62,7 @@ describe('PhoneValidator Directive', () => {
         const control = fixture.debugElement.query(By.css('input')).injector.get(NgForm).controls['testInput'];
         expect(control.errors).toEqual({ phone: true }); // Default US
 
-        component.countryCode = CountryCode.UnitedKingdom;
+        component.countryCode = "GB";
         fixture.detectChanges();
         await fixture.whenStable();
 

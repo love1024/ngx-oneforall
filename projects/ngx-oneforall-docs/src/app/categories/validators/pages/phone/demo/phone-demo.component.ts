@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { phoneValidator, PhoneValidator } from '@ngx-oneforall/validators';
-import { CountryCode } from '@ngx-oneforall/constants';
+import { CountryCode, phoneValidator, PhoneValidator } from '@ngx-oneforall/validators';
+
 
 @Component({
     selector: 'app-phone-demo',
@@ -78,16 +78,16 @@ import { CountryCode } from '@ngx-oneforall/constants';
     `]
 })
 export class PhoneDemoComponent {
-    control = new FormControl(null, phoneValidator(CountryCode.UnitedStates));
+    control = new FormControl(null, phoneValidator("US"));
     templateValue: string | null = null;
-    selectedCountry: CountryCode = CountryCode.UnitedStates;
+    selectedCountry: CountryCode = "US";
 
     countries = [
-        { name: 'United States', code: CountryCode.UnitedStates },
-        { name: 'United Kingdom', code: CountryCode.UnitedKingdom },
-        { name: 'India', code: CountryCode.India },
-        { name: 'Germany', code: CountryCode.Germany },
-        { name: 'Australia', code: CountryCode.Australia }
+        { name: 'United States', code: "US" },
+        { name: 'United Kingdom', code: "GB" },
+        { name: 'India', code: "IN" },
+        { name: 'Germany', code: "DE" },
+        { name: 'Australia', code: "AU" }
     ];
 
     getCountryName(code: CountryCode): string {

@@ -6,9 +6,7 @@ It uses `libphonenumber-js` under the hood to validate phone numbers.
 
 ## Usage
 
-Use `phone` to validate phone numbers. You must provide a `CountryCode`.
-
-> **Note** : You can import the `CountryCode` constant object from `@ngx-oneforall/constants` to use predefined country codes.
+Use `phone` to validate phone numbers. You must provide a `CountryCode` (Alpha-2 code).
 
 {{ NgDocActions.demo("PhoneDemoComponent", { container: true }) }}
 

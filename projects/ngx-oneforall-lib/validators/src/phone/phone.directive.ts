@@ -1,8 +1,7 @@
 import { Directive, effect, forwardRef, input, Input } from '@angular/core';
 import { NG_VALIDATORS } from '@angular/forms';
 import { BaseValidator } from '../base/base.validator';
-import { phoneValidator } from './phone.validator';
-import { CountryCode } from '@ngx-oneforall/constants';
+import { CountryCode, phoneValidator } from './phone.validator';
 import { isPresent } from '@ngx-oneforall/utils';
 
 @Directive({
@@ -16,7 +15,7 @@ import { isPresent } from '@ngx-oneforall/utils';
     ]
 })
 export class PhoneValidator extends BaseValidator {
-    phone = input<CountryCode | null>(CountryCode.UnitedStates)
+    phone = input<CountryCode | null>("US")
 
     constructor() {
         super();

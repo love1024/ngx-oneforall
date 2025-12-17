@@ -1,7 +1,8 @@
 import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { isValidPhoneNumber } from 'libphonenumber-js';
+import { CountryCode as CountryCodeType, isValidPhoneNumber } from 'libphonenumber-js';
 import { isPresent } from '@ngx-oneforall/utils';
-import { CountryCode } from '@ngx-oneforall/constants';
+
+export type CountryCode = CountryCodeType;
 
 export const phoneValidator = (country: CountryCode): ValidatorFn => {
     return (control: AbstractControl): ValidationErrors | null => {
