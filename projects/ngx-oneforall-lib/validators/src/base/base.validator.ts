@@ -13,4 +13,10 @@ export abstract class BaseValidator implements Validator {
     registerOnValidatorChange(fn: () => void): void {
         this.onChange = fn;
     }
+
+    ngOnChanges(): void {
+        if (this.onChange) {
+            this.onChange();
+        }
+    }
 }

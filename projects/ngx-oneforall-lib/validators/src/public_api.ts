@@ -15,3 +15,5 @@ export * from './max-date/max-date.validator';
 export * from './max-date/max-date.directive';
 export * from './credit-card/credit-card.validator';
 export * from './credit-card/credit-card.directive';
+export * from './phone/phone.validator';
+export * from './phone/phone.directive';
