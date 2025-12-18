@@ -23,7 +23,10 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
-import { withCacheInterceptor } from '@ngx-oneforall/interceptors';
+import {
+  withCacheInterceptor,
+  withTimeoutInterceptor,
+} from '@ngx-oneforall/interceptors';
 import { provideCacheService } from '@ngx-oneforall/services';
 
 export const appConfig: ApplicationConfig = {
@@ -35,7 +38,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(
       withInterceptorsFromDi(),
-      withInterceptors([withCacheInterceptor()])
+      withInterceptors([withCacheInterceptor(), withTimeoutInterceptor(5000)])
     ),
     provideRouter(
       NG_DOC_ROUTING,
