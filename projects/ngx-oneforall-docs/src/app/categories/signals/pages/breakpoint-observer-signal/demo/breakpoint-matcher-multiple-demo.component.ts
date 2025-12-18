@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Breakpoint, BreakpointQueries } from '@ngx-oneforall/constants';
+import { BREAKPOINT, BREAKPOINT_QUERY } from '@ngx-oneforall/constants';
 import { breakpointMatcherMultiple } from '@ngx-oneforall/signals';
 
 @Component({
@@ -14,9 +14,9 @@ import { breakpointMatcherMultiple } from '@ngx-oneforall/signals';
       <div class="result-box" [class.active]="extraSmallorSmallDevice().some">
         <span>
           <strong>Current Query:</strong>
-          <code>{{ BreakpointQueries['XS'] }}</code>
+          <code>{{ BreakpointQueries['xs'] }}</code>
           <span>or</span>
-          <code>{{ BreakpointQueries['SMOnly'] }}</code>
+          <code>{{ BreakpointQueries['smOnly'] }}</code>
         </span>
         <span>
           <strong>Is Extra Small or Small Device?</strong>
@@ -37,9 +37,9 @@ import { breakpointMatcherMultiple } from '@ngx-oneforall/signals';
   styleUrl: 'breakpoint-matcher-signal-demo.component.scss',
 })
 export class BreakpointMatcherMultipleSignalDemoComponent {
-  BreakpointQueries = BreakpointQueries;
+  BreakpointQueries = BREAKPOINT_QUERY;
   extraSmallorSmallDevice = breakpointMatcherMultiple([
-    Breakpoint.SMOnly,
-    Breakpoint.XS,
+    BREAKPOINT.SM_ONLY,
+    BREAKPOINT.XS,
   ]);
 }

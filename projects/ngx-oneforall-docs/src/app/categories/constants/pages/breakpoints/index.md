@@ -1,31 +1,64 @@
-The `Breakpoint` enum defines a set of named breakpoints commonly used in responsive web design, such as `XS`, `SM`, `MD`, `LG`, `XL`, and `XXL`, along with range-specific values like `SMOnly` and `MDOnly`. These enums help standardize breakpoint references throughout your codebase.
+The `@ngx-oneforall/constants` package provides a set of constants for responsive design breakpoints, including their names, numeric values, and CSS media query strings.
 
-The accompanying `BreakpointQueries` object maps each breakpoint to its corresponding CSS media query string, making it easy to use these breakpoints for conditional rendering or styling in your application.
+## Usage
+
+Import the constants to handle responsive logic in your components or services.
 
 ```typescript
-export enum Breakpoint {
-  XS = 'XS',
-  SM = 'SM',
-  MD = 'MD',
-  LG = 'LG',
-  XL = 'XL',
-  XXL = 'XXL',
-  SMOnly = 'SMOnly',
-  MDOnly = 'MDOnly',
-  LGOnly = 'LGOnly',
-  XLONly = 'XLONly',
-}
+import { BREAKPOINT, BREAKPOINT_QUERY } from '@ngx-oneforall/constants';
 
-export const BreakpointQueries = {
-  [Breakpoint.XS]: '(width < 576px)',
-  [Breakpoint.SM]: '(width >= 576px)',
-  [Breakpoint.MD]: '(width >= 768px)',
-  [Breakpoint.LG]: '(width >= 992px)',
-  [Breakpoint.XL]: '(width >= 1200px)',
-  [Breakpoint.XXL]: 'width >= 1400px)',
-  [Breakpoint.SMOnly]: '(576px <= width < 768px)',
-  [Breakpoint.MDOnly]: '(768px <= width < 992px)',
-  [Breakpoint.LGOnly]: '(992px <= width < 1200px)',
-  [Breakpoint.XLONly]: '(1200px <= width < 1400px)',
-};
+// Example: Using a media query in a component
+const isMobileQuery = BREAKPOINT_QUERY[BREAKPOINT.XS];
+
+// Example: Comparing against a breakpoint value
+if (window.innerWidth >= BREAKPOINT_VALUE.MD) {
+  // Logic for tablet and above
+}
 ```
+
+## BREAKPOINT
+
+The `BREAKPOINT` constant defines the names of the support breakpoints.
+
+| Name | Value |
+| :--- | :--- |
+| **XS** | `'xs'` |
+| **SM** | `'sm'` |
+| **MD** | `'md'` |
+| **LG** | `'lg'` |
+| **XL** | `'xl'` |
+| **XXL** | `'xxl'` |
+| **SM_ONLY** | `'smOnly'` |
+| **MD_ONLY** | `'mdOnly'` |
+| **LG_ONLY** | `'lgOnly'` |
+| **XL_ONLY** | `'xlOnly'` |
+
+## BREAKPOINT_VALUE
+
+Numeric pixel values for each breakpoint threshold.
+
+| Name | Value (px) |
+| :--- | :--- |
+| **XS** | `0` |
+| **SM** | `576` |
+| **MD** | `768` |
+| **LG** | `992` |
+| **XL** | `1200` |
+| **XXL** | `1400` |
+
+## BREAKPOINT_QUERY
+
+Standardized CSS media query strings for each breakpoint.
+
+| Breakpoint | Media Query |
+| :--- | :--- |
+| **XS** | `(max-width: 575.98px)` |
+| **SM** | `(min-width: 576px)` |
+| **MD** | `(min-width: 768px)` |
+| **LG** | `(min-width: 992px)` |
+| **XL** | `(min-width: 1200px)` |
+| **XXL** | `(min-width: 1400px)` |
+| **SM_ONLY**| `(min-width: 576px) and (max-width: 767.98px)` |
+| **MD_ONLY**| `(min-width: 768px) and (max-width: 991.98px)` |
+| **LG_ONLY**| `(min-width: 992px) and (max-width: 1199.98px)` |
+| **XL_ONLY**| `(min-width: 1200px) and (max-width: 1399.98px)` |

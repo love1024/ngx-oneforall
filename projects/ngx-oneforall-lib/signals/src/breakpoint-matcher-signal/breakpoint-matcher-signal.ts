@@ -1,6 +1,10 @@
 import { isPlatformBrowser } from '@angular/common';
 import { effect, inject, PLATFORM_ID, signal, Signal } from '@angular/core';
-import { Breakpoint, BreakpointQueries } from '@ngx-oneforall/constants';
+import {
+  BREAKPOINT,
+  Breakpoint,
+  BREAKPOINT_QUERY,
+} from '@ngx-oneforall/constants';
 
 type BreakpointInput = Breakpoint | string;
 export interface BreakpointResult {
@@ -16,7 +20,7 @@ export function breakpointMatcher(
   const state = signal<boolean>(false);
   if (isPlatformBrowser(platformId) && window.matchMedia) {
     const query = isBreakpoint(breakpoint)
-      ? BreakpointQueries[breakpoint]
+      ? BREAKPOINT_QUERY[breakpoint]
       : breakpoint;
 
     const mediaQuery = window.matchMedia(query);
@@ -44,8 +48,8 @@ export function breakpointMatcherMultiple(
     const queries = breakpoints.map(b => {
       if (isBreakpoint(b)) {
         // Store for later reverse mapping
-        reverseMap.set(BreakpointQueries[b], b);
-        return BreakpointQueries[b];
+        reverseMap.set(BREAKPOINT_QUERY[b], b);
+        return BREAKPOINT_QUERY[b];
       }
       return b;
     });
@@ -108,7 +112,7 @@ function startListener(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isBreakpoint(value: any): value is Breakpoint {
-  return value in Breakpoint;
+  return value in BREAKPOINT;
 }
 
 function someBreakpointMatch(breakpoints: Record<string, boolean>): boolean {

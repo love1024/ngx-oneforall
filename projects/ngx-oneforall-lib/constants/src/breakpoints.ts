@@ -1,25 +1,42 @@
-export enum Breakpoint {
-  XS = 'XS',
-  SM = 'SM',
-  MD = 'MD',
-  LG = 'LG',
-  XL = 'XL',
-  XXL = 'XXL',
-  SMOnly = 'SMOnly',
-  MDOnly = 'MDOnly',
-  LGOnly = 'LGOnly',
-  XLONly = 'XLONly',
-}
+export const BREAKPOINT = {
+  XS: 'xs',
+  SM: 'sm',
+  MD: 'md',
+  LG: 'lg',
+  XL: 'xl',
+  XXL: 'xxl',
 
-export const BreakpointQueries = {
-  [Breakpoint.XS]: '(width < 576px)',
-  [Breakpoint.SM]: '(width >= 576px)',
-  [Breakpoint.MD]: '(width >= 768px)',
-  [Breakpoint.LG]: '(width >= 992px)',
-  [Breakpoint.XL]: '(width >= 1200px)',
-  [Breakpoint.XXL]: 'width >= 1400px)',
-  [Breakpoint.SMOnly]: '(576px <= width < 768px)',
-  [Breakpoint.MDOnly]: '(768px <= width < 992px)',
-  [Breakpoint.LGOnly]: '(992px <= width < 1200px)',
-  [Breakpoint.XLONly]: '(1200px <= width < 1400px)',
-};
+  SM_ONLY: 'smOnly',
+  MD_ONLY: 'mdOnly',
+  LG_ONLY: 'lgOnly',
+  XL_ONLY: 'xlOnly',
+} as const;
+
+export const BREAKPOINT_VALUE = {
+  XS: 0,
+  SM: 576,
+  MD: 768,
+  LG: 992,
+  XL: 1200,
+  XXL: 1400,
+} as const;
+
+export type Breakpoint = (typeof BREAKPOINT)[keyof typeof BREAKPOINT];
+
+export const BREAKPOINT_QUERY = {
+  [BREAKPOINT.XS]: `(max-width: ${BREAKPOINT_VALUE.SM - 0.02}px)`,
+
+  [BREAKPOINT.SM]: `(min-width: ${BREAKPOINT_VALUE.SM}px)`,
+  [BREAKPOINT.MD]: `(min-width: ${BREAKPOINT_VALUE.MD}px)`,
+  [BREAKPOINT.LG]: `(min-width: ${BREAKPOINT_VALUE.LG}px)`,
+  [BREAKPOINT.XL]: `(min-width: ${BREAKPOINT_VALUE.XL}px)`,
+  [BREAKPOINT.XXL]: `(min-width: ${BREAKPOINT_VALUE.XXL}px)`,
+
+  [BREAKPOINT.SM_ONLY]: `(min-width: ${BREAKPOINT_VALUE.SM}px) and (max-width: ${BREAKPOINT_VALUE.MD - 0.02}px)`,
+
+  [BREAKPOINT.MD_ONLY]: `(min-width: ${BREAKPOINT_VALUE.MD}px) and (max-width: ${BREAKPOINT_VALUE.LG - 0.02}px)`,
+
+  [BREAKPOINT.LG_ONLY]: `(min-width: ${BREAKPOINT_VALUE.LG}px) and (max-width: ${BREAKPOINT_VALUE.XL - 0.02}px)`,
+
+  [BREAKPOINT.XL_ONLY]: `(min-width: ${BREAKPOINT_VALUE.XL}px) and (max-width: ${BREAKPOINT_VALUE.XXL - 0.02}px)`,
+} as const;

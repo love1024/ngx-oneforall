@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { Breakpoint } from '@ngx-oneforall/constants';
+import { BREAKPOINT } from '@ngx-oneforall/constants';
 import {
   breakpointMatcher,
   breakpointMatcherMultiple,
@@ -12,7 +12,7 @@ import { PLATFORM_ID } from '@angular/core';
   template: `<div>{{ isMd$() }}</div>`,
 })
 class TestBreakpointComponent {
-  isMd$ = breakpointMatcher(Breakpoint.MD);
+  isMd$ = breakpointMatcher(BREAKPOINT.MD);
 }
 
 @Component({
@@ -20,7 +20,7 @@ class TestBreakpointComponent {
   template: `<div>{{ result$().some }}-{{ result$().all }}</div>`,
 })
 class TestMultipleBreakpointsComponent {
-  result$ = breakpointMatcherMultiple([Breakpoint.MD, Breakpoint.LG]);
+  result$ = breakpointMatcherMultiple([BREAKPOINT.MD, BREAKPOINT.LG]);
 }
 
 @Component({
