@@ -111,6 +111,30 @@ describe('breakpointMatcher', () => {
       expect(signal()).toEqual(true);
     });
   });
+
+  it('should handle Breakpoint tokens (hits lines 17, 23)', () => {
+    window.matchMedia = jest.fn().mockImplementation(query => {
+      if (query === '(min-width: 768px)') {
+        return {
+          matches: true,
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+        };
+      }
+      return {
+        matches: false,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      };
+    });
+
+    TestBed.runInInjectionContext(() => {
+      // BREAKPOINT.MD mapping to query
+      const signal = breakpointMatcher(BREAKPOINT.MD);
+      expect(signal()).toBe(true);
+      expect(window.matchMedia).toHaveBeenCalledWith('(min-width: 768px)');
+    });
+  });
 });
 
 describe('breakpointMatcherMultiple', () => {
@@ -273,6 +297,27 @@ describe('breakpointCustomMultiple', () => {
         '(min-width: 500px)',
         '(max-width: 1000px)',
       ]);
+    });
+  });
+
+  it('should handle Breakpoint tokens in multiple (hits lines 51, 52)', () => {
+    window.matchMedia = jest.fn().mockImplementation(query => {
+      return {
+        matches: query === '(min-width: 768px)',
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      };
+    });
+
+    TestBed.runInInjectionContext(() => {
+      const signal = breakpointMatcherMultiple([
+        BREAKPOINT.MD,
+        '(min-width: 1000px)',
+      ]);
+
+      expect(signal().breakpoints['md']).toBe(true);
+      expect(signal().breakpoints['(min-width: 1000px)']).toBe(false);
+      expect(window.matchMedia).toHaveBeenCalledWith('(min-width: 768px)');
     });
   });
 

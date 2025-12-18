@@ -120,5 +120,31 @@ describe('debug', () => {
         },
       });
     });
+
+    it('should not log error if when() returns false', done => {
+      const source$ = throwError(() => 'some error');
+      const tag = 'ErrorTag';
+      const when = () => false;
+
+      source$.pipe(debug(tag, when)).subscribe({
+        error: () => {
+          expect(consoleSpy).not.toHaveBeenCalled();
+          done();
+        },
+      });
+    });
+
+    it('should not log complete if when() returns false', done => {
+      const source$ = of();
+      const tag = 'CompleteTag';
+      const when = () => false;
+
+      source$.pipe(debug(tag, when)).subscribe({
+        complete: () => {
+          expect(consoleSpy).not.toHaveBeenCalled();
+          done();
+        },
+      });
+    });
   });
 });

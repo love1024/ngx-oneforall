@@ -112,7 +112,7 @@ function startListener(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isBreakpoint(value: any): value is Breakpoint {
-  return value in BREAKPOINT;
+  return Object.values(BREAKPOINT).includes(value);
 }
 
 function someBreakpointMatch(breakpoints: Record<string, boolean>): boolean {

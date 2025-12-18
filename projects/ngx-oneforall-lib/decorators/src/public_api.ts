@@ -4,3 +4,5 @@ export * from './only-in-browser/only-in-browser';
 export * from './log-execution-time/log-execution-time';
 export * from './cache/cache';
 export * from './memoize/memoize';
+export * from './catch-error/catch-error';
+export * from './catch-error/catch-error';
