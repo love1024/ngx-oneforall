@@ -7,3 +7,4 @@ export * from './sort-direction';
 export * from './time';
 export * from './http';
 export * from './file-extension';
+export * from './device';

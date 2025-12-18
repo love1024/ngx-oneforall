@@ -8,14 +8,12 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 import { fromEvent, startWith } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DeviceType, Orientation } from '@ngx-oneforall/constants';
 
 const MOBILE_RE =
   /(iPhone|Android.*Mobile|Windows Phone|BlackBerry|webOS|Opera Mini|Mobile(\/|\s)|Mobile Safari)/i;
 const TABLET_RE =
   /(iPad|Tablet|PlayBook|Silk|Kindle|KF[A-Z]+|Nexus 7|Nexus 9|Nexus 10|Android(?!.*Mobile))/i;
-
-export type DeviceType = 'mobile' | 'tablet' | 'desktop';
-export type Orientation = 'portrait' | 'landscape';
 
 export interface DeviceInfo {
   type: DeviceType;
