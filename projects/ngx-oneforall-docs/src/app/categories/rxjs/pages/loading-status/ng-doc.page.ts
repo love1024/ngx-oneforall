@@ -3,7 +3,7 @@ import { LoadingStatusDemoComponent } from './demo/loading-status-demo.component
 import RxjsCategory from '../../ng-doc.category';
 
 const LoadingStatusPage: NgDocPage = {
-  title: `loading Status`,
+  title: `Loading Status`,
   mdFile: `./index.md`,
   category: RxjsCategory,
   demos: { LoadingStatusDemoComponent },
