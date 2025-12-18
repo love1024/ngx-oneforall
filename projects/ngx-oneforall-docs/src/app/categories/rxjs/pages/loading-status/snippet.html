@@ -1,0 +1,13 @@
+@if (data$ | async; as state) {
+  @if (state.isLoading) {
+    <spinner></spinner>
+  }
+
+  @if (state.status === 'success') {
+    <div>{{ state.data | json }}</div>
+  }
+
+  @if (state.status === 'error') {
+    <div class="error">{{ state.error }}</div>
+  }
+}
