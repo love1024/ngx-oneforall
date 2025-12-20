@@ -1,7 +1,24 @@
+import { Observable } from 'rxjs';
 import { Provider } from '@angular/core';
 import { JwtService } from './jwt.service';
 
-export type tokenGetterFn = () => string;
+/**
+ * Interface for handling token refresh and logout logic.
+ * This is used by the jwtInterceptor when a 401 Unauthorized error occurs.
+ */
+export interface RefreshTokenHandler {
+  /**
+   * Logic to refresh the token. Should return an Observable with the new token.
+   */
+  refreshToken(): Observable<string>;
+
+  /**
+   * Logic to logout the user if refresh fails or is not possible.
+   */
+  logout(): void;
+}
+
+export type tokenGetterFn = () => string | null;
 
 export interface JwtOptions {
   tokenGetter?: tokenGetterFn;
@@ -11,6 +28,10 @@ export interface JwtOptions {
   headerName?: string;
   allowedDomains?: (string | RegExp)[];
   skipUrls?: (string | RegExp)[];
+  /**
+   * Optional handler for automatic token refresh on 401 errors.
+   */
+  refreshTokenHandler?: RefreshTokenHandler;
 }
 
 export interface JwtBody {

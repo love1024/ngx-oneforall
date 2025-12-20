@@ -11,6 +11,7 @@ export class JwtService {
   public decodeHeader<T = Record<string, unknown>>(
     token = this.tokenGetter()
   ): T {
+    if (!token) throw new Error('Token is missing.');
     const parts = token.split('.');
     if (parts.length !== 3) throw new Error('Token is not a valid JWT.');
 
@@ -22,6 +23,7 @@ export class JwtService {
   public decodeBody<T extends JwtBody = JwtBody>(
     token = this.tokenGetter()
   ): T {
+    if (!token) throw new Error('Token is missing.');
     const parts = token.split('.');
     if (parts.length !== 3) throw new Error('Token is not a valid JWT.');
 
@@ -65,6 +67,7 @@ export class JwtService {
 
   public isValid(token = this.tokenGetter(), offsetSeconds = 0): boolean {
     return (
+      !!token &&
       token.split('.').length === 3 &&
       !this.isExpired(token, offsetSeconds) &&
       !this.isNotYetValid(token)

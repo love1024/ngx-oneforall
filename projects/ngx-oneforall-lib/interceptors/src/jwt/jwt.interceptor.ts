@@ -1,13 +1,40 @@
 import { isPlatformBrowser } from '@angular/common';
-import { HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import {
+  HttpContext,
+  HttpErrorResponse,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+  HttpStatusCode,
+} from '@angular/common/http';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { JwtService } from '@ngx-oneforall/services';
 import { isRegexp } from '@ngx-oneforall/utils';
+import {
+  Observable,
+  catchError,
+  finalize,
+  shareReplay,
+  switchMap,
+  throwError,
+} from 'rxjs';
+import { SKIP_JWT_INTERCEPTOR } from './jwt-context';
+
+let refreshToken$: Observable<string> | null = null;
+
+// Exported for testing purposes only
+export const resetJwtInterceptor = () => {
+  refreshToken$ = null;
+};
 
 const httpPorts = ['80', '443'];
 
 const getRequestUrl = (request: HttpRequest<unknown>) => {
-  return new URL(request.url, document.location.origin);
+  try {
+    return new URL(request.url, document.location.origin);
+  } catch {
+    return null;
+  }
 };
 
 const isAllowedDomain = (
@@ -15,6 +42,7 @@ const isAllowedDomain = (
   allowedDomains: (string | RegExp)[]
 ) => {
   const requestUrl = getRequestUrl(request);
+  if (!requestUrl) return false;
 
   if (requestUrl.origin === document.location.origin) {
     return true;
@@ -37,6 +65,7 @@ const isDisallowedRoute = (
   excludedRoutes: (string | RegExp)[]
 ) => {
   const requestUrl = getRequestUrl(request);
+  if (!requestUrl) return false;
 
   return excludedRoutes.some(route => {
     if (isRegexp(route)) {
@@ -54,6 +83,10 @@ const isDisallowedRoute = (
 };
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
+  if (req.context.get(SKIP_JWT_INTERCEPTOR)) {
+    return next(req);
+  }
+
   const platformId = inject(PLATFORM_ID);
   if (!isPlatformBrowser(platformId)) {
     return next(req);
@@ -69,9 +102,49 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     skipAddingIfExpired = false,
     allowedDomains = [],
     skipUrls = [],
+    refreshTokenHandler,
   } = config;
 
   const token = jwtService.getToken();
+
+  const getAttachedRequest = (request: HttpRequest<unknown>, token: string) => {
+    return request.clone({
+      setHeaders: {
+        [headerName]: `${authScheme}${token}`,
+      },
+    });
+  };
+
+  const handleUnauthorized = (
+    failedRequest: HttpRequest<unknown>,
+    nextFn: HttpHandlerFn
+  ) => {
+    if (!refreshToken$) {
+      refreshToken$ = refreshTokenHandler!.refreshToken().pipe(
+        shareReplay(1),
+        finalize(() => {
+          refreshToken$ = null;
+        })
+      );
+    }
+
+    return refreshToken$.pipe(
+      switchMap(newToken =>
+        nextFn(
+          getAttachedRequest(
+            failedRequest.clone({
+              context: new HttpContext().set(SKIP_JWT_INTERCEPTOR, true),
+            }),
+            newToken
+          )
+        )
+      ),
+      catchError(err => {
+        refreshTokenHandler!.logout();
+        return throwError(() => err);
+      })
+    );
+  };
 
   if (isDisallowedRoute(req, skipUrls)) {
     return next(req);
@@ -95,11 +168,16 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  return next(
-    req.clone({
-      setHeaders: {
-        [headerName]: `${authScheme}${token}`,
-      },
+  return next(getAttachedRequest(req, token)).pipe(
+    catchError(error => {
+      if (
+        error instanceof HttpErrorResponse &&
+        error.status === HttpStatusCode.Unauthorized &&
+        refreshTokenHandler
+      ) {
+        return handleUnauthorized(req, next);
+      }
+      return throwError(() => error);
     })
   );
 };

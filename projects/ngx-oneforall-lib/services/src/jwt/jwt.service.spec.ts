@@ -117,21 +117,25 @@ describe('JwtService', () => {
 
   it('should handle empty token from tokenGetter gracefully', () => {
     service = new JwtService();
+    expect(() => service.decodeHeader()).toThrow('Token is missing.');
+    expect(() => service.decodeBody()).toThrow('Token is missing.');
+    expect(service.isValid()).toBe(false);
+    expect(() => service.getClaim('foo')).toThrow('Token is missing.');
+    expect(() => service.getExpirationDate()).toThrow('Token is missing.');
+    expect(() => service.getIssuedAtDate()).toThrow('Token is missing.');
+    expect(() => service.isExpired()).toThrow('Token is missing.');
+    expect(() => service.isNotYetValid()).toThrow('Token is missing.');
+    expect(() => service.getTimeUntilExpiration()).toThrow('Token is missing.');
+  });
+
+  it('should throw "Token is not a valid JWT." if token does not have 3 parts', () => {
+    service = new JwtService({ tokenGetter: () => 'invalid.token' });
     expect(() => service.decodeHeader()).toThrow('Token is not a valid JWT.');
     expect(() => service.decodeBody()).toThrow('Token is not a valid JWT.');
-    expect(service.isValid()).toBe(false);
-    expect(() => service.getClaim('foo')).toThrow('Token is not a valid JWT.');
-    expect(() => service.getExpirationDate()).toThrow(
-      'Token is not a valid JWT.'
-    );
-    expect(() => service.getIssuedAtDate()).toThrow(
-      'Token is not a valid JWT.'
-    );
-    expect(() => service.isExpired()).toThrow('Token is not a valid JWT.');
-    expect(() => service.isNotYetValid()).toThrow('Token is not a valid JWT.');
-    expect(() => service.getTimeUntilExpiration()).toThrow(
-      'Token is not a valid JWT.'
-    );
+
+    service = new JwtService({ tokenGetter: () => 'part1.part2.part3.part4' });
+    expect(() => service.decodeHeader()).toThrow('Token is not a valid JWT.');
+    expect(() => service.decodeBody()).toThrow('Token is not a valid JWT.');
   });
 
   it('should return null for issued at date if iat is not available', () => {

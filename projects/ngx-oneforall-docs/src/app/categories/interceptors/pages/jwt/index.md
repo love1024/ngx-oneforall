@@ -81,6 +81,35 @@ The interceptor supports several configuration options via the `JwtService`:
 - **skipUrls**: Array of URLs or regex patterns to exclude from token attachment.
 - **errorOnNoToken**: Throws an error if no token is available.
 - **skipAddingIfExpired**: Skips adding the token if it is expired.
+- **refreshTokenHandler**: An optional handler that implements `RefreshTokenHandler` interface to automatically refresh tokens on 401 errors.
+
+## Token Refresh Logic
+
+The `jwtInterceptor` can automatically handle 401 Unauthorized errors by attempting to refresh the token. To enable this, provide a `refreshTokenHandler` in the configuration.
+
+- **Automatic Refresh**: When a 401 error occurs, the interceptor calls `refreshToken()` on your handler.
+- **Concurrency Handling**: If multiple requests fail with 401 concurrently, the interceptor will only trigger one refresh request. All other requests will wait for the new token and then retry.
+- **Error Propagation**: If `refreshTokenHandler` is not provided, 401 errors are propagated to the subscriber as usual.
+- **Logout**: If the refresh attempt fails, `logout()` is called on your handler.
+
+```typescript
+export interface RefreshTokenHandler {
+  refreshToken(): Observable<string>;
+  logout(): void;
+}
+```
+
+## Skipping Interceptor
+
+Sometimes you may want to bypass the `jwtInterceptor` for specific requests, such as the login request or the refresh token request itself to prevent infinite loops. You can use the `SKIP_JWT_INTERCEPTOR` context token for this purpose.
+
+A helper function `withSkipJwtInterceptor()` is provided for convenience.
+
+```typescript
+import { withSkipJwtInterceptor } from '@ngx-oneforall/interceptors';
+
+this.http.post('/api/auth/refresh', {}, { context: withSkipJwtInterceptor() }).subscribe();
+```
 
 ## Benefits of Using jwtInterceptor
 
