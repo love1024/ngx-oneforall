@@ -1,0 +1,142 @@
+.container {
+  max-width: 650px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-family: Arial, sans-serif;
+
+  h3 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .description {
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .config-info {
+    background: #fff3cd;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #ffc107;
+
+    strong {
+      color: #856404;
+    }
+
+    code {
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #d32f2f;
+      font-size: 0.9em;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .fetch-btn {
+    padding: 0.5rem 1.2rem;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #125ea8;
+    }
+
+    &.custom {
+      background: #7b1fa2;
+
+      &:hover {
+        background: #6a1b9a;
+      }
+    }
+
+    &.disabled {
+      background: #757575;
+
+      &:hover {
+        background: #616161;
+      }
+    }
+  }
+
+  .request-info {
+    background: #e8f5e9;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #4caf50;
+
+    .info-row {
+      margin-bottom: 0.5rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      strong {
+        color: #2e7d32;
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      code {
+        background: #fff;
+        padding: 4px 8px;
+        border-radius: 3px;
+        color: #1976d2;
+        font-size: 0.9em;
+        word-break: break-all;
+        display: block;
+      }
+    }
+  }
+
+  .loading {
+    text-align: center;
+    color: #1976d2;
+    font-weight: 500;
+    margin: 1rem 0;
+  }
+
+  .user-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0 0;
+  }
+
+  .user-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: white;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+
+    .user-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    .user-email {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+}

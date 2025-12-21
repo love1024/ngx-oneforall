@@ -5,3 +5,5 @@ export * from './timeout/timeout.interceptor';
 export * from './timeout/timeout-context';
 export * from './correlation-id/correlation-id.interceptor';
 export * from './correlation-id/correlation-id-context';
+export * from './base-url/base-url.interceptor';
+export * from './base-url/base-url-context';
