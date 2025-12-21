@@ -9,3 +9,5 @@ export * from './base-url/base-url.interceptor';
 export * from './base-url/base-url-context';
 export * from './performance/performance.interceptor';
 export * from './performance/performance-context';
+export * from './encryption/encryption.interceptor';
+export * from './encryption/encryption-context';

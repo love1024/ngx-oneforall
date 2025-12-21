@@ -43,11 +43,7 @@ export const withPerformanceInterceptor = (
     }
 
     const report = (entry: PerformanceEntry) => {
-      if (injector) {
-        runInInjectionContext(injector, () => reporter(entry));
-      } else {
-        reporter(entry);
-      }
+      runInInjectionContext(injector, () => reporter(entry));
     };
 
     const start = performance.now();
