@@ -7,3 +7,5 @@ export * from './correlation-id/correlation-id.interceptor';
 export * from './correlation-id/correlation-id-context';
 export * from './base-url/base-url.interceptor';
 export * from './base-url/base-url-context';
+export * from './performance/performance.interceptor';
+export * from './performance/performance-context';

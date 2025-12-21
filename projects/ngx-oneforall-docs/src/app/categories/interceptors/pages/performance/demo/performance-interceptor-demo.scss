@@ -1,0 +1,163 @@
+.container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-family: Arial, sans-serif;
+
+  h3 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  h4 {
+    margin-top: 0;
+    color: #555;
+    font-size: 1.1rem;
+  }
+
+  .description {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .fetch-btn,
+  .clear-btn {
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .fetch-btn {
+    background: #1976d2;
+    color: #fff;
+
+    &:hover {
+      background: #125ea8;
+    }
+
+    &.labeled {
+      background: #7b1fa2;
+
+      &:hover {
+        background: #6a1b9a;
+      }
+    }
+
+    &.error {
+      background: #d32f2f;
+
+      &:hover {
+        background: #b71c1c;
+      }
+    }
+  }
+
+  .clear-btn {
+    background: #757575;
+    color: #fff;
+
+    &:hover {
+      background: #616161;
+    }
+  }
+
+  .metrics-container {
+    background: white;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .metrics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .metric-card {
+    background: #f5f5f5;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border-left: 4px solid #4caf50;
+
+    &.error {
+      border-left-color: #f44336;
+      background: #ffebee;
+    }
+  }
+
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    strong {
+      color: #555;
+      min-width: 80px;
+    }
+
+    span {
+      color: #333;
+      text-align: right;
+      flex: 1;
+      word-break: break-word;
+
+      &.url {
+        font-size: 0.85rem;
+        color: #666;
+      }
+
+      &.duration {
+        color: #1976d2;
+        font-weight: 600;
+      }
+
+      &.label {
+        background: #e3f2fd;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.85rem;
+        color: #1565c0;
+      }
+
+      &.success {
+        color: #388e3c;
+        font-weight: 600;
+      }
+
+      &.error-status {
+        color: #d32f2f;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    color: #999;
+    padding: 2rem;
+    background: white;
+    border-radius: 6px;
+    border: 2px dashed #ddd;
+  }
+}
