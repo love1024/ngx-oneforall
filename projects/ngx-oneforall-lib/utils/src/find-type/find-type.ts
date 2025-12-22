@@ -133,7 +133,11 @@ export const isString = getTagTester('String');
 export const isNumber = getTagTester('Number');
 export const isSymbol = getTagTester('Symbol');
 export const isArrayBuffer = getTagTester('ArrayBuffer');
-export const isFunction = getTagTester('Function');
+export const isFunction = (
+  value: unknown
+): value is (...args: any[]) => any => {
+  return typeof value === 'function';
+};
 export const isMap = getTagTester('Map');
 export const isWeakMap = getTagTester('WeakMap');
 export const isSet = getTagTester('Set');

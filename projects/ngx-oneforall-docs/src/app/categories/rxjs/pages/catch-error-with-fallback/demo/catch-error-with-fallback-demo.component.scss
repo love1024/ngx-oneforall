@@ -1,0 +1,177 @@
+.container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-family: Arial, sans-serif;
+
+  h3 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  h4 {
+    margin-top: 0;
+    color: #555;
+    font-size: 1.1rem;
+  }
+
+  .description {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+
+    code {
+      background: #e8eaf6;
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #3f51b5;
+      font-size: 0.9em;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: #fff;
+
+    &.success {
+      background: #4caf50;
+
+      &:hover {
+        background: #388e3c;
+      }
+    }
+
+    &.fallback-static {
+      background: #2196f3;
+
+      &:hover {
+        background: #1976d2;
+      }
+    }
+
+    &.fallback-observable {
+      background: #ff9800;
+
+      &:hover {
+        background: #f57c00;
+      }
+    }
+
+    &.fallback-function {
+      background: #9c27b0;
+
+      &:hover {
+        background: #7b1fa2;
+      }
+    }
+
+    &.clear {
+      background: #757575;
+
+      &:hover {
+        background: #616161;
+      }
+    }
+  }
+
+  .logs-container {
+    background: white;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .logs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .log-entry {
+    padding: 0.75rem;
+    border-radius: 4px;
+    border-left: 4px solid;
+
+    &.success {
+      background: #e8f5e9;
+      border-left-color: #4caf50;
+    }
+
+    &.error {
+      background: #ffebee;
+      border-left-color: #f44336;
+    }
+
+    &.fallback {
+      background: #e3f2fd;
+      border-left-color: #2196f3;
+    }
+  }
+
+  .log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .log-type {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+
+    .success & {
+      background: #c8e6c9;
+      color: #2e7d32;
+    }
+
+    .error & {
+      background: #ffcdd2;
+      color: #c62828;
+    }
+
+    .fallback & {
+      background: #bbdefb;
+      color: #1565c0;
+    }
+  }
+
+  .log-time {
+    font-size: 0.8rem;
+    color: #757575;
+  }
+
+  .log-message {
+    color: #333;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: #999;
+    padding: 2rem;
+    background: white;
+    border-radius: 6px;
+    border: 2px dashed #ddd;
+  }
+}

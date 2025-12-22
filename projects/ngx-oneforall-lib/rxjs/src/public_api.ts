@@ -3,3 +3,4 @@ export * from './live-search/live-search';
 export * from './data-polling/data-polling';
 export * from './loading-status/loading-status';
 export * from './debug/debug';
+export * from './catch-error-with-fallback/catch-error-with-fallback';
