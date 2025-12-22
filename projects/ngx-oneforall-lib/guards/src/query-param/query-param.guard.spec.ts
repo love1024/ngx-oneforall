@@ -16,6 +16,7 @@ describe('queryParamGuard', () => {
         {
           provide: Router,
           useValue: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             parseUrl: jest.fn((url: string) => url as any),
           },
         },
@@ -24,7 +25,11 @@ describe('queryParamGuard', () => {
     router = TestBed.inject(Router);
   });
 
-  const getGuardResult = (config: QueryParamGuardConfig, queryParams: any) => {
+  const getGuardResult = (
+    config: QueryParamGuardConfig,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryParams: any
+  ) => {
     const environment = TestBed.inject(EnvironmentInjector);
     return runInInjectionContext(environment, () => {
       const guard = queryParamGuard(config);
