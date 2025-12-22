@@ -3,7 +3,7 @@ import RxjsCategory from '../../ng-doc.category';
 import { CatchErrorWithFallbackDemoComponent } from './demo/catch-error-with-fallback-demo.component';
 
 const CatchErrorWithFallbackPage: NgDocPage = {
-  title: 'catchErrorWithFallback',
+  title: 'Catch Error With Fallback',
   mdFile: './index.md',
   category: RxjsCategory,
   demos: {
