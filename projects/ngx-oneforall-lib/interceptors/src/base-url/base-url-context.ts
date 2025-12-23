@@ -2,7 +2,7 @@ import { HttpContext, HttpContextToken } from '@angular/common/http';
 
 export interface BaseUrlContextConfig {
   enabled?: boolean;
-  baseUrl?: string;
+  baseUrl?: string | (() => string);
   context?: HttpContext;
 }
 

@@ -61,7 +61,15 @@ The interceptor requires a configuration object with a `baseUrl` property:
 
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
-| `baseUrl` | `string` | **Yes** | The base URL to prepend to relative requests |
+| `baseUrl` | `string \| (() => string)` | **Yes** | The base URL to prepend to relative requests. Can be a string or a function. |
+| `overrides` | `BaseUrlOverrides[]` | No | List of overrides for specific paths. |
+
+### BaseUrlOverrides Interface
+
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| `startWith` | `string` | Prefix to match against the request URL (e.g. `'auth'`). |
+| `url` | `string \| (() => string)` | The URL to use instead of `baseUrl` if the match succeeds. |
 
 > **Warning**
 > The `baseUrl` is required. The interceptor will throw an error if it's not provided.
@@ -124,7 +132,7 @@ this.http.get('/admin/settings', {
 | Option | Type | Description |
 |--------|------|-------------|
 | `enabled` | `boolean` | Set to `false` to skip base URL prepending for this request |
-| `baseUrl` | `string` | Override the configured base URL for this specific request |
+| `baseUrl` | `string \| (() => string)` | Override the configured base URL for this specific request. Can be a string or a function. |
 | `context` | `HttpContext` | Use an existing HttpContext object |
 
 ## Use Cases
@@ -156,6 +164,44 @@ export const appConfig: ApplicationConfig = {
     ),
   ],
 };
+```
+
+### Environment-Specific Configuration (Functional)
+Using a function allows `baseUrl` to be resolved dynamically in the injection context, enabling the use of `inject()`.
+
+```typescript
+import { inject, InjectionToken } from '@angular/core';
+
+export const API_URL = new InjectionToken<string>('API_URL');
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    { provide: API_URL, useValue: 'https://api.example.com' },
+    provideHttpClient(
+      withInterceptors([
+        withBaseUrlInterceptor({
+          // Use inject() to get the URL from a token
+          baseUrl: () => inject(API_URL)
+        })
+      ])
+    ),
+  ],
+};
+```
+
+### URL Overrides
+You can configure overrides to point specific URL prefixes to different base URLs.
+
+```typescript
+withBaseUrlInterceptor({
+  baseUrl: 'https://api.example.com',
+  overrides: [
+    // Redirects /auth/... to https://auth.example.com/auth/...
+    { startWith: 'auth', url: 'https://auth.example.com' },
+    // Resolving functional url
+    { startWith: 'assets', url: () => inject(ASSETS_URL) }
+  ]
+})
 ```
 
 ### Mixed API Endpoints

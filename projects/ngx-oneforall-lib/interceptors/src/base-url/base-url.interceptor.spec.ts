@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { InjectionToken, inject } from '@angular/core';
 import {
   HttpClient,
   HttpContext,
@@ -88,6 +89,80 @@ describe('BaseUrlInterceptor', () => {
     expect(() => withBaseUrlInterceptor({} as any)).toThrow(
       '[BaseUrlInterceptor] baseUrl must be provided'
     );
+  });
+
+  it('should support baseUrl as a function with injection context', () => {
+    const API_URL = new InjectionToken<string>('API_URL');
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: API_URL, useValue: 'https://injected.example.com' },
+        provideHttpClient(
+          withInterceptors([
+            withBaseUrlInterceptor({
+              baseUrl: () => inject(API_URL),
+            }),
+          ])
+        ),
+        provideHttpClientTesting(),
+      ],
+    });
+
+    http = TestBed.inject(HttpClient);
+    httpTesting = TestBed.inject(HttpTestingController);
+
+    http.get('/injected').subscribe();
+    httpTesting.expectOne('https://injected.example.com/injected').flush({});
+  });
+
+  it('should support baseUrl in context as a function', () => {
+    configureTestBed({ baseUrl: 'https://default.com' });
+    http
+      .get('/context-fn', {
+        context: useBaseUrl({ baseUrl: () => 'https://context-fn.com' }),
+      })
+      .subscribe();
+
+    httpTesting.expectOne('https://context-fn.com/context-fn').flush({});
+  });
+
+  it('should use override url if request starts with override config', () => {
+    configureTestBed({
+      baseUrl: 'https://api.example.com',
+      overrides: [{ startWith: 'auth', url: 'https://auth.example.com' }],
+    });
+
+    http.get('/auth/login').subscribe();
+    httpTesting.expectOne('https://auth.example.com/auth/login').flush({});
+
+    http.get('/users').subscribe();
+    httpTesting.expectOne('https://api.example.com/users').flush({});
+  });
+
+  it('should handle multiple overrides and pick first match', () => {
+    configureTestBed({
+      baseUrl: 'https://api.example.com',
+      overrides: [
+        { startWith: 'auth', url: 'https://auth.example.com' },
+        { startWith: 'admin', url: 'https://admin.example.com' },
+      ],
+    });
+
+    http.get('/admin/dashboard').subscribe();
+    httpTesting
+      .expectOne('https://admin.example.com/admin/dashboard')
+      .flush({});
+  });
+
+  it('should support override url as function', () => {
+    configureTestBed({
+      baseUrl: 'https://api.example.com',
+      overrides: [
+        { startWith: 'assets', url: () => 'https://cdn.example.com' },
+      ],
+    });
+
+    http.get('/assets/logo.png').subscribe();
+    httpTesting.expectOne('https://cdn.example.com/assets/logo.png').flush({});
   });
 
   describe('useBaseUrl', () => {
