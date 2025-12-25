@@ -10,3 +10,4 @@ export * from './safe-serialize/safe-serialize';
 export * from './normalize-key/normalize-key';
 export * from './host-platform/host-platform';
 export * from './is-present/is-present';
+export * from './is-record/is-record';
