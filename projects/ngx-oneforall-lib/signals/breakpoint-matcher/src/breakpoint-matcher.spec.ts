@@ -4,7 +4,7 @@ import { BREAKPOINT } from '@ngx-oneforall/constants';
 import {
   breakpointMatcher,
   breakpointMatcherMultiple,
-} from './breakpoint-matcher-signal';
+} from './breakpoint-matcher';
 import { PLATFORM_ID } from '@angular/core';
 
 @Component({

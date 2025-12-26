@@ -1,53 +1,19 @@
-The `routeQueryParamSignal` utility in Angular provides a reactive and declarative way to access and respond to changes in route **query parameters** within your components. By leveraging Angular signals and the router, it enables seamless synchronization between the URL's query parameters and your component state, ensuring your UI always reflects the current navigation context.
+`routeQueryParamSignal` creates a reactive signal that tracks URL query parameters. It automatically updates when query strings change, eliminating manual subscriptions.
 
-#### Access a Single Query Param
+## Usage
 
-```typescript
-import { routeQueryParamSignal } from 'path-to-your-utils';
+Use `routeQueryParamSignal` to reactively access query parameters in signal-based components.
 
-@Component({
-    ...
-})
-export class ExampleComponent {
-    // Reactively tracks the value of the 'search' query parameter
-    search = routeQueryParamSignal('search');
-}
-```
-
-#### Access Query Params Map
+### Single Query Parameter
 
 ```typescript
-import { routeQueryParamsMapSignal } from 'path-to-your-utils';
+import { routeQueryParamSignal } from '@ngx-oneforall/signals/route-query-param-signal';
 
-@Component({
-    ...
-})
-export class ExampleComponent {
-    // Get all query params as a ParamMap
-    queryParamsMap = routeQueryParamsMapSignal();
-}
-```
-
-#### Key Features
-
-- **Reactive Query Parameter Access:**  
-    The signal automatically updates when the query parameter changes, eliminating the need for manual subscriptions or imperative code.
-
-- **Integration with Angular Signals:**  
-    Works seamlessly with Angular's signal-based reactivity model, making it easy to use in computed signals, effects, and templates.
-
-- **Automatic Cleanup:**  
-    The effect ensures that event subscriptions are properly cleaned up, preventing memory leaks.
-
-#### React On Changes
-
-```typescript
-@Component({
-    ...
-})
+@Component({ ... })
 export class SearchComponent {
+    // Tracks the 'q' query parameter (?q=value)
     searchTerm = routeQueryParamSignal('q');
-
+    
     constructor() {
         effect(() => {
             const term = this.searchTerm();
@@ -59,8 +25,55 @@ export class SearchComponent {
 }
 ```
 
-#### When to Use
+### All Query Parameters
 
-- When you need to reactively access query parameters in a signal-based Angular application.
-- When you want to avoid manual subscription management for query param changes.
-- When building components that depend on dynamic query parameters (e.g., search pages, filters, etc.).
+```typescript
+import { routeQueryParamsMapSignal } from '@ngx-oneforall/signals/route-query-param-signal';
+
+@Component({ ... })
+export class FilterComponent {
+    // Get all query params as ParamMap
+    queryParams = routeQueryParamsMapSignal();
+    
+    constructor() {
+        effect(() => {
+            const map = this.queryParams();
+            console.log('Sort:', map.get('sort'));
+            console.log('Page:', map.get('page'));
+        });
+    }
+}
+```
+
+## API
+
+### routeQueryParamSignal
+
+`routeQueryParamSignal(paramName: string): Signal<string | null>`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `paramName` | `string` | Name of the query parameter |
+
+Returns a signal with the current parameter value, or `null` if not present.
+
+### routeQueryParamsMapSignal
+
+`routeQueryParamsMapSignal(): Signal<ParamMap>`
+
+Returns a signal containing the full `ParamMap` of query parameters.
+
+> **Note**
+> Both signals automatically update when navigation changes the query string.
+
+## When to Use
+
+✅ **Good use cases:**
+- Search pages (`?q=angular`)
+- Filter and sort controls
+- Pagination (`?page=2`)
+- Shareable URLs with state
+
+❌ **Avoid when:**
+- You need route path parameters (use `routeParamSignal`)
+- You need fragment data (use `ActivatedRoute.fragment`)

@@ -1,29 +1,30 @@
-`webSocketSignal` creates a reactive interface for a WebSocket connection. It manages the connection lifecycle and provides signals for messages, errors, and connection status.
+`webSocketSignal` creates a reactive interface for WebSocket connections. It manages the connection lifecycle and provides signals for messages, status, and errors.
 
 ## Usage
 
-Use `webSocketSignal` to easily integrate real-time features. It handles the underlying `WebSocket` complexity and exposes it via Angular Signals.
+Use `webSocketSignal` to integrate real-time WebSocket features with Angular's signal-based reactivity.
 
 {{ NgDocActions.demo("WebSocketSignalDemoComponent", { container: true }) }}
 
 ### Basic Example
 
 ```typescript
-import { effect, Component } from '@angular/core';
-import { webSocketSignal } from '@ngx-oneforall/signals';
+import { webSocketSignal } from '@ngx-oneforall/signals/websocket-signal';
 
 @Component({ ... })
 export class ChatComponent {
     socket = webSocketSignal<string>('wss://echo.websocket.org');
-
+    
     constructor() {
         effect(() => {
             const msg = this.socket.messages();
-            if (msg) console.log('New message:', msg);
+            if (msg) {
+                console.log('Received:', msg);
+            }
         });
     }
-
-    sendMessage(text: string) {
+    
+    send(text: string) {
         if (this.socket.status() === 'open') {
             this.socket.send(text);
         }
@@ -31,17 +32,57 @@ export class ChatComponent {
 }
 ```
 
+### Handling Connection Status
+
+```typescript
+@Component({
+    template: `
+        <div [class]="socket.status()">
+            {{ socket.status() | uppercase }}
+        </div>
+        <button (click)="socket.close()" 
+                *ngIf="socket.status() === 'open'">
+            Disconnect
+        </button>
+    `
+})
+export class StatusComponent {
+    socket = webSocketSignal('wss://example.com');
+}
+```
+
 ## API
 
 `webSocketSignal<T>(url: string): WebSocketState<T>`
 
-Returns a `WebSocketState` object containing:
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `url` | `string` | WebSocket server URL |
 
-- **messages**: `Signal<T | null>` - The latest received message.
-- **error**: `Signal<Event | null>` - The latest error event.
-- **status**: `Signal<'connecting' | 'open' | 'closed' | 'error'>` - Current connection status.
-- **send**: `(msg: T) => void` - Function to send messages.
-- **close**: `() => void` - Function to close the connection.
+### WebSocketState
+
+The returned object provides:
+
+| Property/Method | Type | Description |
+|-----------------|------|-------------|
+| `messages` | `Signal<T \| null>` | Latest received message |
+| `error` | `Signal<Event \| null>` | Latest error event |
+| `status` | `Signal<'connecting' \| 'open' \| 'closed' \| 'error'>` | Connection status |
+| `send(msg)` | `(msg: T) => void` | Send a message |
+| `close()` | `() => void` | Close the connection |
 
 > **Note**
-> The connection is automatically closed when the component or injection context is destroyed.
+> The connection is automatically closed when the injection context is destroyed.
+
+## When to Use
+
+✅ **Good use cases:**
+- Real-time chat applications
+- Live notifications
+- Stock/crypto price feeds
+- Collaborative editing
+
+❌ **Avoid when:**
+- You need request/response patterns (use HTTP)
+- Server doesn't support WebSocket
+- You need complex reconnection logic (use dedicated libraries)

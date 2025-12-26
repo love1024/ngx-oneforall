@@ -1,8 +1,8 @@
-`throttledSignal` creates a signal that limits the rate at which the source signal's updates are emitted. It ensures the signal value updates at most once every specified `delay` milliseconds.
+`throttledSignal` creates a read-only signal that limits how often the source signal's updates are emitted. It ensures updates occur at most once per specified interval, regardless of how frequently the source changes.
 
 ## Usage
 
-Use `throttledSignal` when you want to handle frequent updates (like scroll events or mouse movements) without overwhelming your application or causing excessive re-rendering.
+Use `throttledSignal` when you need to limit the rate of updates from high-frequency events like scroll, mousemove, or resize.
 
 {{ NgDocActions.demo("ThrottledSignalDemoComponent", { container: true }) }}
 
@@ -10,13 +10,18 @@ Use `throttledSignal` when you want to handle frequent updates (like scroll even
 
 ```typescript
 import { signal } from '@angular/core';
-import { throttledSignal } from '@ngx-oneforall/signals';
+import { throttledSignal } from '@ngx-oneforall/signals/throttled-signal';
 
 @Component({ ... })
-export class MyComponent {
+export class MouseTrackerComponent {
     coords = signal('0, 0');
-    // Updates at most once every 500ms
-    throttledCoords = throttledSignal(this.coords, 500);
+    
+    // Updates at most once every 100ms
+    throttledCoords = throttledSignal(this.coords, 100);
+    
+    onMouseMove(event: MouseEvent) {
+        this.coords.set(`${event.clientX}, ${event.clientY}`);
+    }
 }
 ```
 
@@ -24,10 +29,32 @@ export class MyComponent {
 
 `throttledSignal<T>(source: Signal<T>, delay: number): Signal<T>`
 
-- **source**: The source signal to throttle.
-- **delay**: The throttling interval in milliseconds.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `source` | `Signal<T>` | The source signal to throttle |
+| `delay` | `number` | Minimum interval between updates (ms) |
 
 Returns a read-only signal that updates at most once per `delay` interval.
 
 > **Note**
-> The internal timer is automatically cleaned up when the component or injection context is destroyed.
+> The internal timer is automatically cleaned up when the injection context is destroyed.
+
+## Debounce vs Throttle
+
+| Behavior | `debouncedSignal` | `throttledSignal` |
+|----------|-------------------|-------------------|
+| **When it emits** | After source stops changing | At regular intervals |
+| **Use case** | Wait for input to settle | Rate-limit frequent updates |
+| **Example** | Search input | Scroll position tracking |
+
+## When to Use
+
+✅ **Good use cases:**
+- Scroll event handling
+- Mouse movement tracking
+- Window resize handlers
+- Progress updates
+
+❌ **Avoid when:**
+- You need to wait for input to settle (use `debouncedSignal`)
+- You need immediate response to every change

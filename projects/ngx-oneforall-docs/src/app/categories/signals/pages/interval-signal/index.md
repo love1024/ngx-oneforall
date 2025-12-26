@@ -1,53 +1,67 @@
-
-`intervalSignal` creates a controllable interval timer that updates a signal. It handles Angular Zone execution efficiently by running the timer outside Angular and only updating the signal inside.
+`intervalSignal` creates a controllable interval timer that updates a signal. It runs the timer outside Angular's zone for performance and only triggers change detection when updating the signal.
 
 ## Usage
 
-Use `intervalSignal` to create a timer. It returns an `IntervalController` object with signals for the current value and running state, and methods to start and stop the timer.
+Use `intervalSignal` to create timers, countdowns, or periodic updates with start/stop control.
 
 {{ NgDocActions.demo("IntervalSignalDemoComponent", { container: true }) }}
 
 ### Basic Example
 
 ```typescript
-import { intervalSignal } from '@ngx-oneforall/signals';
+import { intervalSignal } from '@ngx-oneforall/signals/interval-signal';
 
 @Component({ ... })
-export class MyComponent {
-    // Create an interval that ticks every 1000ms
-    interval = intervalSignal(1000);
-
+export class TimerComponent {
+    // Ticks every 1000ms (1 second)
+    timer = intervalSignal(1000);
+    
     constructor() {
         effect(() => {
-            // Update automatically when interval changes
-            console.log(this.interval.value());
-        })
+            console.log('Tick:', this.timer.value());
+        });
     }
-
+    
     start() {
-        this.interval.start();
+        this.timer.start();
     }
-
+    
     stop() {
-        this.interval.stop();
+        this.timer.stop();
     }
 }
 ```
 
-### API
+## API
 
 `intervalSignal(ms: number): IntervalController`
 
-- **ms**: The interval duration in milliseconds.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `ms` | `number` | Interval duration in milliseconds |
 
 ### IntervalController
 
-The returned object contains:
+The returned object provides:
 
-- **value**: `WritableSignal<number>` - The current count (starts at 0).
-- **running**: `WritableSignal<boolean>` - Whether the interval is currently active.
-- **start()**: Starts the interval.
-- **stop()**: Stops the interval.
+| Property/Method | Type | Description |
+|-----------------|------|-------------|
+| `value` | `WritableSignal<number>` | Current tick count (starts at 0) |
+| `running` | `WritableSignal<boolean>` | Whether the timer is active |
+| `start()` | `() => void` | Starts the interval |
+| `stop()` | `() => void` | Stops the interval |
 
 > **Note**
-> The interval automatically cleans up when the component or injection context is destroyed.
+> The interval automatically cleans up when the injection context is destroyed.
+
+## When to Use
+
+✅ **Good use cases:**
+- Countdown timers
+- Auto-refresh data polling
+- Animation frame timing
+- Session timeout warnings
+
+❌ **Avoid when:**
+- You need one-time delays (use `setTimeout`)
+- You're polling an API (use RxJS `timer` with HTTP)

@@ -1,40 +1,71 @@
-`routerEventSignal` creates a reactive signal that tracks Angular Router events. It provides easy access to the current router event and helpers for common navigation states.
+`routerEventSignal` creates a reactive signal that tracks Angular Router events. It provides easy access to the current event and computed helpers for common navigation states.
 
 ## Usage
 
-Use `routerEventSignal` to react to navigation changes. It returns an object with signals for the current event and computed signals for navigation start/end states.
+Use `routerEventSignal` to react to navigation changes with Angular signals.
 
 {{ NgDocActions.demo("RouterEventSignalDemoComponent", { container: true }) }}
 
 ### Basic Example
 
 ```typescript
-import { routerEventSignal } from '@ngx-oneforall/signals';
+import { routerEventSignal } from '@ngx-oneforall/signals/router-event-signal';
 
 @Component({ ... })
-export class MyComponent {
-    // Track router events
+export class NavigationComponent {
     router = routerEventSignal();
-
+    
     constructor() {
         effect(() => {
             if (this.router.isNavigationEnd()) {
-                console.log('Navigation finished!');
+                console.log('Navigation complete!');
+                this.trackPageView();
             }
         });
     }
 }
 ```
 
+### Loading Indicator
+
+```typescript
+@Component({
+    template: `
+        <div class="loading" *ngIf="router.isNavigationStart()">
+            Loading...
+        </div>
+    `
+})
+export class AppComponent {
+    router = routerEventSignal();
+}
+```
+
 ## API
 
-`routerEventSignal()`
+`routerEventSignal(): RouterEventState`
 
-Returns an object with:
+### RouterEventState
 
-- **event**: `Signal<RouterEvent | null>` - The most recent router event.
-- **isNavigationStart**: `Signal<boolean>` - True if the last event was `NavigationStart`.
-- **isNavigationEnd**: `Signal<boolean>` - True if the last event was `NavigationEnd`.
+The returned object provides:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `event` | `Signal<RouterEvent \| null>` | Most recent router event |
+| `isNavigationStart` | `Signal<boolean>` | True during navigation start |
+| `isNavigationEnd` | `Signal<boolean>` | True after navigation completes |
 
 > **Note**
-> The signal automatically cleans up its subscription when the component or injection context is destroyed.
+> The subscription is automatically cleaned up when the injection context is destroyed.
+
+## When to Use
+
+✅ **Good use cases:**
+- Loading indicators during navigation
+- Analytics/page view tracking
+- Navigation guards with signals
+- Scroll position restoration
+
+❌ **Avoid when:**
+- You need detailed route data (use `ActivatedRoute`)
+- You need to prevent navigation (use route guards)

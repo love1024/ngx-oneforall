@@ -1,8 +1,8 @@
-`debouncedSignal` creates a signal that updates its value only after a specified delay has passed since the last change in the source signal. This is useful for handling rapid updates like search inputs or window resizing.
+`debouncedSignal` creates a read-only signal that delays updates until the source signal stops changing for a specified duration. Ideal for search inputs, form validation, and window resize handling.
 
 ## Usage
 
-Use `debouncedSignal` when you want to delay reactions to a signal's changes until the changes have settled.
+Use `debouncedSignal` to wait for rapid changes to settle before reacting.
 
 {{ NgDocActions.demo("DebouncedSignalDemoComponent", { container: true }) }}
 
@@ -10,13 +10,23 @@ Use `debouncedSignal` when you want to delay reactions to a signal's changes unt
 
 ```typescript
 import { signal } from '@angular/core';
-import { debouncedSignal } from '@ngx-oneforall/signals';
+import { debouncedSignal } from '@ngx-oneforall/signals/debounced-signal';
 
 @Component({ ... })
-export class MyComponent {
+export class SearchComponent {
     searchTerm = signal('');
+    
     // Updates only after user stops typing for 500ms
     debouncedTerm = debouncedSignal(this.searchTerm, 500);
+    
+    constructor() {
+        effect(() => {
+            const term = this.debouncedTerm();
+            if (term) {
+                this.performSearch(term);
+            }
+        });
+    }
 }
 ```
 
@@ -24,10 +34,24 @@ export class MyComponent {
 
 `debouncedSignal<T>(source: Signal<T>, delay: number): Signal<T>`
 
-- **source**: The source signal to debounce.
-- **delay**: The delay in milliseconds.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `source` | `Signal<T>` | The source signal to debounce |
+| `delay` | `number` | Delay in milliseconds |
 
 Returns a read-only signal that reflects the source value after the delay.
 
 > **Note**
-> The internal timer is automatically cleaned up when the component or injection context is destroyed.
+> The internal timer is automatically cleaned up when the injection context is destroyed.
+
+## When to Use
+
+✅ **Good use cases:**
+- Search input with API calls
+- Form validation on change
+- Window resize handlers
+- Auto-save functionality
+
+❌ **Avoid when:**
+- You need immediate response
+- You want rate limiting instead (use `throttledSignal`)

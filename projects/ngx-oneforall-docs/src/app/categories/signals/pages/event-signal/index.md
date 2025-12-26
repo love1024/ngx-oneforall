@@ -1,37 +1,69 @@
-`eventSignal` creates a reactive `Signal` from a DOM event. It automatically handles event listener cleanup and Angular Zone execution.
+`eventSignal` creates a reactive signal from DOM events. It automatically handles event listener setup, cleanup, and Angular zone execution.
 
 ## Usage
 
-Use `eventSignal` to track events on a DOM element. It must be called within an **injection context** (e.g., constructor or field initializer).
+Use `eventSignal` to track DOM events reactively. Must be called within an injection context.
 
+{{ NgDocActions.demo("EventSignalDemoComponent", { container: true }) }}
 
 ### Basic Example
 
 ```typescript
-import { eventSignal } from '@ngx-oneforall/signals';
+import { eventSignal } from '@ngx-oneforall/signals/event-signal';
 
 @Component({ ... })
-export class MyComponent {
-    // Create a signal from click events on document
-    clickSignal = eventSignal(document, 'click');
+export class ClickTrackerComponent {
+    // Track clicks on the document
+    clickEvent = eventSignal(document, 'click');
+    
+    constructor() {
+        effect(() => {
+            const event = this.clickEvent();
+            if (event) {
+                console.log('Clicked at:', event.clientX, event.clientY);
+            }
+        });
+    }
 }
 ```
 
-> **Note**
-> The signal returns `null` initially until the first event fires.
+### With Element Reference
 
-> **Important**
-> `eventSignal` uses `inject()` internally, so it must be called during component construction. If you need to attach to an element that is not available yet (like a `viewChild`), you might need to use `runInInjectionContext` in `ngAfterViewInit` or use the host element.
+```typescript
+@Component({
+    template: `<button #btn>Click me</button>`
+})
+export class MyComponent {
+    private elementRef = inject(ElementRef);
+    
+    // Listen on host element
+    hostClick = eventSignal(this.elementRef.nativeElement, 'click');
+}
+```
 
 ## API
 
 `eventSignal<T = Event>(target: EventTarget, eventName: string, options?: AddEventListenerOptions): WritableSignal<T | null>`
 
-- **target**: The DOM element or EventTarget to listen to.
-- **eventName**: The name of the event (e.g., 'click', 'mousemove').
-- **options**: Optional `AddEventListenerOptions` (e.g., `{ capture: true }`).
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `target` | `EventTarget` | DOM element or EventTarget to listen on |
+| `eventName` | `string` | Event name (e.g., 'click', 'mousemove') |
+| `options` | `AddEventListenerOptions` | Optional listener options |
 
-## Demo
+Returns a writable signal that holds the latest event, or `null` before first event.
 
+> **Note**
+> Must be called in an injection context (constructor, field initializer). For elements not available at construction (like `viewChild`), use `runInInjectionContext` in `ngAfterViewInit`.
 
-{{ NgDocActions.demo("EventSignalDemoComponent", { container: true }) }}
+## When to Use
+
+✅ **Good use cases:**
+- Mouse/touch tracking
+- Keyboard shortcuts
+- Scroll position monitoring
+- Custom drag-and-drop
+
+❌ **Avoid when:**
+- Using Angular's built-in event binding is sufficient
+- You need complex event composition (use RxJS `fromEvent`)

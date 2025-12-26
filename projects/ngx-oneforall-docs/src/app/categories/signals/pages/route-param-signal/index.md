@@ -1,69 +1,79 @@
-The `routeParamSignal` utility in Angular provides a reactive and declarative way to access and respond to changes in route parameters within your components. By leveraging Angular signals and the router, it enables seamless synchronization between the URL's route parameters and your component state, ensuring your UI always reflects the current navigation context.
+`routeParamSignal` creates a reactive signal that tracks route parameters. It automatically updates when the URL's route parameters change, eliminating manual subscriptions.
 
-#### Access a Single Param
+## Usage
 
-```typescript
-import { routeParamSignal } from 'path-to-your-utils';
+Use `routeParamSignal` to reactively access route parameters in signal-based components.
 
-@Component({
-    ...
-})
-export class ExampleComponent {
-    // Reactively tracks the value of the 'id' route parameter
-    id = routeParamSignal('id');
-}
-```
-
-#### Access Params Map
+### Single Parameter
 
 ```typescript
-import { routeParamSignal } from 'path-to-your-utils';
+import { routeParamSignal } from '@ngx-oneforall/signals/route-param-signal';
 
-@Component({
-    ...
-})
-export class ExampleComponent {
-    // get all params
-    paramsMap = routeParamsMapSignal();
-}
-```
-
-#### Key Features
-
-- **Reactive Route Parameter Access:**  
-    The signal automatically updates when the route parameter changes, eliminating the need for manual subscriptions or imperative code.
-
-- **Integration with Angular Signals:**  
-    Works seamlessly with Angular's signal-based reactivity model, making it easy to use in computed signals, effects, and templates.
-
-- **Automatic Cleanup:**  
-    The effect ensures that event subscriptions are properly cleaned up, preventing memory leaks.
-
-#### React On Changes
-
-```typescript
-@Component({
-    ...
-})
+@Component({ ... })
 export class ProductDetailComponent {
-    productId = routeParamSignal('productId');
-
-    // Use the signal in your template or computed signals
+    // Tracks the 'id' route parameter
+    productId = routeParamSignal('id');
+    
     constructor() {
         effect(() => {
-            const productId = this.productId();
-            if(productId) {
-               this.fetchProducts(productId);
+            const id = this.productId();
+            if (id) {
+                this.loadProduct(id);
             }
-        })
+        });
     }
 }
 ```
-#### When to Use
 
-- When you need to reactively access route parameters in a signal-based Angular application.
-- When you want to avoid manual subscription management for route changes.
-- When building components that depend on dynamic route parameters (e.g., detail pages, editors, etc.).
+### All Parameters
 
+```typescript
+import { routeParamsMapSignal } from '@ngx-oneforall/signals/route-param-signal';
 
+@Component({ ... })
+export class RouteInfoComponent {
+    // Get all route params as ParamMap
+    params = routeParamsMapSignal();
+    
+    constructor() {
+        effect(() => {
+            const map = this.params();
+            console.log('Category:', map.get('category'));
+            console.log('ID:', map.get('id'));
+        });
+    }
+}
+```
 
+## API
+
+### routeParamSignal
+
+`routeParamSignal(paramName: string): Signal<string | null>`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `paramName` | `string` | Name of the route parameter |
+
+Returns a signal with the current parameter value, or `null` if not present.
+
+### routeParamsMapSignal
+
+`routeParamsMapSignal(): Signal<ParamMap>`
+
+Returns a signal containing the full `ParamMap` of route parameters.
+
+> **Note**
+> Both signals automatically update when navigation changes the route parameters.
+
+## When to Use
+
+✅ **Good use cases:**
+- Detail pages (`/products/:id`)
+- Nested routes with parameters
+- Dynamic route segments
+- Master-detail layouts
+
+❌ **Avoid when:**
+- You need query parameters (use `routeQueryParamSignal`)
+- You need route data, not params (use `ActivatedRoute.data`)
