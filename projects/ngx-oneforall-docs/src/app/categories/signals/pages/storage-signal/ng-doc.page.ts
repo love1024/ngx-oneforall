@@ -9,6 +9,7 @@ const StorageSignal: NgDocPage = {
   demos: {
     StorageSignalDemoComponent,
   },
+  order: 1,
 };
 
 export default StorageSignal;

@@ -7,6 +7,7 @@ import {
   Injector,
   PLATFORM_ID,
   signal,
+  VERSION,
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -67,14 +68,14 @@ function init<T>(
       try {
         storage.setItem(key, serializer(state()));
       } catch (err) {
-        console.log(`[storageSignal] failed to store ${key}`, err);
+        console.error(`[storageSignal] failed to store ${key}`, err);
       }
     },
-    { injector }
+    { injector, allowSignalWrites: VERSION.major < '19' || undefined }
   );
 
   // Check if cross tab sync is required and start listening
-  if (crossTabSync && typeof window !== 'undefined') {
+  if (crossTabSync) {
     fromEvent(window, 'storage')
       .pipe(takeUntilDestroyed(destroyRef))
       .subscribe((e: Event) => {

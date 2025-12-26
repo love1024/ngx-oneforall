@@ -1,112 +1,94 @@
-The `storageSignal` utility in Angular provides a reactive way to synchronize application state with browser storage mechanisms such as `localStorage` or `sessionStorage`. It leverages Angular signals to keep your data in sync with storage, enabling seamless state persistence and cross-tab communication.
+`storageSignal` creates a reactive signal that automatically syncs with browser storage (`localStorage` or `sessionStorage`). Changes to the signal persist to storage, and the signal can optionally sync across browser tabs.
 
+## Usage
+
+Use `storageSignal` to persist state across page refreshes or share state between tabs.
+
+{{ NgDocActions.demo("StorageSignalDemoComponent", { container: true }) }}
+
+### Basic Example
 
 ```typescript
-const signalResponse = storageSignal<T>(NAME, DEFAULT_VALUE, OPTIONS);
+import { storageSignal } from '@ngx-oneforall/signals';
+
+@Component({ ... })
+export class MyComponent {
+    // Persists to localStorage under key 'counter'
+    counter = storageSignal<number>('counter', 0);
+
+    increment() {
+        this.counter.update(c => c + 1);
+        // Value is automatically saved to localStorage
+    }
+}
 ```
 
-#### Options
+> **Note**
+> The signal must be created within an injection context (e.g., constructor, field initializer) or you must provide an `injector` in options.
 
-The `OPTIONS` parameter is an object that configures how the `storageSignal` behaves. Here are the available options:
+### Using Session Storage
 
-- **`storage`** (default: `localStorage`)  
-    The storage mechanism to use. Can be `localStorage`, `sessionStorage`, or any custom object implementing the `Storage` interface.  
+```typescript
+// Use sessionStorage instead of localStorage
+const token = storageSignal<string>('session-token', '', { 
+    storage: sessionStorage 
+});
+```
 
-- **`serializer`** (default: `JSON.stringify`)  
-    A function to convert the value to a string before saving it to storage. Useful for custom or complex data types.  
+### Cross-Tab Synchronization
 
-- **`deserializer`** (default: `JSON.parse`)  
-    A function to convert the stored string back to the original value when reading from storage.  
+```typescript
+// Changes in one tab will reflect in all open tabs
+const cart = storageSignal<string[]>('cart', [], { 
+    crossTabSync: true 
+});
+```
 
-- **`crossTabSync`** (default: `false`)  
-    If set to `true`, synchronizes the signal's value across multiple browser tabs/windows.  
+### Custom Serialization
 
-- **`injector`**  
-    An Angular `Injector` instance. Allows the signal to be used outside of Angular's standard injection context.  
+```typescript
+interface User {
+    id: number;
+    name: string;
+}
 
-#### Key Features
+const user = storageSignal<User>('current-user', { id: 0, name: '' }, {
+    serializer: (value) => JSON.stringify(value),
+    deserializer: (data) => JSON.parse(data)
+});
+```
 
-- **Reactive State Persistence:** Automatically keeps a signal's value in sync with browser storage.
+## API
 
-    ```typescript
-    import { storageSignal } from '@angular/core';
+`storageSignal<T>(key: string, defaultValue: T, options?: StorageSignalOptions<T>): WritableSignal<T>`
 
-    @Component({
-    ...
-    })
-    export class StorageSignalDemoComponent {
-        // Defautl value is localstorage
-        count = storageSignal<number>('count', 0);
+### Parameters
 
-        increaseCount() {
-            // Updates both signal and localStorage
-            this.count.update(c => c + 1);
-        }
-    }
-    ```
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `key` | `string` | The storage key to use |
+| `defaultValue` | `T` | Initial value if nothing in storage |
+| `options` | `StorageSignalOptions<T>` | Optional configuration |
 
-- **Customizable Storage:** Supports both `localStorage` and `sessionStorage`, or any custom storage implementing the `Storage` interface.
+### Options
 
-    ```typescript
-    // Use sessionStorage instead of localStorage
-    const sessionToken = storageSignal<string>('session-token', '', { storage: sessionStorage });
-    sessionToken.set('abc123');
-    ```
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `storage` | `Storage` | `localStorage` | Storage backend (`localStorage`, `sessionStorage`, or custom) |
+| `serializer` | `(v: T) => string` | `JSON.stringify` | Function to serialize value to string |
+| `deserializer` | `(data: string) => T` | `JSON.parse` | Function to deserialize string to value |
+| `crossTabSync` | `boolean` | `false` | Sync changes across browser tabs |
+| `injector` | `Injector` | Current injector | Angular injector for use outside injection context |
 
-- **Serialization Options:** Allows custom serialization and deserialization logic for complex data types.
+## When to Use
 
-    ```typescript
-    interface User {
-        id: number;
-        name: string;
-    }
+✅ **Good use cases:**
+- User preferences (theme, language)
+- Form draft auto-save
+- Shopping cart persistence
+- Authentication tokens
 
-    const users = storageSignal<User[]>(
-        'users',
-        [],
-        {
-            storage: localStorage,
-            serialize: (value) => JSON.stringify(value),
-            deserialize: (value) => value ? JSON.parse(value) : []
-        }
-    );
-    users.set([{ id: 1, name: 'Alice' }]);
-    ```
-
-- **Cross-Tab Synchronization:** Optionally synchronizes state changes across multiple browser tabs.
-
-    ```typescript
-    const cart = storageSignal<string[]>(
-        'cart',
-        [],
-        { storage: localStorage, crossTabSync: true }
-    );
-    // Updates in one tab will reflect in all open tabs
-    ```
-
-- **Flexible Injection:** Can be used within or outside Angular's injection context by providing an `Injector`.
-
-    ```typescript
-    import { storageSignal } from '@angular/core';
-
-    @Component({
-    ...
-    })
-    export class StorageSignalDemoComponent implements OnInit {
-        private injector = inject(Injector);
-
-        ngOnInit() {
-            // This is outside injection context
-            const theme = storageSignal('theme', 'light', { injector });
-        }
-    }
-    ```
-
----
-
-#### Live Demo
-
-Explore this example in a live demonstration:
-
-{{ NgDocActions.demo("StorageSignalDemoComponent") }}
-
+❌ **Avoid when:**
+- Storing sensitive data (use secure cookies instead)
+- Large datasets (storage limits apply)
+- Data that changes very frequently (storage writes are synchronous)
