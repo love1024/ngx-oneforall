@@ -8,7 +8,5 @@ export * from './router-event-signal/router-event-signal';
 export * from './debounced-signal/debounced-signal';
 export * from './throttled-signal/throttled-signal';
 export * from './websocket-signal/websocket-signal';
-export * from './deep-computed/deep-computed';
-export type { DeepComputed } from './deep-computed/deep-computed.model';
 export * from './state-signal/state-signal';
 export type { StateSignal } from './state-signal/state-signal.model';

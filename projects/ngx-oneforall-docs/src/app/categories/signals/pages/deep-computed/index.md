@@ -1,10 +1,15 @@
-`deepComputed` creates a computed signal that allows nested property access using proxy syntax. This is useful for accessing deeply nested state without repeatedly calling the signal function.
+`deepComputed` creates a computed signal that allows readonly nested property access using proxy syntax. This is useful for accessing deeply nested state without repeatedly calling the signal function.
+
+> **Note**
+> If you need writable nested properties, use `stateSignal` instead.
 
 ## Usage
 
 Use `deepComputed` when you have complex nested objects in computed signals and want ergonomic property access.
 
 {{ NgDocActions.demo("DeepComputedDemoComponent", { container: true }) }}
+
+
 
 ### Basic Example
 
@@ -25,6 +30,8 @@ export class MyComponent {
     }
 }
 ```
+
+
 
 ### Reactive Updates
 

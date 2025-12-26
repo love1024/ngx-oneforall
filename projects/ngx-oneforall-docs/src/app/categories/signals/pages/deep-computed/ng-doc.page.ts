@@ -7,6 +7,7 @@ const DeepComputedPage: NgDocPage = {
   mdFile: './index.md',
   category: SignalsCategory,
   demos: { DeepComputedDemoComponent },
+  order: 2,
 };
 
 export default DeepComputedPage;
