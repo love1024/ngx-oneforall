@@ -22,28 +22,7 @@ import { throttledSignal } from '@ngx-oneforall/signals/throttled-signal';
       </div>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-        border: 1px solid var(--ng-doc-border-color);
-        border-radius: 4px;
-      }
-      .mouse-area {
-        width: 100%;
-        height: 100px;
-        background: var(--ng-doc-input-bg);
-        border: 1px dashed var(--ng-doc-border-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: crosshair;
-      }
-    `,
-  ],
+  styleUrl: './throttled-signal-demo.component.scss',
 })
 export class ThrottledSignalDemoComponent {
   coords = signal('0, 0');

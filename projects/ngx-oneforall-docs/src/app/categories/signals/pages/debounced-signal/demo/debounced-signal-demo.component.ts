@@ -24,30 +24,7 @@ import { debouncedSignal } from '@ngx-oneforall/signals/debounced-signal';
       </div>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-        border: 1px solid var(--ng-doc-border-color);
-        border-radius: 4px;
-      }
-      .input-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      input {
-        padding: 0.5rem;
-        border: 1px solid var(--ng-doc-border-color);
-        border-radius: 4px;
-        background: var(--ng-doc-input-bg);
-        color: var(--ng-doc-text-color);
-      }
-    `,
-  ],
+  styleUrl: './debounced-signal-demo.component.scss',
 })
 export class DebouncedSignalDemoComponent {
   searchTerm = signal('');

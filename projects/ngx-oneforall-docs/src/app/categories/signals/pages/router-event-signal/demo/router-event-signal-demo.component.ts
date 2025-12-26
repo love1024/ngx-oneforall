@@ -26,36 +26,7 @@ import { routerEventSignal } from '@ngx-oneforall/signals/router-event-signal';
       <p class="hint">Click on the right menu links to see updates!</p>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1.5rem;
-        background: var(--ng-doc-code-background);
-        border-radius: 4px;
-      }
-      .info,
-      .status,
-      .details {
-        padding: 0.5rem;
-        background: rgba(0, 0, 0, 0.05);
-        border-radius: 4px;
-      }
-      pre {
-        margin: 0.5rem 0 0;
-        white-space: pre-wrap;
-        word-break: break-all;
-        font-size: 0.85rem;
-      }
-      .hint {
-        font-style: italic;
-        opacity: 0.7;
-        margin: 0;
-      }
-    `,
-  ],
+  styleUrl: './router-event-signal-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RouterEventSignalDemoComponent {

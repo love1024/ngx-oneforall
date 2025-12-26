@@ -31,51 +31,7 @@ import { CommonModule } from '@angular/common';
       </div>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        padding: 1rem;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-      }
-
-      .state-display,
-      .signals-display,
-      .controls {
-        margin: 1rem 0;
-      }
-
-      pre {
-        background: #f5f5f5;
-        padding: 1rem;
-        border-radius: 4px;
-        overflow-x: auto;
-      }
-
-      button {
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
-        padding: 0.5rem 1rem;
-        border: none;
-        background: #28a745;
-        color: white;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      button:hover {
-        background: #218838;
-      }
-
-      button:last-child {
-        background: #6c757d;
-      }
-
-      button:last-child:hover {
-        background: #5a6268;
-      }
-    `,
-  ],
+  styleUrl: './state-signal-demo.component.scss',
 })
 export class StateSignalDemoComponent {
   state = stateSignal({
@@ -96,7 +52,6 @@ export class StateSignalDemoComponent {
   }
 
   updateName() {
-    // Direct nested update using .set() - automatically bubbles to root
     const currentName = this.state.profile.name();
     this.state.profile.name.set(
       currentName === 'John Doe' ? 'Jane Smith' : 'John Doe'
@@ -104,12 +59,10 @@ export class StateSignalDemoComponent {
   }
 
   incrementAge() {
-    // Using .update() for derived values
     this.state.profile.age.update(age => age + 1);
   }
 
   updateCity() {
-    // Deep nested update
     const currentCity = this.state.profile.address.city();
     this.state.profile.address.city.set(
       currentCity === 'New York' ? 'Los Angeles' : 'New York'
@@ -117,7 +70,6 @@ export class StateSignalDemoComponent {
   }
 
   resetState() {
-    // Can also replace entire state at root level
     this.state.set({
       profile: {
         name: 'John Doe',
