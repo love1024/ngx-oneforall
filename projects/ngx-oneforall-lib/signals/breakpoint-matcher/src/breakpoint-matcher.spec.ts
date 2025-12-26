@@ -227,7 +227,7 @@ describe('breakpointMatcherMultiple', () => {
     expect(fixture.nativeElement.textContent.trim()).toBe('true-true');
   });
 
-  it('should use addListener and removeListner if event lisnters are not supported', () => {
+  it('should use addListener and removeListener if event lisnters are not supported', () => {
     const handlers: ((event: { matches: boolean }) => void)[] = [];
     const matches = [false, false];
     let count = -1;

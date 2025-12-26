@@ -54,20 +54,23 @@ export function breakpointMatcherMultiple(
       return b;
     });
 
-    queries.forEach(query => {
-      const mediaQuery = window.matchMedia(query);
+    // Build initial state in one pass
+    const initialBreakpoints: Record<string, boolean> = {};
+    const mediaQueries = queries.map(query => {
+      const mq = window.matchMedia(query);
+      initialBreakpoints[reverseMap.get(query) || query] = mq.matches;
+      return { query, mq };
+    });
 
-      const updatedBreakpoints = {
-        ...state().breakpoints,
-        [reverseMap.get(query) || query]: mediaQuery.matches,
-      };
-      // Set initial state
-      state.set({
-        some: someBreakpointMatch(updatedBreakpoints),
-        all: allBreakpointMatch(updatedBreakpoints),
-        breakpoints: updatedBreakpoints,
-      });
+    // Set initial state once
+    state.set({
+      some: someBreakpointMatch(initialBreakpoints),
+      all: allBreakpointMatch(initialBreakpoints),
+      breakpoints: initialBreakpoints,
+    });
 
+    // Setup listeners for dynamic updates
+    mediaQueries.forEach(({ query, mq }) => {
       const handler = (event: MediaQueryListEvent) => {
         const updatedBreakpoints = {
           ...state().breakpoints,
@@ -80,10 +83,10 @@ export function breakpointMatcherMultiple(
         });
       };
 
-      startListener(mediaQuery, handler);
+      startListener(mq, handler);
     });
   }
-  return state;
+  return state.asReadonly();
 }
 
 function startListener(
@@ -120,5 +123,6 @@ function someBreakpointMatch(breakpoints: Record<string, boolean>): boolean {
 }
 
 function allBreakpointMatch(breakpoints: Record<string, boolean>): boolean {
-  return Object.values(breakpoints).every(v => v);
+  const values = Object.values(breakpoints);
+  return values.length > 0 && values.every(v => v);
 }
