@@ -15,25 +15,27 @@ export function deepComputed<T extends object>(
     has(target: any, prop: string | symbol) {
       return !!this.get!(target, prop, undefined);
     },
-    get(target: any, prop: string) {
+    get(target: any, prop: string | symbol) {
       const value = untracked(target);
+
+      // If value is not a record we can recurse into, or prop doesn't exist, handle cleanup and return
       if (!isRecord(value) || !(prop in value)) {
         if (isSignal(target[prop]) && (target[prop] as any)[DEEP_COMPUTED]) {
           delete target[prop];
         }
-
         return target[prop];
       }
 
       if (!isSignal(target[prop])) {
+        const nested = deepComputed(() => target()[prop]);
         Object.defineProperty(target, prop, {
-          value: computed(() => target()[prop]),
+          value: nested,
           configurable: true,
         });
         target[prop][DEEP_COMPUTED] = true;
       }
 
-      return deepComputed(target[prop]);
+      return target[prop];
     },
   });
 }
