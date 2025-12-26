@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BREAKPOINT, BREAKPOINT_QUERY } from '@ngx-oneforall/constants';
-import { breakpointMatcher } from '@ngx-oneforall/signals';
+import { breakpointMatcher } from '@ngx-oneforall/signals/breakpoint-matcher-signal';
 
 @Component({
   selector: 'lib-breakpoint-matcher-signal-demo',

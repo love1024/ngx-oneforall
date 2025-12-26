@@ -1,5 +1,5 @@
 import { Component, effect } from '@angular/core';
-import { stateSignal } from '@ngx-oneforall/signals';
+import { stateSignal } from '@ngx-oneforall/signals/state-signal';
 import { CommonModule } from '@angular/common';
 
 @Component({
