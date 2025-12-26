@@ -9,7 +9,7 @@ Use `breakpointMatcher` to reactively adapt your UI based on viewport size witho
 ### Single Breakpoint
 
 ```typescript
-import { breakpointMatcher } from '@ngx-oneforall/signals/breakpoint-matcher-signal';
+import { breakpointMatcher } from '@ngx-oneforall/signals/breakpoint-matcher';
 import { BREAKPOINT } from '@ngx-oneforall/constants';
 
 @Component({ ... })
@@ -29,7 +29,7 @@ For checking multiple breakpoints at once, use `breakpointMatcherMultiple`:
 {{ NgDocActions.demo("BreakpointMatcherMultipleSignalDemoComponent", { container: true }) }}
 
 ```typescript
-import { breakpointMatcherMultiple } from '@ngx-oneforall/signals/breakpoint-matcher-signal';
+import { breakpointMatcherMultiple } from '@ngx-oneforall/signals/breakpoint-matcher';
 import { BREAKPOINT } from '@ngx-oneforall/constants';
 
 @Component({ ... })
@@ -71,19 +71,6 @@ Returns a signal that is `true` when the viewport matches.
 ## Predefined Breakpoints
 
 The `@ngx-oneforall/constants` package provides standard breakpoints:
-
-| Breakpoint | Media Query |
-|------------|-------------|
-| `XS` | `(width < 576px)` |
-| `SM` | `(width >= 576px)` |
-| `MD` | `(width >= 768px)` |
-| `LG` | `(width >= 992px)` |
-| `XL` | `(width >= 1200px)` |
-| `XXL` | `(width >= 1400px)` |
-| `SM_ONLY` | `(576px <= width < 768px)` |
-| `MD_ONLY` | `(768px <= width < 992px)` |
-| `LG_ONLY` | `(992px <= width < 1200px)` |
-| `XL_ONLY` | `(1200px <= width < 1400px)` |
 
 ## When to Use
 
