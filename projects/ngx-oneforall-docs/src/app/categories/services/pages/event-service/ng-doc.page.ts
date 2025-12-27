@@ -3,7 +3,7 @@ import ServicesCategory from '../../ng-doc.category';
 import { EventServiceDemoComponent } from './demo/event-service-demo.component';
 
 const EventService: NgDocPage = {
-  title: 'Event Service',
+  title: 'Event',
   mdFile: './index.md',
   category: ServicesCategory,
   demos: {

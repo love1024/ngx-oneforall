@@ -2,8 +2,8 @@ import { NgDocPage } from '@ng-doc/core';
 import ServicesCategory from '../../ng-doc.category';
 import { CacheServiceDemoComponent } from './demo/cache-service-demo.component';
 
-const CookieService: NgDocPage = {
-  title: 'Cache Service',
+const CacheService: NgDocPage = {
+  title: 'Cache',
   mdFile: './index.md',
   category: ServicesCategory,
   demos: {
@@ -11,4 +11,4 @@ const CookieService: NgDocPage = {
   },
 };
 
-export default CookieService;
+export default CacheService;

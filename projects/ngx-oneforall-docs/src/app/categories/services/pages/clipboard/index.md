@@ -1,42 +1,80 @@
+A simple service for copying and reading text from the system clipboard with automatic fallback for older browsers.
 
-The \`ClipboardService\` provides a simple way to interact with the system clipboard in an Angular application. It abstracts the complexity of the Clipboard API and provides a fallback mechanism for older browsers.
+## Features
 
-#### Features
-- Copies text to the clipboard using the modern Clipboard API.
-- Falls back to \`document.execCommand('copy')\` if the Clipboard API is unavailable or fails.
-- Reads text from the clipboard.
-- Safely handles platform checks (browser vs server).
+- **Modern Clipboard API** — Uses `navigator.clipboard` when available
+- **Automatic Fallback** — Falls back to `execCommand('copy')` for older browsers
+- **SSR Safe** — Returns safe defaults on server
+- **Promise-based** — Async/await friendly API
 
-#### Usage
-1. Import and provide the \`ClipboardService\` in your component or module.
-2. Inject the service to use its methods.
+---
 
-#### Example
+## Installation
+
 ```typescript
-import { ClipboardService, provideClipboardService } from '@ngx-oneforall/services';
+import { ClipboardService } from '@ngx-oneforall/services/clipboard';
+```
+
+---
+
+## Basic Usage
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { ClipboardService } from '@ngx-oneforall/services/clipboard';
 
 @Component({
-  // ...
-  providers: [provideClipboardService()],
+  selector: 'app-demo',
+  template: `
+    <button (click)="copyText()">Copy</button>
+    <button (click)="pasteText()">Paste</button>
+  `,
+  providers: [ClipboardService],
 })
-export class MyComponent {
-  constructor(private clipboardService: ClipboardService) {}
+export class DemoComponent {
+  private clipboard = inject(ClipboardService);
 
-  async copy() {
-    const success = await this.clipboardService.copy('Hello World');
-    if (success) {
-      console.log('Copied!');
-    }
+  async copyText() {
+    const success = await this.clipboard.copy('Hello World');
+    console.log(success ? 'Copied!' : 'Failed to copy');
+  }
+
+  async pasteText() {
+    const text = await this.clipboard.read();
+    console.log('Clipboard:', text);
   }
 }
 ```
 
-#### Methods
-- **\`copy(text: string): Promise<boolean>\`**: Copies the provided text to the clipboard. Returns a promise that resolves to \`true\` if successful, \`false\` otherwise.
-- **\`read(): Promise<string>\`**: Reads text from the clipboard. Returns a promise that resolves to the text, or an empty string if failed.
+---
 
-#### Live Demo
+## API Reference
 
-Try out the clipboard service below:
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `copy(text)` | `Promise<boolean>` | Copies text to clipboard, returns `true` on success |
+| `read()` | `Promise<string>` | Reads text from clipboard, returns `''` on failure |
+
+---
+
+## SSR Behavior
+
+On server-side rendering (SSR):
+
+| Method | SSR Return |
+|--------|------------|
+| `copy()` | `false` |
+| `read()` | `''` |
+
+---
+
+## Browser Compatibility
+
+> [!NOTE]
+> The Clipboard API requires user interaction and HTTPS. On HTTP or without user gesture, the fallback mechanism will be used for `copy()`.
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demo("ClipboardDemoComponent") }}

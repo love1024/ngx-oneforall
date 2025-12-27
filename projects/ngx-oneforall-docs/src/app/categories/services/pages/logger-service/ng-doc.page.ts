@@ -4,7 +4,7 @@ import { LoggerServiceDemoComponent } from './demo/logger-service-demo.component
 import { LoggerServiceCustomDemoComponent } from './demo/logger-service-custom-demo.component';
 
 const LoggerService: NgDocPage = {
-  title: 'Logger Service',
+  title: 'Logger',
   mdFile: './index.md',
   category: ServicesCategory,
   demos: {

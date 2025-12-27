@@ -3,7 +3,7 @@ import ServicesCategory from '../../ng-doc.category';
 import { CookieServiceDemoComponent } from './demo/cookie-service-demo.component';
 
 const CookieService: NgDocPage = {
-  title: 'Cookie Service',
+  title: 'Cookie',
   mdFile: './index.md',
   category: ServicesCategory,
   demos: {
