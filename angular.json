@@ -74,6 +74,11 @@
             "assets": [
               {
                 "glob": "**/*",
+                "input": "projects/ngx-oneforall-docs/public",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
                 "input": "node_modules/@ng-doc/app/assets",
                 "output": "assets/ng-doc/app"
               },
@@ -85,25 +90,6 @@
               {
                 "glob": "**/*",
                 "input": "ng-doc/ngx-oneforall-docs/assets",
-                "output": "assets/ng-doc"
-              },
-              {
-                "glob": "**/*",
-                "input": "projects/ngx-oneforall-docs/public"
-              },
-              {
-                "glob": "**/*",
-                "input": "node_modules/@ng-doc/ui-kit/assets",
-                "output": "assets/ng-doc/ui-kit"
-              },
-              {
-                "glob": "**/*",
-                "input": "node_modules/@ng-doc/app/assets",
-                "output": "assets/ng-doc/app"
-              },
-              {
-                "glob": "**/*",
-                "input": "ng-doc/<project-name>/assets",
                 "output": "assets/ng-doc"
               }
             ],
