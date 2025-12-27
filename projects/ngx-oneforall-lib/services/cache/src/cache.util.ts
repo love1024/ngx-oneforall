@@ -16,6 +16,11 @@ export function getStorageEngine(
   storage: CacheStorageType = 'memory',
   prefix?: string
 ) {
+  // SSR safety - fallback to memory on server
+  if (typeof window === 'undefined') {
+    return new MemoryStorageService();
+  }
+
   const key = getStorageKey(storage, prefix);
   if (storageCache.has(key)) {
     return storageCache.get(key)!;

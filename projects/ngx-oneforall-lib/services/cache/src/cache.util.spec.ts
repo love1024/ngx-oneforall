@@ -46,4 +46,15 @@ describe('getStorageEngine', () => {
     const engine = getStorageEngine('local', 'myprefix');
     expect((engine as WebStorageService as any).prefix).toBe('myprefix');
   });
+
+  it('should return MemoryStorageService when window is undefined (SSR)', () => {
+    const originalWindow = global.window;
+    // @ts-expect-error - simulating SSR environment
+    delete global.window;
+
+    const engine = getStorageEngine('local');
+    expect(engine).toBeInstanceOf(MemoryStorageService);
+
+    global.window = originalWindow;
+  });
 });

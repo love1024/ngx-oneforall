@@ -1,97 +1,137 @@
+Advanced caching service with TTL, versioning, and multi-storage support.
 
-The `CacheService` is a versatile Angular service for efficient client-side caching, supporting multiple storage engines and advanced cache management features. It enables developers to store, retrieve, and manage data in memory, localStorage, or sessionStorage, with configurable expiration and versioning.
+## Features
 
-#### Key Features
+- **Multi-Storage** — Support for `memory`, `local`, and `session` storage
+- **Time-to-Live (TTL)** — Auto-expiration for cached entries
+- **Versioning** — Invalidate entire cache when version changes
+- **SSR Safe** — Graceful fallback to memory on server
+- **Type-Safe** — Generic support for stored values
 
-- **Flexible Storage:** Choose between in-memory, localStorage, or sessionStorage for cache persistence.
-- **Time-to-Live (TTL):** Set global or per-entry expiration to automatically invalidate stale data.
-- **Versioning:** Associate cache entries with a version to ensure data consistency across deployments.
-- **Cache Operations:** Easily set, get, check, remove, and clear cached values.
-- **Customizable Prefix:** Optionally set a prefix for cache keys to avoid collisions.
+---
 
-#### Usage
+## Installation
 
-1. **Provide the Service:** Register `CacheService` in your Angular module or component using `provideCacheService(options)`. Configure storage type, TTL, version, and key prefix as needed.
-2. **Inject the Service:** Use Angular's dependency injection to access `CacheService` in your components or services.
+```typescript
+import { 
+  CacheService, 
+  provideCacheService,
+  CacheOptions 
+} from '@ngx-oneforall/services/cache';
+```
 
-#### Example
+---
+
+## Basic Usage
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { CacheService, provideCacheService } from '@ngx-oneforall/services';
+import { CacheService, provideCacheService } from '@ngx-oneforall/services/cache';
 
 @Component({
-    selector: 'app-cache-demo',
-    template: `
-        <button (click)="setCache()">Set Cache</button>
-        <button (click)="getCache()">Get Cache</button>
-        <button (click)="removeCache()">Remove Cache</button>
-        <button (click)="clearCache()">Clear All</button>
-        <p>Cached Value: {{ cachedValue }}</p>
-    `,
-    providers: [provideCacheService({ storage: 'local', ttl: 60000, version: 'v1' })],
+  selector: 'app-demo',
+  template: `<p>User: {{ '{' }}{{ '{' }} user() }}</p>`,
+  providers: [
+    provideCacheService({
+      storage: 'local',
+      ttl: 3600 * 1000, // 1 hour
+      version: 'v1.0.0'
+    })
+  ]
 })
-export class CacheDemoComponent {
-    private readonly cacheService = inject(CacheService);
-    cachedValue = '';
+export class DemoComponent {
+  private cache = inject(CacheService);
 
-    setCache() {
-        this.cacheService.set('user', 'JohnDoe');
-    }
+  user = linkedSignal(() => {
+    // Check cache first
+    const cached = this.cache.get<User>('current_user');
+    if (cached) return cached;
+    
+    // Fetch if missing
+    return this.fetchUser();
+  });
 
-    getCache() {
-        this.cachedValue = this.cacheService.get('user') ?? '';
-    }
-
-    removeCache() {
-        this.cacheService.remove('user');
-        this.cachedValue = '';
-    }
-
-    clearCache() {
-        this.cacheService.clear();
-        this.cachedValue = '';
-    }
+  saveUser(user: User) {
+    this.cache.set('current_user', user);
+  }
 }
 ```
 
-#### API Overview
+---
 
-- **`set<T>(key: string, value: T, config?: { ttl?: number; version?: string }): void`**  
-    Stores a value in the cache with optional TTL and version.
+## API Reference
 
-- **`get<T>(key: string): T | null`**  
-    Retrieves a cached value, or `null` if not found or expired.
+### `get<T>(key, storage?)`
 
-- **`has(key: string): boolean`**  
-    Checks if a valid cache entry exists for the given key.
+Retrieve a value from cache. Returns `null` if missing or expired.
 
-- **`remove(key: string): void`**  
-    Removes a specific cache entry.
+```typescript
+// Get from default storage
+const value = cache.get<string>('key');
 
-- **`clear(): void`**  
-    Clears all cache entries managed by the service.
+// Get from specific storage
+const memoryValue = cache.get<number>('count', 'memory');
+```
 
-#### Configuration Options
+### `set<T>(key, value, config?)`
 
-Customize cache behavior via `CacheOptions`:
+Store a value with optional overrides.
 
-- `storage`: `'memory' | 'local' | 'session'` (default: `'memory'`)
-- `ttl`: number (global time-to-live in milliseconds, default: 1 hour)
-- `version`: string (optional, for cache versioning)
-- `storagePrefix`: string (optional, prefix for cache keys)
+```typescript
+// Use global config
+cache.set('user', user);
 
-#### Notes
+// Override TTL for this specific item (e.g. 5 seconds)
+cache.set('temp', data, { ttl: 5000 });
+```
 
-> **Warning**
-> When a version mismatch is detected, all entries are automatically purged.
+### `has(key, storage?)`
 
-- The service is suitable for browser environments and supports both persistent and volatile caching.
-- Use versioning to invalidate outdated cache after deployments or data schema changes.
+Check if a valid (non-expired) entry exists.
 
-#### Live Demo
+```typescript
+if (cache.has('token')) {
+  // ...
+}
+```
 
-Explore a live demonstration of cache service:
+### `remove(key, storage?)`
+
+Remove a specific entry.
+
+### `clear(storage?)`
+
+Clear all entries managed by this service (respects prefix).
+
+---
+
+## Configuration Options
+
+Pass these options to `provideCacheService()`:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `storage` | `'memory' \| 'local' \| 'session'` | `'memory'` | Default storage engine |
+| `ttl` | `number` | `3600000` (1h) | Global expiration time in ms |
+| `version` | `string` | `INTERNAL` | Cache version string |
+| `storagePrefix` | `string` | `undefined` | Key prefix in storage |
+
+---
+
+## Versioning & Invalidation
+
+When you deploy a new version of your app, you often want to invalidate old cache entries to prevent schema mismatches.
+
+```typescript
+provideCacheService({
+  version: 'v2.0.0', // Changing this invalidates all previous 'v1.0.0' entries
+})
+```
+
+When `CacheService` detects a version mismatch for a key, it automatically removes that entry and returns `null`.
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demo("CacheServiceDemoComponent") }}
-

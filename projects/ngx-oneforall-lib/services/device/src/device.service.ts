@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { fromEvent, startWith } from 'rxjs';
+import { fromEvent, merge, startWith } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DeviceType, Orientation } from '@ngx-oneforall/constants';
 
@@ -33,8 +33,7 @@ export class DeviceService {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      this.subscribeToOritentationChanges();
-      this.subscribeToResizeChanges();
+      this.subscribeToDeviceChanges();
     }
   }
 
@@ -109,16 +108,8 @@ export class DeviceService {
     return 'desktop';
   }
 
-  private subscribeToOritentationChanges() {
-    fromEvent(window, 'orientationchange')
-      .pipe(startWith(null), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this._deviceInfo.set(this.detectDeviceInfo());
-      });
-  }
-
-  private subscribeToResizeChanges() {
-    fromEvent(window, 'resize')
+  private subscribeToDeviceChanges() {
+    merge(fromEvent(window, 'orientationchange'), fromEvent(window, 'resize'))
       .pipe(startWith(null), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this._deviceInfo.set(this.detectDeviceInfo());
