@@ -1,55 +1,132 @@
+Configurable logging service with support for disabling and custom logger implementations.
 
+## Features
 
-The `NetworkStatusService` monitors and provides the current network connectivity status in an Angular application. It leverages the browser's `navigator.onLine` property and listens to `online` and `offline` events to determine the network status in real-time. The service offers both reactive and signal-based APIs for accessing the network status.
+- **4 Log Levels** — `log`, `error`, `warn`, `debug`
+- **Disable Logging** — Completely disable in production
+- **Custom Logger** — Replace console with your own implementation (e.g., send to server)
+- **Type-Safe** — Full TypeScript support
 
-#### Features
-- Detects whether the application is online or offline.
-- Provides reactive streams (`isOnline$`) for observing network status changes.
-- Offers signal-based APIs (`isOnlineSignal`) for Angular's signal-based reactivity.
-- Automatically updates the network status when the browser's connectivity changes.
+---
 
-#### Usage
-1. Import and provide the `NetworkStatusService` in your Angular module or component.
-2. Inject the service into your component or service to access its properties and methods.
+## Installation
 
-#### Example
 ```typescript
-...
-import { NetworkStatusService } from './network-status.service';
+import { 
+  LoggerService, 
+  provideLoggerService,
+  DISABLE_LOGGER,
+  CUSTOM_LOGGER,
+  CustomLogger
+} from '@ngx-oneforall/services/logger';
+```
+
+---
+
+## Basic Usage
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { LoggerService, provideLoggerService } from '@ngx-oneforall/services/logger';
 
 @Component({
-    ...
-    template: `
-        @if(isOnline()) {
-            <p>You are online</p>
-        } @else {
-            <p>You are offline</p> 
-        }
-    `
+  selector: 'app-demo',
+  template: `<button (click)="onClick()">Log</button>`,
+  providers: [provideLoggerService()],
 })
-export class NetworkStatusComponent {
-  isOnline = computed(() => this.networkStatuService.isOnlineSignal());
-  private readonly networkStatuService = inject(NetworkStatusService);
+export class DemoComponent {
+  private logger = inject(LoggerService);
+
+  onClick() {
+    this.logger.log('User clicked button');
+    this.logger.debug('Debug info', { timestamp: Date.now() });
+    this.logger.warn('This is a warning');
+    this.logger.error('Something went wrong!');
+  }
 }
 ```
 
-#### Properties
-- **`isOnline`**: A boolean getter that returns `true` if the application is online, otherwise `false`.
-- **`isOffline`**: A boolean getter that returns `true` if the application is offline, otherwise `false`.
-- **`isOnline$`**: An observable stream that emits the current network status (`true` for online, `false` for offline).
-- **`isOnlineSignal`**: A readonly signal that reflects the current network status.
+---
 
-#### Notes
-- This service assumes it is running in a browser environment where the `window` object is available.
+## API Reference
 
-#### Live Demo
+| Method | Description |
+|--------|-------------|
+| `log(...args)` | Standard console.log |
+| `error(...args)` | console.error |
+| `warn(...args)` | console.warn |
+| `debug(...args)` | console.debug |
 
-Explore this example in a live demonstration:
+---
+
+## Disable Logging
+
+Disable all logging (useful for production):
+
+```typescript
+import { DISABLE_LOGGER, provideLoggerService } from '@ngx-oneforall/services/logger';
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideLoggerService(),
+    { provide: DISABLE_LOGGER, useValue: true },
+  ],
+});
+```
+
+When disabled, all log methods become no-ops.
+
+---
+
+## Custom Logger
+
+Replace the default console with your own implementation:
+
+```typescript
+import { CUSTOM_LOGGER, CustomLogger, provideLoggerService } from '@ngx-oneforall/services/logger';
+
+const serverLogger: CustomLogger = {
+  log: (...args) => sendToServer('log', args),
+  error: (...args) => sendToServer('error', args),
+  warn: (...args) => sendToServer('warn', args),
+  debug: (...args) => {}, // Suppress debug in production
+};
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideLoggerService(),
+    { provide: CUSTOM_LOGGER, useValue: serverLogger },
+  ],
+});
+```
+
+---
+
+## CustomLogger Interface
+
+```typescript
+interface CustomLogger {
+  log: (...args: unknown[]) => void;
+  error: (...args: unknown[]) => void;
+  warn: (...args: unknown[]) => void;
+  debug: (...args: unknown[]) => void;
+}
+```
+
+---
+
+## Priority
+
+1. If `DISABLE_LOGGER` is `true` → All methods are no-ops
+2. If `CUSTOM_LOGGER` is provided → Uses custom implementation
+3. Otherwise → Uses `console` methods
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demo("LoggerServiceDemoComponent") }}
 
-#### Live Demo
-
-Explore this example in a live demonstration:
+### Custom Logger Demo
 
 {{ NgDocActions.demo("LoggerServiceCustomDemoComponent") }}
