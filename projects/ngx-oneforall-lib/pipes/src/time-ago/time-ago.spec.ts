@@ -1,6 +1,6 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { TimeAgoPipe } from './time-ago.pipe';
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, PLATFORM_ID } from '@angular/core';
 import {
   provideTimeAgoPipeClock,
   provideTimeAgoPipeLabels,
@@ -195,5 +195,43 @@ describe('TimeAgoPipe', () => {
 
       expect(pipe.transform(now, true)).toBe(`0 sec ago`);
     });
+  });
+
+  describe('SSR behavior', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [],
+        providers: [
+          {
+            provide: ChangeDetectorRef,
+            useValue: {
+              markForCheck: jest.fn(),
+            },
+          },
+          { provide: PLATFORM_ID, useValue: 'server' },
+          TimeAgoPipe,
+        ],
+      });
+      pipe = TestBed.inject(TimeAgoPipe);
+      changeDetectorRef = TestBed.inject(ChangeDetectorRef);
+    });
+
+    it('should return time ago string on server', () => {
+      const now = new Date();
+      expect(pipe.transform(now)).toBe('0 second ago');
+    });
+
+    it('should not trigger live updates on server', fakeAsync(() => {
+      const now = new Date();
+      const secondsAgo = new Date(now.getTime() - 5 * 1000);
+
+      pipe.transform(secondsAgo, true);
+
+      const markForCheckSpy = jest.spyOn(changeDetectorRef, 'markForCheck');
+
+      tick(1000);
+
+      expect(markForCheckSpy).not.toHaveBeenCalled();
+    }));
   });
 });

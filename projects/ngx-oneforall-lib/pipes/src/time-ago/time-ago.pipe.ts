@@ -4,7 +4,9 @@ import {
   inject,
   Pipe,
   PipeTransform,
+  PLATFORM_ID,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   DAY,
@@ -32,6 +34,7 @@ import {
 })
 export class TimeAgoPipe implements PipeTransform {
   private readonly cd = inject(ChangeDetectorRef);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly clock =
     inject(TIME_AGO_PIPE_CLOCK, { optional: true }) ?? defaultClock;
   private readonly labels =
@@ -44,7 +47,8 @@ export class TimeAgoPipe implements PipeTransform {
 
     const secondsPassed = getSecondsPassed(timestamp);
 
-    if (live) {
+    // Skip live updates on server to prevent SSR timeout
+    if (live && isPlatformBrowser(this.platformId)) {
       this.startUpdateTimer(timestamp);
     }
 
