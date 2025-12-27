@@ -138,6 +138,37 @@ describe('JwtService', () => {
     expect(() => service.decodeBody()).toThrow('Token is not a valid JWT.');
   });
 
+  it('should throw "Failed to decode JWT" for malformed base64', () => {
+    // Invalid base64 in header
+    service = new JwtService({
+      tokenGetter: () => '!!!invalid!!.eyJhIjoxfQ.sig',
+    });
+    expect(() => service.decodeHeader()).toThrow(
+      'Failed to decode JWT header.'
+    );
+
+    // Invalid base64 in payload
+    service = new JwtService({
+      tokenGetter: () => 'eyJhbGciOiJIUzI1NiJ9.!!!invalid!!.sig',
+    });
+    expect(() => service.decodeBody()).toThrow('Failed to decode JWT payload.');
+  });
+
+  it('should throw "Failed to decode JWT" for invalid JSON', () => {
+    // Valid base64 but invalid JSON
+    const invalidJsonToken = [
+      Buffer.from('not json').toString('base64url'),
+      Buffer.from('also not json').toString('base64url'),
+      'signature',
+    ].join('.');
+
+    service = new JwtService({ tokenGetter: () => invalidJsonToken });
+    expect(() => service.decodeHeader()).toThrow(
+      'Failed to decode JWT header.'
+    );
+    expect(() => service.decodeBody()).toThrow('Failed to decode JWT payload.');
+  });
+
   it('should return null for issued at date if iat is not available', () => {
     service = new JwtService({
       tokenGetter: () => createJwt({ exp: now + 100 }),

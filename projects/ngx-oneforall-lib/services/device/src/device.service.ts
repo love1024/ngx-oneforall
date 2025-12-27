@@ -109,7 +109,7 @@ export class DeviceService {
     return 'desktop';
   }
 
-  private subscribeToResizeChanges() {
+  private subscribeToOritentationChanges() {
     fromEvent(window, 'orientationchange')
       .pipe(startWith(null), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -117,7 +117,7 @@ export class DeviceService {
       });
   }
 
-  private subscribeToOritentationChanges() {
+  private subscribeToResizeChanges() {
     fromEvent(window, 'resize')
       .pipe(startWith(null), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {

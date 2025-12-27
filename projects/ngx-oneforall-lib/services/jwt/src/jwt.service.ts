@@ -15,9 +15,12 @@ export class JwtService {
     const parts = token.split('.');
     if (parts.length !== 3) throw new Error('Token is not a valid JWT.');
 
-    const decodedHeader = base64UrlDecode(parts[0]);
-
-    return JSON.parse(decodedHeader) as T;
+    try {
+      const decodedHeader = base64UrlDecode(parts[0]);
+      return JSON.parse(decodedHeader) as T;
+    } catch {
+      throw new Error('Failed to decode JWT header.');
+    }
   }
 
   public decodeBody<T extends JwtBody = JwtBody>(
@@ -27,9 +30,12 @@ export class JwtService {
     const parts = token.split('.');
     if (parts.length !== 3) throw new Error('Token is not a valid JWT.');
 
-    const decodedBody = base64UrlDecode(parts[1]);
-
-    return JSON.parse(decodedBody) as T;
+    try {
+      const decodedBody = base64UrlDecode(parts[1]);
+      return JSON.parse(decodedBody) as T;
+    } catch {
+      throw new Error('Failed to decode JWT payload.');
+    }
   }
 
   public getClaim<T = unknown>(

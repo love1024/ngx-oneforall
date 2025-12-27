@@ -1,85 +1,96 @@
-`DeviceService` provides a reliable, cross-platform way to detect the current device type (`mobile | tablet | desktop`) and screen orientation (`portrait | landscape`). It combines several detection strategies to be accurate across modern browsers and devices.
+Detect device type and orientation with automatic updates on resize and orientation changes.
 
-Features
---------
-- Detect device type: `mobile`, `tablet`, or `desktop`.
-- Detect orientation: `portrait` or `landscape`.
-- Exposes a readonly signal for use in templates and `deviceType` / `orientation` getters for code.
-- Safe to use with server rendering — subscriptions to window events are only created in browser platform.
+## Features
 
-Provide the service
--------------------
-Register the service at the module or component level using the provided factory:
+- **Device Type Detection** — Detect `mobile`, `tablet`, or `desktop`
+- **Orientation Detection** — Detect `portrait` or `landscape`
+- **Reactive Signal** — Exposes `deviceInfoSignal` for template bindings
+- **SSR Safe** — No window subscriptions on server
 
-```ts
-import { provideDeviceService } from '@ngx-oneforall/services';
+---
 
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  providers: [provideDeviceService()],
-  template: `...`,
-})
-export class AppComponent {}
+## Installation
+
+```typescript
+import { DeviceService, provideDeviceService } from '@ngx-oneforall/services/device';
 ```
 
-Inject and read device info (imperative)
-----------------------------------------
-Inject `DeviceService` and consume the getters or helper methods in components or services:
+---
 
-```ts
+## Basic Usage
+
+```typescript
 import { Component, inject } from '@angular/core';
-import { DeviceService } from '@ngx-oneforall/services';
+import { DeviceService, provideDeviceService } from '@ngx-oneforall/services/device';
 
-@Component({ /* ... */ })
-export class ExampleComponent {
-  private readonly device = inject(DeviceService);
-
-  get deviceType() {
-    return this.device.deviceType; // 'mobile' | 'tablet' | 'desktop' | null
-  }
-
-  get orientation() {
-    return this.device.orientation; // 'portrait' | 'landscape' | null
-  }
-
-  isMobile() { return this.device.isMobile(); }
-  isTablet() { return this.device.isTablet(); }
-  isDesktop() { return this.device.isDesktop(); }
+@Component({
+  selector: 'app-demo',
+  template: `
+    @if (device.deviceInfoSignal(); as info) {
+      <p>Type: {{ info.type }}</p>
+      <p>Orientation: {{ info.orientation }}</p>
+    }
+  `,
+  providers: [provideDeviceService()],
+})
+export class DemoComponent {
+  device = inject(DeviceService);
 }
 ```
 
-Reactive templates with signals (recommended for Angular 16+)
--------------------------------------------------------------
-`DeviceService` exposes a readonly signal (via `deviceInfoSignal`) that you can use directly in standalone or component templates to react to runtime changes without manual subscriptions:
+---
 
-```html file="./snippets.html"#L1-L24
+## API Reference
+
+### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `deviceInfo` | `DeviceInfo \| null` | Current device info object |
+| `deviceType` | `DeviceType \| null` | `'mobile'` \| `'tablet'` \| `'desktop'` |
+| `orientation` | `Orientation \| null` | `'portrait'` \| `'landscape'` |
+| `deviceInfoSignal` | `Signal<DeviceInfo \| null>` | Reactive signal for templates |
+
+### Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `isMobile()` | `boolean` | True if device is mobile |
+| `isTablet()` | `boolean` | True if device is tablet |
+| `isDesktop()` | `boolean` | True if device is desktop |
+| `isPortrait()` | `boolean` | True if orientation is portrait |
+| `isLandscape()` | `boolean` | True if orientation is landscape |
+
+---
+
+## Types
+
+```typescript
+interface DeviceInfo {
+  type: 'mobile' | 'tablet' | 'desktop';
+  orientation: 'portrait' | 'landscape';
+}
 ```
 
-Lifecycle and platform notes
-----------------------------
-- `DeviceService` only subscribes to `resize` / `orientationchange` events when running in the browser (uses `PLATFORM_ID`). In server-side rendering (SSR) the service will not create window event subscriptions.
-- You may provide the service at any scope — global (app) or per-component — depending on whether you want a single shared instance or isolated behavior for a demo component.
+---
 
+## Detection Strategy
 
-Common usage scenarios
-----------------------
-- Adjust layout or feature flags based on `isMobile()` / `isTablet()` / `isDesktop()`.
-- Show device-specific tips, controls, or accessibility hints (e.g. touch tooltips).
-- Bind to `deviceInfoSignal` directly in templates for responsive UI updates.
+1. **userAgentData** — Most accurate (Chromium browsers)
+2. **iPadOS detection** — Handles iPadOS 13+ (reports as Macintosh)
+3. **User Agent regex** — Fallback pattern matching
+4. **Touch + screen size** — Final fallback for unknown devices
 
-API summary
------------
-- `deviceInfo: DeviceInfo | null` — current device info object ({ type, orientation }).
-- `deviceType: 'mobile' | 'tablet' | 'desktop' | null` — current device type.
-- `orientation: 'portrait' | 'landscape' | null` — current orientation.
-- `deviceInfoSignal` — readonly signal<DeviceInfo | null> for templates.
-- `isMobile(): boolean` — true when current device is mobile.
-- `isTablet(): boolean` — true when current device is tablet.
-- `isDesktop(): boolean` — true when current device is desktop.
+---
 
-Live demo
----------
-Explore an interactive demo component that displays the current device type and orientation:
+## SSR Behavior
+
+On server-side rendering:
+- `deviceInfo`, `deviceType`, `orientation` return `null`
+- No window event subscriptions are created
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demo("DeviceServiceDemoComponent") }}

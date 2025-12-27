@@ -1,88 +1,134 @@
+Decode, validate, and extract claims from JSON Web Tokens (JWTs) with a configurable token source.
 
-The `JwtService` is a comprehensive Angular service for decoding and validating JSON Web Tokens (JWTs) in client applications. It provides a robust API for extracting claims, verifying token validity, and handling JWT-specific operations, making it ideal for authentication and authorization workflows.
+## Features
 
-#### Features
+- **Decode JWT** — Extract header and payload without verification
+- **Claim Access** — Get individual claims with type safety
+- **Validity Checks** — Check expiration, not-yet-valid, and overall validity
+- **Configurable Token Source** — Provide custom `tokenGetter` function
+- **Error Handling** — Clear errors for missing, malformed, or invalid tokens
 
-- **Decode JWT Header & Body:** Extract and parse the header and payload sections of a JWT.
-- **Claim Retrieval:** Access specific claims (e.g., `exp`, `iat`, `nbf`, custom claims) from the token payload.
-- **Expiration & Validity Checks:** Determine if a token is expired, not yet valid, or currently valid.
-- **Time Calculations:** Compute the remaining time until token expiration.
-- **Configurable Token Source:** Supports custom token retrieval logic via `tokenGetter` for flexible integration.
+---
 
-#### Usage
-
-1. **Provide the Service:** Add `provideJwtService` in your Angular module or component providers, optionally passing `JwtOptions` for configuration.
+## Installation
 
 ```typescript
-{
-    ...
-    providers: [provideJwtService({ tokenGetter: () => localStorage.getItem('access_token')})]
+import { JwtService, provideJwtService } from '@ngx-oneforall/services/jwt';
+```
+
+---
+
+## Basic Usage
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { JwtService, provideJwtService } from '@ngx-oneforall/services/jwt';
+
+@Component({
+  selector: 'app-demo',
+  template: `<p>Token valid: {{ isValid }}</p>`,
+  providers: [
+    provideJwtService({
+      tokenGetter: () => localStorage.getItem('access_token') ?? '',
+    }),
+  ],
+})
+export class DemoComponent {
+  private jwt = inject(JwtService);
+  isValid = this.jwt.isValid();
 }
 ```
 
-2. **Inject or Use Directly:** Use Angular's dependency injection or create an instance directly to access JWT utilities.
+---
 
+## API Reference
 
-#### Example
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `decodeHeader<T>(token?)` | `T` | Decode and return JWT header |
+| `decodeBody<T>(token?)` | `T` | Decode and return JWT payload |
+| `getClaim<T>(claim, token?)` | `T \| undefined` | Get specific claim value |
+| `getExpirationDate(token?)` | `Date \| null` | Get `exp` claim as Date |
+| `getIssuedAtDate(token?)` | `Date \| null` | Get `iat` claim as Date |
+| `isExpired(token?, offset?)` | `boolean` | Check if token is expired |
+| `isNotYetValid(token?)` | `boolean` | Check `nbf` claim |
+| `isValid(token?, offset?)` | `boolean` | Check structure + expiration + nbf |
+| `getTimeUntilExpiration(token?)` | `number \| null` | Milliseconds until expiration |
+| `getToken()` | `string` | Get token from tokenGetter |
+| `getConfig()` | `JwtOptions` | Get service configuration |
 
-```typescript{8}
-export const authGuard: CanActivateFn = (
-  route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
-) => {
-  const jwtService = inject(JwtService);
+---
+
+## Configuration
+
+```typescript
+interface JwtOptions {
+  tokenGetter?: () => string | null;
+  authScheme?: string;           // Default: 'Bearer '
+  headerName?: string;           // Default: 'Authorization'
+  errorOnNoToken?: boolean;
+  skipAddingIfExpired?: boolean;
+  allowedDomains?: (string | RegExp)[];
+  skipUrls?: (string | RegExp)[];
+  refreshTokenHandler?: RefreshTokenHandler;
+}
+```
+
+---
+
+## Auth Guard Example
+
+```typescript
+export const authGuard: CanActivateFn = () => {
+  const jwt = inject(JwtService);
   const router = inject(Router);
 
-  if (jwtService.isExpired(token))) {
-    router.navigateByUrl('/signin');
+  if (jwt.isExpired()) {
+    router.navigateByUrl('/login');
     return false;
   }
-
   return true;
 };
 ```
 
-#### API Overview
+---
 
-- **`decodeHeader<T>(token?: string): T`**  
-        Decodes and returns the JWT header as an object.
+## SSR Considerations
 
-- **`decodeBody<T extends JwtBody>(token?: string): T`**  
-        Decodes and returns the JWT payload/body as an object.
+> **Note**
+> The service itself is SSR-safe, but your `tokenGetter` must handle server environments:
 
-- **`getClaim<T>(claim: string, token?: string): T | undefined`**  
-        Retrieves the value of a specific claim from the payload.
+```typescript
+// ✅ SSR-safe tokenGetter
+provideJwtService({
+  tokenGetter: () => {
+    if (typeof localStorage === 'undefined') return '';
+    return localStorage.getItem('token') ?? '';
+  }
+})
 
-- **`getExpirationDate(token?: string): Date | null`**  
-        Returns the expiration date (`exp` claim) as a `Date` object.
+// ✅ Better: Use cookies (available on server)
+provideJwtService({
+  tokenGetter: () => cookieService.get('access_token')
+})
+```
 
-- **`getIssuedAtDate(token?: string): Date | null`**  
-        Returns the issued-at date (`iat` claim) as a `Date` object.
+---
 
-- **`isExpired(token?: string, offsetSeconds?: number): boolean`**  
-        Checks if the token is expired, optionally with an offset.
+## Error Handling
 
-- **`isNotYetValid(token?: string): boolean`**  
-        Checks if the token is not yet valid (`nbf` claim).
+The service throws descriptive errors:
 
-- **`getTimeUntilExpiration(token?: string): number | null`**  
-        Returns milliseconds until expiration, or `null` if not available.
+| Error | Cause |
+|-------|-------|
+| `'Token is missing.'` | Empty token from `tokenGetter` |
+| `'Token is not a valid JWT.'` | Token doesn't have 3 dot-separated parts |
+| `'Failed to decode JWT header.'` | Invalid base64 or JSON in header |
+| `'Failed to decode JWT payload.'` | Invalid base64 or JSON in payload |
 
-- **`isValid(token?: string, offsetSeconds?: number): boolean`**  
-        Returns `true` if the token is structurally valid, not expired, and not before its valid time.
+---
 
-#### JwtOptions
+## Security Notes
 
-Configure token retrieval and service behavior:
-
-- `tokenGetter`: `() => string`  
-        Function to retrieve the JWT (e.g., from storage or cookies).
-
-#### Notes
-
-- The service does not perform cryptographic verification of JWT signatures.
-- Designed for client-side decoding and validation of JWT structure and claims.
-- Ensure tokens are securely stored and transmitted.
-
-
-
+> **Warning**
+> This service **does not verify JWT signatures**. It only decodes and validates structure/claims. Signature verification should be done server-side.
