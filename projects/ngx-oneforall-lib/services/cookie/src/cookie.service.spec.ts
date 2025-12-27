@@ -1,3 +1,5 @@
+import { TestBed } from '@angular/core/testing';
+import { PLATFORM_ID } from '@angular/core';
 import { CookieService, CookieOptions } from './cookie.service';
 
 describe('CookieService', () => {
@@ -5,7 +7,10 @@ describe('CookieService', () => {
   let originalCookie: PropertyDescriptor;
 
   beforeEach(() => {
-    service = new CookieService();
+    TestBed.configureTestingModule({
+      providers: [CookieService],
+    });
+    service = TestBed.inject(CookieService);
     originalCookie = Object.getOwnPropertyDescriptor(document, 'cookie')!;
     let cookieStore = '';
     Object.defineProperty(document, 'cookie', {
@@ -124,5 +129,36 @@ describe('CookieService', () => {
     const regex = (service as any).getCookieUsingRegex('na.me');
     expect(regex).toBeInstanceOf(RegExp);
     expect('na.me=val;'.match(regex)).not.toBeNull();
+  });
+});
+
+describe('CookieService - SSR', () => {
+  let service: CookieService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [CookieService, { provide: PLATFORM_ID, useValue: 'server' }],
+    });
+    service = TestBed.inject(CookieService);
+  });
+
+  it('should return empty string for get() on server', () => {
+    expect(service.get('foo')).toBe('');
+  });
+
+  it('should return empty object for getAll() on server', () => {
+    expect(service.getAll()).toEqual({});
+  });
+
+  it('should not throw for set() on server', () => {
+    expect(() => service.set('foo', 'bar')).not.toThrow();
+  });
+
+  it('should not throw for delete() on server', () => {
+    expect(() => service.delete('foo')).not.toThrow();
+  });
+
+  it('should not throw for deleteAll() on server', () => {
+    expect(() => service.deleteAll()).not.toThrow();
   });
 });

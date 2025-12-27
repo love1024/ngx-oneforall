@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { OnlyInBrowser } from './only-in-browser';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 export type SameSiteOption = 'Strict' | 'Lax' | 'None';
 
@@ -17,16 +17,18 @@ export interface CookieOptions {
 
 @Injectable()
 export class CookieService {
-  @OnlyInBrowser()
+  private platformId = inject(PLATFORM_ID);
+
   get(name: string): string {
+    if (!isPlatformBrowser(this.platformId)) return '';
     name = encodeURIComponent(name);
     const regExp = this.getCookieUsingRegex(name);
     const result = regExp.exec(document.cookie);
     return result?.[1] ? this.safeDecodeURIComponent(result[1]) : '';
   }
 
-  @OnlyInBrowser()
   getAll(): Record<string, string> {
+    if (!isPlatformBrowser(this.platformId)) return {};
     return Object.fromEntries(
       document.cookie.split(';').map(cookie => {
         const [name, ...rest] = cookie.split('=');
@@ -40,8 +42,8 @@ export class CookieService {
     );
   }
 
-  @OnlyInBrowser()
   set(name: string, value: string, options?: CookieOptions) {
+    if (!isPlatformBrowser(this.platformId)) return;
     const mergedOptions = this.mergeDefaultCookieOptions(options);
     let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)};`;
 
@@ -75,12 +77,10 @@ export class CookieService {
     document.cookie = cookieString;
   }
 
-  @OnlyInBrowser()
   delete(name: string, options?: CookieOptions) {
+    if (!isPlatformBrowser(this.platformId)) return;
     this.set(name, '', { path: '/', ...options, expires: deleteDate });
   }
-
-  @OnlyInBrowser()
   deleteAll(options?: CookieOptions) {
     const cookies = this.getAll();
 
