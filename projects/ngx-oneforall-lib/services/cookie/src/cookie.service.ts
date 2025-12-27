@@ -32,7 +32,7 @@ export class CookieService {
     return Object.fromEntries(
       document.cookie.split(';').map(cookie => {
         const [name, ...rest] = cookie.split('=');
-        // Join with '=', If the split was doine from '=' in value as well
+        // Join with '=', If the split was done from '=' in value as well
         const value = rest.join('=');
         return [
           this.safeDecodeURIComponent(name.trim()),
@@ -81,13 +81,12 @@ export class CookieService {
     if (!isPlatformBrowser(this.platformId)) return;
     this.set(name, '', { path: '/', ...options, expires: deleteDate });
   }
+
   deleteAll(options?: CookieOptions) {
     const cookies = this.getAll();
 
     Object.keys(cookies).forEach(name => {
-      if (Object.hasOwn(cookies, name)) {
-        this.delete(name, options);
-      }
+      this.delete(name, options);
     });
   }
 

@@ -1,89 +1,97 @@
+A lightweight service for managing browser cookies with SSR safety and security-aware defaults.
 
-The `CookieService` is a robust Angular service designed to manage browser cookies efficiently and securely. It provides a comprehensive API for reading, writing, and deleting cookies, supporting advanced options such as SameSite policies, domain, path, secure flags, and expiration settings.
+## Features
 
-#### Features
+- **CRUD Operations** — Get, set, delete individual or all cookies
+- **SSR Safe** — Returns safe defaults on server (no `document` access)
+- **Security Compliant** — Auto-enforces `secure` flag when `SameSite=None`
+- **Flexible Options** — Expiry, path, domain, partitioned, and more
 
-- **Read Cookies:** Retrieve the value of a specific cookie or all cookies as a key-value object.
-- **Write Cookies:** Set cookies with customizable options, including expiration, path, domain, SameSite, secure, and partitioned attributes.
-- **Delete Cookies:** Remove individual cookies or all cookies at once.
-- **Browser-Only Execution:** Ensures cookie operations are performed only in browser environments.
-- **Security Compliance:** Automatically enforces secure attributes when required by SameSite policies.
+---
 
-#### Usage
+## Installation
 
-1. **Provide the Service:** Register `CookieService` in your Angular module or component using the `provideCookieService()` function.
-2. **Inject the Service:** Use Angular's dependency injection to access `CookieService` in your components or services.
+```typescript
+import { CookieService, provideCookieService } from '@ngx-oneforall/services/cookie';
+```
 
-#### Example
+---
+
+## Basic Usage
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { CookieService, provideCookieService } from '@ngx-oneforall/services';
+import { CookieService, provideCookieService } from '@ngx-oneforall/services/cookie';
 
 @Component({
-    selector: 'app-cookie-demo',
-    template: `
-        <button (click)="setCookie()">Set Cookie</button>
-        <button (click)="getCookie()">Get Cookie</button>
-        <button (click)="deleteCookie()">Delete Cookie</button>
-        <p>Cookie Value: {{ cookieValue }}</p>
-    `,
-    providers: [provideCookieService()],
+  selector: 'app-demo',
+  template: `<button (click)="save()">Save</button>`,
+  providers: [provideCookieService()],
 })
-export class CookieDemoComponent {
-    private readonly cookieService = inject(CookieService);
-    cookieValue = '';
+export class DemoComponent {
+  private cookies = inject(CookieService);
 
-    setCookie() {
-        this.cookieService.set('user', 'JohnDoe', { sameSite: 'Lax', secure: true, expires: 3600 });
-    }
-
-    getCookie() {
-        this.cookieValue = this.cookieService.get('user');
-    }
-
-    deleteCookie() {
-        this.cookieService.delete('user');
-        this.cookieValue = '';
-    }
+  save() {
+    // Set cookie with 1 hour expiry
+    this.cookies.set('user', 'JohnDoe', { expires: 3600 });
+    
+    // Get cookie value
+    const user = this.cookies.get('user'); // 'JohnDoe'
+    
+    // Delete cookie
+    this.cookies.delete('user');
+  }
 }
 ```
 
-#### API Overview
+---
 
-- **`get(name: string): string`**  
-    Returns the value of the specified cookie, or an empty string if not found.
+## API Reference
 
-- **`getAll(): Record<string, string>`**  
-    Retrieves all cookies as an object with key-value pairs.
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `get(name)` | `string` | Returns cookie value or `''` if not found |
+| `getAll()` | `Record<string, string>` | Returns all cookies as key-value object |
+| `set(name, value, options?)` | `void` | Sets a cookie with optional config |
+| `delete(name, options?)` | `void` | Deletes the specified cookie |
+| `deleteAll(options?)` | `void` | Deletes all cookies |
 
-- **`set(name: string, value: string, options?: CookieOptions): void`**  
-    Sets a cookie with the given name, value, and options.
+---
 
-- **`delete(name: string, options?: CookieOptions): void`**  
-    Deletes the specified cookie.
+## Cookie Options
 
-- **`deleteAll(options?: CookieOptions): void`**  
-    Deletes all cookies.
+```typescript
+interface CookieOptions {
+  sameSite?: 'Strict' | 'Lax' | 'None';  // Default: 'Lax'
+  domain?: string;
+  path?: string;
+  secure?: boolean;
+  partitioned?: boolean;
+  expires?: number | Date;  // number = seconds
+}
+```
 
-#### CookieOptions
+---
 
-Customize cookie behavior with the following options:
+## SSR Behavior
 
-- `sameSite`: `'Strict' | 'Lax' | 'None'` (default: `'Lax'`)
-- `domain`: string
-- `path`: string
-- `secure`: boolean
-- `partitioned`: boolean
-- `expires`: number (seconds) or `Date`
+On server-side rendering (SSR), all methods return safe defaults:
 
-#### Notes
+| Method | SSR Return |
+|--------|------------|
+| `get()` | `''` |
+| `getAll()` | `{}` |
+| `set()` / `delete()` / `deleteAll()` | No-op |
 
-- The service is intended for use in browser environments only.
-- When using `SameSite=None`, the `secure` flag is automatically enforced for security compliance.
+---
 
-#### Live Demo
+## Security Notes
 
-Explore a live demonstration of cookie management:
+> [!WARNING]
+> When `SameSite=None` is set, the service automatically enables `secure: true` and logs a console warning. This is required by browser security policies.
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demo("CookieServiceDemoComponent") }}

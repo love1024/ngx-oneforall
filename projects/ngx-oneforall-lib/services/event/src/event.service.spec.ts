@@ -1,10 +1,10 @@
 import { EventService, AppEvent } from './event.service';
 
 describe('EventService', () => {
-  let service: EventService<string>;
+  let service: EventService;
 
   beforeEach(() => {
-    service = new EventService<string>();
+    service = new EventService();
   });
 
   it('should create the service', () => {
@@ -12,7 +12,7 @@ describe('EventService', () => {
   });
 
   it('should emit dispatched events', done => {
-    const testEvent: AppEvent<string> = { name: 'test', data: { foo: 'bar' } };
+    const testEvent: AppEvent = { name: 'test', data: { foo: 'bar' } };
     service.getEventEmitter().subscribe(event => {
       expect(event).toEqual(testEvent);
       done();

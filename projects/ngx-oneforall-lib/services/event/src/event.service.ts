@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
-export interface AppEvent<T = string> {
-  name: T;
-  data?: unknown;
+export interface AppEvent<T = unknown> {
+  name: string;
+  data?: T;
 }
 
 @Injectable()
@@ -14,7 +14,7 @@ export class EventService {
     this.emitter.next({ name, data });
   }
 
-  getEventEmitter(): Observable<AppEvent> {
-    return this.emitter.asObservable();
+  getEventEmitter<T = unknown>(): Observable<AppEvent<T>> {
+    return this.emitter.asObservable() as Observable<AppEvent<T>>;
   }
 }
