@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RepeatDirective } from '@ngx-oneforall/directives';
+import { RepeatDirective } from '@ngx-oneforall/directives/repeat';
 
 @Component({
   selector: 'lib-repeat-demo',

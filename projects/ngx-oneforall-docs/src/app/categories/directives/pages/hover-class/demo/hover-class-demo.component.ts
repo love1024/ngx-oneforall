@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HoverClassDirective } from '@ngx-oneforall/directives';
+import { HoverClassDirective } from '@ngx-oneforall/directives/hover-class';
 
 @Component({
   selector: 'lib-hover-class-demo',

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "sudo ng serve",
     "build": "ng build ngx-oneforall-lib",
     "build:docs": "sudo ng build ngx-oneforall-docs --base-href /ngx-oneforall/",
     "watch": "ng build ngx-oneforall-lib --watch --configuration development",

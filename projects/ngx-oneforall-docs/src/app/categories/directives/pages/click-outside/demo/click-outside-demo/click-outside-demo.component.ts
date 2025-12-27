@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { ClickOutsideDirective } from '@ngx-oneforall/directives';
+import { ClickOutsideDirective } from '@ngx-oneforall/directives/click-outside';
 
 @Component({
   selector: 'lib-click-outside-demo',
