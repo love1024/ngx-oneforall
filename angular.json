@@ -73,6 +73,11 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               {
+                "glob": "404.html",
+                "input": "projects/ngx-oneforall-docs/public",
+                "output": ""
+              },
+              {
                 "glob": "**/*",
                 "input": "projects/ngx-oneforall-docs/public",
                 "output": "assets"
