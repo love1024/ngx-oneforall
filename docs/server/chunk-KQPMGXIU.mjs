@@ -1,2 +1,0 @@
-import './polyfills.server.mjs';
-import{Xa as o,ea as r}from"./chunk-7JPNWG76.mjs";var n={title:"Validators"},l=n;var i=class a{validator=null;onChange;validate(t){return this.validator?this.validator(t):null}registerOnValidatorChange(t){this.onChange=t}ngOnChanges(){this.onChange&&this.onChange()}static \u0275fac=function(e){return new(e||a)};static \u0275dir=o({type:a,features:[r]})};export{l as a,i as b};

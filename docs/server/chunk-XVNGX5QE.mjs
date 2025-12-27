@@ -1,2 +1,0 @@
-import './polyfills.server.mjs';
-function n(){if(typeof navigator>"u")return"UNKNOWN";let t=navigator.userAgent||navigator.vendor;return/windows phone/i.test(t)?"WINDOWS_PHONE":/win/i.test(t)?"WINDOWS":/android/i.test(t)?"ANDROID":/iPad|iPhone|iPod/.test(t)||/Macintosh/.test(t)&&"ontouchend"in document?"IOS":/mac/i.test(t)?"MAC":/linux/i.test(t)?"LINUX":"UNKNOWN"}export{n as a};

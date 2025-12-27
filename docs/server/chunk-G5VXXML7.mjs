@@ -1,2 +1,0 @@
-import './polyfills.server.mjs';
-import{b as S,c as a}from"./chunk-BEH5JPNY.mjs";import{Tc as i,Y as o,_ as t,wa as n}from"./chunk-7JPNWG76.mjs";var c=new o("SESSION_STORAGE");function u(r){return{provide:c,useFactory:()=>{let e=t(n);return i(e)?new S(sessionStorage,r):new a}}}var s=new o("LOCAL_STORAGE");function d(r){return{provide:s,useFactory:()=>{let e=t(n);return i(e)?new S(localStorage,r):new a}}}export{c as a,u as b,s as c,d};

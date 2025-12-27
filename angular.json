@@ -60,7 +60,10 @@
         "build": {
           "builder": "@ng-doc/builder:application",
           "options": {
-            "outputPath": "docs",
+            "outputPath": {
+              "base": "docs",
+              "browser": ""
+            },
             "index": "projects/ngx-oneforall-docs/src/index.html",
             "browser": "projects/ngx-oneforall-docs/src/main.ts",
             "polyfills": [
@@ -110,10 +113,7 @@
             ],
             "scripts": [],
             "server": "projects/ngx-oneforall-docs/src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "projects/ngx-oneforall-docs/src/server.ts"
-            },
+            "prerender": false,
             "allowedCommonJsDependencies": [
               "@ng-doc/core"
             ]
