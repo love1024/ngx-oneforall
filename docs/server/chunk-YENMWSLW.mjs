@@ -1,0 +1,2 @@
+import './polyfills.server.mjs';
+import{a as l}from"./chunk-P2RM3SYT.mjs";import{d as e}from"./chunk-CDYUKEUG.mjs";var d=a=>{if(l(e.required(a)))return null;let t=a.value;if(t instanceof Date)return isNaN(t.getTime())?{date:{actualValue:t}}:null;if(typeof t=="string"){if(t.trim()==="")return null;let r=new Date(t);return console.log(r),isNaN(r.getTime())?{date:{actualValue:t}}:null}return{date:{actualValue:t}}};export{d as a};

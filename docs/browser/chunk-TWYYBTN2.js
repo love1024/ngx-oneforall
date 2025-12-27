@@ -1,0 +1,1 @@
+import{Qa as o,ca as r}from"./chunk-GNIWJDNQ.js";var n={title:"Validators"},l=n;var i=class a{validator=null;onChange;validate(t){return this.validator?this.validator(t):null}registerOnValidatorChange(t){this.onChange=t}ngOnChanges(){this.onChange&&this.onChange()}static \u0275fac=function(e){return new(e||a)};static \u0275dir=o({type:a,features:[r]})};export{l as a,i as b};

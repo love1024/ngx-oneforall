@@ -60,7 +60,7 @@
         "build": {
           "builder": "@ng-doc/builder:application",
           "options": {
-            "outputPath": "dist/ngx-oneforall-docs",
+            "outputPath": "docs",
             "index": "projects/ngx-oneforall-docs/src/index.html",
             "browser": "projects/ngx-oneforall-docs/src/main.ts",
             "polyfills": [

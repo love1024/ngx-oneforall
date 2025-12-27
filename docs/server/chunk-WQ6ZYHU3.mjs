@@ -1,0 +1,2 @@
+import './polyfills.server.mjs';
+import{R as l,_ as o,c as a,da as s,f as d,ja as b,ka as u,rc as c,tc as f}from"./chunk-7JPNWG76.mjs";function m(t){t||(s(m),t=o(u));let r=new a(e=>t.onDestroy(e.next.bind(e)));return e=>e.pipe(l(r))}function g(t,r){!r?.injector&&s(g);let e=r?.injector??o(b),n=new d(1),v=f(()=>{let i;try{i=t()}catch(y){c(()=>n.error(y));return}c(()=>n.next(i))},{injector:e,manualCleanup:!0});return e.get(u).onDestroy(()=>{v.destroy(),n.complete()}),n.asObservable()}export{m as a,g as b};
