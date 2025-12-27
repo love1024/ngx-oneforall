@@ -1,10 +1,11 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
   signal,
-  WritableSignal,
   inject,
   NgZone,
   DestroyRef,
   Signal,
+  PLATFORM_ID,
 } from '@angular/core';
 
 export function eventSignal<T = Event>(
@@ -12,22 +13,25 @@ export function eventSignal<T = Event>(
   eventName: string,
   options?: AddEventListenerOptions
 ): Signal<T | null> {
+  const platformId = inject(PLATFORM_ID);
   const zone = inject(NgZone);
   const destroyRef = inject(DestroyRef);
 
   const s = signal<T | null>(null);
 
-  zone.runOutsideAngular(() => {
-    const handler = (event: Event) => {
-      zone.run(() => s.set(event as T));
-    };
+  if (isPlatformBrowser(platformId)) {
+    zone.runOutsideAngular(() => {
+      const handler = (event: Event) => {
+        zone.run(() => s.set(event as T));
+      };
 
-    target.addEventListener(eventName, handler, options);
+      target.addEventListener(eventName, handler, options);
 
-    destroyRef.onDestroy(() => {
-      target.removeEventListener(eventName, handler, options);
+      destroyRef.onDestroy(() => {
+        target.removeEventListener(eventName, handler, options);
+      });
     });
-  });
+  }
 
   return s.asReadonly();
 }

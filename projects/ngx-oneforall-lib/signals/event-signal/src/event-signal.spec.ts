@@ -4,6 +4,7 @@ import {
   Signal,
   signal,
   WritableSignal,
+  PLATFORM_ID,
 } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { eventSignal } from './event-signal';
@@ -70,5 +71,21 @@ describe('eventSignal', () => {
     fixture.destroy(); // Destroy
 
     expect(removeSpy).toHaveBeenCalled();
+  });
+
+  it('should not attach listener on server (SSR)', () => {
+    const target = document.createElement('div');
+    const addSpy = jest.spyOn(target, 'addEventListener');
+
+    TestBed.configureTestingModule({
+      providers: [{ provide: PLATFORM_ID, useValue: 'server' }],
+    });
+
+    TestBed.runInInjectionContext(() => {
+      const s = eventSignal(target, 'click');
+      expect(s()).toBeNull();
+    });
+
+    expect(addSpy).not.toHaveBeenCalled();
   });
 });
