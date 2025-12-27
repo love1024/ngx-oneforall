@@ -60,5 +60,11 @@ export function webSocketSignal<T>(url: string): WebSocketState<T> {
 
   const close = () => ws?.close();
 
-  return { messages, error, status, send, close };
+  return {
+    messages: messages.asReadonly(),
+    error: error.asReadonly(),
+    status: status.asReadonly(),
+    send,
+    close,
+  };
 }
