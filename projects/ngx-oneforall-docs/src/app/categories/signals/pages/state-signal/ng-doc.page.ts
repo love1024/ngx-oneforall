@@ -3,7 +3,7 @@ import SignalsCategory from '../../ng-doc.category';
 import { StateSignalDemoComponent } from './demo/state-signal-demo.component';
 
 const StateSignalPage: NgDocPage = {
-  title: 'State Signal',
+  title: 'State',
   mdFile: './index.md',
   category: SignalsCategory,
   demos: { StateSignalDemoComponent },

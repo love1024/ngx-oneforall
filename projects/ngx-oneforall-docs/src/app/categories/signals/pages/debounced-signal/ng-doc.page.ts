@@ -3,10 +3,10 @@ import SignalsCategory from '../../ng-doc.category';
 import { DebouncedSignalDemoComponent } from './demo/debounced-signal-demo.component';
 
 const DebouncedSignalPage: NgDocPage = {
-    title: 'Debounced Signal',
-    mdFile: './index.md',
-    category: SignalsCategory,
-    demos: { DebouncedSignalDemoComponent },
+  title: 'Debounced',
+  mdFile: './index.md',
+  category: SignalsCategory,
+  demos: { DebouncedSignalDemoComponent },
 };
 
 export default DebouncedSignalPage;

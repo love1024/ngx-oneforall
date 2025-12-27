@@ -3,7 +3,7 @@ import SignalsCategory from '../../ng-doc.category';
 import { StorageSignalDemoComponent } from './demo/storage-signal-demo.component';
 
 const StorageSignal: NgDocPage = {
-  title: 'Storage Signal',
+  title: 'Storage',
   mdFile: './index.md',
   category: SignalsCategory,
   demos: {

@@ -38,7 +38,7 @@ export class ChatComponent {
 @Component({
     template: `
         <div [class]="socket.status()">
-            {{ socket.status() | uppercase }}
+            Status: {{ '{{' }} socket.status().toUpperCase() {{ '}}' }}
         </div>
         <button (click)="socket.close()" 
                 *ngIf="socket.status() === 'open'">
