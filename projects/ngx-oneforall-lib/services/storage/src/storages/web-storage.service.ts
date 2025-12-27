@@ -17,7 +17,17 @@ export class WebStorageService extends StorageEngine {
   }
 
   clear(): void {
-    this.storage.clear();
+    if (!this.prefix) {
+      this.storage.clear();
+      return;
+    }
+    // Only clear keys with prefix
+    for (let i = this.storage.length - 1; i >= 0; i--) {
+      const key = this.storage.key(i);
+      if (key?.startsWith(this.prefix)) {
+        this.storage.removeItem(key);
+      }
+    }
   }
 
   length(): number {
@@ -26,6 +36,21 @@ export class WebStorageService extends StorageEngine {
 
   key(index: number) {
     return this.storage.key(index);
+  }
+
+  keys(): string[] {
+    const result: string[] = [];
+    for (let i = 0; i < this.storage.length; i++) {
+      const key = this.storage.key(i);
+      if (key !== null) {
+        if (this.prefix && key.startsWith(this.prefix)) {
+          result.push(key.slice(this.prefix.length));
+        } else if (!this.prefix) {
+          result.push(key);
+        }
+      }
+    }
+    return result;
   }
 
   protected getItem(key: string): string | undefined {

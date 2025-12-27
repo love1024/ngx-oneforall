@@ -4,24 +4,18 @@ import {
 } from './transformers/storage-transformer';
 
 export abstract class StorageEngine {
-  public get<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    T extends BaseStorageTransformer<any> = BaseStorageTransformer<string>,
-  >(
+  public get<T = string>(
     key: string,
-    transformer: T = StorageTransformers.STRING as T
-  ): ReturnType<T['deserialize']> | undefined {
+    transformer: BaseStorageTransformer<T> = StorageTransformers.STRING as BaseStorageTransformer<T>
+  ): T | undefined {
     const data = this.getItem(key);
     return data !== undefined ? transformer.deserialize(data) : undefined;
   }
 
-  public set<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    T extends BaseStorageTransformer<any> = BaseStorageTransformer<string>,
-  >(
+  public set<T = string>(
     key: string,
-    value: ReturnType<T['deserialize']>,
-    transformer: T = StorageTransformers.STRING as T
+    value: T,
+    transformer: BaseStorageTransformer<T> = StorageTransformers.STRING as BaseStorageTransformer<T>
   ): void {
     this.setItem(key, transformer.serialize(value));
   }
@@ -35,6 +29,27 @@ export abstract class StorageEngine {
   abstract length(): number;
 
   abstract key(index: number): string | null;
+
+  /**
+   * Returns all keys in storage
+   */
+  abstract keys(): string[];
+
+  /**
+   * Returns all key-value pairs in storage
+   */
+  public getAll<T = string>(
+    transformer: BaseStorageTransformer<T> = StorageTransformers.STRING as BaseStorageTransformer<T>
+  ): Map<string, T> {
+    const result = new Map<string, T>();
+    for (const key of this.keys()) {
+      const value = this.get<T>(key, transformer);
+      if (value !== undefined) {
+        result.set(key, value);
+      }
+    }
+    return result;
+  }
 
   protected abstract getItem(key: string): string | undefined;
 

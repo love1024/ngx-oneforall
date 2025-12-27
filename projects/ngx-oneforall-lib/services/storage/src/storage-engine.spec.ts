@@ -25,7 +25,11 @@ class TestStorageEngine extends StorageEngine {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   key(index: number): string | null {
-    return '';
+    return Object.keys(this.store)[index] ?? null;
+  }
+
+  keys(): string[] {
+    return Object.keys(this.store);
   }
 
   protected getItem(key: string): string | undefined {
@@ -85,5 +89,34 @@ describe('StorageEngine', () => {
     };
     engine.set('num', 21, transformer);
     expect(engine.get('num', transformer)).toBe(21);
+  });
+
+  it('should return all values with getAll', () => {
+    engine.set('a', '1');
+    engine.set('b', '2');
+    engine.set('c', '3');
+
+    const all = engine.getAll();
+
+    expect(all.size).toBe(3);
+    expect(all.get('a')).toBe('1');
+    expect(all.get('b')).toBe('2');
+    expect(all.get('c')).toBe('3');
+  });
+
+  it('should return all values with getAll using transformer', () => {
+    engine.set('x', { value: 10 }, StorageTransformers.JSON);
+    engine.set('y', { value: 20 }, StorageTransformers.JSON);
+
+    const all = engine.getAll(StorageTransformers.JSON);
+
+    expect(all.size).toBe(2);
+    expect(all.get('x')).toEqual({ value: 10 });
+    expect(all.get('y')).toEqual({ value: 20 });
+  });
+
+  it('should return empty map for getAll when storage is empty', () => {
+    const all = engine.getAll();
+    expect(all.size).toBe(0);
   });
 });

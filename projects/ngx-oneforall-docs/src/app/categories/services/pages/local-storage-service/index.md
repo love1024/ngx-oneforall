@@ -1,79 +1,104 @@
+Type-safe wrapper around browser localStorage with transformers for different data types.
 
-The `LocalStorageService` is an Angular service that provides a robust, type-safe interface for interacting with the browser's local storage. It implements the `StorageEngine` interface, ensuring a consistent API for storing, retrieving, and managing data within the local storage scope. This service is ideal for scenarios where you need to persist data across browser sessions, such as user preferences, authentication tokens, or persistent application state.
+## Features
 
-#### Features
+- **Type-Safe** — Use transformers for JSON, Number, Boolean, Date, Base64
+- **Key Prefix** — Optional prefix for all keys  
+- **SSR Safe** — Falls back to in-memory storage on server
+- **New Methods** — `keys()` and `getAll()` for bulk operations
 
-- **Type Safety**: Supports different types, allowing you to store and retrieve strongly-typed data.
-- **CRUD Operations**: Provides methods to get, set, check, remove, and clear local storage entries.
-- **Encapsulation**: Abstracts direct access to the browser's `localStorage`, promoting cleaner and more maintainable code.
-- **Serialization**: Offers various options for serialization and deserialization, enabling storage of complex objects.
+---
 
-#### Usage
+## Installation
 
-1. Import and provide the `provideLocalStorage` in your Angular module or component.
-2. Inject the service where you need to interact with local storage.
+```typescript
+import { 
+  LocalStorageService, 
+  provideLocalStorage, 
+  StorageTransformers 
+} from '@ngx-oneforall/services/storage';
+```
 
-#### Example
+---
 
-> **Note**
-> By default, all calls to get and set are of type string.
+## Basic Usage
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { LocalStorageService, provideLocalStorage } from '@ngx-oneforall/services';
+import { LocalStorageService, provideLocalStorage } from '@ngx-oneforall/services/storage';
 
 @Component({
-  ...
-  providers: [provideLocalStorage()]
+  selector: 'app-demo',
+  template: `<p>Name: {{ name }}</p>`,
+  providers: [provideLocalStorage()],
 })
-export class LocalStorageDemoComponent {
-  key = 'LOCAL_STORAGE_DEMO_NAME';
-  name = linkedSignal<string>(
-    () => this.localStorageService.get(this.key) ?? ''
-  );
+export class DemoComponent {
+  private storage = inject(LocalStorageService);
+  name = this.storage.get('user_name') ?? 'Guest';
 
-  private readonly localStorageService = inject(LocalStorageService);
-
-  updateName(updatedName: string) {
-    this.name.set(updatedName);
-    this.localStorageService.set(this.key, this.name());
+  saveName(value: string) {
+    this.storage.set('user_name', value);
   }
 }
 ```
 
-#### Transformers
+---
 
-The storage service provides built-in support for various data types other than string using transformers. These transformers serialize and deserialize data before storing to local storage. The library provides the following transformers:
+## API Reference
 
-1. JSON
-2. Number
-3. Boolean
-4. Date
-5. Base64
-6. String (Default)
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `get<T>(key, transformer?)` | `T \| undefined` | Get value by key |
+| `set<T>(key, value, transformer?)` | `void` | Set value by key |
+| `has(key)` | `boolean` | Check if key exists |
+| `remove(key)` | `void` | Remove key |
+| `clear()` | `void` | Clear all keys (prefix-aware) |
+| `keys()` | `string[]` | Get all keys |
+| `getAll<T>(transformer?)` | `Map<string, T>` | Get all key-value pairs |
+| `length()` | `number` | Number of stored items |
 
-Transformers can be provided as the second parameter and will enforce the mentioned type.
+---
 
-```typescript {4,8}
-import { StorageTransformers } from '@ngx-oneforall/services';
-...
-constructor() {
-  this.count = this.localStorageService.get(this.key, StorageTransformers.NUMBER)
-}
+## Transformers
 
-updateCount(count: number) {
-  this.localStorageService.set(this.key, count, StorageTransformers.NUMBER);
-}
+```typescript
+import { StorageTransformers } from '@ngx-oneforall/services/storage';
+
+// Store as JSON
+storage.set('user', { name: 'John' }, StorageTransformers.JSON);
+const user = storage.get('user', StorageTransformers.JSON);
+
+// Store as Number
+storage.set('count', 42, StorageTransformers.NUMBER);
+const count = storage.get('count', StorageTransformers.NUMBER);
 ```
 
-#### Live Demo
+| Transformer | Type | Description |
+|-------------|------|-------------|
+| `STRING` | `string` | Default, no transformation |
+| `JSON` | `object` | JSON.stringify/parse |
+| `NUMBER` | `number` | Number conversion |
+| `BOOLEAN` | `boolean` | Boolean conversion |
+| `DATE` | `Date` | ISO date string |
+| `BASE64` | `Uint8Array` | Binary data |
 
-Explore this example in a live demonstration:
+---
+
+## Key Prefix
+
+```typescript
+// All keys prefixed with 'app_'
+providers: [provideLocalStorage('app_')]
+```
+
+---
+
+## SSR Behavior
+
+On server-side rendering, `LocalStorageService` automatically uses in-memory storage (no errors).
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demo("LocalStorageServiceDemoComponent") }}
-
-#### Notes
-
-- The service operates on the browser's `localStorage` object, meaning data persists across browser sessions and remains until explicitly cleared.
-- For temporary storage that is cleared when the browser tab is closed, consider using a similar service with `sessionStorage`.
-

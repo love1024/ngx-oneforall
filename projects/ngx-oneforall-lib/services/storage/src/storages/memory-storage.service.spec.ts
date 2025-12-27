@@ -50,6 +50,22 @@ describe('MemoryStorageService', () => {
   it('should return key by index', () => {
     service['storage'].set('a', '1');
 
-    expect(service.key(0)).toBe('1');
+    expect(service.key(0)).toBe('a');
+  });
+
+  it('should return null for out of bounds key index', () => {
+    expect(service.key(999)).toBeNull();
+  });
+
+  it('should return all keys', () => {
+    service['storage'].set('a', '1');
+    service['storage'].set('b', '2');
+    service['storage'].set('c', '3');
+
+    expect(service.keys()).toEqual(['a', 'b', 'c']);
+  });
+
+  it('should return empty array for keys when storage is empty', () => {
+    expect(service.keys()).toEqual([]);
   });
 });

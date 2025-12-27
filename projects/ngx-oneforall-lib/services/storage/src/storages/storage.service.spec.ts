@@ -71,4 +71,65 @@ describe('WebStorageService', () => {
     service.key(0);
     expect(spy).toHaveBeenCalledWith(0);
   });
+
+  it('should return all keys without prefix', () => {
+    const store: Record<string, string> = { foo: '1', bar: '2' };
+    storage = {
+      getItem: jest.fn((key: string) => (key in store ? store[key] : null)),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+      key: jest.fn((i: number) => Object.keys(store)[i] ?? null),
+      length: Object.keys(store).length,
+    };
+    service = new WebStorageService(storage);
+
+    expect(service.keys()).toEqual(['foo', 'bar']);
+  });
+
+  it('should return only prefixed keys when using prefix', () => {
+    const store: Record<string, string> = {
+      app_foo: '1',
+      app_bar: '2',
+      other: '3',
+    };
+    storage = {
+      getItem: jest.fn((key: string) => (key in store ? store[key] : null)),
+      setItem: jest.fn(),
+      removeItem: jest.fn((key: string) => {
+        delete store[key];
+      }),
+      clear: jest.fn(),
+      key: jest.fn((i: number) => Object.keys(store)[i] ?? null),
+      length: Object.keys(store).length,
+    };
+    service = new WebStorageService(storage, 'app_');
+
+    expect(service.keys()).toEqual(['foo', 'bar']);
+  });
+
+  it('should only clear prefixed keys when using prefix', () => {
+    const store: Record<string, string> = {
+      app_foo: '1',
+      app_bar: '2',
+      other: '3',
+    };
+    storage = {
+      getItem: jest.fn((key: string) => (key in store ? store[key] : null)),
+      setItem: jest.fn(),
+      removeItem: jest.fn((key: string) => {
+        delete store[key];
+      }),
+      clear: jest.fn(),
+      key: jest.fn((i: number) => Object.keys(store)[i] ?? null),
+      length: Object.keys(store).length,
+    };
+    service = new WebStorageService(storage, 'app_');
+
+    service.clear();
+
+    expect(storage.removeItem).toHaveBeenCalledWith('app_foo');
+    expect(storage.removeItem).toHaveBeenCalledWith('app_bar');
+    expect(storage.removeItem).not.toHaveBeenCalledWith('other');
+  });
 });

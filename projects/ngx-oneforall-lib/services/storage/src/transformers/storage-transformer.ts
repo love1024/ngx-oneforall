@@ -28,8 +28,12 @@ export class Base64Transformer extends BaseStorageTransformer<Uint8Array> {
   }
 
   deserialize(data: string): Uint8Array {
-    const binary = atob(data);
-    return new Uint8Array(binary.split('').map(char => char.charCodeAt(0)));
+    try {
+      const binary = atob(data);
+      return new Uint8Array(binary.split('').map(char => char.charCodeAt(0)));
+    } catch {
+      return new Uint8Array();
+    }
   }
 }
 

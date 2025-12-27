@@ -20,7 +20,11 @@ export class MemoryStorageService extends StorageEngine {
   }
 
   key(index: number): string | null {
-    return Array.from(this.storage.values())[index];
+    return Array.from(this.storage.keys())[index] ?? null;
+  }
+
+  keys(): string[] {
+    return Array.from(this.storage.keys());
   }
 
   protected getItem(key: string): string | undefined {

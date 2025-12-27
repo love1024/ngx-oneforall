@@ -97,5 +97,11 @@ describe('Storage Transformers', () => {
       const arr = transformer.deserialize(base64);
       expect(Array.from(arr)).toEqual([88, 89, 90]); // 'X', 'Y', 'Z'
     });
+
+    it('should return empty Uint8Array for invalid base64', () => {
+      const result = transformer.deserialize('!!!invalid-base64!!!');
+      expect(result).toBeInstanceOf(Uint8Array);
+      expect(result.length).toBe(0);
+    });
   });
 });
