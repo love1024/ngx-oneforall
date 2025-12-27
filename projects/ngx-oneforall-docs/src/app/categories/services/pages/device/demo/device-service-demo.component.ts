@@ -1,6 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule, NgClass, NgIf, TitleCasePipe } from '@angular/common';
-import { DeviceService, provideDeviceService } from '@ngx-oneforall/services';
+import {
+  DeviceService,
+  provideDeviceService,
+} from '@ngx-oneforall/services/device';
 
 @Component({
   selector: 'lib-device-service-demo',

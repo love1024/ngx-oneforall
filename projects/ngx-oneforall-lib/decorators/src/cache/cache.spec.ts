@@ -9,7 +9,7 @@ const mockStorage: any = {
   }),
 };
 
-jest.mock('../../../services/src/cache/cache.util', () => ({
+jest.mock('../../../services/cache/src/cache.util', () => ({
   getStorageEngine: () => mockStorage,
 }));
 

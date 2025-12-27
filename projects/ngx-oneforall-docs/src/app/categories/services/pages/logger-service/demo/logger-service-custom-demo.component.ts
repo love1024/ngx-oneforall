@@ -3,7 +3,7 @@ import {
   CUSTOM_LOGGER,
   CustomLogger,
   LoggerService,
-} from '@ngx-oneforall/services';
+} from '@ngx-oneforall/services/logger';
 
 class APILogger implements CustomLogger {
   log(...args: unknown[]) {

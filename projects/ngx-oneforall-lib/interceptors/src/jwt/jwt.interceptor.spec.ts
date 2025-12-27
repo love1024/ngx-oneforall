@@ -9,7 +9,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { jwtInterceptor, resetJwtInterceptor } from './jwt.interceptor';
-import { JwtService, provideJwtService } from '@ngx-oneforall/services';
+import { JwtService, provideJwtService } from '@ngx-oneforall/services/jwt';
 import { PLATFORM_ID } from '@angular/core';
 import { of, throwError, Subject } from 'rxjs';
 import { withSkipJwtInterceptor } from './jwt-context';

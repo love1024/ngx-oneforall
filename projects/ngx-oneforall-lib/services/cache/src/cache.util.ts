@@ -1,6 +1,8 @@
-import { StorageEngine } from '../storage/storage-engine';
-import { MemoryStorageService } from '../storage/storages/memory-storage.service';
-import { WebStorageService } from '../storage/storages/web-storage.service';
+import {
+  StorageEngine,
+  MemoryStorageService,
+  WebStorageService,
+} from '@ngx-oneforall/services/storage';
 import { CacheStorageType } from './cache-provider';
 
 // Storage cache to keep track of all storage created so far, and use the same

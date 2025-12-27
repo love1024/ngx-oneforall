@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { OnlyInBrowser } from '../shared/only-in-browser';
+import { OnlyInBrowser } from './only-in-browser';
 
 export type SameSiteOption = 'Strict' | 'Lax' | 'None';
 

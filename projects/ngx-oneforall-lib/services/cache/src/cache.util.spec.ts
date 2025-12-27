@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getStorageEngine } from './cache.util';
-import { MemoryStorageService } from '../storage/storages/memory-storage.service';
-import { WebStorageService } from '../storage/storages/web-storage.service';
+import {
+  MemoryStorageService,
+  WebStorageService,
+} from '@ngx-oneforall/services/storage';
 
 describe('getStorageEngine', () => {
   it('should return a MemoryStorageService for "memory"', () => {

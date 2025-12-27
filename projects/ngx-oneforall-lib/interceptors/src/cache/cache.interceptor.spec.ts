@@ -10,7 +10,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { withCacheInterceptor } from './cache.interceptor';
-import { CacheService } from '@ngx-oneforall/services';
+import { CacheService } from '@ngx-oneforall/services/cache';
 import { useCache } from './cache-context';
 import { PLATFORM_ID } from '@angular/core';
 

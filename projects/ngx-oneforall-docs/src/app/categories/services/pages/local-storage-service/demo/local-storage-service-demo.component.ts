@@ -3,7 +3,7 @@ import {
   LocalStorageService,
   provideLocalStorage,
   StorageTransformers,
-} from '@ngx-oneforall/services';
+} from '@ngx-oneforall/services/storage';
 
 @Component({
   selector: 'lib-local-storage-service-demo',

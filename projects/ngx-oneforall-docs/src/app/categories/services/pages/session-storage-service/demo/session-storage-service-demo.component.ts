@@ -3,7 +3,7 @@ import {
   provideSessionStorage,
   SessionStorageService,
   StorageTransformers,
-} from '@ngx-oneforall/services';
+} from '@ngx-oneforall/services/storage';
 
 @Component({
   selector: 'lib-session-storage-service-demo',

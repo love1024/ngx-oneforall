@@ -1,4 +1,4 @@
-import { StorageEngine } from '../storage/storage-engine';
+import { StorageEngine } from '@ngx-oneforall/services/storage';
 import { CacheOptions, CacheStorageType } from './cache-provider';
 
 interface CacheEntry<T> {

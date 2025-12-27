@@ -1,5 +1,8 @@
 import { Component, signal } from '@angular/core';
-import { CookieService, provideCookieService } from '@ngx-oneforall/services';
+import {
+  CookieService,
+  provideCookieService,
+} from '@ngx-oneforall/services/cookie';
 
 @Component({
   selector: 'lib-cookie-service-demo',

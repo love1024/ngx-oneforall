@@ -1,8 +1,8 @@
 import {
   CacheStorageType,
   getStorageEngine,
-  StorageTransformers,
-} from '@ngx-oneforall/services';
+} from '@ngx-oneforall/services/cache';
+import { StorageTransformers } from '@ngx-oneforall/services/storage';
 import { safeSerialize } from '@ngx-oneforall/utils';
 import { finalize, Observable, of, shareReplay, tap } from 'rxjs';
 

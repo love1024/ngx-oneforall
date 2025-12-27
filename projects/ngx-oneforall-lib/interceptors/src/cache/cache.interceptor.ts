@@ -4,7 +4,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { inject, PLATFORM_ID } from '@angular/core';
-import { CacheService } from '@ngx-oneforall/services';
+import { CacheService } from '@ngx-oneforall/services/cache';
 import { CACHE_CONTEXT, CacheContextOptions } from './cache-context';
 import { of, tap } from 'rxjs';
 import { isPlatformServer } from '@angular/common';

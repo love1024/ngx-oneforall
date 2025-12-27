@@ -27,7 +27,7 @@ import {
   withCacheInterceptor,
   withTimeoutInterceptor,
 } from '@ngx-oneforall/interceptors';
-import { provideCacheService } from '@ngx-oneforall/services';
+import { provideCacheService } from '@ngx-oneforall/services/cache';
 
 export const appConfig: ApplicationConfig = {
   providers: [
