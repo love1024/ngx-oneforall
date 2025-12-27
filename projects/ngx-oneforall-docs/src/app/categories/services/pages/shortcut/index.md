@@ -1,51 +1,133 @@
-The **ShortcutService** provides an Observable-based API for handling keyboard shortcuts. It allows you to listen for shortcuts globally or on specific elements, with support for modifiers and strict matching.
+Observable-based keyboard shortcut handling with cross-platform modifier support.
 
 ## Features
 
-- **Observable API:** Returns an Observable that emits when the shortcut is triggered.
-- **Global & Scoped:** Listen globally (window) or on specific elements.
-- **Prevent Default:** Automatically prevents default browser actions (configurable).
-- **Expanded Modifiers:** Supports standard and non-standard modifiers (e.g., `space`, `enter`, `up`, `down`).
+- **Observable API** — Returns `Observable<KeyboardEvent>` for shortcuts
+- **Cross-Platform** — `cmd`/`meta` maps to `ctrl` on non-Apple platforms
+- **Multiple Shortcuts** — Comma-separated: `"ctrl.s, meta.s"`
+- **Scoped/Global** — Listen on specific elements or globally
+- **SSR Safe** — No listeners attached on server
 
-## Usage
+---
 
-Inject the `ShortcutService` and use the `observe` method to start listening for shortcuts.
+## Installation
+
+```typescript
+import { 
+  ShortcutService, 
+  provideShortcutService,
+  ShortcutOptions 
+} from '@ngx-oneforall/services/shortcut';
+```
+
+---
+
+## Basic Usage
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { ShortcutService } from 'ngx-oneforall';
+import { ShortcutService, provideShortcutService } from '@ngx-oneforall/services/shortcut';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-@Component({ ... })
-export class MyComponent {
-  private shortcutService = inject(ShortcutService);
+@Component({
+  selector: 'app-demo',
+  template: `<p>Press Ctrl+S to save</p>`,
+  providers: [provideShortcutService()],
+})
+export class DemoComponent {
+  private shortcuts = inject(ShortcutService);
 
   constructor() {
-    // Listen globally for Ctrl + S
-    this.shortcutService.observe({ 
-      key: 'ctrl.s', 
-      isGlobal: true 
-    }).subscribe(() => {
-      console.log('Save triggered!');
-    });
+    this.shortcuts.observe({ key: 'ctrl.s', isGlobal: true })
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.save());
+  }
+
+  save() {
+    console.log('Saved!');
   }
 }
 ```
 
-## Configuration
+---
 
-The `observe` method accepts a `ShortcutOptions` object:
+## API Reference
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `key` | `string` | **Required** | The shortcut key combination(s). Format: `modifier.key` (e.g., `ctrl.s`, `shift.enter`). Supports comma-separated multiple shortcuts. |
-| `isGlobal` | `boolean` | `false` | If `true`, listens globally on the window. |
-| `element` | `HTMLElement` | `undefined` | The element to listen on if `isGlobal` is `false`. Defaults to window if not provided but `isGlobal` is false. |
-| `preventDefault` | `boolean` | `true` | If `true`, calls `event.preventDefault()` when the shortcut matches. |
+### `observe(options: ShortcutOptions)`
 
-## Supported Modifiers
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `key` | `string` | **required** | Shortcut pattern(s), e.g. `"ctrl.s"` |
+| `isGlobal` | `boolean` | `false` | Listen on window |
+| `element` | `HTMLElement` | — | Target element (if not global) |
+| `preventDefault` | `boolean` | `true` | Prevent browser default |
 
-`shift`, `control` (ctrl), `alt`, `meta` (cmd), `altleft`, `backspace`, `tab`, `left`, `right`, `up`, `down`, `enter`, `space`, `escape` (esc).
+---
 
-## Demo
+## Shortcut Patterns
+
+```typescript
+// Single shortcut
+{ key: 'ctrl.s' }
+
+// Multiple shortcuts (either triggers)
+{ key: 'ctrl.s, meta.s' }
+
+// Multiple modifiers
+{ key: 'ctrl.shift.n' }
+
+// Arrow keys and special keys
+{ key: 'ctrl.arrowup' }
+{ key: 'escape' }
+{ key: 'enter' }
+```
+
+---
+
+## Supported Keys
+
+### Modifiers
+`ctrl`, `shift`, `alt`, `meta` (cmd), `control`
+
+### Special Keys
+`enter`, `escape` (esc), `space`, `tab`, `backspace`, `delete`
+
+### Arrow Keys
+`arrowup` (up), `arrowdown` (down), `arrowleft` (left), `arrowright` (right)
+
+### Punctuation
+`period` (.), `comma` (,), `slash` (/), `minus` (-), `equal` (=)
+
+---
+
+## Cross-Platform Shortcuts
+
+```typescript
+// Works on both Mac (Cmd+S) and Windows/Linux (Ctrl+S)
+{ key: 'ctrl.s, meta.s' }
+
+// On non-Apple platforms, 'cmd' auto-maps to 'ctrl'
+{ key: 'cmd.s' } // → ctrl.s on Windows
+```
+
+---
+
+## Element-Scoped Shortcuts
+
+```typescript
+@ViewChild('editor') editor!: ElementRef;
+
+ngAfterViewInit() {
+  this.shortcuts.observe({
+    key: 'ctrl.enter',
+    element: this.editor.nativeElement,
+    isGlobal: false,
+  }).subscribe(() => this.submit());
+}
+```
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demo("ShortcutServiceDemoComponent") }}
