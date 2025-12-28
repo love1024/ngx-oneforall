@@ -1,41 +1,74 @@
+Automatically focuses an element when rendered, with reactive two-way binding support.
 
+## Features
 
+- **Auto Focus** — Focuses the element immediately on render
+- **Two-Way Binding** — Sync focus state with parent via `[(isFocused)]`
+- **SSR Safe** — Only runs in the browser via `afterNextRender`
 
-The `autoFocus` directive is a utility designed to automatically focus an element when it is rendered. This is particularly useful for improving user experience in forms, dialogs, or any interactive UI components where immediate focus is desired.
+---
 
-### Features
+## Installation
 
-- **Automatic Focus:** When applied, the directive ensures the host element receives focus as soon as it appears in the DOM.
-- **Reactive Focus Management:** The directive tracks the focus state and can respond to changes dynamically.
-- **Manual Focus Control:** You can programmatically control the focus state using an input property.
-
-### How to use
-
-```html
-<!-- Basic usage -->
-<input autoFocus />
-
-<!-- With manual control -->
-<input autoFocus [isFocused]="true" />
+```typescript
+import { AutoFocusDirective } from '@ngx-oneforall/directives/auto-focus';
 ```
 
+---
 
-
-### Input: `isFocused`
-
-You can pass an input property called `isFocused` to the directive. This property is a boolean that determines whether the element should be focused. By updating this value, you can programmatically focus or blur the element as needed.
-
-**Example:**
+## Basic Usage
 
 ```html
+<!-- Auto focus on render -->
+<input autoFocus />
+
+<!-- With two-way binding -->
+<input autoFocus [(isFocused)]="focusState" />
+
+<!-- Read-only binding -->
 <input autoFocus [isFocused]="shouldFocus" />
 ```
 
-In this example, setting `shouldFocus` to `true` will focus the input, while setting it to `false` will remove focus.
+---
 
-### Example Usage
+## API Reference
 
-See the directive in action with the following live demonstration:
+| Input/Output | Type | Default | Description |
+|--------------|------|---------|-------------|
+| `isFocused` | `ModelSignal<boolean>` | `true` | Two-way bindable focus state |
+
+### Host Events
+
+| Event | Behavior |
+|-------|----------|
+| `focus` | Sets `isFocused` to `true` |
+| `blur` | Sets `isFocused` to `false` |
+
+---
+
+## Programmatic Control
+
+Use two-way binding to control focus from your component:
+
+```typescript
+@Component({
+  template: `
+    <input autoFocus [(isFocused)]="isFocused" />
+    <button (click)="focusInput()">Focus Input</button>
+  `,
+  imports: [AutoFocusDirective]
+})
+export class MyComponent {
+  isFocused = signal(false);
+
+  focusInput() {
+    this.isFocused.set(true);
+  }
+}
+```
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demoPane("AutoFocusDemoComponent") }}
-

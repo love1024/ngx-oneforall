@@ -1,44 +1,83 @@
-The `hoverClass` directive is a reusable Angular directive that dynamically applies one or more CSS classes to an element when it is hovered by the mouse. This directive is particularly useful for enhancing user experience by providing visual feedback on hover, such as highlighting buttons, cards, or any interactive UI elements.
+Dynamically applies CSS classes on hover with reactive updates and toggle support.
 
-### Features
+## Features
 
-- **Dynamic Class Application:** Accepts one or multiple CSS class names to be toggled on hover.
-- **Configurable Enable/Disable:** The directive can be enabled or disabled dynamically using an input binding.
-- **Reactive Updates:** Automatically responds to changes in the class names or enabled state.
-- **Seamless Integration:** Designed to work with Angular's dependency injection and rendering mechanisms.
+- **Multiple Classes** — Apply one or more space-separated classes
+- **Toggleable** — Enable/disable via `hoverClassEnabled` input
+- **Auto Cleanup** — Classes removed automatically when disabled
+- **SSR Safe** — Only activates in the browser
 
-### Usage
+---
 
-To use the `hoverClass` directive, simply add the `hoverClass` attribute to any HTML element and provide the desired class or classes as its value. Optionally, you can bind the `hoverClassEnabled` input to control whether the hover effect is active.
+## Installation
 
-```html
-<!-- Apply a single class on hover -->
-<button [hoverClass]="'highlight'">Hover me</button>
-
-<!-- Apply multiple classes on hover -->
-<div [hoverClass]="'shadow-lg border-primary'">Hover over this box</div>
-
-<!-- Conditionally enable/disable the hover effect -->
-<span [hoverClass]="'underline'" [hoverClassEnabled]="isHoverActive">Hoverable text</span>
+```typescript
+import { HoverClassDirective } from '@ngx-oneforall/directives/hover-class';
 ```
 
-### Inputs
+---
 
-| Input              | Type      | Description                                              |
-|--------------------|-----------|----------------------------------------------------------|
-| `hoverClass`       | `string`  | Required. Space-separated list of CSS classes to toggle. |
-| `hoverClassEnabled`| `boolean` | Optional. Enables or disables the hover effect. Defaults to `true`. |
+## Basic Usage
 
-### How It Works
+```html
+<!-- Single class -->
+<button hoverClass="highlight">Hover me</button>
 
-- On mouse enter, the directive adds the specified classes to the host element if `hoverClassEnabled` is `true`.
-- On mouse leave, it removes those classes.
-- If the `hoverClass` input changes, the directive updates the classes to be toggled accordingly.
-- If `hoverClassEnabled` is set to `false`, the directive ensures that no hover classes are applied.
+<!-- Multiple classes -->
+<div hoverClass="shadow-lg border-primary">Hover card</div>
 
-### Example Usage
+<!-- Conditional enable -->
+<span hoverClass="underline" [hoverClassEnabled]="isActive()">Link</span>
+```
 
-See the directive in action with the following live demonstration:
+---
+
+## API Reference
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `hoverClass` | `string` | *required* | Space-separated CSS classes to apply on hover |
+| `hoverClassEnabled` | `boolean` | `true` | Enables/disables the hover effect |
+
+---
+
+## Behavior
+
+| State | Action |
+|-------|--------|
+| Mouse enter (enabled) | Adds all specified classes |
+| Mouse leave (enabled) | Removes all specified classes |
+| `hoverClassEnabled=false` | Immediately removes any applied classes |
+| `hoverClass` changes | Updates classes to toggle on next hover |
+
+---
+
+## Common Use Cases
+
+### Button Hover Effect
+
+```html
+<button hoverClass="bg-primary text-white scale-105">
+  Submit
+</button>
+```
+
+### Card Hover Shadow
+
+```typescript
+@Component({
+  template: `
+    <div class="card" hoverClass="shadow-xl transform-up">
+      {{ item.title }}
+    </div>
+  `,
+  imports: [HoverClassDirective]
+})
+export class CardComponent {}
+```
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demoPane("HoverClassDemoComponent") }}
-

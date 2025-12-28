@@ -13,7 +13,7 @@ import {
   selector: '[autoFocus]',
   host: {
     '(focus)': 'hostFocused()',
-    '(blur)': 'hostBlured()',
+    '(blur)': 'hostBlurred()',
   },
 })
 export class AutoFocusDirective {
@@ -36,7 +36,7 @@ export class AutoFocusDirective {
     this.isFocused.set(true);
   }
 
-  hostBlured() {
+  hostBlurred() {
     this.isFocused.set(false);
   }
 

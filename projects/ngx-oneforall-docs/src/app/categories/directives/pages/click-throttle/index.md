@@ -1,50 +1,85 @@
+Throttles click events to prevent accidental double-clicks and rapid repeated interactions.
 
+## Features
 
-The `ClickThrottleDirective` is an Angular directive that throttles click events on the host element.
+- **Immediate Response** — First click fires instantly (leading edge)
+- **Configurable Delay** — Set throttle interval via `throttleTime` input
+- **Reactive** — Updates throttle duration when input changes
+- **SSR Safe** — Only activates in the browser
 
-### Overview
+---
 
-This directive prevents excessive click event emissions by ensuring that only one click event is emitted within a specified time interval. It is useful for avoiding accidental double-clicks or rapid user interactions that could lead to unintended behavior, such as multiple form submissions or repeated API calls.
+## Installation
 
-### Inputs
+```typescript
+import { ClickThrottleDirective } from '@ngx-oneforall/directives/click-throttle';
+```
 
-- **throttleTime: number**  
-    The minimum time interval (in milliseconds) between consecutive click events. Defaults to `1000` ms (1 second). You can customize this value by binding to the directive:
+---
 
-    ```html
-    <button [throttleTime]="500">Click Me</button>
-    ```
-
-### Outputs
-
-- **clickThrottle: EventEmitter<Event>**  
-    Emits the click event, but only once per throttle interval. Subscribe to this output to handle throttled click events:
-
-    ```html
-    <button [throttleTime]="1000" (clickThrottle)="onThrottledClick($event)">Click Me</button>
-    ```
-
-### Usage Example
+## Basic Usage
 
 ```html
-<button [throttleTime]="1500" (clickThrottle)="handleClick($event)">
-    Throttled Button
+<!-- Default 1000ms throttle -->
+<button (clickThrottle)="submit()">Submit</button>
+
+<!-- Custom 500ms throttle -->
+<button [throttleTime]="500" (clickThrottle)="submit()">Submit</button>
+```
+
+---
+
+## API Reference
+
+| Input/Output | Type | Default | Description |
+|--------------|------|---------|-------------|
+| `throttleTime` | `number` | `1000` | Minimum interval (ms) between emissions |
+| `clickThrottle` | `OutputEmitterRef<Event>` | — | Emits throttled click events |
+
+---
+
+## How It Works
+
+```
+User clicks:    ●──●●●●──────────●●●──────●
+                0  200           1500      2800 (ms)
+
+With 1000ms throttle:
+Emits:          ●─────────────────●────────●
+                0                 1500     2800
+```
+
+- First click in each window is emitted immediately
+- Subsequent clicks within the throttle period are ignored
+
+---
+
+## Common Use Cases
+
+### Prevent Double Submit
+
+```html
+<button [throttleTime]="2000" (clickThrottle)="submitForm()">
+  Submit Order
 </button>
 ```
 
-### Implementation Details
+### API Request Protection
 
-- Utilizes RxJS's `throttleTime` operator to manage the throttling logic.
-- Automatically cleans up event subscriptions when the directive is destroyed.
-- Reacts to changes in the `throttleTime` input and updates the throttling behavior accordingly.
+```typescript
+@Component({
+  template: `<button (clickThrottle)="loadMore()">Load More</button>`,
+  imports: [ClickThrottleDirective]
+})
+export class ListComponent {
+  loadMore() {
+    this.api.fetchNextPage(); // Won't fire more than once per second
+  }
+}
+```
 
-### Best Practices
+---
 
-- Use this directive on interactive elements where rapid repeated clicks should be ignored.
-- Adjust the `throttleTime` input based on the desired user experience and the criticality of the action being throttled.
-
-## Example Usage
-
-See the directive in action with the following live demonstration:
+## Live Demo
 
 {{ NgDocActions.demoPane("ClickThrottleDemoComponent") }}

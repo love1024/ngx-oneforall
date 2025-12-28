@@ -51,7 +51,7 @@ describe('AutoFocusDirective', () => {
 
   it('should set isFocused to false on hostBlured()', () => {
     directive.isFocused.set(true);
-    directive.hostBlured();
+    directive.hostBlurred();
     expect(directive.isFocused()).toBe(false);
   });
 });

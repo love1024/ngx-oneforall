@@ -32,15 +32,12 @@ export class HoverClassDirective {
 
   constructor() {
     afterNextRender(() => {
-      this.setClasses();
       runInInjectionContext(this.environment, () => {
         effect(
           () => {
             this.setClasses();
           },
           {
-            // Set allowSignalWrites to support Angular < v19
-            // Set to undefined to avoid warning on newer versions
             allowSignalWrites: VERSION.major < '19' || undefined,
           }
         );
@@ -49,12 +46,13 @@ export class HoverClassDirective {
           () => {
             // Remove classes if disabled
             if (!this.hoverClassEnabled()) {
-              this.classesToToggle.set([]);
+              const classes = this.classesToToggle();
+              classes.forEach(cls => {
+                this.renderer.removeClass(this.hostEl.nativeElement, cls);
+              });
             }
           },
           {
-            // Set allowSignalWrites to support Angular < v19
-            // Set to undefined to avoid warning on newer versions
             allowSignalWrites: VERSION.major < '19' || undefined,
           }
         );

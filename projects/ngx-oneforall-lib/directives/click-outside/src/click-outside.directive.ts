@@ -35,12 +35,12 @@ export class ClickOutsideDirective implements OnDestroy {
 
   private initListener() {
     this.ngZone.runOutsideAngular(() => {
-      this.document.addEventListener('click', this.onClickListener);
+      this.document.addEventListener('click', this.onClickListener, true);
     });
   }
 
   private removeListener() {
-    this.document.removeEventListener('click', this.onClickListener);
+    this.document.removeEventListener('click', this.onClickListener, true);
   }
 
   private onClickListener(evt: Event) {

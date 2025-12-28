@@ -10,6 +10,7 @@ import {
   numberAttribute,
   output,
   runInInjectionContext,
+  VERSION,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, Subscription, throttleTime } from 'rxjs';
@@ -29,9 +30,10 @@ export class ClickThrottleDirective {
 
   constructor() {
     afterNextRender(() => {
-      this.subscribeToClickEvent();
       runInInjectionContext(this.environment, () => {
-        effect(() => this.subscribeToClickEvent());
+        effect(() => this.subscribeToClickEvent(), {
+          allowSignalWrites: VERSION.major < '19' || undefined,
+        });
       });
     });
   }

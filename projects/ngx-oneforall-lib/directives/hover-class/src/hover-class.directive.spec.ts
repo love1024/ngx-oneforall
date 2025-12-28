@@ -98,10 +98,15 @@ describe('HoverClassDirective', () => {
   });
 
   it('should not remove classes on mouseleave if hoverClassEnabled is false', () => {
-    const removeClassSpy = jest.spyOn(renderer, 'removeClass');
+    // When disabled, the effect removes classes automatically
+    // onMouseLeave should not add additional removeClass calls
     component.enabled.set(false);
     fixture.detectChanges();
+
+    const removeClassSpy = jest.spyOn(renderer, 'removeClass');
     directive.onMouseLeave();
+
+    // onMouseLeave should not call removeClass when disabled
     expect(removeClassSpy).not.toHaveBeenCalled();
   });
 });
