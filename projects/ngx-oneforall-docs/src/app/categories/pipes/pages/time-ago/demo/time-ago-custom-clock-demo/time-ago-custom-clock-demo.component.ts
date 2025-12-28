@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { provideTimeAgoPipeClock, TimeAgoPipe } from '@ngx-oneforall/pipes';
+import {
+  provideTimeAgoPipeClock,
+  TimeAgoPipe,
+} from '@ngx-oneforall/pipes/time-ago';
 import { timer } from 'rxjs';
 
 @Component({

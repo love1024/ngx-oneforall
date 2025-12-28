@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FirstErrorKeyPipe } from '@ngx-oneforall/pipes';
+import { FirstErrorKeyPipe } from '@ngx-oneforall/pipes/first-error-key';
 
 @Component({
   selector: 'lib-first-error-validation',

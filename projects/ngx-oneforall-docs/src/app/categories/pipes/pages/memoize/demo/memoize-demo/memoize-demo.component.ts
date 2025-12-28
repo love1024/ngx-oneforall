@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MemoizePipe } from '@ngx-oneforall/pipes';
+import { MemoizePipe } from '@ngx-oneforall/pipes/memoize';
 
 @Component({
   selector: 'lib-memoize-demo',

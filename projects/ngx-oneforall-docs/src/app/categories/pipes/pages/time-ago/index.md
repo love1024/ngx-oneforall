@@ -80,7 +80,7 @@ export class PostComponent {}
 You can provide a custom clock implementation by using the `provideTimeAgoPipeClock` provider. This is useful for scenarios where the clock needs to be controlled. The custom implementation should return an observable and the pipe will update whenever that observable will emit a value. 
 
 ```ts
-import { provideTimeAgoPipeClock } from '@ngx-oneforall/pipes';
+import { provideTimeAgoPipeClock } from '@ngx-oneforall/pipes/time-ago';
 import { timer } from 'rxjs';
 
 @Component({

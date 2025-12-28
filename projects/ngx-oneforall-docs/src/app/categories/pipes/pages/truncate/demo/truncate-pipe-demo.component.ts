@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TruncatePipe } from '@ngx-oneforall/pipes';
+import { TruncatePipe } from '@ngx-oneforall/pipes/truncate';
 
 @Component({
   selector: 'lib-truncate-pipe-demo',
