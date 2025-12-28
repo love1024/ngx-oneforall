@@ -10,7 +10,7 @@ Use `number` to validate that input values are strictly numeric.
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { number } from '@ngx-oneforall/validators';
+import { number } from '@ngx-oneforall/validators/number';
 
 const control = new FormControl(null, number);
 ```

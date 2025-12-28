@@ -14,7 +14,7 @@ Use `phone` to validate phone numbers. You must provide a `CountryCode` (Alpha-2
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { phoneValidator } from '@ngx-oneforall/validators';
+import { phoneValidator } from '@ngx-oneforall/validators/phone';
 import { CountryCode } from '@ngx-oneforall/constants';
 
 const control = new FormControl(null, phoneValidator(CountryCode.UnitedStates));

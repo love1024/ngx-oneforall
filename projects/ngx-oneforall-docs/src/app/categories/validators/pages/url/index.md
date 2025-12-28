@@ -10,7 +10,7 @@ Use `url` to validate that input values are valid URLs. It supports configuratio
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { url } from '@ngx-oneforall/validators';
+import { url } from '@ngx-oneforall/validators/url';
 
 const control = new FormControl(null, url({ protocols: ['https'] }));
 ```

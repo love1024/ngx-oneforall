@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { backOffRetry } from '@ngx-oneforall/rxjs';
+import { backOffRetry } from '@ngx-oneforall/rxjs/backoff-retry';
 import { Observable } from 'rxjs';
 
 @Component({

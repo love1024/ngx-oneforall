@@ -18,7 +18,7 @@ With the `TypedTemplateDirective`, you can bind a type to an `ng-template` conte
 First, import the directive into your component:
 
 ```typescript
-import { TypedTemplateDirective } from '@ngx-oneforall/guards';
+import { TypedTemplateDirective } from '@ngx-oneforall/guards/typed-template';
 ```
 
 #### 2. Define a Typed Context

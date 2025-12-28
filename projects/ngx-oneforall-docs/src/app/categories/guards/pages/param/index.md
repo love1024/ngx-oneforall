@@ -5,7 +5,7 @@
 To use `paramGuard`, provide it in your route configuration using `canActivate`. It is particularly useful for validating required parameters in routes like `/item/:id`.
 
 ```typescript
-import { paramGuard } from '@ngx-oneforall/guards';
+import { paramGuard } from '@ngx-oneforall/guards/param';
 
 const routes: Routes = [
   {

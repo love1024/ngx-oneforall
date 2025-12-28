@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component } from '@angular/core';
-import { TypedTemplateDirective } from '@ngx-oneforall/guards';
+import { TypedTemplateDirective } from '@ngx-oneforall/guards/typed-template';
 
 interface User {
   id: number;

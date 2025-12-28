@@ -10,7 +10,7 @@ Use `date` to validate date inputs.
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { date } from '@ngx-oneforall/validators';
+import { date } from '@ngx-oneforall/validators/date';
 
 const control = new FormControl(null, date);
 ```

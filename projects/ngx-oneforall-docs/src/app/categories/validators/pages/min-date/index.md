@@ -13,7 +13,7 @@ Use `minDate` to validate that a date is not before a certain boundary.
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { minDate } from '@ngx-oneforall/validators';
+import { minDate } from '@ngx-oneforall/validators/min-date';
 
 const control = new FormControl(null, minDate(new Date('2023-01-01')));
 // OR with string

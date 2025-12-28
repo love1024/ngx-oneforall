@@ -1,5 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
-import { HasUnsavedChanges, unsavedChangesGuard } from '@ngx-oneforall/guards';
+import {
+  HasUnsavedChanges,
+  unsavedChangesGuard,
+} from '@ngx-oneforall/guards/unsaved-changes';
 
 @Component({
   selector: 'lib-unsaved-changes-demo',

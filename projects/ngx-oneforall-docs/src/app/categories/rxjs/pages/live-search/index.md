@@ -10,7 +10,7 @@ It combines `debounceTime`, `distinctUntilChanged`, and `switchMap` to provide a
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { liveSearch } from '@ngx-oneforall/rxjs';
+import { liveSearch } from '@ngx-oneforall/rxjs/live-search';
 
 export class SearchComponent {
     searchControl = new FormControl('', { nonNullable: true });
@@ -34,7 +34,7 @@ export class SearchComponent {
 ```typescript
 import { HttpClient } from '@angular/common/http';
 import { FormControl } from '@angular/forms';
-import { liveSearch } from '@ngx-oneforall/rxjs';
+import { liveSearch } from '@ngx-oneforall/rxjs/live-search';
 
 export class ProductSearchComponent {
     searchControl = new FormControl('');
