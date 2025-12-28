@@ -3,11 +3,10 @@ import { BytesPipe } from '@ngx-oneforall/pipes/bytes';
 
 @Component({
   selector: 'app-bytes-pipe-demo',
-  standalone: true,
   imports: [BytesPipe],
   template: `
     <div class="demo-container">
-      <h3>Basic Usage</h3>
+      <h3>Basic Usage (Binary - 1024)</h3>
       <p>
         1024 bytes: <strong>{{ 1024 | bytes }}</strong>
       </p>
@@ -16,6 +15,19 @@ import { BytesPipe } from '@ngx-oneforall/pipes/bytes';
       </p>
       <p>
         0 bytes: <strong>{{ 0 | bytes }}</strong>
+      </p>
+
+      <h3>SI Units (Base 1000)</h3>
+      <p>
+        1000 bytes (SI): <strong>{{ 1000 | bytes: 2 : null : true }}</strong>
+      </p>
+      <p>
+        1000000 bytes (SI):
+        <strong>{{ 1000000 | bytes: 2 : null : true }}</strong>
+      </p>
+      <p>
+        1024 bytes (Binary):
+        <strong>{{ 1024 | bytes: 2 : null : false }}</strong>
       </p>
 
       <h3>Custom Decimals</h3>
@@ -36,10 +48,10 @@ import { BytesPipe } from '@ngx-oneforall/pipes/bytes';
 
       <h3>Large Numbers</h3>
       <p>
-        1073741824 bytes: <strong>{{ 1073741824 | bytes }}</strong>
+        1 GB: <strong>{{ 1073741824 | bytes }}</strong>
       </p>
       <p>
-        1099511627776 bytes: <strong>{{ 1099511627776 | bytes }}</strong>
+        1 TB: <strong>{{ 1099511627776 | bytes }}</strong>
       </p>
     </div>
   `,

@@ -100,4 +100,36 @@ describe('BytesPipe', () => {
       expect(pipe.transform(mbValue, 2, shortUnits)).toBe('1024.00 KB');
     });
   });
+
+  describe('SI units (base 1000)', () => {
+    it('should use SI base (1000) when useSI is true', () => {
+      expect(pipe.transform(1000, 2, null, true)).toBe('1.00 KB');
+      expect(pipe.transform(1000000, 2, null, true)).toBe('1.00 MB');
+      expect(pipe.transform(1000000000, 2, null, true)).toBe('1.00 GB');
+    });
+
+    it('should use binary base (1024) when useSI is false (default)', () => {
+      expect(pipe.transform(1024, 2, null, false)).toBe('1.00 KB');
+      expect(pipe.transform(1000, 2, null, false)).toBe('1000.00 B');
+    });
+
+    it('should handle SI with custom decimals', () => {
+      expect(pipe.transform(1500, 0, null, true)).toBe('2 KB');
+      expect(pipe.transform(1500, 3, null, true)).toBe('1.500 KB');
+    });
+
+    it('should handle SI with custom units', () => {
+      const customUnits = ['b', 'kb', 'mb'];
+      expect(pipe.transform(1000, 2, customUnits, true)).toBe('1.00 kb');
+    });
+
+    it('should handle SI with negative numbers', () => {
+      expect(pipe.transform(-1000, 2, null, true)).toBe('-1.00 KB');
+    });
+
+    it('should handle very large SI numbers', () => {
+      const pb = Math.pow(1000, 5);
+      expect(pipe.transform(pb, 2, null, true)).toBe('1.00 PB');
+    });
+  });
 });

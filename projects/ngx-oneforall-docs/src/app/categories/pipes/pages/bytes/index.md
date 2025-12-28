@@ -1,53 +1,57 @@
-The `BytesPipe` converts a number (in bytes) into a human-readable string with appropriate units (B, KB, MB, GB, TB, PB). It automatically selects the best unit and formats the number with a specified number of decimal places.
+The `BytesPipe` converts a number (in bytes) into a human-readable string with appropriate units (B, KB, MB, GB, TB, PB). It automatically selects the best unit and formats the number with configurable decimal places.
 
 ### Usage
 
-Apply the pipe in Angular templates:
-
-```html file="./snippets.html"#L1-L3
+```html file="./snippets.html"#L2-L4
 ```
-
-- **value**: The number of bytes to format.
-- **decimals** (optional): The number of decimal places to include. Defaults to `2`.
-- **units** (optional): Custom array of units. Defaults to `['B', 'KB', 'MB', 'GB', 'TB', 'PB']`.
 
 ### Parameters
 
-- `value: number | string`
-    The numeric value in bytes to be formatted. If the value is not a valid number, it returns "0 B".
-- `decimals: number` (optional)
-    The number of digits to appear after the decimal point. Defaults to `2`.
-- `units: string[]` (optional)
-    An array of strings representing the units to be used. Defaults to `['B', 'KB', 'MB', 'GB', 'TB', 'PB']`.
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `value` | `number \| string` | — | The bytes value to format |
+| `decimals` | `number` | `2` | Decimal places in output |
+| `units` | `string[] \| null` | `['B', 'KB', ...]` | Custom unit labels |
+| `useSI` | `boolean` | `false` | Use SI base (1000) instead of binary (1024) |
+
+### Binary vs SI Units
+
+By default, the pipe uses **binary** base (1024):
+- 1 KB = 1024 bytes
+- 1 MB = 1,048,576 bytes
+
+With `useSI: true`, use **SI** base (1000):
+- 1 KB = 1000 bytes
+- 1 MB = 1,000,000 bytes
+
+```html file="./snippets.html"#L22-L24
+```
 
 ### Examples
 
 #### Custom Decimals
 
-```html file="./snippets.html"#L6-L7
+```html file="./snippets.html"#L8-L10
 ```
 
 #### Custom Units
 
-```html file="./snippets.html"#L13-L13
+```html file="./snippets.html"#L18-L18
 ```
 
 #### Large Numbers
 
-```html file="./snippets.html"#L10-L10
+```html file="./snippets.html"#L14-L14
 ```
 
-### Behavior
+### Edge Cases
 
-- Automatically scales from Bytes up to Petabytes (PB).
-- Handles negative numbers correctly (e.g., `-1024` → `-1.00 KB`).
-- Returns `0 B` for `NaN`, `null`, `undefined`, or empty strings.
-- The pipe is marked as `pure` and `standalone`.
+- Handles negative numbers: `-1024` → `-1.00 KB`
+- Returns `0 B` for invalid values (`NaN`, `null`, `undefined`, empty string)
+- Caps at largest unit for very large numbers
 
 ---
 
 #### Live Demo
-
-Explore this example in a live demonstration:
 
 {{ NgDocActions.demo("BytesPipeDemoComponent") }}
