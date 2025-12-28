@@ -1,34 +1,96 @@
-
-The **Shortcut** directive allows you to define keyboard shortcuts and trigger actions when the specified key combination is pressed. It supports modifier keys like `Ctrl`, `Shift`, `Alt`, and `Meta` (Cmd).
+Binds keyboard shortcuts to trigger actions with support for modifiers and global/scoped listening.
 
 ## Features
 
-- **Custom Shortcuts:** Define any key combination (e.g., `ctrl.s`, `shift.enter`).
-- **Modifier Support:** Supports `ctrl`, `shift`, `alt`, and `meta` (cmd) modifiers.
-- **Global & Scoped:** Listen globally (window) or scoped to the element.
-- **Prevent Default:** Automatically prevents the default behavior of the key combination.
+- **Multiple Shortcuts** — Comma-separated patterns (e.g., `'ctrl.s, meta.s'`)
+- **Modifier Support** — `ctrl`, `shift`, `alt`, `meta` (cmd)
+- **Global/Scoped** — Listen on window or element-only
+- **Layout Independent** — Uses physical key codes for cross-keyboard support
+- **Performance Optimized** — Cached shortcut parsing with computed signals
 
-## How to Use
+---
 
-To use the **Shortcut** directive, import it and add the `shortcut` attribute to any element. Pass the shortcut string as the value and bind to the `(action)` output.
+## Installation
 
-```html
-<!-- Element Scoped (default) -->
-<input shortcut="ctrl.s" (action)="onSave()" />
-
-<!-- Global Shortcut -->
-<div shortcut="ctrl.s" [isGlobal]="true" (action)="onSave()"></div>
+```typescript
+import { ShortcutDirective } from '@ngx-oneforall/directives/shortcut';
 ```
 
-## Configuration
+---
+
+## API Reference
 
 | Input | Type | Default | Description |
 |-------|------|---------|-------------|
-| `shortcut` | `string` | **Required** | The keyboard shortcut(s) to listen for. <br><br> **Format:** <br> - Single: `modifier.key` (e.g., `ctrl.s`, `ctrl.shift.s`) <br> - Multiple: Comma-separated (e.g., `ctrl.s, meta.s`) <br><br> **Supported Modifiers:** <br> `shift`, `control` (ctrl), `alt`, `meta` (cmd), `altleft`, `backspace`, `tab`, `left`, `right`, `up`, `down`, `enter`, `space`, `escape` (esc). |
-| `isGlobal` | `boolean` | `false` | If `true`, listens for shortcuts globally on the window. If `false`, listens only when the element is focused. |
+| `shortcut` | `string` | **Required** | Shortcut pattern(s) |
+| `isGlobal` | `boolean` | `false` | Listen globally on window |
 
-## Example Usage
+| Output | Type | Description |
+|--------|------|-------------|
+| `action` | `void` | Emits when shortcut is triggered |
 
-See the directive in action with the following live demonstration:
+### Shortcut Format
+
+```
+modifier.modifier.key
+```
+
+**Modifiers:** `ctrl`, `shift`, `alt`, `meta`, `cmd`
+
+**Examples:**
+- `ctrl.s` — Ctrl+S
+- `meta.s` — Cmd+S (Mac)
+- `ctrl.shift.s` — Ctrl+Shift+S
+- `ctrl.s, meta.s` — Ctrl+S or Cmd+S
+
+---
+
+## Basic Usage
+
+```html
+<!-- Element scoped (requires focus) -->
+<input [shortcut]="'ctrl.s'" (action)="save()" />
+
+<!-- Global (works anywhere) -->
+<div [shortcut]="'ctrl.k'" [isGlobal]="true" (action)="openSearch()"></div>
+```
+
+---
+
+## Common Use Cases
+
+### Save Shortcut (Cross-Platform)
+
+```html
+<div [shortcut]="'ctrl.s, meta.s'" [isGlobal]="true" (action)="save()">
+  Press Ctrl+S or Cmd+S to save
+</div>
+```
+
+### Command Palette
+
+```typescript
+@Component({
+  template: `
+    <div [shortcut]="'ctrl.k, meta.k'" [isGlobal]="true" (action)="openPalette()">
+      @if (paletteOpen()) {
+        <command-palette />
+      }
+    </div>
+  `,
+  imports: [ShortcutDirective]
+})
+export class AppComponent {
+  paletteOpen = signal(false);
+  
+  openPalette() {
+    this.paletteOpen.set(true);
+  }
+}
+```
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demoPane("ShortcutDemoComponent") }}
