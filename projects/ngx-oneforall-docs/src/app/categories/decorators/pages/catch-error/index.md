@@ -5,7 +5,7 @@ The `CatchError` decorator is a versatile utility for handling errors in class m
 Apply the decorator to a method. You can provide a static fallback value or a **dynamic fallback function** that receives the error.
 
 ```typescript
-import { CatchError } from '@ngx-oneforall/decorators';
+import { CatchError } from '@ngx-oneforall/decorators/catch-error';
 import { of } from 'rxjs';
 
 class MyService {

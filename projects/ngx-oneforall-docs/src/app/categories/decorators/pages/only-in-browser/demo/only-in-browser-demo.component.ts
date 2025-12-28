@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { OnlyInBrowser } from '@ngx-oneforall/decorators';
+import { OnlyInBrowser } from '@ngx-oneforall/decorators/only-in-browser';
 
 @Component({
   selector: 'lib-only-in-browser-demo',

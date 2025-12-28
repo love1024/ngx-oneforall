@@ -1,6 +1,6 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { memoize } from '@ngx-oneforall/decorators';
+import { memoize } from '@ngx-oneforall/decorators/memoize';
 import { Observable, of, delay } from 'rxjs';
 
 interface Response {
@@ -15,11 +15,11 @@ interface Response {
     <div class="memoize-demo-container">
       <h2>Memoize Decorator Demo</h2>
       <p>
-        This demo demonstrates the <code>memoize</code> decorator. The method below
-        simulates a heavy computation or API call. Repeated calls with the same
-        arguments return the cached result instantly.
+        This demo demonstrates the <code>memoize</code> decorator. The method
+        below simulates a heavy computation or API call. Repeated calls with the
+        same arguments return the cached result instantly.
       </p>
-      
+
       <div class="controls">
         <button (click)="calculate(50)">Calculate Factorial(50)</button>
         <button (click)="calculate(100)">Calculate Factorial(100)</button>
@@ -32,7 +32,9 @@ interface Response {
         <div class="result-box">
           <h3>Result:</h3>
           <pre>{{ result() | json }}</pre>
-          <p class="timestamp">Computed at: {{ result()?.timestamp | date:'mediumTime' }}</p>
+          <p class="timestamp">
+            Computed at: {{ result()?.timestamp | date: 'mediumTime' }}
+          </p>
         </div>
       }
 
@@ -44,10 +46,11 @@ interface Response {
           }
         </ul>
       </div>
-      
+
       <div class="note">
-        <strong>Note:</strong> Click the same button twice. The first time you'll see "Computing..." log, 
-        the second time it returns instantly without logging "Computing...".
+        <strong>Note:</strong> Click the same button twice. The first time
+        you'll see "Computing..." log, the second time it returns instantly
+        without logging "Computing...".
       </div>
     </div>
   `,
@@ -85,12 +88,12 @@ export class MemoizeDecoratorComponent {
     const start = performance.now();
     const value = this.computeFactorial(n);
     const end = performance.now();
-    
+
     this.result.set({
       data: `Factorial(${n}) = ${value}`,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
-    
+
     this.addLog(`Result received in ${(end - start).toFixed(2)}ms`);
   }
 
@@ -109,7 +112,10 @@ export class MemoizeDecoratorComponent {
   }
 
   addLog(message: string) {
-    this.logs.update(logs => [...logs, `[${new Date().toLocaleTimeString()}] ${message}`]);
+    this.logs.update(logs => [
+      ...logs,
+      `[${new Date().toLocaleTimeString()}] ${message}`,
+    ]);
   }
 
   clear() {

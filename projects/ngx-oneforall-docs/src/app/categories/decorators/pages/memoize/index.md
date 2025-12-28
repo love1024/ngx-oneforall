@@ -21,7 +21,7 @@ This is particularly useful for:
 ### Usage Example
 
 ```typescript
-import { memoize } from '@ngx-oneforall/decorators';
+import { memoize } from '@ngx-oneforall/decorators/memoize';
 
 class MathService {
   @memoize()

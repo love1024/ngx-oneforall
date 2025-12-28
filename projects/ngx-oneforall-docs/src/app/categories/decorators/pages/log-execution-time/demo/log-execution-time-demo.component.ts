@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LogExecutionTime } from '@ngx-oneforall/decorators';
+import { LogExecutionTime } from '@ngx-oneforall/decorators/log-execution-time';
 
 @Component({
   selector: 'lib-log-execution-time-demo',
