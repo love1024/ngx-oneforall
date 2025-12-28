@@ -6,7 +6,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { StateSignal } from './state-signal.model';
-import { isRecord } from '@ngx-oneforall/utils';
+import { isRecord } from '@ngx-oneforall/utils/is-record';
 
 const STATE_SIGNAL = Symbol(isDevMode() ? 'STATE_SIGNAL' : '');
 

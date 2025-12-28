@@ -9,7 +9,7 @@ import {
 } from '@angular/common/http';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { JwtService } from '@ngx-oneforall/services/jwt';
-import { isRegexp } from '@ngx-oneforall/utils';
+import { isRegexp } from '@ngx-oneforall/utils/find-type';
 import {
   Observable,
   catchError,

@@ -7,7 +7,7 @@ Use `isPresent` to safely filter out nullish values from arrays or verify that a
 ### Example
 
 ```typescript
-import { isPresent } from '@ngx-oneforall/utils';
+import { isPresent } from '@ngx-oneforall/utils/is-present';
 
 const values = [1, null, 2, undefined, 3];
 const definedValues = values.filter(isPresent); // Type is number[]

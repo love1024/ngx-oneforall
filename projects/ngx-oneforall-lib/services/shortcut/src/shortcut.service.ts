@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import { Observable, fromEvent, NEVER } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
-import { getHostPlatform, normalizeKey } from '@ngx-oneforall/utils';
+import { getHostPlatform } from '@ngx-oneforall/utils/host-platform';
+import { normalizeKey } from '@ngx-oneforall/utils/normalize-key';
 import { isPlatformBrowser } from '@angular/common';
 
 export interface ShortcutOptions {

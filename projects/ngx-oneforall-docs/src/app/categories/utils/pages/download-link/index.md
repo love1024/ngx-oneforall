@@ -9,7 +9,7 @@ Use `downloadLink` when you have a file URL (or Blob URL) and want to initiate a
 ### Example
 
 ```typescript
-import { downloadLink } from '@ngx-oneforall/utils';
+import { downloadLink } from '@ngx-oneforall/utils/download-link';
 
 // Download a remote file
 downloadLink('https://example.com/report.pdf', 'report.pdf');

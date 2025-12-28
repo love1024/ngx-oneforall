@@ -2,7 +2,7 @@ import { Directive, effect, forwardRef, input } from '@angular/core';
 import { BaseValidator } from '../../base/base.validator';
 import { maxDate } from './max-date.validator';
 import { NG_VALIDATORS } from '@angular/forms';
-import { isPresent } from '@ngx-oneforall/utils';
+import { isPresent } from '@ngx-oneforall/utils/is-present';
 
 @Directive({
   selector:

@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { BaseUrlContextConfig } from './base-url-context';
 import { BASE_URL_CONTEXT } from './base-url-context';
-import { isFunction } from '@ngx-oneforall/utils';
+import { isFunction } from '@ngx-oneforall/utils/find-type';
 
 export interface BaseUrlOverrides {
   startWith: string;

@@ -9,7 +9,7 @@ The `getHostPlatform` utility allows you to detect the current host platform (OS
 Import `getHostPlatform` and `HostPlatform` from `ngx-oneforall`:
 
 ```typescript
-import {getHostPlatform} from '@ngx-oneforall/utils';
+import {getHostPlatform} from '@ngx-oneforall/utils/host-platform';
 import {HostPlatform} from '@ngx-oneforall/constants';
 
 const platform = getHostPlatform();

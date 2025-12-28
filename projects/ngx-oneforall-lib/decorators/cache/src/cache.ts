@@ -3,7 +3,7 @@ import {
   getStorageEngine,
 } from '@ngx-oneforall/services/cache';
 import { StorageTransformers } from '@ngx-oneforall/services/storage';
-import { safeSerialize } from '@ngx-oneforall/utils';
+import { safeSerialize } from '@ngx-oneforall/utils/safe-serialize';
 import { finalize, Observable, of, shareReplay, tap } from 'rxjs';
 
 interface CacheData<T> {

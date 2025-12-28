@@ -1,7 +1,7 @@
 import { Directive, effect, forwardRef, input, Signal } from '@angular/core';
 import { NG_VALIDATORS } from '@angular/forms';
 import { rangeLength } from './range-length.validator';
-import { isPresent } from '@ngx-oneforall/utils';
+import { isPresent } from '@ngx-oneforall/utils/is-present';
 import { BaseValidator } from '../../base/base.validator';
 
 @Directive({

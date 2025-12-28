@@ -1,4 +1,4 @@
-import { safeSerialize } from '@ngx-oneforall/utils';
+import { safeSerialize } from '@ngx-oneforall/utils/safe-serialize';
 
 export function memoize<Args extends unknown[] = unknown[], R = unknown>(
   resolver?: (...args: Args) => string

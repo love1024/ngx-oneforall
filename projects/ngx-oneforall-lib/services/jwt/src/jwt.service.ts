@@ -1,4 +1,4 @@
-import { base64UrlDecode } from '@ngx-oneforall/utils';
+import { base64UrlDecode } from '@ngx-oneforall/utils/base64';
 import { JwtBody, JwtOptions, tokenGetterFn } from './jwt-provider';
 
 export class JwtService {

@@ -5,7 +5,7 @@
 ## Usage
 
 ```ts
-import { safeSerialize } from '@ngx-oneforall/utils';
+import { safeSerialize } from '@ngx-oneforall/utils/safe-serialize';
 
 const args = [1, 'foo', Symbol('bar'), () => 42, { a: 1 }, BigInt(123), new Date(), /abc/g, new Map([[1,2]]), new Set([1,2]), new Error('fail')];
 const key = safeSerialize(args);

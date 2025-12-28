@@ -9,7 +9,7 @@ The `normalizeKey` utility standardizes keyboard key values across different bro
 Import `normalizeKey` from `ngx-oneforall`:
 
 ```typescript
-import {normalizeKey} from '@ngx-oneforall/utils';
+import {normalizeKey} from '@ngx-oneforall/utils/normalize-key';
 
 // Basic usage
 const key = normalizeKey('Esc'); // Returns 'escape'

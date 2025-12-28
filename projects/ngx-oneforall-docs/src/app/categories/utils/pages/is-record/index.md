@@ -7,7 +7,7 @@ Use `isRecord` when you need to distinguish plain objects from other object type
 ### Basic Example
 
 ```typescript
-import { isRecord } from '@ngx-oneforall/utils';
+import { isRecord } from '@ngx-oneforall/utils/is-record';
 
 const plainObject = { name: 'John', age: 30 };
 const date = new Date();

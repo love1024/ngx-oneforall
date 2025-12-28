@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { safeSerialize } from '@ngx-oneforall/utils';
+import { safeSerialize } from '@ngx-oneforall/utils/safe-serialize';
 
 @Component({
   selector: 'lib-safe-serialize-demo',

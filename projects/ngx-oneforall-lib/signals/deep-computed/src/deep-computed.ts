@@ -1,6 +1,6 @@
 import { computed, isDevMode, isSignal, untracked } from '@angular/core';
 import { DeepComputed } from './deep-computed.model';
-import { isRecord } from '@ngx-oneforall/utils';
+import { isRecord } from '@ngx-oneforall/utils/is-record';
 
 // Reference - https://github.com/ngrx/platform/blob/main/modules/signals/src/deep-signal.ts
 

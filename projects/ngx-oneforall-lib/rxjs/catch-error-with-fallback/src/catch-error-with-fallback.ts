@@ -1,4 +1,4 @@
-import { isFunction } from '@ngx-oneforall/utils';
+import { isFunction } from '@ngx-oneforall/utils/find-type';
 import { catchError, isObservable, Observable, of } from 'rxjs';
 
 export interface CatchErrorWithFallbackOptions {

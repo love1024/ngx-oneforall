@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { BREAKPOINT, BREAKPOINT_QUERY } from '@ngx-oneforall/constants';
+import {
+  BREAKPOINT,
+  BREAKPOINT_QUERY,
+} from '@ngx-oneforall/constants';
 import { breakpointMatcherMultiple } from '@ngx-oneforall/signals/breakpoint-matcher';
 
 @Component({

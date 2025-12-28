@@ -6,7 +6,8 @@ import {
   input,
   output,
 } from '@angular/core';
-import { getHostPlatform, normalizeKey } from '@ngx-oneforall/utils';
+import { getHostPlatform } from '@ngx-oneforall/utils/host-platform';
+import { normalizeKey } from '@ngx-oneforall/utils/normalize-key';
 
 @Directive({
   selector: '[shortcut]',
