@@ -17,11 +17,15 @@ import { distinctUntilChanged } from 'rxjs';
   host: {
     '(input)': 'onInputChanges()',
     '(paste)': 'onInputChanges()',
+    '(cut)': 'onInputChanges()',
   },
 })
 export class NumbersOnlyDirective implements OnInit {
+  /** Number of decimal places allowed (0 = integers only) */
   decimals = input(0, { transform: numberAttribute });
+  /** Allow negative numbers */
   negative = input<boolean>(false);
+  /** Decimal separator character */
   separator = input<string>('.');
 
   private oldValue = signal('');
