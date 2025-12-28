@@ -40,10 +40,9 @@ export class ChatComponent {
         <div [class]="socket.status()">
             Status: {{ '{{' }} socket.status().toUpperCase() {{ '}}' }}
         </div>
-        <button (click)="socket.close()" 
-                *ngIf="socket.status() === 'open'">
-            Disconnect
-        </button>
+        @if (socket.status() === 'open') {
+            <button (click)="socket.close()">Disconnect</button>
+        }
     `
 })
 export class StatusComponent {

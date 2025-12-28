@@ -31,9 +31,9 @@ export class NavigationComponent {
 ```typescript
 @Component({
     template: `
-        <div class="loading" *ngIf="router.isNavigationStart()">
-            Loading...
-        </div>
+        @if (router.isNavigationStart()) {
+            <div class="loading">Loading...</div>
+        }
     `
 })
 export class AppComponent {

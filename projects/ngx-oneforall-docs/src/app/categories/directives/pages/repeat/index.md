@@ -48,12 +48,12 @@ import { RepeatDirective } from '@ngx-oneforall/directives/repeat';
 ## Using Context Variables
 
 ```html
-<div *repeat="3; let i; let isFirst = first; let isLast = last; let isEven = even">
+<ng-container *repeat="3; let i; let isFirst = first; let isLast = last; let isEven = even">
   <span>Index: {{ i }}</span>
-  <span *ngIf="isFirst">← First</span>
-  <span *ngIf="isLast">← Last</span>
-  <span *ngIf="isEven">← Even</span>
-</div>
+  @if (isFirst) { <span>← First</span> }
+  @if (isLast) { <span>← Last</span> }
+  @if (isEven) { <span>← Even</span> }
+</ng-container>
 ```
 
 ---
