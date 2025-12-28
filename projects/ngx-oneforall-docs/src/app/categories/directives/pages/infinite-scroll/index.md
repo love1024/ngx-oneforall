@@ -1,35 +1,56 @@
-
-The **InfiniteScroll** directive allows you to implement infinite scrolling behavior in your Angular application. It detects when the user scrolls near the bottom of a container or the window and emits an event to load more content.
+Implements infinite scroll behavior using IntersectionObserver for efficient detection.
 
 ## Features
 
-- **Scroll Detection:** Detects when the user scrolls to the bottom of an element or the window.
-- **Customizable Threshold:** Configure the distance from the bottom (margin) to trigger the event.
-- **Window or Container:** Supports scrolling on the main window or a specific scrollable container.
-- **Performance Optimized:** Uses `IntersectionObserver` for efficient scroll detection without attaching scroll event listeners.
-- **Initial Check:** Optionally checks for intersection on initialization.
-- **Disabled State:** Can be dynamically disabled/enabled.
+- **IntersectionObserver** — No scroll event listeners, better performance
+- **Reactive** — Automatically reinitializes when inputs change
+- **Flexible Container** — Works with window, custom container, or auto-detects parent
+- **Configurable Threshold** — Control trigger distance via `bottomMargin`
+- **SSR Safe** — Only activates in the browser
 
-## How to Use
+---
 
-To use the **InfiniteScroll** directive, import it and add the `infiniteScroll` selector to your element. Bind to the `(scrolled)` output to handle the load more logic.
+## Installation
 
-### Window Scrolling
+```typescript
+import { InfiniteScrollDirective } from '@ngx-oneforall/directives/infinite-scroll';
+```
 
-By default, the directive listens to window scroll events.
+---
+
+## Basic Usage
 
 ```html
-<div 
-  infiniteScroll 
-  (scrolled)="onScroll()"
->
-  <!-- List items -->
+<!-- Window scrolling (default) -->
+<div infiniteScroll (scrolled)="loadMore()">
+  @for (item of items(); track item.id) {
+    <div>{{ item.name }}</div>
+  }
 </div>
 ```
 
-### Container Scrolling
+---
 
-To use a specific scrollable container, set `[useWindow]="false"` and provide the container selector via `[scrollContainer]`.
+## API Reference
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `bottomMargin` | `number` | `20` | Distance (%) from bottom to trigger |
+| `useWindow` | `boolean` | `true` | Use window vs container scroll |
+| `scrollContainer` | `string` | `null` | CSS selector for custom container |
+| `disabled` | `boolean` | `false` | Disable scroll detection |
+| `checkOnInit` | `boolean` | `true` | Emit on initial render if visible |
+| `initDelay` | `number` | `1000` | Delay (ms) to ignore initial intersections |
+
+| Output | Type | Description |
+|--------|------|-------------|
+| `scrolled` | `void` | Emits when scroll reaches threshold |
+
+---
+
+## Container Scrolling
+
+For a specific scrollable container:
 
 ```html
 <div 
@@ -37,24 +58,48 @@ To use a specific scrollable container, set `[useWindow]="false"` and provide th
   infiniteScroll 
   [useWindow]="false"
   [scrollContainer]="'.scroll-container'"
-  (scrolled)="onScroll()"
->
-  <!-- List items -->
+  (scrolled)="loadMore()">
+  <!-- Items -->
 </div>
 ```
 
-## Configuration
+---
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `bottomMargin` | `number` | `20` | The distance in percentage from the bottom to trigger the scroll event. |
-| `useWindow` | `boolean` | `true` | Whether to listen for scroll events on the window or a specific container. |
-| `scrollContainer` | `string \| null` | `null` | The CSS selector for the scrollable container. Required if `useWindow` is `false`. |
-| `disabled` | `boolean` | `false` | Whether the directive is disabled. |
-| `checkOnInit` | `boolean` | `true` | Whether to check for intersection immediately on initialization. |
+## Common Use Cases
 
-## Example Usage
+### Paginated List
 
-See the directive in action with the following live demonstration:
+```typescript
+@Component({
+  template: `
+    <div infiniteScroll (scrolled)="loadNextPage()" [disabled]="loading()">
+      @for (item of items(); track item.id) {
+        <app-item [data]="item" />
+      }
+      @if (loading()) {
+        <div class="spinner">Loading...</div>
+      }
+    </div>
+  `,
+  imports: [InfiniteScrollDirective]
+})
+export class ListComponent {
+  items = signal<Item[]>([]);
+  loading = signal(false);
+  page = 0;
+
+  loadNextPage() {
+    this.loading.set(true);
+    this.api.getItems(++this.page).subscribe(newItems => {
+      this.items.update(items => [...items, ...newItems]);
+      this.loading.set(false);
+    });
+  }
+}
+```
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demoPane("InfiniteScrollDemoComponent") }}

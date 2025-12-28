@@ -1,33 +1,64 @@
-import { AfterViewInit, Directive, ElementRef, inject, input, NgZone, OnDestroy, output, PLATFORM_ID, Renderer2, signal } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import {
+  afterNextRender,
+  Directive,
+  effect,
+  ElementRef,
+  EnvironmentInjector,
+  inject,
+  input,
+  NgZone,
+  OnDestroy,
+  output,
+  Renderer2,
+  runInInjectionContext,
+  signal,
+  untracked,
+} from '@angular/core';
 
 @Directive({
-  selector: '[infiniteScroll]'
+  selector: '[infiniteScroll]',
 })
-export class InfiniteScrollDirective implements AfterViewInit, OnDestroy {
+export class InfiniteScrollDirective implements OnDestroy {
+  /** Percentage margin from bottom to trigger scroll event */
   bottomMargin = input<number>(20);
+  /** Use window as scroll container instead of closest scrollable parent */
   useWindow = input<boolean>(true);
+  /** Disable the infinite scroll behavior */
   disabled = input<boolean>(false);
+  /** Emit scrolled event on initial intersection (e.g. page load) */
   checkOnInit = input<boolean>(true);
+  /** CSS selector for custom scroll container */
   scrollContainer = input<string | null>(null);
+  /** Delay (ms) to ignore initial intersections when checkOnInit is false */
+  initDelay = input<number>(1000);
 
   scrolled = output<void>();
 
-  private scrollableParent = signal<HTMLElement | Window | null>(null);
+  /** Root element for IntersectionObserver (null = viewport/window) */
+  private observerRoot = signal<HTMLElement | null>(null);
   private observer = signal<IntersectionObserver | null>(null);
   private targetElement = signal<HTMLElement | null>(null);
 
-  private readonly platformId = inject(PLATFORM_ID);
   private readonly renderer = inject(Renderer2);
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly ngZone = inject(NgZone);
+  private readonly environment = inject(EnvironmentInjector);
+  private targetElementAdded = false;
 
+  constructor() {
+    afterNextRender(() => {
+      runInInjectionContext(this.environment, () => {
+        effect(() => {
+          // Track these signals to re-run when they change
+          this.bottomMargin();
+          this.useWindow();
+          this.scrollContainer();
 
-
-  ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.initialize();
-    }
+          // Run setup/reinit without tracking internal signal reads/writes
+          untracked(() => this.setupInfiniteScroll());
+        });
+      });
+    });
   }
 
   ngOnDestroy(): void {
@@ -35,7 +66,7 @@ export class InfiniteScrollDirective implements AfterViewInit, OnDestroy {
     this.targetElement()?.remove();
   }
 
-  private initialize() {
+  private setupInfiniteScroll() {
     if (typeof IntersectionObserver === 'undefined') {
       throw new Error('IntersectionObserver is not supported in this browser');
     }
@@ -46,51 +77,68 @@ export class InfiniteScrollDirective implements AfterViewInit, OnDestroy {
 
     if (this.disabled()) return;
 
-    this.addTargetElement();
+    // Only add target element once
+    if (!this.targetElementAdded) {
+      this.addTargetElement();
+      this.targetElementAdded = true;
+    }
+
     this.setScrollParent();
+
+    // Disconnect existing observer before creating new one
+    this.observer()?.disconnect();
     this.setupObserver();
   }
 
   private setupObserver() {
+    const target = this.targetElement();
+    if (!target) return;
+
     this.ngZone.runOutsideAngular(() => {
       const rootMargin = `0px 0px ${this.bottomMargin()}% 0px`;
       const options: IntersectionObserverInit = {
-        root: this.scrollableParent() instanceof Window ? null : (this.scrollableParent() as HTMLElement),
+        root: this.observerRoot(),
         rootMargin,
         threshold: 0,
       };
 
-      this.observer.set(new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (this.disabled()) return;
+      const initDelay = this.initDelay();
+      this.observer.set(
+        new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (this.disabled()) return;
 
-          // If checkOnInit is false, we ignore any intersection that happens
-          // within the first 1000ms (e.g. due to scroll restoration after page refresh).
-          if (entry.time < 1000 && !this.checkOnInit()) {
-            return;
-          }
+            // If checkOnInit is false, ignore intersections within initDelay
+            // (e.g. due to scroll restoration after page refresh)
+            if (entry.time < initDelay && !this.checkOnInit()) {
+              return;
+            }
 
-          if (entry.isIntersecting) {
-            this.ngZone.run(() => this.emitScroll());
-          }
-        });
-      }, options));
+            if (entry.isIntersecting) {
+              this.ngZone.run(() => this.emitScroll());
+            }
+          });
+        }, options)
+      );
 
-      this.observer()?.observe(this.targetElement()!);
+      this.observer()?.observe(target);
     });
   }
 
   private setScrollParent() {
     if (this.useWindow()) {
-      this.scrollableParent.set(null);
+      this.observerRoot.set(null);
     } else if (this.scrollContainer()) {
       const el = document.querySelector(this.scrollContainer()!);
       if (!el) {
         throw new Error('Container element not found');
       }
-      this.scrollableParent.set(el as HTMLElement);
+      this.observerRoot.set(el as HTMLElement);
     } else {
-      this.scrollableParent.set(this.findScrollableParent(this.host.nativeElement) || this.host.nativeElement);
+      this.observerRoot.set(
+        this.findScrollableParent(this.host.nativeElement) ||
+          this.host.nativeElement
+      );
     }
   }
 
@@ -107,10 +155,17 @@ export class InfiniteScrollDirective implements AfterViewInit, OnDestroy {
 
   private findScrollableParent(el: HTMLElement | null): HTMLElement | null {
     let node: HTMLElement | null = el;
-    while (node && node !== document.documentElement && node !== document.body) {
+    while (
+      node &&
+      node !== document.documentElement &&
+      node !== document.body
+    ) {
       const style = window.getComputedStyle(node);
       const overflowY = style.overflowY;
-      const isScrollable = overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay';
+      const isScrollable =
+        overflowY === 'auto' ||
+        overflowY === 'scroll' ||
+        overflowY === 'overlay';
       if (isScrollable && node.scrollHeight > node.clientHeight) {
         return node;
       }

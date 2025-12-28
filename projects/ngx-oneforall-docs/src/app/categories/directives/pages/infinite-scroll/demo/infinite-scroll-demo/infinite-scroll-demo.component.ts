@@ -17,7 +17,7 @@ import { InfiniteScrollDirective } from '@ngx-oneforall/directives/infinite-scro
             <div class="item">{{ item }}</div>
           }
           @if (loading()) {
-            <div class="loading">Loading more items...</div>
+            <div class="loading">Loading...</div>
           }
         </div>
       </div>
