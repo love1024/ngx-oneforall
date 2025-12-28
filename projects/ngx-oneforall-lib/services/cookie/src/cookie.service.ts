@@ -5,16 +5,28 @@ export type SameSiteOption = 'Strict' | 'Lax' | 'None';
 
 const deleteDate = new Date('Thu, 01 Jan 1970 00:00:01 GMT');
 
+/**
+ * Options for setting cookies.
+ */
 export interface CookieOptions {
+  /** SameSite attribute */
   sameSite?: SameSiteOption;
+  /** Cookie domain */
   domain?: string;
+  /** Cookie path */
   path?: string;
+  /** Secure flag (required for SameSite=None) */
   secure?: boolean;
+  /** Partitioned flag for CHIPS */
   partitioned?: boolean;
-  // Date or the number of seconds after which cookie expires
+  /** Expiry date or seconds from now */
   expires?: number | Date;
 }
 
+/**
+ * Service for managing browser cookies.
+ * Supports get, set, delete operations with configurable options.
+ */
 @Injectable()
 export class CookieService {
   private platformId = inject(PLATFORM_ID);

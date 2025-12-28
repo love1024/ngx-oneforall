@@ -7,12 +7,32 @@ import {
 } from '@ngx-oneforall/constants';
 
 type BreakpointInput = Breakpoint | string;
+
+/**
+ * Result of matching multiple breakpoints.
+ */
 export interface BreakpointResult {
+  /** True if any breakpoint matches */
   some: boolean;
+  /** True if all breakpoints match */
   all: boolean;
+  /** Individual match status per breakpoint */
   breakpoints: Record<string, boolean>;
 }
 
+/**
+ * Creates a signal that tracks a media query breakpoint.
+ * Reactively updates when the viewport crosses the breakpoint.
+ *
+ * @param breakpoint - Predefined breakpoint name or custom media query
+ * @returns A read-only signal with the current match state
+ *
+ * @example
+ * ```typescript
+ * const isMobile = breakpointMatcher(BREAKPOINT.SM);
+ * const isWide = breakpointMatcher('(min-width: 1200px)');
+ * ```
+ */
 export function breakpointMatcher(
   breakpoint: BreakpointInput
 ): Signal<boolean> {
@@ -34,6 +54,19 @@ export function breakpointMatcher(
   return state.asReadonly();
 }
 
+/**
+ * Creates a signal that tracks multiple media query breakpoints.
+ * Provides aggregate `some`/`all` results plus individual matches.
+ *
+ * @param breakpoints - Array of breakpoint names or custom media queries
+ * @returns A read-only signal with match results
+ *
+ * @example
+ * ```typescript
+ * const result = breakpointMatcherMultiple([BREAKPOINT.SM, BREAKPOINT.MD]);
+ * console.log(result().some); // true if any match
+ * ```
+ */
 export function breakpointMatcherMultiple(
   breakpoints: BreakpointInput[]
 ): Signal<BreakpointResult> {

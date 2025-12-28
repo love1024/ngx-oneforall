@@ -15,12 +15,24 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, Subscription, throttleTime } from 'rxjs';
 
+/**
+ * Throttles click events to prevent rapid repeated clicks.
+ * Useful for preventing double-submissions and rate limiting actions.
+ *
+ * @example
+ * ```html
+ * <button (clickThrottle)="submit()">Submit</button>
+ * <button (clickThrottle)="submit()" [throttleTime]="500">Fast Submit</button>
+ * ```
+ */
 @Directive({
   selector: '[clickThrottle]',
 })
 export class ClickThrottleDirective {
+  /** Throttle duration in milliseconds */
   throttleTime = input(1000, { transform: numberAttribute });
 
+  /** Emits throttled click events */
   clickThrottle = output<Event>();
 
   private hostEl = inject(ElementRef);

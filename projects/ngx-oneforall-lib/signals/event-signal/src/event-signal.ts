@@ -8,6 +8,21 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 
+/**
+ * Creates a signal that tracks DOM events on a target element.
+ * Runs outside Angular zone for performance and auto-cleans up on destroy.
+ *
+ * @param target - The EventTarget to listen on (window, document, element)
+ * @param eventName - Name of the event to listen for
+ * @param options - Optional event listener options
+ * @returns A read-only signal containing the latest event or null
+ *
+ * @example
+ * ```typescript
+ * const clicks = eventSignal(document, 'click');
+ * effect(() => console.log(clicks()?.target));
+ * ```
+ */
 export function eventSignal<T = Event>(
   target: EventTarget,
   eventName: string,

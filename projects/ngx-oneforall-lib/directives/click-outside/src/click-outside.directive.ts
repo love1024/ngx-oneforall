@@ -11,11 +11,22 @@ import {
   output,
 } from '@angular/core';
 
+/**
+ * Emits when a click occurs outside the host element.
+ * Useful for closing dropdowns, modals, and menus.
+ *
+ * @example
+ * ```html
+ * <div (clickOutside)="close()">Dropdown content</div>
+ * ```
+ */
 @Directive({
   selector: '[clickOutside]',
 })
 export class ClickOutsideDirective implements OnDestroy {
+  /** Emits the click event when clicked outside */
   clickOutside = output<Event>();
+  /** Enable/disable the directive */
   clickOutsideEnabled = input(true, { transform: booleanAttribute });
 
   private readonly document = inject(DOCUMENT);

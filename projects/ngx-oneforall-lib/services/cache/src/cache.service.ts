@@ -11,6 +11,10 @@ type CacheConfig = Omit<CacheOptions, 'storagePrefix'>;
 
 const INTERNAL_VERSION = Symbol.for('[int-v1]');
 
+/**
+ * Service for caching data with TTL and versioning support.
+ * Supports multiple storage backends (local, session, memory).
+ */
 export class CacheService {
   private readonly prefixKey = '[cache]:';
 

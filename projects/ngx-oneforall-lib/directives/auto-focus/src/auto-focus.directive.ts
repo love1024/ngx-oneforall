@@ -9,6 +9,16 @@ import {
   runInInjectionContext,
 } from '@angular/core';
 
+/**
+ * Automatically focuses the host element when initialized.
+ * Uses a two-way bound model to track and control focus state.
+ *
+ * @example
+ * ```html
+ * <input autoFocus />
+ * <input autoFocus [(isFocused)]="shouldFocus" />
+ * ```
+ */
 @Directive({
   selector: '[autoFocus]',
   host: {
@@ -17,6 +27,7 @@ import {
   },
 })
 export class AutoFocusDirective {
+  /** Two-way bound focus state */
   isFocused = model<boolean>(true);
 
   private hostEl = inject<ElementRef<HTMLElement>>(ElementRef);

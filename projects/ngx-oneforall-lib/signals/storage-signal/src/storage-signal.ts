@@ -13,14 +13,37 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
 
+/**
+ * Options for storageSignal.
+ */
 export interface StorageSignalOptions<T> {
+  /** Storage backend (default: localStorage) */
   storage?: Storage;
+  /** Custom serializer function */
   serializer?: (v: T) => string;
+  /** Custom deserializer function */
   deserializer?: (data: string) => T;
+  /** Enable cross-tab synchronization */
   crossTabSync?: boolean;
+  /** Injector for use outside injection context */
   injector?: Injector;
 }
 
+/**
+ * Creates a writable signal backed by web storage (localStorage/sessionStorage).
+ * Automatically persists changes and optionally syncs across browser tabs.
+ *
+ * @param key - Storage key
+ * @param defaultValue - Default value if key doesn't exist
+ * @param options - Configuration options
+ * @returns A writable signal that persists to storage
+ *
+ * @example
+ * ```typescript
+ * const theme = storageSignal('theme', 'dark');
+ * theme.set('light'); // Persisted to localStorage
+ * ```
+ */
 export function storageSignal<T>(
   key: string,
   defaultValue: T,
