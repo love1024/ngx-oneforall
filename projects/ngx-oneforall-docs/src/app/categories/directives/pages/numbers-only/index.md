@@ -1,74 +1,85 @@
+Restricts user input to valid numeric values with configurable decimal places and negative number support.
 
+## Features
 
+- **Input Validation** — Blocks non-numeric characters on input, paste, and cut
+- **Decimal Control** — Configure allowed decimal places
+- **Negative Support** — Optionally allow negative numbers
+- **Custom Separator** — Use any decimal separator (`.`, `,`, etc.)
+- **Forms Compatible** — Works with both native inputs and Angular forms
 
-The `NumbersOnlyDirective` is a powerful Angular directive designed to restrict user input in form fields to valid numeric values. It provides a flexible and configurable way to enforce numeric-only input, supporting a variety of use cases such as integers, decimals, negative numbers, and custom decimal separators.
+---
 
-### Features
+## Installation
 
-- **Integer-only input:** Restrict input to whole numbers.
-- **Decimal support:** Allow numbers with a configurable number of decimal places.
-- **Negative numbers:** Optionally permit negative values.
-- **Custom decimal separator:** Support for different decimal separators (e.g., `.` or `,
+```typescript
+import { NumbersOnlyDirective } from '@ngx-oneforall/directives/numbers-only';
+```
 
-- **Works with or without Angular forms:** Compatible with both standalone inputs and those bound to `NgModel` or reactive forms.
+---
 
-`).
+## API Reference
 
-### Directive Inputs
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `decimals` | `number` | `0` | Decimal places allowed (0 = integers only) |
+| `negative` | `boolean` | `false` | Allow negative numbers |
+| `separator` | `string` | `'.'` | Decimal separator character |
 
-| Input      | Type      | Default | Description                                              |
-|------------|-----------|---------|----------------------------------------------------------|
-| `decimals` | `number`  | `0`     | Number of decimal places allowed. `0` means integers only.|
-| `negative` | `boolean` | `false` | Allow negative numbers if set to `true`.                 |
-| `separator`| `string`  | `.`     | Character used as the decimal separator.                 |
+---
 
-### Usage Examples
-
-#### 1. Integer Only
+## Basic Usage
 
 ```html
-<input type="text" numbersOnly />
-```
-*Allows only positive integers (e.g., `123`).*
+<!-- Integers only (default) -->
+<input numbersOnly />
 
-#### 2. Integer with Negative Values
+<!-- Allow 2 decimal places -->
+<input numbersOnly [decimals]="2" />
+
+<!-- Allow negative values -->
+<input numbersOnly [negative]="true" />
+
+<!-- Custom separator (comma) -->
+<input numbersOnly [decimals]="2" [separator]="','" />
+```
+
+---
+
+## Common Use Cases
+
+### Currency Input
 
 ```html
-<input type="text" numbersOnly [negative]="true" />
+<input 
+  numbersOnly 
+  [decimals]="2" 
+  placeholder="$0.00" />
 ```
-*Allows positive and negative integers (e.g., `-42`, `17`).*
 
-#### 3. Decimal Numbers
+### Quantity Field
 
 ```html
-<input type="text" numbersOnly [decimals]="2" />
+<input 
+  numbersOnly 
+  [negative]="true" 
+  placeholder="Enter quantity" />
 ```
-*Allows numbers with up to 2 decimal places (e.g., `12.34`).*
 
-#### 4. Decimal with Negative Values
+### Reactive Forms
 
-```html
-<input type="text" numbersOnly [decimals]="3" [negative]="true" />
+```typescript
+@Component({
+  template: `<input numbersOnly [decimals]="2" [formControl]="price" />`,
+  imports: [NumbersOnlyDirective, ReactiveFormsModule]
+})
+export class PriceFormComponent {
+  price = new FormControl('');
+}
 ```
-*Allows negative and positive numbers with up to 3 decimal places (e.g., `-5.123`).*
 
-#### 5. Custom Decimal Separator
+---
 
-```html
-<input type="text" numbersOnly [decimals]="2" [separator]="','" />
-```
-*Allows numbers with a comma as the decimal separator (e.g., `123,45`).*
-
-### Example Usage
-
-See the directive in action with the following live demonstration:
+## Live Demo
 
 {{ NgDocActions.demoPane("NumbersOnlyDemoComponent") }}
-
-### Best Practices
-
-- Use with Angular forms (`NgModel` or reactive forms) for seamless integration.
-- Combine with form validation for enhanced user experience.
-- Clearly indicate to users the expected input format, especially when using custom separators.
-
-
