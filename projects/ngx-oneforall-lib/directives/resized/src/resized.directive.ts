@@ -3,7 +3,9 @@ import {
   Directive,
   ElementRef,
   inject,
+  input,
   NgZone,
+  numberAttribute,
   OnDestroy,
   output,
 } from '@angular/core';
@@ -18,7 +20,7 @@ export interface ResizedEvent {
 
 /**
  * A directive that emits an event whenever the size of the host element changes.
- * This directive uses the `ResizeObserver` API to monitor size changes and emits
+ * Uses the `ResizeObserver` API to monitor size changes and emits
  * the current and previous dimensions of the element.
  *
  * @example
@@ -28,62 +30,68 @@ export interface ResizedEvent {
  * </div>
  * ```
  *
- * ```typescript
- * import { Component } from '@angular/core';
- * import { ResizedEvent } from './resized.directive';
- *
- * @Component({
- *   selector: 'app-root',
- *   template: `
- *     <div (resized)="onResized($event)">
- *       Resize me!
- *     </div>
- *   `,
- *   styleUrls: ['./app.component.css']
- * })
- * export class AppComponent {
- *   onResized(event: ResizedEvent): void {
- *     console.log('Current size:', event.current);
- *     console.log('Previous size:', event.previous);
- *   }
- * }
+ * @example
+ * ```html
+ * <!-- With debouncing -->
+ * <div (resized)="onResized($event)" [debounceTime]="100">
+ *   Resize me!
+ * </div>
  * ```
- *
- * @selector [resized]
- * @export
- * @class ResizedDirective
- * @implements OnDestroy
  */
 @Directive({ selector: '[resized]' })
 export class ResizedDirective implements OnDestroy {
+  /** Debounce time in milliseconds (0 = no debouncing) */
+  debounceTime = input(0, { transform: numberAttribute });
+
   resized = output<ResizedEvent>();
 
   private element = inject(ElementRef);
   private zone = inject(NgZone);
   private observer?: ResizeObserver;
   private previousRect: DOMRectReadOnly | null = null;
+  private debounceTimer?: ReturnType<typeof setTimeout>;
 
   constructor() {
     afterNextRender(() => {
-      this.observer = new ResizeObserver(entries =>
-        this.zone.run(() => this.handleResize(entries))
-      );
-      const nativeElement = this.element.nativeElement;
-      this.observer?.observe(nativeElement);
+      this.zone.runOutsideAngular(() => {
+        this.observer = new ResizeObserver(entries => {
+          this.handleResize(entries);
+        });
+        this.observer.observe(this.element.nativeElement);
+      });
     });
   }
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+    }
   }
 
   private handleResize(entries: ResizeObserverEntry[]): void {
     if (entries.length === 0) {
       return;
     }
-    const domSize = entries[0];
-    const currentRect = domSize.contentRect;
-    this.resized.emit({ current: currentRect, previous: this.previousRect });
+
+    const debounce = this.debounceTime();
+    if (debounce > 0) {
+      if (this.debounceTimer) {
+        clearTimeout(this.debounceTimer);
+      }
+      this.debounceTimer = setTimeout(() => {
+        this.emitResize(entries);
+      }, debounce);
+    } else {
+      this.emitResize(entries);
+    }
+  }
+
+  private emitResize(entries: ResizeObserverEntry[]): void {
+    const currentRect = entries[0].contentRect;
+    this.zone.run(() => {
+      this.resized.emit({ current: currentRect, previous: this.previousRect });
+    });
     this.previousRect = currentRect;
   }
 }

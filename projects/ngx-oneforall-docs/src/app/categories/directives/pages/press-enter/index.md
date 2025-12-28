@@ -1,39 +1,78 @@
-
-The **PressEnter** directive allows you to listen for the 'Enter' key press event on any element. This is particularly useful for input fields where you want to trigger an action when the user presses Enter, such as submitting a form or adding an item to a list.
+Emits an event when the Enter key is pressed on any element.
 
 ## Features
 
-- **Enter Key Detection:** Specifically listens for the `keydown.enter` event.
-- **Prevent Default:** Automatically prevents the default behavior of the Enter key (e.g., form submission).
-- **Easy Integration:** Simply add the `pressEnter` attribute to any element.
+- **Enter Key Detection** — Listens for `keydown.enter` event
+- **Prevent Default** — Optionally prevents form submission
+- **Simple API** — Just add the directive and listen
 
-## How to Use
+---
 
-To use the **PressEnter** directive, import it and add the `pressEnter` selector to your element. Bind to the `(pressEnter)` output to handle the event.
-
-```html
-<input 
-  type="text" 
-  (pressEnter)="onEnter()"
-/>
-```
-
-In your component:
+## Installation
 
 ```typescript
-onEnter(): void {
-  console.log('Enter key pressed!');
-}
+import { PressEnterDirective } from '@ngx-oneforall/directives/press-enter';
 ```
 
-## Configuration
+---
+
+## API Reference
 
 | Input | Type | Default | Description |
 |-------|------|---------|-------------|
-| `preventDefault` | `boolean` | `true` | Whether to prevent the default behavior of the Enter key. |
+| `preventDefault` | `boolean` | `true` | Prevent default Enter behavior |
 
-## Example Usage
+| Output | Type | Description |
+|--------|------|-------------|
+| `pressEnter` | `void` | Emits when Enter is pressed |
 
-See the directive in action with the following live demonstration:
+---
+
+## Basic Usage
+
+```html
+<input (pressEnter)="onSubmit()" placeholder="Press Enter" />
+```
+
+```typescript
+onSubmit() {
+  console.log('Enter pressed!');
+}
+```
+
+---
+
+## Common Use Cases
+
+### Search Input
+
+```html
+<input 
+  [(ngModel)]="searchQuery"
+  (pressEnter)="search()"
+  placeholder="Search..." />
+```
+
+### Chat Message
+
+```html
+<input 
+  [(ngModel)]="message"
+  (pressEnter)="sendMessage()"
+  placeholder="Type a message..." />
+```
+
+### Allow Default Behavior
+
+```html
+<!-- Don't prevent form submission -->
+<input 
+  (pressEnter)="onEnter()" 
+  [preventDefault]="false" />
+```
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demoPane("PressEnterDemoComponent") }}

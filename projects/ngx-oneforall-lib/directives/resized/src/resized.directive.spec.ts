@@ -104,4 +104,64 @@ describe('ResizedDirective', () => {
 
     expect(emitSpy).not.toHaveBeenCalled();
   });
+
+  it('should debounce resize events when debounceTime is set', () => {
+    jest.useFakeTimers();
+
+    const mockEntry1 = {
+      contentRect: { width: 100, height: 100 } as DOMRectReadOnly,
+    } as ResizeObserverEntry;
+
+    const mockEntry2 = {
+      contentRect: { width: 200, height: 200 } as DOMRectReadOnly,
+    } as ResizeObserverEntry;
+
+    // Set debounce time
+    (directive as any).debounceTime = () => 100;
+
+    fixture.detectChanges();
+
+    // Simulate rapid resize events
+    directive['handleResize']([mockEntry1]);
+    directive['handleResize']([mockEntry2]);
+
+    // Should not emit yet
+    expect(emitSpy).not.toHaveBeenCalled();
+
+    // Advance timer
+    jest.advanceTimersByTime(100);
+
+    // Should emit only the last value
+    expect(emitSpy).toHaveBeenCalledTimes(1);
+    expect(emitSpy).toHaveBeenCalledWith({
+      current: mockEntry2.contentRect,
+      previous: null,
+    });
+
+    jest.useRealTimers();
+  });
+
+  it('should clear debounce timer on destroy', () => {
+    jest.useFakeTimers();
+    const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+
+    const mockEntry = {
+      contentRect: { width: 100, height: 100 } as DOMRectReadOnly,
+    } as ResizeObserverEntry;
+
+    // Set debounce time
+    (directive as any).debounceTime = () => 100;
+
+    fixture.detectChanges();
+
+    // Trigger resize to start debounce timer
+    directive['handleResize']([mockEntry]);
+
+    // Destroy before timer completes
+    fixture.destroy();
+
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+
+    jest.useRealTimers();
+  });
 });

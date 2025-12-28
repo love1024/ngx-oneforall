@@ -1,40 +1,91 @@
-The `RepeatDirective` is a structural directive for Angular that allows you to dynamically repeat a template a specified number of times. This directive is useful when you need to render a block of HTML multiple times based on a numeric value, similar to the `ngFor` directive but with a focus on repeating a template a fixed number of times rather than iterating over a collection.
+A structural directive that repeats a template a specified number of times.
 
-### Selector
+## Features
+
+- **Reactive** — Re-renders when count changes
+- **Rich Context** — Exposes index, first, last, even, odd
+- **Safe** — Handles negative numbers gracefully
+
+---
+
+## Installation
 
 ```typescript
-[repeat]
+import { RepeatDirective } from '@ngx-oneforall/directives/repeat';
 ```
 
-You can use the directive by adding the `repeat` attribute to an element in your template.
+---
+
+## API Reference
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `repeat` | `number` | `1` | Number of times to repeat |
 
 ### Context Variables
 
-When using the `RepeatDirective`, the following context variables are available within each repeated template:
+| Variable | Type | Description |
+|----------|------|-------------|
+| `$implicit` | `number` | Current index (0-based) |
+| `index` | `number` | Same as `$implicit` |
+| `first` | `boolean` | True if first iteration |
+| `last` | `boolean` | True if last iteration |
+| `even` | `boolean` | True if index is even |
+| `odd` | `boolean` | True if index is odd |
 
-- **$implicit**: The current index (number) of the iteration.
-- **index**: Alias for `$implicit`, the current index.
-- **first**: Boolean, `true` if this is the first iteration.
-- **last**: Boolean, `true` if this is the last iteration.
+---
 
-### Example Usage
+## Basic Usage
 
 ```html
-<div *repeat="5; let i = $implicit; let isFirst = first; let isLast = last">
-    <p>
-        Index: {{ i }},
-        First: {{ isFirst }},
-        Last: {{ isLast }}
-    </p>
+<div *repeat="5; let i">
+  Item {{ i }}
 </div>
 ```
 
-This will render the `<div>` block five times, providing the current index, and flags for the first and last iterations.
+---
 
-### Live Demonstration
+## Using Context Variables
 
-See the directive in action with the following live demonstration:
+```html
+<div *repeat="3; let i; let isFirst = first; let isLast = last; let isEven = even">
+  <span>Index: {{ i }}</span>
+  <span *ngIf="isFirst">← First</span>
+  <span *ngIf="isLast">← Last</span>
+  <span *ngIf="isEven">← Even</span>
+</div>
+```
+
+---
+
+## Common Use Cases
+
+### Star Rating
+
+```html
+<span *repeat="5; let i">
+  ★
+</span>
+```
+
+### Skeleton Loaders
+
+```html
+<div *repeat="3" class="skeleton-row"></div>
+```
+
+### Pagination Dots
+
+```html
+<span *repeat="pageCount; let i" 
+      [class.active]="i === currentPage"
+      (click)="goToPage(i)">
+  ●
+</span>
+```
+
+---
+
+## Live Demo
 
 {{ NgDocActions.demoPane("RepeatDemoComponent") }}
-
-

@@ -1,101 +1,107 @@
-
-
-The `ResizedDirective` is a custom Angular directive designed to detect changes in the size of an HTML element. It provides a simple and efficient way to respond to resizing events, making it particularly useful for building responsive and dynamic user interfaces.
-
-## Overview
-
-The `ResizedDirective` listens for changes in the dimensions of the host element and emits an event containing the new size. This can be used to dynamically adjust layouts, trigger animations, or perform other actions based on the element's size.
+Detects element resize events using ResizeObserver and emits current/previous dimensions.
 
 ## Features
 
-- Detects changes in the width and height of an element.
-- Emits an event with the updated dimensions.
-- Lightweight and easy to integrate into existing Angular applications.
+- **ResizeObserver API** — Efficient native resize detection
+- **Previous Dimensions** — Tracks both current and previous size
+- **Debounce Support** — Optional debouncing for rapid resize events
+- **Zone Optimized** — Runs outside Angular zone for performance
+- **SSR Safe** — Only activates in the browser
 
-## Usage
+---
 
-To use the `ResizedDirective`, import it into your Angular module and apply it to the desired HTML element. You can then listen for the `resized` event to handle size changes.
-
-### Importing the Directive
-
-Ensure that the `ResizedDirective` is declared in your Angular module:
+## Installation
 
 ```typescript
-import { NgModule } from '@angular/core';
-import { ResizedDirective } from './resized.directive';
-
-@NgModule({
-  declarations: [ResizedDirective],
-  exports: [ResizedDirective]
-})
-export class SharedModule {}
+import { ResizedDirective, ResizedEvent } from '@ngx-oneforall/directives/resized';
 ```
 
-### Apply the Directive
+---
 
-In this example, the `ResizedDirective` is used to detect size changes and adjust the layout dynamically.
+## API Reference
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `debounceTime` | `number` | `0` | Debounce time in ms (0 = no debounce) |
+
+| Output | Type | Description |
+|--------|------|-------------|
+| `resized` | `ResizedEvent` | Emits on size change |
+
+### ResizedEvent
+
+```typescript
+interface ResizedEvent {
+  current: DOMRectReadOnly;   // Current dimensions
+  previous: DOMRectReadOnly | null;  // Previous dimensions
+}
+```
+
+---
+
+## Basic Usage
 
 ```html
-<div
-  appResized
-  (resized)="onResized($event)"
-  style="resize: both; overflow: auto; border: 1px solid #ccc; padding: 16px;"
->
-  Resize this box to see the dimensions update.
+<div (resized)="onResize($event)">
+  Resizable content
 </div>
-<p>Width: { { width }}px</p>
-<p>Height: { { height }}px</p>
 ```
 
 ```typescript
-import { Component, signal } from '@angular/core';
-import { ResizedEvent } from './resized-event.model';
+onResize(event: ResizedEvent) {
+  console.log('Width:', event.current.width);
+  console.log('Height:', event.current.height);
+}
+```
 
+---
+
+## With Debouncing
+
+```html
+<div (resized)="onResize($event)" [debounceTime]="100">
+  Resizable content
+</div>
+```
+
+---
+
+## Common Use Cases
+
+### Responsive Component
+
+```typescript
 @Component({
-  selector: 'app-resized-demo',
-  templateUrl: './resized-demo.component.html',
-  styleUrls: ['./resized-demo.component.css']
+  template: `
+    <div (resized)="onResize($event)">
+      @if (isCompact()) {
+        <span>Compact</span>
+      } @else {
+        <span>Full</span>
+      }
+    </div>
+  `,
+  imports: [ResizedDirective]
 })
-export class ResizedDemoComponent {
-  width = signal(0);
-  height = signal(0);
+export class ResponsiveComponent {
+  isCompact = signal(false);
 
-  onResized(event: ResizedEvent): void {
-    this.width.set(event.newWidth);
-    this.height.set(event.newHeight);
+  onResize(event: ResizedEvent) {
+    this.isCompact.set(event.current.width < 400);
   }
 }
 ```
 
+### Size Display
 
-## API
-
-### Selector
-
-- `[resized]`: Apply this directive to any HTML element to enable resize detection.
-
-### Outputs
-
-- `resized`: Emits a `ResizedEvent` object whenever the size of the element changes.
-
-### ResizedEvent Model
-
-The `ResizedEvent` object contains the following properties:
-
-- `current`: A `DOMRectReadOnly` object representing the current dimensions and position of the element.
-- `previous`: A `DOMRectReadOnly` object representing the previous dimensions and position of the element, or `null` if no previous size is available.
-
-```typescript
-export interface ResizedEvent {
-  current: DOMRectReadOnly;
-  previous: DOMRectReadOnly | null;
-}
+```html
+<div (resized)="size.set($event.current)" style="resize: both; overflow: auto;">
+  Width: {{"{{ size().width }}"}} x Height: {{"{{ size().height }}"}}
+</div>
 ```
 
-## Conclusion
+---
 
-The `ResizedDirective` is a powerful tool for handling dynamic resizing in Angular applications. By leveraging this directive, you can create responsive and adaptive user interfaces with minimal effort.
-
-Explore this directive in action with a live demonstration:
+## Live Demo
 
 {{ NgDocActions.demoPane("ResizedDemoComponent") }}

@@ -1,18 +1,21 @@
-import { Directive, HostListener, input, output } from '@angular/core';
+import { Directive, input, output } from '@angular/core';
 
 @Directive({
-    selector: '[pressEnter]',
-    standalone: true
+  selector: '[pressEnter]',
+  host: {
+    '(keydown.enter)': 'onEnter($event)',
+  },
 })
 export class PressEnterDirective {
-    preventDefault = input<boolean>(true);
-    pressEnter = output<void>();
+  /** Prevents default form submission behavior */
+  preventDefault = input<boolean>(true);
+  /** Emits when Enter key is pressed */
+  pressEnter = output<void>();
 
-    @HostListener('keydown.enter', ['$event'])
-    onEnter(event: KeyboardEvent): void {
-        if (this.preventDefault()) {
-            event.preventDefault();
-        }
-        this.pressEnter.emit();
+  onEnter(event: Event): void {
+    if (this.preventDefault()) {
+      event.preventDefault();
     }
+    this.pressEnter.emit();
+  }
 }
