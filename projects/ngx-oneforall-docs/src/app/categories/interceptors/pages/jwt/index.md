@@ -29,7 +29,7 @@ Register these in your Angular application's providers:
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { jwtInterceptor } from '@ngx-oneforall/interceptors';
+import { jwtInterceptor } from '@ngx-oneforall/interceptors/jwt';
 import { JwtService } from '@ngx-oneforall/services';
 
 @NgModule({
@@ -50,7 +50,7 @@ or
 
 ```typescript
 import { provideHttpClient, withInterceptors} from '@angular/common/http';
-import { jwtInterceptor } from '@ngx-oneforall/interceptors';
+import { jwtInterceptor } from '@ngx-oneforall/interceptors/jwt';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -106,7 +106,7 @@ Sometimes you may want to bypass the `jwtInterceptor` for specific requests, suc
 A helper function `withSkipJwtInterceptor()` is provided for convenience.
 
 ```typescript
-import { withSkipJwtInterceptor } from '@ngx-oneforall/interceptors';
+import { withSkipJwtInterceptor } from '@ngx-oneforall/interceptors/jwt';
 
 this.http.post('/api/auth/refresh', {}, { context: withSkipJwtInterceptor() }).subscribe();
 ```

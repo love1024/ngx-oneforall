@@ -14,7 +14,7 @@ Register the interceptor in your application's `app.config.ts` (for standalone a
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { withTimeoutInterceptor } from '@ngx-oneforall/interceptors';
+import { withTimeoutInterceptor } from '@ngx-oneforall/interceptors/timeout';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,7 +33,7 @@ You can use the `withTimeout` helper to set a specific timeout for an individual
 
 ```typescript
 import { HttpClient } from '@angular/common/http';
-import { withTimeout } from '@ngx-oneforall/interceptors';
+import { withTimeout } from '@ngx-oneforall/interceptors/timeout';
 
 @Component({ ... })
 export class MyComponent {
@@ -70,7 +70,7 @@ When a request times out, the interceptor throws an error object with the follow
 You can catch this error in your `subscribe` block or via other RxJS operators like `catchError`.
 
 ```typescript
-import { TIMEOUT_ERROR } from '@ngx-oneforall/interceptors';
+import { TIMEOUT_ERROR } from '@ngx-oneforall/interceptors/timeout';
 ...
 catchError((error) => {
   if (error.name === TIMEOUT_ERROR) {

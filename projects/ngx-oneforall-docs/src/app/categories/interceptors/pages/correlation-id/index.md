@@ -17,7 +17,7 @@ Register the interceptor in your Angular application's providers:
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors';
+import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors/correlation-id';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,7 +32,7 @@ or for NgModule-based applications:
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors';
+import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors/correlation-id';
 
 @NgModule({
   providers: [
@@ -85,7 +85,7 @@ You can control the correlation ID on a per-request basis using the `useCorrelat
 ### Disable for Specific Requests
 
 ```typescript
-import { useCorrelationId } from '@ngx-oneforall/interceptors';
+import { useCorrelationId } from '@ngx-oneforall/interceptors/correlation-id';
 
 this.http.get('/api/public', {
   context: useCorrelationId({ enabled: false })

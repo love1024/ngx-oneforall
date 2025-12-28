@@ -15,7 +15,7 @@ Register the interceptor in your Angular application's providers with a base URL
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors';
+import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors/base-url';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,7 +32,7 @@ or for NgModule-based applications:
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors';
+import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors/base-url';
 
 @NgModule({
   providers: [
@@ -110,7 +110,7 @@ You can control or override the base URL on a per-request basis using the `useBa
 ### Disable for Specific Requests
 
 ```typescript
-import { useBaseUrl } from '@ngx-oneforall/interceptors';
+import { useBaseUrl } from '@ngx-oneforall/interceptors/base-url';
 
 // Skip the interceptor for this request
 this.http.get('/users', {

@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { EncryptionAdapter, useEncryption } from '@ngx-oneforall/interceptors';
+import {
+  EncryptionAdapter,
+  useEncryption,
+} from '@ngx-oneforall/interceptors/encryption';
 
 interface Message {
   id: number;

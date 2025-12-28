@@ -18,7 +18,7 @@ Register the interceptor in your Angular application's providers:
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { withPerformanceInterceptor } from '@ngx-oneforall/interceptors';
+import { withPerformanceInterceptor } from '@ngx-oneforall/interceptors/performance';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,7 +33,7 @@ or for NgModule-based applications:
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { withPerformanceInterceptor } from '@ngx-oneforall/interceptors';
+import { withPerformanceInterceptor } from '@ngx-oneforall/interceptors/performance';
 
 @NgModule({
   providers: [
@@ -149,7 +149,7 @@ Control performance reporting on a per-request basis using the `usePerformance` 
 ### Disable for Specific Requests
 
 ```typescript
-import { usePerformance } from '@ngx-oneforall/interceptors';
+import { usePerformance } from '@ngx-oneforall/interceptors/performance';
 
 // Skip performance reporting for this request
 this.http.get('/api/health', {

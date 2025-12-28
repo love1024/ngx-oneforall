@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { usePerformance, PerformanceEntry } from '@ngx-oneforall/interceptors';
+import {
+  usePerformance,
+  PerformanceEntry,
+} from '@ngx-oneforall/interceptors/performance';
 
 interface Post {
   id: number;

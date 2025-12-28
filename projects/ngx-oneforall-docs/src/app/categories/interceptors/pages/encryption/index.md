@@ -17,7 +17,7 @@ The `withEncryptionInterceptor` automates the encryption/decryption process, ens
 First, implement an encryption adapter that defines how data should be encrypted and decrypted:
 
 ```typescript
-import { EncryptionAdapter } from '@ngx-oneforall/interceptors';
+import { EncryptionAdapter } from '@ngx-oneforall/interceptors/encryption';
 
 class AesEncryptionAdapter implements EncryptionAdapter {
   constructor(private secretKey: string) {}
@@ -40,7 +40,7 @@ Then register the interceptor with your adapter:
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { withEncryptionInterceptor } from '@ngx-oneforall/interceptors';
+import { withEncryptionInterceptor } from '@ngx-oneforall/interceptors/encryption';
 
 const encryptionAdapter = new AesEncryptionAdapter(environment.encryptionKey);
 
@@ -59,7 +59,7 @@ or for NgModule-based applications:
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { withEncryptionInterceptor } from '@ngx-oneforall/interceptors';
+import { withEncryptionInterceptor } from '@ngx-oneforall/interceptors/encryption';
 
 @NgModule({
   providers: [
@@ -114,7 +114,7 @@ Control encryption behavior on a per-request basis using the `useEncryption` con
 ### Disable Encryption for Specific Requests
 
 ```typescript
-import { useEncryption } from '@ngx-oneforall/interceptors';
+import { useEncryption } from '@ngx-oneforall/interceptors/encryption';
 
 // Skip encryption entirely for this request
 this.http.post('/api/public', data, {

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { withTimeout } from '@ngx-oneforall/interceptors';
+import { withTimeout } from '@ngx-oneforall/interceptors/timeout';
 import { NgClass } from '@angular/common';
 
 @Component({

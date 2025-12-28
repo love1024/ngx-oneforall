@@ -12,7 +12,7 @@ Register the interceptor and `CacheService` in your Angular application's provid
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { withCacheInterceptor } from '@ngx-oneforall/interceptors';
+import { withCacheInterceptor } from '@ngx-oneforall/interceptors/cache';
 import { provideCacheService } from '@ngx-oneforall/services';
 
 @NgModule({
