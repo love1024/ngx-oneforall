@@ -22,19 +22,30 @@ interface CachedObject {
   data: Record<string, CacheData<unknown>[]>;
 }
 
+/**
+ * Configuration options for the Cache decorator.
+ */
 export interface CacheDecoratorOptions {
+  /** Storage type: 'memory', 'local', or 'session'. Default: 'memory' */
   storage?: CacheStorageType;
+  /** Key used to store cache in storage. Default: 'CACHE_DECORATOR' */
   storageKey?: string;
+  /** Time-to-live in milliseconds. null = no expiration. Default: null */
   ttl?: number | null;
+  /** Custom cache key for this method. Default: ClassName-methodName */
   itemCacheKey?: string;
+  /** Maximum cached items per method. null = unlimited. Default: null */
   maxItems?: number | null;
+  /** Cache version. Changing this clears all cached data. */
   version?: string;
+  /** Custom function to compare cached params with new params. */
   cacheKeyMatcher?: (oldParams: unknown, newParams: unknown) => boolean;
+  /** Custom function to select which params to use as cache key. */
   cacheKeySelector?: (params: unknown[]) => unknown;
 }
 
 const DEFAULT_STORAGE_KEY = 'CACHE_DECORATOR';
-const DEFAULT_VERSION = Symbol.for('Interval-v1');
+const DEFAULT_VERSION = '__interval-v1';
 
 const DEFAULT_CACHE_KEY_MATCHER = (
   existingParams: unknown,
@@ -43,6 +54,39 @@ const DEFAULT_CACHE_KEY_MATCHER = (
 
 export const DEFAULT_CACHE_KEY_SELECTOR = (parameters: unknown[]) => parameters;
 
+/**
+ * Decorator that caches Observable method results with configurable storage, TTL, and versioning.
+ *
+ * @description
+ * Caches the result of Observable-returning methods. Supports multiple storage backends,
+ * time-to-live expiration, version-based cache invalidation, and deduplication of in-flight requests.
+ *
+ * **Features:**
+ * - Multi-storage support (memory, localStorage, sessionStorage)
+ * - TTL-based expiration
+ * - Version control (cache cleared on version change)
+ * - Pending request deduplication via shareReplay
+ * - LRU-style eviction with maxItems
+ * - Failed requests are NOT cached
+ *
+ * @example
+ * ```typescript
+ * class UserService {
+ *   @Cache({ ttl: 60000, storage: 'local' })
+ *   getUser(id: number): Observable<User> {
+ *     return this.http.get<User>(`/api/users/${id}`);
+ *   }
+ *
+ *   @Cache({ maxItems: 10, version: '1.0.0' })
+ *   searchUsers(query: string): Observable<User[]> {
+ *     return this.http.get<User[]>(`/api/users?q=${query}`);
+ *   }
+ * }
+ * ```
+ *
+ * @param cacheConfig - Configuration options for caching behavior
+ * @returns Method decorator
+ */
 export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
   return function (
     target: object,
@@ -132,7 +176,8 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
             );
             if (foundPendingRequest) {
               pendingRequests.splice(
-                pendingRequests.indexOf(foundPendingRequest)
+                pendingRequests.indexOf(foundPendingRequest),
+                1
               );
             }
           }),
