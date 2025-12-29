@@ -1,65 +1,63 @@
-The `LogExecutionTime` decorator is a powerful Angular utility designed to measure and log the execution time of methods. It provides valuable insights into the performance of both synchronous and asynchronous operations, helping developers identify bottlenecks and optimize their applications.
+The `LogExecutionTime` decorator logs method execution time. Works with sync, Promise, and Observable methods.
 
-## Purpose and Benefits
+### Parameters
 
-Performance monitoring is crucial for modern web applications. By automatically logging how long methods take to execute, `LogExecutionTime` enables:
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `label` | `string` | Method name | Custom label for log message |
 
-- **Transparent Performance Tracking**: Easily monitor method execution times without manual instrumentation.
-- **Support for Async Operations**: Handles both synchronous and asynchronous methods seamlessly.
-- **Customizable Labels**: Optionally specify a label for each log entry to improve traceability.
-- **Non-Intrusive Integration**: No need to modify method logic—just apply the decorator.
+### Output Format
 
+```
+[label] executed in X.XX ms
+```
 
-## Usage
+### Features
 
-To use the `LogExecutionTime` decorator, import it and apply it to any method whose execution time you want to monitor. You can optionally provide a label for the log output.
+- **Sync methods**: Logs after return
+- **Promises**: Logs after resolution/rejection
+- **Observables**: Logs after completion via `finalize()`
+- **Global disable**: Turn off logging for production
 
-### Example: Logging Execution Time of Methods
+### Basic Usage
 
 ```typescript
-import { Component } from '@angular/core';
-import { LogExecutionTime } from 'ngx-oneforall-lib';
+@LogExecutionTime()
+getData(): Observable<Data> {
+  return this.http.get<Data>('/api/data');
+}
+// Console: [getData] executed in 123.45 ms
+```
 
-@Component({
-  selector: 'app-performance-demo',
-  ...
-})
-export class PerformanceDemoComponent {
-  @LogExecutionTime('syncTask')
-  syncTask() {
-    // Synchronous code
-    for (let i = 0; i < 1e6; i++) {}
-  }
+### Custom Label
 
-  @LogExecutionTime('asyncTask')
-  async asyncTask() {
-    // Asynchronous code
-    await new Promise(resolve => setTimeout(resolve, 500));
-  }
+```typescript
+@LogExecutionTime('FetchUsers')
+async getUsers(): Promise<User[]> {
+  return await this.api.fetchUsers();
+}
+// Console: [FetchUsers] executed in 456.78 ms
+```
+
+### Disable in Production
+
+```typescript
+import { disableLogExecutionTime } from '@ngx-oneforall/decorators/log-execution-time';
+
+// main.ts
+if (environment.production) {
+  disableLogExecutionTime();
 }
 ```
 
-#### Explanation
+### Helper Functions
 
-- The `@LogExecutionTime('syncTask')` decorator logs the execution time of the `syncTask` method with the label "syncTask".
-- The `@LogExecutionTime('asyncTask')` decorator does the same for the asynchronous `asyncTask` method.
-- If no label is provided, the method name is used as the default label.
+| Function | Description |
+|----------|-------------|
+| `disableLogExecutionTime()` | Disables logging globally |
+| `enableLogExecutionTime()` | Re-enables logging |
+| `isLogExecutionTimeEnabled()` | Returns current enabled state |
 
-## Use Cases
-
-Apply `LogExecutionTime` to:
-
-- Performance-critical business logic
-- Data processing functions
-- API call handlers
-- Any method where execution time matters
-
-## Live Demonstration
-
-See the `LogExecutionTime` decorator in action:
+### Live Demonstration
 
 {{ NgDocActions.demo("LogExecutionTimeDemoComponent") }}
-
-## Conclusion
-
-The `LogExecutionTime` decorator is an essential tool for Angular developers seeking to monitor and optimize application performance. By providing automatic, customizable logging for both synchronous and asynchronous methods, it streamlines performance analysis and helps maintain high-quality, responsive applications.

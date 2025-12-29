@@ -81,4 +81,110 @@ describe('debounce', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
     expect(mockFn).toHaveBeenCalledWith('test1');
   }));
+
+  describe('options object', () => {
+    it('should accept options object with delay', fakeAsync(() => {
+      class TestWithOptions {
+        @debounce({ delay: 500 })
+        method() {
+          mockFn();
+        }
+      }
+      const instance = new TestWithOptions();
+
+      instance.method();
+      tick(300);
+      expect(mockFn).not.toHaveBeenCalled();
+
+      tick(200);
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    }));
+
+    it('should default to 300ms delay when options.delay is not provided', fakeAsync(() => {
+      class TestWithoutDelay {
+        @debounce({ leading: false })
+        method() {
+          mockFn();
+        }
+      }
+      const instance = new TestWithoutDelay();
+
+      instance.method();
+      tick(200);
+      expect(mockFn).not.toHaveBeenCalled();
+
+      tick(100);
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    }));
+  });
+
+  describe('leading edge', () => {
+    class LeadingTestClass {
+      @debounce({ delay: 300, leading: true })
+      leadingMethod(...args: unknown[]) {
+        mockFn(...args);
+      }
+    }
+
+    it('should execute immediately on first call when leading is true', fakeAsync(() => {
+      const instance = new LeadingTestClass();
+
+      instance.leadingMethod('first');
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      expect(mockFn).toHaveBeenCalledWith('first');
+
+      tick(300);
+    }));
+
+    it('should not execute again during debounce period when leading is true', fakeAsync(() => {
+      const instance = new LeadingTestClass();
+
+      instance.leadingMethod('first');
+      expect(mockFn).toHaveBeenCalledTimes(1);
+
+      instance.leadingMethod('second');
+      instance.leadingMethod('third');
+      expect(mockFn).toHaveBeenCalledTimes(1); // Still only first call
+
+      tick(300);
+      expect(mockFn).toHaveBeenCalledTimes(1); // No trailing call
+    }));
+
+    it('should allow new leading call after delay resets', fakeAsync(() => {
+      const instance = new LeadingTestClass();
+
+      instance.leadingMethod('first');
+      expect(mockFn).toHaveBeenCalledTimes(1);
+
+      tick(300); // Wait for delay to reset
+
+      instance.leadingMethod('second');
+      expect(mockFn).toHaveBeenCalledTimes(2);
+      expect(mockFn).toHaveBeenLastCalledWith('second');
+
+      tick(300);
+    }));
+  });
+
+  describe('return value caching', () => {
+    it('should return cached result', fakeAsync(() => {
+      class ReturnTestClass {
+        @debounce(300)
+        getValue(): string {
+          mockFn();
+          return 'result';
+        }
+      }
+      const instance = new ReturnTestClass();
+
+      const result1 = instance.getValue();
+      expect(result1).toBeUndefined(); // No cached value yet
+
+      tick(300);
+      const result2 = instance.getValue();
+      expect(result2).toBe('result'); // Returns cached value
+
+      tick(300);
+    }));
+  });
 });
