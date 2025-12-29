@@ -1,17 +1,23 @@
-The `withBaseUrlInterceptor` is an Angular HTTP interceptor that automatically prepends a configured base URL to all relative HTTP requests. This simplifies API calls throughout your application by eliminating the need to repeatedly specify the full API endpoint in every request.
+The `withBaseUrlInterceptor` is an Angular HTTP interceptor that automatically prepends a base URL to all relative HTTP requests. It eliminates repetitive URL construction across your application.
 
-## Why Use a Base URL Interceptor?
+## Features
 
-When building Angular applications that communicate with backend APIs, you typically need to make many HTTP requests to the same domain. Hardcoding the full URL for every request is repetitive and makes it difficult to switch between environments (development, staging, production). The `withBaseUrlInterceptor` solves this by:
+- **Single configuration point** — Define your API base URL once
+- **Relative paths** — Use `/users` instead of `https://api.example.com/users`
+- **Dynamic URLs** — Support for functions that resolve URLs at runtime
+- **Path-specific overrides** — Route different paths to different base URLs
+- **Per-request control** — Disable or override via `HttpContext`
+- **Smart slash handling** — Automatically normalizes trailing/leading slashes
 
-- **Centralizing configuration**: Define your API base URL once in the interceptor configuration
-- **Simplifying requests**: Use relative paths like `/users` instead of `https://api.example.com/users`
-- **Environment flexibility**: Easily switch base URLs between environments
-- **Cleaner code**: Keep your service methods focused on business logic, not URL construction
+## Installation
 
-## How to Use
+```typescript
+import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors/base-url';
+```
 
-Register the interceptor in your Angular application's providers with a base URL:
+## Quick Start
+
+### Standalone Applications
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -28,7 +34,7 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-or for NgModule-based applications:
+### NgModule Applications
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -46,82 +52,91 @@ import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors/base-url';
 export class AppModule {}
 ```
 
-Now you can make requests with relative URLs:
+### Making Requests
 
 ```typescript
-// Instead of: this.http.get('https://api.example.com/users')
-this.http.get('/users').subscribe(users => {
-  // The interceptor automatically prepends the base URL
-});
+// Before (without interceptor)
+this.http.get('https://api.example.com/users');
+
+// After (with interceptor)
+this.http.get('/users'); // → https://api.example.com/users
 ```
 
 ## Configuration
 
-The interceptor requires a configuration object with a `baseUrl` property:
+### BaseUrlConfig
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| `baseUrl` | `string \| (() => string)` | **Yes** | The base URL to prepend to relative requests. Can be a string or a function. |
-| `overrides` | `BaseUrlOverrides[]` | No | List of overrides for specific paths. |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `baseUrl` | `string \| (() => string)` | **Yes** | Default base URL for all relative requests |
+| `overrides` | `BaseUrlOverrides[]` | No | Path-specific base URL overrides |
 
-### BaseUrlOverrides Interface
+### BaseUrlOverrides
 
 | Property | Type | Description |
-| -------- | ---- | ----------- |
-| `startWith` | `string` | Prefix to match against the request URL (e.g. `'auth'`). |
-| `url` | `string \| (() => string)` | The URL to use instead of `baseUrl` if the match succeeds. |
+|----------|------|-------------|
+| `startWith` | `string` | Path prefix to match (e.g., `'auth'`, `'api/v2'`) |
+| `url` | `string \| (() => string)` | Base URL to use when prefix matches |
 
 > **Warning**
-> The `baseUrl` is required. The interceptor will throw an error if it's not provided.
+> The `baseUrl` option is required. The interceptor throws an error if not provided.
 
 ## Behavior
 
-The interceptor follows these rules:
+### Processing Order
 
-1. **Relative URLs Only**: Only prepends the base URL to relative request paths (e.g., `/users`, `api/data`)
-2. **Absolute URLs Unchanged**: If a request URL is already absolute (starts with `http://` or `https://`), it's left unchanged
-3. **Smart Slash Handling**: Automatically handles trailing/leading slashes between the base URL and path
-4. **Context Override**: Per-request configuration via `HttpContext` takes precedence
+The interceptor processes requests in the following order:
+
+1. **Check context** — If disabled via `HttpContext`, pass through unchanged
+2. **Check absolute URL** — If the request URL starts with `http://` or `https://`, pass through unchanged
+3. **Resolve base URL** — Use context override, matching path override, or default `baseUrl`
+4. **Join URLs** — Combine base URL and request path with proper slash handling
 
 ### Smart Slash Handling
 
-The interceptor intelligently joins the base URL and request path, regardless of trailing or leading slashes:
+The interceptor automatically normalizes slashes between the base URL and path:
 
 ```typescript
-// All of these produce: https://api.example.com/users
+// All produce: https://api.example.com/users
 
-// Base URL with trailing slash, path with leading slash
 withBaseUrlInterceptor({ baseUrl: 'https://api.example.com/' })
-this.http.get('/users')
+this.http.get('/users')   // trailing + leading slash
 
-// Base URL without trailing slash, path without leading slash
 withBaseUrlInterceptor({ baseUrl: 'https://api.example.com' })
-this.http.get('users')
+this.http.get('users')    // no slashes
 
-// Base URL with trailing slash, path without leading slash
 withBaseUrlInterceptor({ baseUrl: 'https://api.example.com/' })
-this.http.get('users')
+this.http.get('users')    // trailing slash only
+```
+
+### Absolute URLs Pass Through
+
+Requests with absolute URLs are never modified:
+
+```typescript
+this.http.get('/users');                          // → https://api.example.com/users
+this.http.get('https://other-api.com/data');      // → https://other-api.com/data (unchanged)
 ```
 
 ## Context API
 
-You can control or override the base URL on a per-request basis using the `useBaseUrl` context function:
-
-### Disable for Specific Requests
+Control the interceptor on a per-request basis using `useBaseUrl`:
 
 ```typescript
 import { useBaseUrl } from '@ngx-oneforall/interceptors/base-url';
+```
 
-// Skip the interceptor for this request
-this.http.get('/users', {
+### Disable for a Request
+
+```typescript
+this.http.get('https://external-api.com/data', {
   context: useBaseUrl({ enabled: false })
 });
 ```
 
-### Override Base URL for Specific Requests
+### Override Base URL
 
 ```typescript
-// Use a different base URL for this specific request
 this.http.get('/admin/settings', {
   context: useBaseUrl({ baseUrl: 'https://admin-api.example.com' })
 });
@@ -131,22 +146,22 @@ this.http.get('/admin/settings', {
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `enabled` | `boolean` | Set to `false` to skip base URL prepending for this request |
-| `baseUrl` | `string \| (() => string)` | Override the configured base URL for this specific request. Can be a string or a function. |
-| `context` | `HttpContext` | Use an existing HttpContext object |
+| `enabled` | `boolean` | Set `false` to skip base URL prepending |
+| `baseUrl` | `string \| (() => string)` | Override the configured base URL |
+| `context` | `HttpContext` | Extend an existing `HttpContext` |
 
-## Use Cases
+## Examples
 
-### Environment-Specific Configuration
+### Environment-Based Configuration
 
 ```typescript
-// environment.ts
+// environments/environment.ts
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000'
 };
 
-// environment.prod.ts
+// environments/environment.prod.ts
 export const environment = {
   production: true,
   apiUrl: 'https://api.production.com'
@@ -166,8 +181,9 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-### Environment-Specific Configuration (Functional)
-Using a function allows `baseUrl` to be resolved dynamically in the injection context, enabling the use of `inject()`.
+### Dynamic URL with Dependency Injection
+
+Use a function to resolve the base URL dynamically in the injection context:
 
 ```typescript
 import { inject, InjectionToken } from '@angular/core';
@@ -180,7 +196,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([
         withBaseUrlInterceptor({
-          // Use inject() to get the URL from a token
           baseUrl: () => inject(API_URL)
         })
       ])
@@ -189,25 +204,33 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-### URL Overrides
-You can configure overrides to point specific URL prefixes to different base URLs.
+### Path-Specific Overrides
+
+Route specific path prefixes to different base URLs:
 
 ```typescript
 withBaseUrlInterceptor({
   baseUrl: 'https://api.example.com',
   overrides: [
-    // Redirects /auth/... to https://auth.example.com/auth/...
     { startWith: 'auth', url: 'https://auth.example.com' },
-    // Resolving functional url
+    { startWith: 'api/v2', url: 'https://api-v2.example.com' },
     { startWith: 'assets', url: () => inject(ASSETS_URL) }
   ]
 })
 ```
 
+**Matching behavior:**
+- `/auth/login` → `https://auth.example.com/auth/login`
+- `/api/v2/users` → `https://api-v2.example.com/api/v2/users`
+- `/users` → `https://api.example.com/users`
+
+> **Note**
+> Overrides are matched in array order. The first matching prefix wins.
+
 ### Mixed API Endpoints
 
 ```typescript
-// Most requests go to the main API
+// Default: all requests use https://api.example.com
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(
@@ -218,24 +241,17 @@ export const appConfig: ApplicationConfig = {
   ],
 };
 
-// But some requests need a different base
+// Override for specific requests
+@Injectable()
 class AnalyticsService {
+  constructor(private http: HttpClient) {}
+
   trackEvent(event: string) {
     return this.http.post('/events', { event }, {
       context: useBaseUrl({ baseUrl: 'https://analytics.example.com' })
     });
   }
 }
-```
-
-### External API Calls
-
-```typescript
-// Regular API calls use the base URL
-this.http.get('/users').subscribe(); // → https://api.example.com/users
-
-// External APIs are left unchanged
-this.http.get('https://external-api.com/data').subscribe(); // → https://external-api.com/data
 ```
 
 ## Demo
