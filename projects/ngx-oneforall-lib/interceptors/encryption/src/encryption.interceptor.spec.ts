@@ -153,6 +153,69 @@ describe('EncryptionInterceptor', () => {
     );
   });
 
+  describe('Error Handling', () => {
+    it('should throw on encryption error by default', () => {
+      configureTestBed();
+      mockAdapter.encrypt.mockImplementation(() => {
+        throw new Error('Encryption failed');
+      });
+
+      let errorThrown: unknown = null;
+      http.post('/api/test', { data: 123 }).subscribe({
+        error: err => (errorThrown = err),
+      });
+
+      expect((errorThrown as Error)?.message).toBe('Encryption failed');
+    });
+
+    it('should not throw on encryption error when throwOnEncryptionError is false', () => {
+      configureTestBed({ throwOnEncryptionError: false });
+      mockAdapter.encrypt.mockImplementation(() => {
+        throw new Error('Encryption failed');
+      });
+
+      const body = { data: 123 };
+      http.post('/api/test', body).subscribe();
+
+      const req = httpTesting.expectOne('/api/test');
+      expect(req.request.body).toEqual(body); // Original unencrypted body
+      req.flush({});
+    });
+
+    it('should throw on decryption error by default', () => {
+      configureTestBed();
+      mockAdapter.decrypt.mockImplementation(() => {
+        throw new Error('Decryption failed');
+      });
+
+      let errorThrown = false;
+      http.get('/api/test').subscribe({
+        error: () => (errorThrown = true),
+      });
+
+      const req = httpTesting.expectOne('/api/test');
+      req.flush('encrypted:{}');
+
+      expect(errorThrown).toBe(true);
+    });
+
+    it('should not throw on decryption error when throwOnDecryptionError is false', () => {
+      configureTestBed({ throwOnDecryptionError: false });
+      mockAdapter.decrypt.mockImplementation(() => {
+        throw new Error('Decryption failed');
+      });
+
+      let responseData: any;
+      const encryptedBody = 'encrypted:{}';
+      http.get('/api/test').subscribe(res => (responseData = res));
+
+      const req = httpTesting.expectOne('/api/test');
+      req.flush(encryptedBody);
+
+      expect(responseData).toBe(encryptedBody); // Original encrypted body
+    });
+  });
+
   describe('useEncryption', () => {
     it('should create context with default values', () => {
       const context = useEncryption();
