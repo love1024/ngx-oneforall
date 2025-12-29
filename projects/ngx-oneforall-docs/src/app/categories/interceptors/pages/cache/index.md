@@ -1,101 +1,107 @@
-The `cacheInterceptor` is an Angular HTTP interceptor that transparently caches HTTP responses for GET requests, improving performance and reducing unnecessary network calls. It is highly configurable and integrates seamlessly with Angular's HTTP client.
+The `withCacheInterceptor` caches HTTP responses to improve performance.
 
-## Why Use a Cache Interceptor?
+## Features
 
-Caching HTTP responses can significantly improve the speed and efficiency of your application by avoiding repeated requests for the same data. The `cacheInterceptor` automates this process, allowing you to control which requests are cached, for how long, and in which storage engine (memory, localStorage, or sessionStorage).
+- **Two strategies** — Auto (all GETs) or manual (per-request)
+- **Multiple storage** — Memory, localStorage, or sessionStorage
+- **TTL support** — Configurable time-to-live
+- **Version invalidation** — Bust cache on version change
+- **SSR-safe** — Skips caching on server
 
-## How to use
-Register the interceptor and `CacheService` in your Angular application's providers:
-
-> **Alert**
-> [CacheService](/services/cache) (`@ngx-oneforall/services`) is a required dependency for the CacheInterceptor. Make sure to provide it in your application.
+## Installation
 
 ```typescript
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { withCacheInterceptor } from '@ngx-oneforall/interceptors/cache';
-import { provideCacheService } from '@ngx-oneforall/services';
-
-@NgModule({
-  providers: [
-     provideCacheService(),,
-    { provide: HTTP_INTERCEPTORS, useValue: withCacheInterceptor(), multi: true }
-  ]
-})
-export class AppModule {}
 ```
 
-or provide it in app configuration:
+## Quick Start
 
 ```typescript
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideCacheService(),
-    provideHttpClient(
-      withInterceptors([withCacheInterceptor()])
-    ),
-  ],
-};
+provideHttpClient(
+  withInterceptors([
+    withCacheInterceptor({ strategy: 'auto' })
+  ])
+);
 ```
+
+## Configuration
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `strategy` | `'auto' \| 'manual'` | `'manual'` | Auto caches all GETs, manual requires context |
+| `storage` | `'memory' \| 'local' \| 'session'` | `'memory'` | Default storage backend |
+| `ttl` | `number` | `3600000` | Default TTL in milliseconds (1 hour) |
+| `storagePrefix` | `string` | — | Key prefix for storage |
+| `version` | `string` | — | Cache version for invalidation |
+| `cacheBust` | `(req) => boolean \| void` | — | Function for cache invalidation. Return `true` to clear cache. |
+
 ## Strategies
-The `cacheInterceptor` supports two main caching strategies:
 
-### 1. Manual (Default)
+### Auto Strategy
 
-By default, the interceptor does **not** cache any requests unless explicitly instructed. To cache a specific request, provide the `useCache` context:
+Caches all GET requests with JSON response type automatically:
 
 ```typescript
-this.http.get<Todo[]>('https://jsonplaceholder.typicode.com/todos', {
-  context: useCache(),
+withCacheInterceptor({ strategy: 'auto' })
+```
+
+### Manual Strategy (Default)
+
+Only caches requests with explicit context:
+
+```typescript
+import { useCache } from '@ngx-oneforall/interceptors/cache';
+
+this.http.get('/api/data', {
+  context: useCache()
 });
 ```
 
-This approach gives you fine-grained control over which requests are cached.
+## Cache Invalidation (Cache Bust)
 
-### 2. Auto
-
-With the **auto** strategy enabled, the interceptor automatically caches all GET requests that expect a JSON response. No additional context is required—caching happens transparently for all eligible requests.
-
-You can enable the auto strategy via configuration when registering the interceptor:
+You can provide a `cacheBust` function to implement custom cache invalidation logic. This function runs in the injection context, so you can use `inject()`. Return `true` to automatically clear the entire cache.
 
 ```typescript
-withCacheInterceptor('auto')
+withCacheInterceptor({
+  cacheBust: (req) => {
+    // Automatically clear cache on logout
+    if (req.url.includes('/logout')) {
+      return true;
+    }
+  }
+})
 ```
 
-Choose the strategy that best fits your application's needs for flexibility or convenience.
-
-## Options
-You can customize caching behavior for individual requests by passing options to the `useCache` context. These options override the global settings of the cache service for that specific request:
-
-> **Alert**
-> By default, the global settings of cache service are used.
-
-
-| Option        | Type                                                  | Description                                                                                                  |
-|--------------|-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| enabled      | `boolean`                                             | Enables or disables caching for this request. Set to `false` to bypass cache even if globally enabled.       |
-| key          | `string` or `(req: HttpRequest<unknown>) => string`   | Custom cache key for this request. Useful for differentiating cache entries or dynamic key generation.        |
-| context      | `HttpContext`                                         | Allows passing a custom `HttpContext` for advanced scenarios.                                                |
-| storage      | `'memory' \| 'localStorage' \| 'sessionStorage'`      | Selects the storage engine for this request's cache. Overrides the global storage setting.                   |
-| ttl          | `number`                                              | Time-to-live for the cache entry in milliseconds. Overrides the global TTL for this request.                 |
-| storagePrefix| `string`                                              | Custom prefix for cache keys in storage. Useful for namespacing or versioning cache entries.                 |
-| version      | `string`                                              | Version identifier for the cache entry. Changing the version will invalidate previous cache entries.         |
-
-**Example:**
+## Per-Request Options
 
 ```typescript
-this.http.get<Todo[]>('https://api.example.com/todos', {
+this.http.get('/api/data', {
   context: useCache({
     enabled: true,
-    key: (req) => `todos-${req.params.get('userId')}`,
-    ttl: 3600
-  }),
+    key: 'custom-key',
+    ttl: 60000,
+    storage: 'session'
+  })
 });
 ```
 
-This flexibility lets you fine-tune caching on a per-request basis.
+| Option | Type | Description |
+|--------|------|-------------|
+| `enabled` | `boolean` | Enable/disable caching for this request |
+| `key` | `string \| (req) => string` | Custom cache key |
+| `ttl` | `number` | TTL override for this request |
+| `storage` | `'memory' \| 'local' \| 'session'` | Storage override |
+
+## Dynamic Cache Keys
+
+```typescript
+this.http.get('/api/users', {
+  context: useCache({
+    key: req => `users-${req.params.get('page')}`
+  })
+});
+```
 
 ## Demo
-
-Explore a live demonstration of cache interceptor:
 
 {{ NgDocActions.demo("CacheInterceptorServiceComponent") }}

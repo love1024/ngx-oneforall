@@ -10,34 +10,26 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { withCacheInterceptor } from './cache.interceptor';
-import { CacheService } from '@ngx-oneforall/services/cache';
 import { useCache } from './cache-context';
-import { PLATFORM_ID } from '@angular/core';
+import { PLATFORM_ID, inject } from '@angular/core';
 
 describe('cacheInterceptor', () => {
   let httpTesting: HttpTestingController;
   let http: HttpClient;
 
-  const mockCacheService = {
-    has: jest.fn(),
-    get: jest.fn(),
-    set: jest.fn(),
-  };
-
   beforeEach(() => {
+    TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      imports: [],
       providers: [
-        { provide: CacheService, useValue: mockCacheService },
-        provideHttpClient(withInterceptors([withCacheInterceptor()])),
+        provideHttpClient(
+          withInterceptors([withCacheInterceptor({ strategy: 'manual' })])
+        ),
         provideHttpClientTesting(),
       ],
     });
 
     http = TestBed.inject(HttpClient);
     httpTesting = TestBed.inject(HttpTestingController);
-
-    jest.clearAllMocks();
   });
 
   afterEach(() => {
@@ -45,86 +37,70 @@ describe('cacheInterceptor', () => {
   });
 
   it('should return cached response if enabled and cache has key', () => {
-    const cachedResponse = { body: 'cached', status: 200 };
-    mockCacheService.has.mockReturnValue(true);
-    mockCacheService.get.mockReturnValue(cachedResponse);
+    // First request - should hit network
+    http.get('/api/data', { context: useCache() }).subscribe();
+    const req1 = httpTesting.expectOne('/api/data');
+    req1.flush({ body: 'cached' });
 
-    http
-      .get('/api/data', {
-        context: useCache(),
-      })
-      .subscribe(resp => {
-        expect(resp).toEqual(cachedResponse);
-        expect(mockCacheService.has).toHaveBeenCalledWith('/api/data');
-        expect(mockCacheService.get).toHaveBeenCalledWith('/api/data');
-      });
+    // Second request - should return cached
+    http.get('/api/data', { context: useCache() }).subscribe(resp => {
+      expect(resp).toEqual(
+        expect.objectContaining({ body: { body: 'cached' } })
+      );
+    });
+
+    // No second network request expected
   });
 
   it('should call next and cache response if enabled and cache does not have key', () => {
-    mockCacheService.has.mockReturnValue(false);
-
     http
-      .get('/api/data', {
+      .get('/api/fresh-data', {
         context: useCache({ ttl: 1000, storage: 'memory' }),
       })
       .subscribe();
 
-    const req = httpTesting.expectOne('/api/data');
+    const req = httpTesting.expectOne('/api/fresh-data');
     req.flush({ body: 'fresh' });
-
-    expect(mockCacheService.set).toHaveBeenCalledWith(
-      '/api/data',
-      expect.any(Object),
-      {
-        ttl: 1000,
-        storage: 'memory',
-      }
-    );
   });
 
   it('should use custom key from context', () => {
-    mockCacheService.has.mockReturnValue(false);
-
+    // First request with custom key
     http
-      .get('/api/data', {
-        context: useCache({ key: 'custom-key' }),
-      })
+      .get('/api/data', { context: useCache({ key: 'custom-key' }) })
       .subscribe();
+    const req1 = httpTesting.expectOne('/api/data');
+    req1.flush({ body: 'cached' });
 
-    const req = httpTesting.expectOne('/api/data');
-    req.flush({ body: 'fresh' });
+    // Second request with same custom key - should be cached
+    http
+      .get('/api/other', { context: useCache({ key: 'custom-key' }) })
+      .subscribe(resp => {
+        expect(resp).toEqual(
+          expect.objectContaining({ body: { body: 'cached' } })
+        );
+      });
 
-    expect(mockCacheService.set).toHaveBeenCalledWith(
-      'custom-key',
-      expect.any(Object),
-      {
-        ttl: undefined,
-        storage: undefined,
-      }
-    );
+    // No network request for /api/other due to cache hit
   });
 
   it('should use key function from context', () => {
-    mockCacheService.has.mockReturnValue(false);
+    const keyFn = (r: HttpRequest<unknown>) => `func-${r.method}`;
 
+    // First request
+    http.get('/api/data', { context: useCache({ key: keyFn }) }).subscribe();
+    const req1 = httpTesting.expectOne('/api/data');
+    req1.flush({ body: 'cached' });
+
+    // Second request with same key function result - should be cached
     http
-      .get('/api/data', {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        context: useCache({ key: (r: HttpRequest<unknown>) => 'func-key' }),
-      })
-      .subscribe();
+      .get('/api/other', { context: useCache({ key: keyFn }) })
+      .subscribe(resp => {
+        expect(resp).toEqual(
+          expect.objectContaining({ body: { body: 'cached' } })
+        );
+      });
 
-    const req = httpTesting.expectOne('/api/data');
-    req.flush({ body: 'fresh' });
-
-    expect(mockCacheService.set).toHaveBeenCalledWith(
-      'func-key',
-      expect.any(Object),
-      {
-        ttl: undefined,
-        storage: undefined,
-      }
-    );
+    // No network request for /api/other due to cache hit
   });
 
   it('should call next if context.enabled is not true', () => {
@@ -137,9 +113,12 @@ describe('cacheInterceptor', () => {
     const req = httpTesting.expectOne('/api/data');
     req.flush({ body: 'not-cached' });
 
-    expect(mockCacheService.has).not.toHaveBeenCalled();
-    expect(mockCacheService.get).not.toHaveBeenCalled();
-    expect(mockCacheService.set).not.toHaveBeenCalled();
+    // Second request should still hit network
+    http
+      .get('/api/data', { context: useCache({ enabled: false }) })
+      .subscribe();
+    const req2 = httpTesting.expectOne('/api/data');
+    req2.flush({ body: 'not-cached' });
   });
 });
 
@@ -147,50 +126,48 @@ describe('cacheInterceptor - auto strategy', () => {
   let httpTesting: HttpTestingController;
   let http: HttpClient;
 
-  const mockCacheService = {
-    has: jest.fn(),
-    get: jest.fn(),
-    set: jest.fn(),
-  };
-
   beforeEach(() => {
+    TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      imports: [],
       providers: [
-        { provide: CacheService, useValue: mockCacheService },
-        provideHttpClient(withInterceptors([withCacheInterceptor('auto')])),
+        provideHttpClient(
+          withInterceptors([withCacheInterceptor({ strategy: 'auto' })])
+        ),
         provideHttpClientTesting(),
       ],
     });
 
     http = TestBed.inject(HttpClient);
     httpTesting = TestBed.inject(HttpTestingController);
-
-    jest.clearAllMocks();
   });
 
   afterEach(() => {
     httpTesting.verify();
   });
 
-  it('should only cache if the request is GET and response type is json', () => {
-    http
-      .get('/api/data', {
-        context: useCache(),
-      })
-      .subscribe();
+  it('should cache GET requests with JSON response', () => {
+    // First request
+    http.get('/api/auto-cache-data').subscribe();
+    const req1 = httpTesting.expectOne('/api/auto-cache-data');
+    req1.flush({ body: 'cached' });
 
-    const req = httpTesting.expectOne('/api/data');
-    req.flush({ body: 'fresh' });
+    // Second request - should be cached (no network)
+    http.get('/api/auto-cache-data').subscribe(resp => {
+      expect(resp).toEqual(
+        expect.objectContaining({ body: { body: 'cached' } })
+      );
+    });
+  });
 
-    expect(mockCacheService.set).toHaveBeenCalledWith(
-      '/api/data',
-      expect.any(Object),
-      {
-        ttl: undefined,
-        storage: undefined,
-      }
-    );
+  it('should not cache POST requests', () => {
+    http.post('/api/data', {}).subscribe();
+    const req1 = httpTesting.expectOne('/api/data');
+    req1.flush({ body: 'response' });
+
+    // Second POST - should still hit network
+    http.post('/api/data', {}).subscribe();
+    const req2 = httpTesting.expectOne('/api/data');
+    req2.flush({ body: 'response' });
   });
 });
 
@@ -198,17 +175,10 @@ describe('cacheInterceptor - Platform server', () => {
   let httpTesting: HttpTestingController;
   let http: HttpClient;
 
-  const mockCacheService = {
-    has: jest.fn(),
-    get: jest.fn(),
-    set: jest.fn(),
-  };
-
   beforeEach(() => {
+    TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      imports: [],
       providers: [
-        { provide: CacheService, useValue: mockCacheService },
         { provide: PLATFORM_ID, useValue: 'server' },
         provideHttpClient(withInterceptors([withCacheInterceptor()])),
         provideHttpClientTesting(),
@@ -217,8 +187,6 @@ describe('cacheInterceptor - Platform server', () => {
 
     http = TestBed.inject(HttpClient);
     httpTesting = TestBed.inject(HttpTestingController);
-
-    jest.clearAllMocks();
   });
 
   afterEach(() => {
@@ -226,17 +194,132 @@ describe('cacheInterceptor - Platform server', () => {
   });
 
   it('should not cache for platform server', () => {
-    http
-      .get('/api/data', {
-        context: useCache({ enabled: true }),
-      })
-      .subscribe();
+    http.get('/api/data', { context: useCache({ enabled: true }) }).subscribe();
+    const req1 = httpTesting.expectOne('/api/data');
+    req1.flush({ body: 'not-cached' });
 
+    // Second request should still hit network (no caching on server)
+    http.get('/api/data', { context: useCache({ enabled: true }) }).subscribe();
+    const req2 = httpTesting.expectOne('/api/data');
+    req2.flush({ body: 'not-cached' });
+  });
+});
+
+describe('cacheInterceptor - config options', () => {
+  it('should use default config when called without arguments', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(withInterceptors([withCacheInterceptor()])),
+        provideHttpClientTesting(),
+      ],
+    });
+
+    const http = TestBed.inject(HttpClient);
+    const httpTesting = TestBed.inject(HttpTestingController);
+
+    // Default strategy is manual, so no cache without context
+    http.get('/api/data').subscribe();
     const req = httpTesting.expectOne('/api/data');
-    req.flush({ body: 'not-cached' });
+    req.flush({ body: 'response' });
 
-    expect(mockCacheService.has).not.toHaveBeenCalled();
-    expect(mockCacheService.get).not.toHaveBeenCalled();
-    expect(mockCacheService.set).not.toHaveBeenCalled();
+    httpTesting.verify();
+  });
+
+  it('should use custom storage option', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(
+          withInterceptors([
+            withCacheInterceptor({ strategy: 'manual', storage: 'session' }),
+          ])
+        ),
+        provideHttpClientTesting(),
+      ],
+    });
+
+    const http = TestBed.inject(HttpClient);
+    const httpTesting = TestBed.inject(HttpTestingController);
+
+    http.get('/api/data', { context: useCache() }).subscribe();
+    const req = httpTesting.expectOne('/api/data');
+    req.flush({ body: 'cached' });
+
+    httpTesting.verify();
+  });
+
+  it('should execute cacheBust function and clear cache if true returned', () => {
+    const cacheBustSpy = jest.fn().mockReturnValue(true);
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(
+          withInterceptors([
+            withCacheInterceptor({
+              strategy: 'manual',
+              cacheBust: cacheBustSpy,
+            }),
+          ])
+        ),
+        provideHttpClientTesting(),
+      ],
+    });
+
+    const http = TestBed.inject(HttpClient);
+    const httpTesting = TestBed.inject(HttpTestingController);
+
+    // Initial request to populate cache
+    http.get('/api/data', { context: useCache() }).subscribe();
+    const req1 = httpTesting.expectOne('/api/data');
+    req1.flush({ body: 'cached' });
+
+    // Second request with cacheBust returning true
+    http.get('/api/other').subscribe();
+    const req2 = httpTesting.expectOne('/api/other');
+    req2.flush({ body: 'response' });
+
+    expect(cacheBustSpy).toHaveBeenCalledWith(expect.any(HttpRequest));
+
+    // Verify cache is cleared by making third request to supposedly cached endpoint
+    http.get('/api/data', { context: useCache() }).subscribe();
+    const req3 = httpTesting.expectOne('/api/data'); // Should hit network again
+    req3.flush({ body: 'fresh' });
+
+    httpTesting.verify();
+  });
+
+  it('should run cacheBust in injection context', () => {
+    const cacheBustFn = jest.fn((req: HttpRequest<unknown>) => {
+      // Should not throw
+      const platform = inject(PLATFORM_ID);
+      return false;
+    });
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(
+          withInterceptors([
+            withCacheInterceptor({
+              strategy: 'manual',
+              cacheBust: cacheBustFn,
+            }),
+          ])
+        ),
+        provideHttpClientTesting(),
+      ],
+    });
+
+    const http = TestBed.inject(HttpClient);
+    const httpTesting = TestBed.inject(HttpTestingController);
+
+    http.get('/api/data').subscribe();
+    const req = httpTesting.expectOne('/api/data');
+    req.flush({});
+
+    expect(cacheBustFn).toHaveBeenCalled();
+    httpTesting.verify();
   });
 });

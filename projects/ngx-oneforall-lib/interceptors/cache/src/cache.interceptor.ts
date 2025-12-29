@@ -4,13 +4,51 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { inject, PLATFORM_ID } from '@angular/core';
-import { CacheService } from '@ngx-oneforall/services/cache';
+import {
+  InternalCacheService,
+  getStorageEngine,
+} from '@ngx-oneforall/services/cache';
 import { CACHE_CONTEXT, CacheContextOptions } from './cache-context';
 import { of, tap } from 'rxjs';
 import { isPlatformServer } from '@angular/common';
 
-type strategy = 'auto' | 'manual';
+/**
+ * Cache strategy type.
+ * - `'auto'`: Cache all GET requests with JSON response type
+ * - `'manual'`: Only cache requests with explicit cache context
+ */
+export type CacheStrategy = 'auto' | 'manual';
 
+/**
+ * Storage type for cache.
+ */
+export type CacheStorageType = 'memory' | 'local' | 'session';
+
+/**
+ * Configuration for the cache interceptor.
+ */
+export interface CacheInterceptorConfig {
+  /** Cache strategy. Default: 'manual' */
+  strategy?: CacheStrategy;
+  /** Default storage type. Default: 'memory' */
+  storage?: CacheStorageType;
+  /** Default TTL in milliseconds. Default: 1 hour */
+  ttl?: number;
+  /** Storage key prefix */
+  storagePrefix?: string;
+  /** Cache version for invalidation */
+  version?: string;
+  /**
+   * Function to run custom logic on every request, useful for cache invalidation.
+   * Runs inside the injection context.
+   * Return `true` to clear the entire cache.
+   */
+  cacheBust?: (req: HttpRequest<unknown>) => boolean | void;
+}
+
+/**
+ * Resolves the cache key for a request.
+ */
 function resolveKey(req: HttpRequest<unknown>, context: CacheContextOptions) {
   const { key } = context;
 
@@ -22,13 +60,15 @@ function resolveKey(req: HttpRequest<unknown>, context: CacheContextOptions) {
 }
 
 /**
- * Request is cacheable in following two cases
- * 1. User has manually added cache context and it is enabled
- * 2. The interceptor is running with auto strategy and the request is get with json response
+ * Determines if a request is cacheable.
+ *
+ * Cacheable in following cases:
+ * 1. Strategy is 'auto' and request is GET with JSON response
+ * 2. Strategy is 'manual' and context.enabled is true
  */
 function isCacheable(
   req: HttpRequest<unknown>,
-  strategy: strategy,
+  strategy: CacheStrategy,
   context: CacheContextOptions
 ) {
   if (strategy === 'auto') {
@@ -37,7 +77,49 @@ function isCacheable(
   return strategy === 'manual' && context.enabled;
 }
 
-export function withCacheInterceptor(strategy: strategy = 'manual') {
+/**
+ * Creates an HTTP interceptor that caches responses.
+ *
+ * @param config - Cache interceptor configuration
+ * @returns An Angular HTTP interceptor function
+ *
+ * @example
+ * ```typescript
+ * provideHttpClient(
+ *   withInterceptors([
+ *     withCacheInterceptor({
+ *       strategy: 'auto',
+ *       storage: 'memory',
+ *       ttl: 60000
+ *     })
+ *   ])
+ * );
+ * ```
+ *
+ * @remarks
+ * - SSR-safe: skips caching on server
+ * - Supports per-request overrides via `CACHE_CONTEXT`
+ * - Creates internal CacheService instance
+ */
+export function withCacheInterceptor(config: CacheInterceptorConfig = {}) {
+  const {
+    strategy = 'manual',
+    storage = 'memory',
+    ttl,
+    storagePrefix,
+    version,
+    cacheBust,
+  } = config;
+
+  // Create internal CacheService instance
+  const storageEngine = getStorageEngine(storage, storagePrefix);
+  const cacheService = new InternalCacheService(
+    storageEngine,
+    getStorageEngine,
+    ttl,
+    version
+  );
+
   const cacheInterceptor: HttpInterceptorFn = (req, next) => {
     const platformId = inject(PLATFORM_ID);
 
@@ -45,9 +127,11 @@ export function withCacheInterceptor(strategy: strategy = 'manual') {
       return next(req);
     }
 
-    const cacheService = inject(CacheService);
-    const context = req.context.get(CACHE_CONTEXT);
+    if (cacheBust?.(req)) {
+      cacheService.clear();
+    }
 
+    const context = req.context.get(CACHE_CONTEXT);
     const key = resolveKey(req, context);
 
     if (isCacheable(req, strategy, context)) {
