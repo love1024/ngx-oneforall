@@ -170,10 +170,10 @@ describe('memoize', () => {
       }
 
       const instance = new TestClass();
-      
+
       await expect(instance.asyncMethod(5)).rejects.toThrow('Test error');
       await expect(instance.asyncMethod(5)).rejects.toThrow('Test error');
-      
+
       // Should cache the rejected promise
       expect(instance.callCount).toBe(1);
     });
@@ -193,10 +193,10 @@ describe('memoize', () => {
       }
 
       const instance = new TestClass();
-      
+
       await expect(instance.asyncMethod(5)).rejects.toThrow('Test error');
       const result = await instance.asyncMethod(10);
-      
+
       expect(result).toBe(20);
       expect(instance.callCount).toBe(2);
     });
@@ -213,10 +213,10 @@ describe('memoize', () => {
       }
 
       const instance = new TestClass();
-      
+
       await expect(instance.asyncMethod(5)).rejects.toThrow('Error for 5');
       await expect(instance.asyncMethod(5)).rejects.toThrow('Error for 5');
-      
+
       expect(instance.callCount).toBe(1);
     });
 
@@ -233,18 +233,18 @@ describe('memoize', () => {
       }
 
       const instance = new TestClass();
-      
+
       // First call - caches the promise
       const promise1 = instance.asyncMethod(5);
-      
+
       // Wait for resolution
       const result1 = await promise1;
       expect(result1).toBe(10);
-      
+
       // Second call after resolution - should return resolved value from cache
       const result2 = await instance.asyncMethod(5);
       expect(result2).toBe(10);
-      
+
       // Should only call the method once
       expect(instance.callCount).toBe(1);
     });
@@ -260,18 +260,18 @@ describe('memoize', () => {
       }
 
       const instance = new TestClass();
-      
+
       // First call
       const promise = instance.asyncMethod(7);
-      
+
       // At this point, cache should contain the promise
       // Wait for it to resolve
       const result = await promise;
       expect(result).toBe(21);
-      
+
       // Give the .then() callback time to execute and update cache
       await new Promise(resolve => setTimeout(resolve, 20));
-      
+
       // Second call should get the resolved value from cache
       const result2 = await instance.asyncMethod(7);
       expect(result2).toBe(21);
@@ -420,7 +420,10 @@ describe('memoize', () => {
       }
 
       const instance = new TestClass();
-      const map = new Map([['a', 1], ['b', 2]]);
+      const map = new Map([
+        ['a', 1],
+        ['b', 2],
+      ]);
       instance.expensiveMethod(map);
       instance.expensiveMethod(map);
 
@@ -551,21 +554,13 @@ describe('memoize', () => {
   describe('edge cases', () => {
     it('should return descriptor when descriptor is undefined', () => {
       const descriptor = undefined;
-      const result = memoize()(
-        {},
-        'test',
-        descriptor as any
-      );
+      const result = memoize()({}, 'test', descriptor as any);
       expect(result).toBe(descriptor);
     });
 
     it('should return descriptor when descriptor.value is not a function', () => {
       const descriptor = { value: 'not a function' };
-      const result = memoize()(
-        {},
-        'test',
-        descriptor as any
-      );
+      const result = memoize()({}, 'test', descriptor as any);
       expect(result).toBe(descriptor);
     });
 
@@ -639,6 +634,101 @@ describe('memoize', () => {
 
       expect(instance.callCount1).toBe(1);
       expect(instance.callCount2).toBe(1);
+    });
+  });
+
+  describe('options object', () => {
+    it('should accept options object with resolver', () => {
+      class TestClass {
+        callCount = 0;
+
+        @memoize({ resolver: (a: number) => `key-${a}` })
+        method(a: number): number {
+          this.callCount++;
+          return a * 2;
+        }
+      }
+
+      const instance = new TestClass();
+      instance.method(1);
+      instance.method(1);
+
+      expect(instance.callCount).toBe(1);
+    });
+  });
+
+  describe('maxSize option', () => {
+    it('should evict oldest entry when maxSize is exceeded', () => {
+      class TestClass {
+        callCount = 0;
+
+        @memoize({ maxSize: 2 })
+        method(a: number): number {
+          this.callCount++;
+          return a * 2;
+        }
+      }
+
+      const instance = new TestClass();
+      instance.method(1); // cache: [1]
+      instance.method(2); // cache: [1, 2]
+      instance.method(3); // cache: [2, 3], evicts 1
+
+      expect(instance.callCount).toBe(3);
+
+      // Call 2 and 3 should be cached
+      instance.method(2);
+      instance.method(3);
+      expect(instance.callCount).toBe(3);
+
+      // Call 1 should not be cached anymore
+      instance.method(1);
+      expect(instance.callCount).toBe(4);
+    });
+
+    it('should work with maxSize of 1', () => {
+      class TestClass {
+        callCount = 0;
+
+        @memoize({ maxSize: 1 })
+        method(a: number): number {
+          this.callCount++;
+          return a * 2;
+        }
+      }
+
+      const instance = new TestClass();
+      instance.method(1);
+      instance.method(1);
+      expect(instance.callCount).toBe(1);
+
+      instance.method(2); // evicts 1
+      instance.method(1); // 1 not cached, call again
+      expect(instance.callCount).toBe(3);
+    });
+
+    it('should not limit cache when maxSize is undefined', () => {
+      class TestClass {
+        callCount = 0;
+
+        @memoize()
+        method(a: number): number {
+          this.callCount++;
+          return a * 2;
+        }
+      }
+
+      const instance = new TestClass();
+      for (let i = 0; i < 100; i++) {
+        instance.method(i);
+      }
+      expect(instance.callCount).toBe(100);
+
+      // All should be cached
+      for (let i = 0; i < 100; i++) {
+        instance.method(i);
+      }
+      expect(instance.callCount).toBe(100);
     });
   });
 });

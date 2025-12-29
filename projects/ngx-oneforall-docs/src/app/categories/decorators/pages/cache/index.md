@@ -1,5 +1,8 @@
 The `Cache` decorator caches Observable method results with configurable storage, TTL, and versioning.
 
+> **Note**
+> **When to use:** Use `@Cache` for Observable methods. For sync or Promise methods, use [`@memoize`](/decorators/memoize) instead.
+
 ### Parameters
 
 | Option | Type | Default | Description |
