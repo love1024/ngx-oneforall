@@ -34,44 +34,7 @@ import { HighlightSearchPipe } from '@ngx-oneforall/pipes/highlight-search';
       <p [innerHTML]="'Price: $100' | highlightSearch: '$100'"></p>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      h3 {
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-      }
-      .input-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        margin-bottom: 0.5rem;
-      }
-      .input-group input {
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        max-width: 300px;
-      }
-      :host ::ng-deep mark {
-        background-color: yellow;
-        color: black;
-        padding: 0 2px;
-        border-radius: 2px;
-      }
-      :host ::ng-deep .custom-highlight {
-        background-color: #e0f7fa;
-        color: #006064;
-        padding: 0 4px;
-        border-radius: 3px;
-        font-weight: bold;
-      }
-    `,
-  ],
+  styleUrl: './highlight-search-pipe-demo.component.scss',
 })
 export class HighlightSearchPipeDemoComponent {
   searchTerm = 'Angular';

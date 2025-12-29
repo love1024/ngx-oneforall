@@ -35,28 +35,6 @@ import { RangePipe } from '@ngx-oneforall/pipes/range';
       </div>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      h3 {
-        margin-bottom: 0.5rem;
-      }
-      .range-list {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
-      .badge {
-        background-color: #e0e0e0;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        font-family: monospace;
-      }
-    `,
-  ],
+  styleUrl: './range-pipe-demo.component.scss',
 })
 export class RangePipeDemoComponent {}

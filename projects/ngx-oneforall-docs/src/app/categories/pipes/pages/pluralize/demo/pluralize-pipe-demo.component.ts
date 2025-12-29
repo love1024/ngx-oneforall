@@ -46,18 +46,6 @@ import { PluralizePipe } from '@ngx-oneforall/pipes/pluralize';
       </p>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      h3 {
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-      }
-    `,
-  ],
+  styleUrl: './pluralize-pipe-demo.component.scss',
 })
 export class PluralizePipeDemoComponent {}

@@ -41,23 +41,7 @@ import { TimeAgoPipe } from '@ngx-oneforall/pipes/time-ago';
       </div>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      h3 {
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-      }
-      .demo-row {
-        display: flex;
-        gap: 0.5rem;
-      }
-    `,
-  ],
+  styleUrl: './time-ago-demo.component.scss',
 })
 export class TimeAgoDemoComponent {
   now = new Date();

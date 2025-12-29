@@ -22,19 +22,7 @@ import { CallPipe } from '@ngx-oneforall/pipes/call';
       </p>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      h3 {
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-      }
-    `,
-  ],
+  styleUrl: './call-pipe-demo.component.scss',
 })
 export class CallPipeDemoComponent {
   counter = 42;
