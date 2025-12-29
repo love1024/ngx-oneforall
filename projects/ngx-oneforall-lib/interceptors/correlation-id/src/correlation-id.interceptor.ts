@@ -1,6 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject, PLATFORM_ID } from '@angular/core';
 import {
   CORRELATION_ID_CONTEXT,
   CorrelationIdContextConfig,
@@ -53,7 +51,7 @@ const HEADER_NAME = 'X-Correlation-Id';
  * ```
  *
  * @remarks
- * - Only operates in browser environments (skips SSR).
+ * - SSR compatible (works on server and browser).
  * - Existing correlation ID headers are not overridden.
  * - Per-request behavior can be controlled via `CORRELATION_ID_CONTEXT`.
  */
@@ -61,12 +59,6 @@ export function withCorrelationIdInterceptor(config?: CorrelationIdConfig) {
   const { header = HEADER_NAME, idGenerator = defaultCorrelationIdGenerator } =
     config || {};
   const correlationIdInterceptor: HttpInterceptorFn = (req, next) => {
-    const platformId = inject(PLATFORM_ID);
-
-    if (!isPlatformBrowser(platformId)) {
-      return next(req);
-    }
-
     const contextConfig: CorrelationIdContextConfig | null = req.context.get(
       CORRELATION_ID_CONTEXT
     );

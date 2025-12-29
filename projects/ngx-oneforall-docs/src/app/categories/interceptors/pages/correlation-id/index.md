@@ -7,7 +7,7 @@ The `withCorrelationIdInterceptor` is an Angular HTTP interceptor that automatic
 - **Custom header name** — Use your own header (default: `X-Correlation-Id`)
 - **Custom ID generator** — Provide your own ID generation logic
 - **Per-request control** — Disable or override via `HttpContext`
-- **SSR-safe** — Automatically skips server-side rendering
+- **SSR-compatible** — Works on both server and browser
 
 ## Installation
 
@@ -98,14 +98,13 @@ crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`
 
 The interceptor processes requests in the following order:
 
-1. **Check platform** — Skip if not in browser (SSR)
-2. **Check context** — If disabled via `HttpContext`, pass through
-3. **Check existing header** — If header already present, don't override
-4. **Add correlation ID** — Use context ID, or generate a new one
+1. **Check context** — If disabled via `HttpContext`, pass through
+2. **Check existing header** — If header already present, don't override
+3. **Add correlation ID** — Use context ID, or generate a new one
 
-### SSR Handling
+### SSR Support
 
-The interceptor automatically skips server-side rendering. On the server, requests pass through unchanged. On the browser, correlation ID is added.
+The interceptor is fully compatible with server-side rendering (SSR) and will add correlation IDs to requests made on the server.
 
 ### Existing Headers Preserved
 

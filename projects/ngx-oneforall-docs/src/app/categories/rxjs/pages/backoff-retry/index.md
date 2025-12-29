@@ -1,42 +1,94 @@
+The `backOffRetry` RxJS operator automatically retries failed observables with an exponential backoff strategy. It is essential for handling transient failures in network requests or unstable services.
 
-A backoff retry strategy is useful when you want to automatically retry failed HTTP requests or other asynchronous operations, especially in cases of temporary network issues or server errors. This approach helps your application recover from transient failures without overwhelming the server with repeated requests.
+## Features
 
-### Use Cases
+- **Exponential Backoff** — Increases delay between retries exponentially
+- **Customizable Strategy** — Configure max retries, initial delay, and multiplier base
+- **Typed Configuration** — Full TypeScript support for configuration
+- **Seamless Integration** — Works with any RxJS observable
 
-- Retrying HTTP requests that fail due to network instability.
-- Handling temporary server errors (like 5xx responses).
-- Smoothing out communication with unreliable APIs or services.
+## Installation
 
-### Configuration Options
+```typescript
+import { backOffRetry } from '@ngx-oneforall/rxjs/backoff-retry';
+```
 
-You can customize the backoff retry behavior by providing a configuration object with the following options:
-
-- `count`: Maximum number of retry attempts.
-- `delay`: Initial delay (in milliseconds) before the first retry.
-- `base`: Exponential base to increase the delay after each retry.
-
-### Overriding the Configuration
-
-To override the default configuration, simply pass your own options when using the operator:
+## Quick Start
 
 ```typescript
 this.http.get('/api/data').pipe(
-    backOffRetry({ count: 5, delay: 500, base: 2 })
-).subscribe({
-    next: data => { /* handle data */ },
-    error: err => { /* handle error after retries */ }
-});
+  backOffRetry()
+).subscribe();
 ```
 
-### Benefits
+## Configuration
 
-- Reduces the risk of overwhelming your backend with repeated requests.
-- Gives the server or network time to recover between retries.
-- Improves the resilience and reliability of your application.
+The operator accepts an optional `BackoffRetryConfig` object:
 
-### Live Demo
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `count` | `number` | `3` | Maximum number of retry attempts |
+| `delay` | `number` | `1000` | Initial delay in milliseconds |
+| `base` | `number` | `2` | Base for exponential calculation |
 
-Explore this example in a live demonstration:
+### Custom Configuration
+
+```typescript
+this.http.get('/api/unstable').pipe(
+  backOffRetry({
+    count: 5,       // Retry 5 times
+    delay: 500,     // Start with 500ms delay
+    base: 1.5       // Increase delay by 1.5x each time
+  })
+).subscribe();
+```
+
+## How It Works
+
+The delay for each retry is calculated using the formula:
+
+`delay * Math.pow(base, retryCount - 1)`
+
+For default values (`delay=1000`, `base=2`):
+- **Retry 1**: 1000ms
+- **Retry 2**: 2000ms
+- **Retry 3**: 4000ms
+
+## Examples
+
+### Robust API Calls
+
+Wrap your HTTP requests to automatically recover from temporary network glitches:
+
+```typescript
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+this.http.get('/api/users').pipe(
+  backOffRetry(),
+  catchError(err => {
+    console.error('All retries failed', err);
+    return of([]); // Fallback value
+  })
+).subscribe();
+```
+
+### With Other Operators
+
+Combine with other operators for advanced flows:
+
+```typescript
+this.source$.pipe(
+  // Custom logic before retry
+  tap({ error: () => console.log('Retrying...') }),
+  backOffRetry({ count: 2 }),
+  // Logic after all retries fail
+  catchError(err => throwError(() => new Error('Service Unavailable')))
+);
+```
+
+## Demo
+
+See the operator in action with visualized retry attempts:
 
 {{ NgDocActions.demo("BackoffRetryDemoComponent") }}
-

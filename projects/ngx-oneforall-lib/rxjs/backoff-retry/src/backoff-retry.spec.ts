@@ -25,7 +25,7 @@ describe('backOffRetry', () => {
         subscriber.error('error');
       });
 
-      const expected = '2s 4s 8s #'; // 3 retries, then error
+      const expected = '1s 2s 4s #'; // 3 retries, then error
 
       expectObservable(customSource$.pipe(backOffRetry())).toBe(
         expected,
@@ -49,7 +49,7 @@ describe('backOffRetry', () => {
         }
       });
 
-      expectObservable(customSource$.pipe(backOffRetry())).toBe('2s (a|)', {
+      expectObservable(customSource$.pipe(backOffRetry())).toBe('1s (a|)', {
         a: 42,
       });
     });
@@ -63,7 +63,7 @@ describe('backOffRetry', () => {
         subscriber.error('error');
       });
 
-      const expected = '3s 9s #'; // 3 retries, then error
+      const expected = '1s 3s #'; // 2 retries, then error
 
       expectObservable(customSource$.pipe(backOffRetry(config))).toBe(expected);
     });

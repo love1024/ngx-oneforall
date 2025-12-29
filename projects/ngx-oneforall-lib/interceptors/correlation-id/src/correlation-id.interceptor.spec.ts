@@ -51,12 +51,12 @@ describe('CorrelationIdInterceptor', () => {
     req.flush({});
   });
 
-  it('should not add header if not on browser platform', () => {
+  it('should add header on server platform', () => {
     configureTestBed(undefined, 'server');
     http.get('/api/test').subscribe();
 
     const req = httpTesting.expectOne('/api/test');
-    expect(req.request.headers.has('X-Correlation-Id')).toBe(false);
+    expect(req.request.headers.has('X-Correlation-Id')).toBe(true);
     req.flush({});
   });
 
