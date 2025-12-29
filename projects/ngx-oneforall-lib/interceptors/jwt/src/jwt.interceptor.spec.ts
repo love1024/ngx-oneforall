@@ -8,59 +8,84 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { jwtInterceptor, resetJwtInterceptor } from './jwt.interceptor';
-import { JwtService, provideJwtService } from '@ngx-oneforall/services/jwt';
+import {
+  withJwtInterceptor,
+  resetJwtInterceptor,
+  JwtInterceptorConfig,
+} from './jwt.interceptor';
 import { PLATFORM_ID } from '@angular/core';
 import { of, throwError, Subject } from 'rxjs';
 import { withSkipJwtInterceptor } from './jwt-context';
 
-describe('jwtInterceptor', () => {
+// Helper to create mock JWT tokens - must be at top for use in tests
+function createMockJwt(payload: Record<string, unknown> = {}): string {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const body = btoa(
+    JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600, ...payload })
+  );
+  const signature = 'mock-signature';
+  return `${header}.${body}.${signature}`;
+}
+
+// Pre-create valid test tokens
+const VALID_TOKEN = createMockJwt();
+const EXPIRED_TOKEN = createMockJwt({
+  exp: Math.floor(Date.now() / 1000) - 3600,
+});
+
+describe('withJwtInterceptor', () => {
   let httpTesting: HttpTestingController;
   let http: HttpClient;
 
-  const mockJwtService = {
-    getConfig: jest.fn(),
-    getToken: jest.fn(),
-    isExpired: jest.fn(),
-  };
+  const setupTestBed = (config: Partial<JwtInterceptorConfig> = {}) => {
+    TestBed.resetTestingModule();
+    const defaultConfig: JwtInterceptorConfig = {
+      tokenGetter: () => VALID_TOKEN,
+      ...config,
+    };
 
-  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [],
       providers: [
-        provideJwtService(),
-        provideHttpClient(withInterceptors([jwtInterceptor])),
+        provideHttpClient(
+          withInterceptors([withJwtInterceptor(defaultConfig)])
+        ),
         provideHttpClientTesting(),
-        { provide: JwtService, useValue: mockJwtService },
       ],
     });
 
     http = TestBed.inject(HttpClient);
     httpTesting = TestBed.inject(HttpTestingController);
-
-    jest.clearAllMocks();
-  });
+  };
 
   afterEach(() => {
-    httpTesting.verify();
+    if (httpTesting) {
+      httpTesting.verify();
+    }
     resetJwtInterceptor();
   });
 
+  it('should throw error if tokenGetter is not provided', () => {
+    expect(() => withJwtInterceptor({} as any)).toThrow(
+      '[NgxOneforall - JwtInterceptor]: tokenGetter is required'
+    );
+  });
+
   it('should add Authorization header when token exists', () => {
-    mockJwtService.getConfig.mockReturnValue({});
-    mockJwtService.getToken.mockReturnValue('abc123');
-    mockJwtService.isExpired.mockReturnValue(false);
+    const token = createMockJwt();
+    setupTestBed({ tokenGetter: () => token });
 
     http.get('/api/test').subscribe();
 
     const req = httpTesting.expectOne('/api/test');
-    expect(req.request.headers.get('Authorization')).toBe('Bearer abc123');
+    expect(req.request.headers.get('Authorization')).toBe(`Bearer ${token}`);
     req.flush({});
   });
 
   it('should skip if no token and errorOnNoToken=false', () => {
-    mockJwtService.getConfig.mockReturnValue({ errorOnNoToken: false });
-    mockJwtService.getToken.mockReturnValue(null);
+    setupTestBed({
+      tokenGetter: () => null,
+      errorOnNoToken: false,
+    });
 
     http.get('/api/test').subscribe();
 
@@ -70,14 +95,16 @@ describe('jwtInterceptor', () => {
   });
 
   it('should throw error if no token and errorOnNoToken=true', done => {
-    mockJwtService.getConfig.mockReturnValue({ errorOnNoToken: true });
-    mockJwtService.getToken.mockReturnValue(null);
+    setupTestBed({
+      tokenGetter: () => null,
+      errorOnNoToken: true,
+    });
 
     http.get('/api/test').subscribe({
       next: () => fail('Expected an error, but got success'),
       error: err => {
         expect(err.message).toBe(
-          '[NgxOneforall - JWT Interceptor]: Token getter returned no token'
+          '[NgxOneforall - JwtInterceptor]: tokenGetter returned no token'
         );
         done();
       },
@@ -85,9 +112,10 @@ describe('jwtInterceptor', () => {
   });
 
   it('should skip if token is expired and skipAddingIfExpired=true', () => {
-    mockJwtService.getConfig.mockReturnValue({ skipAddingIfExpired: true });
-    mockJwtService.getToken.mockReturnValue('expiredToken');
-    mockJwtService.isExpired.mockReturnValue(true);
+    setupTestBed({
+      tokenGetter: () => EXPIRED_TOKEN,
+      skipAddingIfExpired: true,
+    });
 
     http.get('/api/test').subscribe();
 
@@ -97,11 +125,9 @@ describe('jwtInterceptor', () => {
   });
 
   it('should skip if request domain is not in allowedDomains', () => {
-    mockJwtService.getConfig.mockReturnValue({
+    setupTestBed({
       allowedDomains: ['allowed.com'],
     });
-    mockJwtService.getToken.mockReturnValue('abc123');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     http.get('https://other.com/api/test').subscribe();
 
@@ -110,12 +136,10 @@ describe('jwtInterceptor', () => {
     req.flush({});
   });
 
-  it('should skip if request URL matches excludedRoutes', () => {
-    mockJwtService.getConfig.mockReturnValue({
+  it('should skip if request URL matches skipUrls', () => {
+    setupTestBed({
       skipUrls: ['https://example.com/api/auth'],
     });
-    mockJwtService.getToken.mockReturnValue('abc123');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     http.get('https://example.com/api/auth').subscribe();
 
@@ -125,26 +149,24 @@ describe('jwtInterceptor', () => {
   });
 
   it('should respect custom headerName and authScheme', () => {
-    mockJwtService.getConfig.mockReturnValue({
+    const token = createMockJwt();
+    setupTestBed({
+      tokenGetter: () => token,
       headerName: 'X-Custom-Auth',
       authScheme: 'JWT ',
     });
-    mockJwtService.getToken.mockReturnValue('xyz456');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     http.get('/api/test').subscribe();
 
     const req = httpTesting.expectOne('/api/test');
-    expect(req.request.headers.get('X-Custom-Auth')).toBe('JWT xyz456');
+    expect(req.request.headers.get('X-Custom-Auth')).toBe(`JWT ${token}`);
     req.flush({});
   });
 
-  it('should add header if request origin is same as current location origin even if not given in domains', () => {
-    mockJwtService.getConfig.mockReturnValue({
+  it('should add header if request origin is same as current location origin', () => {
+    setupTestBed({
       allowedDomains: ['http://gatherbits.com'],
     });
-    mockJwtService.getToken.mockReturnValue('abc123');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     http.get(document.location.origin).subscribe();
 
@@ -153,12 +175,10 @@ describe('jwtInterceptor', () => {
     req.flush({});
   });
 
-  it('should work with regex in included domains', () => {
-    mockJwtService.getConfig.mockReturnValue({
+  it('should work with regex in allowedDomains', () => {
+    setupTestBed({
       allowedDomains: [/gatherbits.com/],
     });
-    mockJwtService.getToken.mockReturnValue('abc');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     http.get('https://gatherbits.com').subscribe();
 
@@ -167,12 +187,10 @@ describe('jwtInterceptor', () => {
     req.flush({});
   });
 
-  it('should work with port in included domains', () => {
-    mockJwtService.getConfig.mockReturnValue({
+  it('should work with port in allowedDomains', () => {
+    setupTestBed({
       allowedDomains: ['localhost:3000'],
     });
-    mockJwtService.getToken.mockReturnValue('abc');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     http.get('http://localhost:3000').subscribe();
 
@@ -181,12 +199,10 @@ describe('jwtInterceptor', () => {
     req.flush({});
   });
 
-  it('should work with regex in disallowed routes', () => {
-    mockJwtService.getConfig.mockReturnValue({
+  it('should work with regex in skipUrls', () => {
+    setupTestBed({
       skipUrls: [/localhost:3000/],
     });
-    mockJwtService.getToken.mockReturnValue('abc');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     http.get('http://localhost:3000').subscribe();
 
@@ -195,50 +211,35 @@ describe('jwtInterceptor', () => {
     req.flush({});
   });
 
-  it('should use default config if not provided', () => {
-    mockJwtService.getConfig.mockReturnValue(null);
-    mockJwtService.getToken.mockReturnValue('abc');
-    mockJwtService.isExpired.mockReturnValue(false);
-
-    http.get('http://localhost:3000').subscribe();
-
-    const req = httpTesting.expectOne('http://localhost:3000');
-    expect(req.request.headers.has('Authorization')).toBe(true);
-    req.flush({});
-  });
-
   it('should refresh token and retry on 401 if refreshTokenHandler is provided', () => {
+    const newToken = createMockJwt({ sub: 'new' });
     const mockHandler = {
-      refreshToken: jest.fn().mockReturnValue(of('new-token')),
+      refreshToken: jest.fn().mockReturnValue(of(newToken)),
       logout: jest.fn(),
     };
-    mockJwtService.getConfig.mockReturnValue({
+    setupTestBed({
       refreshTokenHandler: mockHandler,
     });
-    mockJwtService.getToken.mockReturnValue('old-token');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     http.get('/api/test').subscribe(res => {
       expect(res).toEqual({ success: true });
     });
 
     const req1 = httpTesting.expectOne('/api/test');
-    expect(req1.request.headers.get('Authorization')).toBe('Bearer old-token');
+    expect(req1.request.headers.has('Authorization')).toBe(true);
     req1.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
     expect(mockHandler.refreshToken).toHaveBeenCalled();
 
     const req2 = httpTesting.expectOne('/api/test');
-    expect(req2.request.headers.get('Authorization')).toBe('Bearer new-token');
+    expect(req2.request.headers.get('Authorization')).toBe(
+      `Bearer ${newToken}`
+    );
     req2.flush({ success: true });
   });
 
   it('should NOT handle 401 error if refreshTokenHandler is NOT provided', done => {
-    mockJwtService.getConfig.mockReturnValue({
-      // No refreshTokenHandler
-    });
-    mockJwtService.getToken.mockReturnValue('old-token');
-    mockJwtService.isExpired.mockReturnValue(false);
+    setupTestBed();
 
     http.get('/api/test').subscribe({
       next: () => fail('Should have failed'),
@@ -250,8 +251,6 @@ describe('jwtInterceptor', () => {
 
     const req = httpTesting.expectOne('/api/test');
     req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
-
-    // No logic related to refresh or new requests should happen
   });
 
   it('should handle concurrent 401s and only refresh once', fakeAsync(() => {
@@ -260,11 +259,9 @@ describe('jwtInterceptor', () => {
       refreshToken: jest.fn().mockReturnValue(refreshSubject.asObservable()),
       logout: jest.fn(),
     };
-    mockJwtService.getConfig.mockReturnValue({
+    setupTestBed({
       refreshTokenHandler: mockHandler,
     });
-    mockJwtService.getToken.mockReturnValue('old-token');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     const results: any[] = [];
     http.get('/test-1').subscribe(res => results.push(res));
@@ -273,17 +270,15 @@ describe('jwtInterceptor', () => {
     const req1 = httpTesting.expectOne('/test-1');
     const req2 = httpTesting.expectOne('/test-2');
 
-    // Fail both requests
     req1.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
     req2.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
     tick();
 
-    // Should be called once and waiting
     expect(mockHandler.refreshToken).toHaveBeenCalledTimes(1);
 
-    // Emit new token
-    refreshSubject.next('shared-token');
+    const sharedToken = createMockJwt({ sub: 'shared' });
+    refreshSubject.next(sharedToken);
     refreshSubject.complete();
 
     tick();
@@ -292,10 +287,10 @@ describe('jwtInterceptor', () => {
     const retry2 = httpTesting.expectOne('/test-2');
 
     expect(retry1.request.headers.get('Authorization')).toBe(
-      'Bearer shared-token'
+      `Bearer ${sharedToken}`
     );
     expect(retry2.request.headers.get('Authorization')).toBe(
-      'Bearer shared-token'
+      `Bearer ${sharedToken}`
     );
 
     retry1.flush({ id: 1 });
@@ -311,11 +306,9 @@ describe('jwtInterceptor', () => {
         .mockReturnValue(throwError(() => new Error('Refresh failed'))),
       logout: jest.fn(),
     };
-    mockJwtService.getConfig.mockReturnValue({
+    setupTestBed({
       refreshTokenHandler: mockHandler,
     });
-    mockJwtService.getToken.mockReturnValue('old-token');
-    mockJwtService.isExpired.mockReturnValue(false);
 
     let capturedError: any;
     http.get('/api/test').subscribe({
@@ -332,8 +325,7 @@ describe('jwtInterceptor', () => {
   });
 
   it('should skip everything if SKIP_JWT_INTERCEPTOR context is set', () => {
-    mockJwtService.getConfig.mockReturnValue({});
-    mockJwtService.getToken.mockReturnValue('abc123');
+    setupTestBed();
 
     http
       .get('/api/auth/login', { context: withSkipJwtInterceptor() })
@@ -342,8 +334,6 @@ describe('jwtInterceptor', () => {
     const req = httpTesting.expectOne('/api/auth/login');
     expect(req.request.headers.has('Authorization')).toBe(false);
     req.flush({});
-
-    expect(mockJwtService.getToken).not.toHaveBeenCalled();
   });
 
   describe('Invalid URL handling', () => {
@@ -358,16 +348,13 @@ describe('jwtInterceptor', () => {
     });
 
     it('should NOT add token if URL parsing fails and allowedDomains is set', () => {
-      // Mock URL to throw error
       global.URL = jest.fn(() => {
         throw new Error('Invalid URL');
       }) as any;
 
-      mockJwtService.getConfig.mockReturnValue({
+      setupTestBed({
         allowedDomains: ['example.com'],
       });
-      mockJwtService.getToken.mockReturnValue('abc123');
-      mockJwtService.isExpired.mockReturnValue(false);
 
       http.get('/api/test').subscribe();
 
@@ -376,61 +363,51 @@ describe('jwtInterceptor', () => {
       req.flush({});
     });
 
-    it('should add token if URL parsing fails and only skipUrls is set (fails safe)', () => {
-      // Mock URL to throw error
+    it('should add token if URL parsing fails and only skipUrls is set', () => {
       global.URL = jest.fn(() => {
         throw new Error('Invalid URL');
       }) as any;
 
-      mockJwtService.getConfig.mockReturnValue({
+      setupTestBed({
         skipUrls: ['/api/test'],
       });
-      mockJwtService.getToken.mockReturnValue('abc123');
-      mockJwtService.isExpired.mockReturnValue(false);
 
       http.get('/api/test').subscribe();
 
       const req = httpTesting.expectOne('/api/test');
-      // Should default to adding token because isDisallowedRoute returns false when URL is invalid
       expect(req.request.headers.has('Authorization')).toBe(true);
       req.flush({});
     });
   });
 });
 
-describe('jwtInterceptor', () => {
+describe('withJwtInterceptor SSR', () => {
   let httpTesting: HttpTestingController;
   let http: HttpClient;
 
-  const mockJwtService = {
-    getConfig: jest.fn(),
-    getToken: jest.fn(),
-    isExpired: jest.fn(),
-  };
-
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [],
       providers: [
-        provideJwtService(),
-        provideHttpClient(withInterceptors([jwtInterceptor])),
+        provideHttpClient(
+          withInterceptors([
+            withJwtInterceptor({ tokenGetter: () => VALID_TOKEN }),
+          ])
+        ),
         provideHttpClientTesting(),
-        { provide: JwtService, useValue: mockJwtService },
         { provide: PLATFORM_ID, useValue: 'server' },
       ],
     });
 
     http = TestBed.inject(HttpClient);
     httpTesting = TestBed.inject(HttpTestingController);
+  });
 
-    jest.clearAllMocks();
+  afterEach(() => {
+    httpTesting.verify();
+    resetJwtInterceptor();
   });
 
   it('should skip adding authorization header if not browser', () => {
-    mockJwtService.getConfig.mockReturnValue({});
-    mockJwtService.getToken.mockReturnValue('abc123');
-    mockJwtService.isExpired.mockReturnValue(false);
-
     http.get('/api/test').subscribe();
 
     const req = httpTesting.expectOne('/api/test');
