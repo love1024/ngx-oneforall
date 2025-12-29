@@ -1,4 +1,9 @@
-<p>{{ someDate | timeAgo }}</p>
+<!-- snippet: basic -->
+<p>{{ createdAt | timeAgo }}</p>
 
-<p>{{ someDate | timeAgo:false }}</p>
+<!-- snippet: static -->
+<p>{{ createdAt | timeAgo: false }}</p>
 
+<!-- snippet: future -->
+<p>{{ deadline | timeAgo }}</p>
+<!-- Output: in 3 days -->

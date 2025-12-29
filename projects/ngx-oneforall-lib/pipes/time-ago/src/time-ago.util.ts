@@ -20,6 +20,9 @@ export enum Unit {
 export type TimeAgoLabels = {
   prefix?: string;
   suffix?: string;
+  futurePrefix?: string;
+  futureSuffix?: string;
+  justNow?: string;
   seconds?: string;
   minutes?: string;
   hours?: string;
@@ -34,10 +37,13 @@ export function getSecondsPassed(then: number): number {
   return Math.floor((now - then) / 1000);
 }
 
-export function mergeLabels(labels?: TimeAgoLabels): TimeAgoLabels {
+export function mergeLabels(labels?: Partial<TimeAgoLabels>): TimeAgoLabels {
   return {
     suffix: labels?.suffix ?? 'ago',
     prefix: labels?.prefix ?? '',
+    futurePrefix: labels?.futurePrefix ?? 'in',
+    futureSuffix: labels?.futureSuffix ?? '',
+    justNow: labels?.justNow ?? 'just now',
     second: labels?.second ?? 'second',
     minute: labels?.minute ?? 'minute',
     hour: labels?.hour ?? 'hour',
@@ -57,7 +63,7 @@ export function mergeLabels(labels?: TimeAgoLabels): TimeAgoLabels {
 
 export const defaultClock = {
   tick: (then: number) => {
-    const secondsPassed = getSecondsPassed(then);
+    const secondsPassed = Math.abs(getSecondsPassed(then));
     let interval = 0;
 
     if (secondsPassed < MINUTE) {

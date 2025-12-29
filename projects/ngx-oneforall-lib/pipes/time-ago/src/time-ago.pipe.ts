@@ -28,6 +28,18 @@ import {
   TIME_AGO_PIPE_LABELS,
 } from './time-ago.providers';
 
+/**
+ * Transforms a date into a human-readable relative time string.
+ * Supports past dates ("2 hours ago"), future dates ("in 2 hours"),
+ * and "just now" for very recent times.
+ *
+ * @usageNotes
+ * ```html
+ * {{ createdAt | timeAgo }}        → "2 hours ago"
+ * {{ futureDate | timeAgo }}       → "in 3 days"
+ * {{ createdAt | timeAgo:false }}  → Static, no live updates
+ * ```
+ */
 @Pipe({
   name: 'timeAgo',
   pure: false,
@@ -42,9 +54,15 @@ export class TimeAgoPipe implements PipeTransform {
   private readonly destroyRef = inject(DestroyRef);
   private clockSubscription: Subscription | null = null;
 
+  /**
+   * Transforms a date into a relative time string.
+   *
+   * @param value - Date string or Date object
+   * @param live - If true, updates automatically (default: true)
+   * @returns Human-readable relative time string
+   */
   transform(value: string | Date, live = true): string {
     const timestamp = this.getTimestamp(value);
-
     const secondsPassed = getSecondsPassed(timestamp);
 
     // Skip live updates on server to prevent SSR timeout
@@ -70,31 +88,40 @@ export class TimeAgoPipe implements PipeTransform {
 
   private constructResponse(secondsPassed: number): string {
     const labels = mergeLabels(this.labels);
+    const isFuture = secondsPassed < 0;
+    const absSeconds = Math.abs(secondsPassed);
 
-    let parsed: [number, Unit];
-    if (secondsPassed < MINUTE) {
-      parsed = [secondsPassed, Unit.SECOND];
-    } else if (secondsPassed < HOUR) {
-      parsed = [Math.floor(secondsPassed / MINUTE), Unit.MINUTE];
-    } else if (secondsPassed < DAY) {
-      parsed = [Math.floor(secondsPassed / HOUR), Unit.HOUR];
-    } else if (secondsPassed < WEEK) {
-      parsed = [Math.floor(secondsPassed / DAY), Unit.DAY];
-    } else if (secondsPassed < MONTH) {
-      parsed = [Math.floor(secondsPassed / WEEK), Unit.WEEK];
-    } else if (secondsPassed < YEAR) {
-      parsed = [Math.floor(secondsPassed / MONTH), Unit.MONTH];
-    } else {
-      parsed = [Math.floor(secondsPassed / YEAR), Unit.YEAR];
+    // Handle "just now" for recent times (within 10 seconds)
+    if (absSeconds < 10) {
+      return labels.justNow!;
     }
 
-    const [value, label] = parsed;
-    const response =
-      value > 1
-        ? `${labels.prefix} ${value} ${labels[(label + 's') as keyof TimeAgoLabels]} ${labels.suffix}`
-        : `${labels.prefix} ${value} ${labels[label]} ${labels.suffix}`;
+    const [value, unit] = this.parseTimeUnit(absSeconds);
+    const unitLabel =
+      value > 1 ? labels[(unit + 's') as keyof TimeAgoLabels] : labels[unit];
 
-    return response.trim();
+    if (isFuture) {
+      return `${labels.futurePrefix} ${value} ${unitLabel} ${labels.futureSuffix}`.trim();
+    }
+    return `${labels.prefix} ${value} ${unitLabel} ${labels.suffix}`.trim();
+  }
+
+  private parseTimeUnit(absSeconds: number): [number, Unit] {
+    if (absSeconds < MINUTE) {
+      return [absSeconds, Unit.SECOND];
+    } else if (absSeconds < HOUR) {
+      return [Math.floor(absSeconds / MINUTE), Unit.MINUTE];
+    } else if (absSeconds < DAY) {
+      return [Math.floor(absSeconds / HOUR), Unit.HOUR];
+    } else if (absSeconds < WEEK) {
+      return [Math.floor(absSeconds / DAY), Unit.DAY];
+    } else if (absSeconds < MONTH) {
+      return [Math.floor(absSeconds / WEEK), Unit.WEEK];
+    } else if (absSeconds < YEAR) {
+      return [Math.floor(absSeconds / MONTH), Unit.MONTH];
+    } else {
+      return [Math.floor(absSeconds / YEAR), Unit.YEAR];
+    }
   }
 
   private getTimestamp(value: string | Date): number {

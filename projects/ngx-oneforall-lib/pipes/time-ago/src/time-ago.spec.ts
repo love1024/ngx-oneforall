@@ -35,15 +35,15 @@ describe('TimeAgoPipe', () => {
       expect(pipe).toBeTruthy();
     });
 
-    it('should return "0 second ago" for dates very close to the current time', () => {
+    it('should return "just now" for dates very close to the current time', () => {
       const now = new Date();
-      expect(pipe.transform(now)).toBe('0 second ago');
+      expect(pipe.transform(now)).toBe('just now');
     });
 
-    it('should should accept the input as string as well', () => {
+    it('should accept the input as string as well', () => {
       const now = new Date();
       const dateString = now.toISOString();
-      expect(pipe.transform(dateString)).toBe('0 second ago');
+      expect(pipe.transform(dateString)).toBe('just now');
     });
 
     it('should return "x seconds ago" for dates within the last minute', () => {
@@ -115,7 +115,7 @@ describe('TimeAgoPipe', () => {
 
     it('should trigger mark for check after calculated time', fakeAsync(() => {
       const now = new Date();
-      const secondsAgo = new Date(now.getTime() - 5 * 1000); // 5 seconds ago
+      const secondsAgo = new Date(now.getTime() - 15 * 1000); // 15 seconds ago
 
       pipe.transform(secondsAgo, true);
 
@@ -125,6 +125,54 @@ describe('TimeAgoPipe', () => {
 
       expect(transformSpy).toHaveBeenCalled();
     }));
+  });
+
+  describe('future dates', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [],
+        providers: [
+          {
+            provide: ChangeDetectorRef,
+            useValue: {
+              markForCheck: jest.fn(),
+            },
+          },
+          TimeAgoPipe,
+        ],
+      });
+      pipe = TestBed.inject(TimeAgoPipe);
+    });
+
+    it('should return "just now" for future dates very close to current time', () => {
+      const now = new Date();
+      const future = new Date(now.getTime() + 5 * 1000); // 5 seconds in future
+      expect(pipe.transform(future)).toBe('just now');
+    });
+
+    it('should return "in x seconds" for future dates within the next minute', () => {
+      const now = new Date();
+      const future = new Date(now.getTime() + 30 * 1000); // 30 seconds in future
+      expect(pipe.transform(future)).toBe('in 30 seconds');
+    });
+
+    it('should return "in x minutes" for future dates within the next hour', () => {
+      const now = new Date();
+      const future = new Date(now.getTime() + 10 * 60 * 1000); // 10 minutes in future
+      expect(pipe.transform(future)).toBe('in 10 minutes');
+    });
+
+    it('should return "in x hours" for future dates within the next day', () => {
+      const now = new Date();
+      const future = new Date(now.getTime() + 5 * 60 * 60 * 1000); // 5 hours in future
+      expect(pipe.transform(future)).toBe('in 5 hours');
+    });
+
+    it('should return "in x days" for future dates within the next week', () => {
+      const now = new Date();
+      const future = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days in future
+      expect(pipe.transform(future)).toBe('in 3 days');
+    });
   });
 
   describe('custom clock', () => {
@@ -175,6 +223,7 @@ describe('TimeAgoPipe', () => {
           TimeAgoPipe,
           provideTimeAgoPipeLabels(() => {
             return {
+              justNow: 'now',
               [Unit.SECOND]: 'sec',
               [Unit.MINUTE]: 'min',
               [Unit.HOUR]: 'hour',
@@ -190,10 +239,15 @@ describe('TimeAgoPipe', () => {
       changeDetectorRef = TestBed.inject(ChangeDetectorRef);
     });
 
-    it('should return custom labels', () => {
+    it('should return custom labels for just now', () => {
       const now = new Date();
+      expect(pipe.transform(now, true)).toBe('now');
+    });
 
-      expect(pipe.transform(now, true)).toBe(`0 sec ago`);
+    it('should return custom labels for seconds', () => {
+      const now = new Date();
+      const secondsAgo = new Date(now.getTime() - 15 * 1000);
+      expect(pipe.transform(secondsAgo, true)).toBe('15 seconds ago');
     });
   });
 
@@ -218,12 +272,12 @@ describe('TimeAgoPipe', () => {
 
     it('should return time ago string on server', () => {
       const now = new Date();
-      expect(pipe.transform(now)).toBe('0 second ago');
+      expect(pipe.transform(now)).toBe('just now');
     });
 
     it('should not trigger live updates on server', fakeAsync(() => {
       const now = new Date();
-      const secondsAgo = new Date(now.getTime() - 5 * 1000);
+      const secondsAgo = new Date(now.getTime() - 15 * 1000);
 
       pipe.transform(secondsAgo, true);
 
