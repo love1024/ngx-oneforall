@@ -1,4 +1,4 @@
-import { hashCode } from '../../hash/src/hash';
+import { hashCode } from '@ngx-oneforall/utils/hash';
 
 export function safeSerialize(value: unknown): string;
 export function safeSerialize(...args: unknown[]): string;

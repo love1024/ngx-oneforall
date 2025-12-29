@@ -1,54 +1,47 @@
-The `FirstErrorKeyPipe` is a custom Angular pipe that simplifies error handling in forms by extracting the first error key from an `AbstractControl` instance or a `ValidationErrors` object. This pipe is particularly useful for displaying a single, clear error message to users, improving both usability and user experience.
+The `FirstErrorKeyPipe` extracts the first validation error key from a form control's errors. It supports optional priority ordering to control which error displays first.
 
-## Why Use FirstErrorKeyPipe?
+### Usage
 
-When working with Angular forms, managing validation errors can become complex, especially when multiple validators are applied to a single form control. The `FirstErrorKeyPipe` helps streamline this process by focusing on the first error key, allowing developers to prioritize and display the most relevant error message.
-
-## How It Works
-
-The `FirstErrorKeyPipe` can be applied in two primary scenarios:
-
-1. **With a `FormControl`**: Extracts the first error key from the control's validation errors.
-2. **With a `ValidationErrors` object**: Directly processes a validation errors object, making it flexible for various use cases.
-
-## Usage Examples
-
-### Example 1: Applying the Pipe to a FormControl
-
-In this scenario, the pipe is used with a `FormControl` to retrieve the first error key. If the control has validation errors, the pipe returns the first error key; otherwise, it returns an empty string (`''`).
-
-#### Code Example
-
-```html file="./demo/snippets.html"#L2-L7 {3}
-
+```html file="./demo/snippets.html"#L4-L6
 ```
 
-#### Live Demo
+### Parameters
 
-Experience this example in action:
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `errors` | `ValidationErrors \| null` | Errors object from a form control |
+| `priority` | `string[]` | Optional array of error keys in priority order |
+
+### Priority Ordering
+
+By default, returns the first error key in object order. With priority, returns the first matching priority key:
+
+```html file="./demo/snippets.html"#L18-L22
+```
+
+**How it works:**
+1. Iterates through priority array
+2. Returns first key that exists in errors
+3. Falls back to first available key if no matches
+
+### Examples
+
+#### Basic Usage
+
+```html file="./demo/snippets.html"#L2-L7
+```
 
 {{ NgDocActions.demo("FirstErrorControlComponent") }}
 
-### Example 2: Using the Pipe with a ValidationErrors Object
+#### With Error Messages
 
-The `FirstErrorKeyPipe` can also be applied directly to a `ValidationErrors` object, making it versatile for scenarios where you need to process validation errors outside of a `FormControl`.
-
-#### Code Example
-
-```html file="./demo/snippets.html"#L10-L13 {3}
-
+```html file="./demo/snippets.html"#L10-L13
 ```
-
-#### Live Demo
-
-Explore this example in a live demonstration:
 
 {{ NgDocActions.demo("FirstErrorValidationComponent") }}
 
-## Benefits of Using FirstErrorKeyPipe
+### Behavior
 
-- **Simplifies Error Handling**: Focuses on the first error, reducing complexity in form validation logic.
-- **Improves User Experience**: Displays a single, clear error message, avoiding confusion caused by multiple error messages.
-- **Flexible and Reusable**: Works seamlessly with both `FormControl` and `ValidationErrors` objects.
-
-By incorporating the `FirstErrorKeyPipe` into your Angular applications, you can enhance the clarity and usability of your forms, ensuring a smoother experience for your users.
+- Returns empty string `''` if no errors
+- Pure pipe - re-runs when errors object reference changes
+- Always use `control.errors` (not `control`) for reactive updates

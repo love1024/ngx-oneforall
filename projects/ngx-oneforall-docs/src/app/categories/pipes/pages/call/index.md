@@ -1,63 +1,60 @@
-The `CallPipe` allows you to call a function directly from the template. This is useful for invoking functions without triggering change detection on every cycle, as the pipe is pure.
+The `CallPipe` invokes a function directly from the template with pure pipe caching. This prevents unnecessary change detection cycles since the function is only re-evaluated when its reference or arguments change.
 
 ### Usage
 
-Apply the pipe in Angular templates:
-
-```html file="./snippets.html"#L1-L2
+```html file="./snippets.html"#L2-L2
 ```
-
-- **fn**: The function to call.
-- **args**: Arguments to pass to the function.
 
 ### Parameters
 
-- `fn: Function`
-    The function to be executed.
-- `...args: any[]`
-    Arguments to pass to the function.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fn` | `Function` | The function to call |
+| `...args` | `unknown[]` | Arguments to pass to the function |
 
-### Examples
+### Why Use CallPipe?
 
-#### Basic Usage
+Without the pipe, functions in templates are called on every change detection:
 
-```html file="./snippets.html"#L1-L2
+```html
+<!-- ❌ Called on every CD cycle -->
+{% raw %}{{ formatDate(date) }}{% endraw %}
+
+<!-- ✅ Called only when date changes -->
+{% raw %}{{ formatDate | call:date }}{% endraw %}
 ```
 
 ### Preserving Context
 
-When using methods that rely on `this`, you must ensure the context is preserved.
+When using methods that rely on `this`, ensure the context is preserved:
 
-#### Option 1: Arrow Functions
+#### Arrow Functions (Recommended)
 
-Arrow functions automatically capture the `this` context of the component.
+Arrow functions automatically capture `this`:
 
-```html file="./snippets.html"#L5-L6
+```html file="./snippets.html"#L6-L6
 ```
 
-#### Option 2: Binding Context
+#### Bound Methods
 
-If you use a regular class method, `this` will be lost. You must explicitly bind it, for example in the constructor or by assigning a bound version to a property.
+For regular methods, bind explicitly:
 
 ```typescript
-// In Component
+// In component
 getCounterBound = this.getCounter.bind(this);
 ```
 
-```html file="./snippets.html"#L9-L10
+```html file="./snippets.html"#L10-L10
 ```
 
 ### Behavior
 
-- **Pure**: The function is only called when the function reference or arguments change.
-- **Context**: Does not automatically bind `this`. Users must handle context binding.
-- **Safety**: Returns the input if it is not a function.
-- The pipe is marked as `pure` and `standalone`.
+- **Pure** - Only re-evaluates when function reference or arguments change
+- **Type-safe** - Generic typing for better type inference
+- **Null-safe** - Returns `null` if input is not a function
 
 ---
 
 #### Live Demo
-
-Explore this example in a live demonstration:
 
 {{ NgDocActions.demo("CallPipeDemoComponent") }}

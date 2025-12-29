@@ -1,10 +1,10 @@
-import { CallFunctionPipe } from './call.pipe';
+import { CallPipe } from './call.pipe';
 
-describe('CallFunctionPipe', () => {
-  let pipe: CallFunctionPipe;
+describe('CallPipe', () => {
+  let pipe: CallPipe;
 
   beforeEach(() => {
-    pipe = new CallFunctionPipe();
+    pipe = new CallPipe();
   });
 
   it('should create an instance', () => {
@@ -21,16 +21,16 @@ describe('CallFunctionPipe', () => {
     expect(pipe.transform(fn)).toBe('hello');
   });
 
-  it('should return the input if it is not a function', () => {
-    expect(pipe.transform('not a function' as any)).toBe('not a function');
+  it('should return null if it is not a function', () => {
+    expect(pipe.transform('not a function' as any)).toBeNull();
     expect(pipe.transform(null as any)).toBeNull();
-    expect(pipe.transform(undefined as any)).toBeUndefined();
+    expect(pipe.transform(undefined as any)).toBeNull();
   });
 
   it('should handle context correctly (arrow functions)', () => {
     const context = {
       value: 10,
-      getValue: () => 10 // Arrow function binds to lexical scope, but here we just test it runs
+      getValue: () => 10,
     };
     expect(pipe.transform(context.getValue)).toBe(10);
   });

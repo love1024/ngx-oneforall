@@ -1,5 +1,5 @@
 import { HostPlatform } from '@ngx-oneforall/constants';
-import { getHostPlatform } from '../../host-platform/src/host-platform';
+import { getHostPlatform } from '@ngx-oneforall/utils/host-platform';
 
 const META_KEYS = new Set(['meta', 'cmd', 'command', 'super', 'win', 'os']);
 const APPLE_PLATFORMS = new Set([HostPlatform.MAC, HostPlatform.IOS]);

@@ -1,52 +1,52 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { ValidationErrors } from '@angular/forms';
 
 /**
- * A custom Angular pipe that retrieves the first error key from an `AbstractControl` instance.
- * This is useful for displaying the first validation error in a form control.
+ * Pipe that retrieves the first error key from a `ValidationErrors` object.
+ * Supports optional priority ordering to control which error displays first.
  *
- * @example
- * <!-- Use directly with a form control -->
- *  <form>
- *     <input [formControl]="formControl" placeholder="Enter value" />
- *     @if (formControl | firstErrorKey as firstError) {
- *       <div>
- *          First error key: {{ firstError }}
- *        </div>
- *     }
- *  </form>
+ * @usageNotes
+ * ```html
+ * <!-- Basic usage -->
+ * @if (formControl.errors | firstErrorKey; as error) {
+ *   <div class="error">{{ error }}</div>
+ * }
  *
- * @example
- * <!-- Use with validation errors -->
- *  <form>
- *     <input [formControl]="formControl" placeholder="Enter value" />
- *     <mat-error>
- *        {{ formControl.errors | firstErrorKey }}
- *     </mat-error>
- *  </form>
- *
- * @export
- * @class firstErrorKey
- * @implements {PipeTransform}
+ * <!-- With priority ordering -->
+ * {{ formControl.errors | firstErrorKey:['required', 'minlength', 'pattern'] }}
+ * ```
  */
 @Pipe({
   name: 'firstErrorKey',
 })
 export class FirstErrorKeyPipe implements PipeTransform {
-  transform(input?: ValidationErrors | AbstractControl | null): string {
-    // Return empty string instead of null to avoid null cannot be used as key error
-    if (!input) {
-      return '';
-    }
-
-    const errors: ValidationErrors | null =
-      input instanceof AbstractControl ? input.errors : input;
+  /**
+   * Extracts the first error key from a ValidationErrors object.
+   *
+   * @param errors - ValidationErrors object from a form control
+   * @param priority - Optional array of error keys in priority order
+   * @returns The first error key (prioritized if specified), or empty string if no errors
+   */
+  transform(errors?: ValidationErrors | null, priority?: string[]): string {
     if (!errors) {
       return '';
     }
 
     const errorKeys = Object.keys(errors);
+    if (errorKeys.length === 0) {
+      return '';
+    }
 
-    return errorKeys.length > 0 ? errorKeys[0] : '';
+    // If priority list provided, return first matching priority key
+    if (priority && priority.length > 0) {
+      for (const key of priority) {
+        if (errorKeys.includes(key)) {
+          return key;
+        }
+      }
+    }
+
+    // Fall back to first available key
+    return errorKeys[0];
   }
 }

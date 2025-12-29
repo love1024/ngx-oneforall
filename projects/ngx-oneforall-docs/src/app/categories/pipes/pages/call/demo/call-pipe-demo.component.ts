@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { CallFunctionPipe } from '@ngx-oneforall/pipes/call';
+import { CallPipe } from '@ngx-oneforall/pipes/call';
 
 @Component({
   selector: 'app-call-pipe-demo',
-  standalone: true,
-  imports: [CallFunctionPipe],
+  imports: [CallPipe],
   template: `
     <div class="demo-container">
       <h3>Basic Usage</h3>
@@ -12,12 +11,12 @@ import { CallFunctionPipe } from '@ngx-oneforall/pipes/call';
         Sum (1 + 2): <strong>{{ sum | call: 1 : 2 }}</strong>
       </p>
 
-      <h3>With Context (Arrow Function)</h3>
+      <h3>Arrow Function (Context Preserved)</h3>
       <p>
         Greeting: <strong>{{ getGreeting | call: 'World' }}</strong>
       </p>
 
-      <h3>With Context (Bound Method)</h3>
+      <h3>Accessing Component State</h3>
       <p>
         Counter Value: <strong>{{ getCounter | call }}</strong>
       </p>

@@ -1,7 +1,7 @@
-// "first-error-key-control"
+// "first-error-key-basic"
 <form>
   <input [formControl]="formControl" placeholder="Enter value" />
-  @if (formControl | firstErrorKey; as firstError) {
+  @if (formControl.errors | firstErrorKey; as firstError) {
     <div>First error key: {{ firstError }}</div>
   }
 </form>
@@ -9,5 +9,15 @@
 // "first-error-key-validation"
 <form>
   <input [formControl]="formControl" placeholder="Enter value" />
-  <div>First error key:{{ formControl.errors | firstErrorKey }}</div>
+  <div>First error key: {{ formControl.errors | firstErrorKey }}</div>
+</form>
+
+// "first-error-key-priority"
+<form>
+  <!-- Shows 'required' first if present, then 'minlength', etc. -->
+  <div>
+    {{
+      formControl.errors | firstErrorKey: ['required', 'minlength', 'pattern']
+    }}
+  </div>
 </form>
