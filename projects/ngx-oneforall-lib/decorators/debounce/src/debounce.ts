@@ -1,56 +1,94 @@
 /**
+ * Options for the debounce decorator.
+ */
+export interface DebounceOptions {
+  /** Delay in milliseconds. Default: 300 */
+  delay?: number;
+  /** Execute on leading edge (immediately on first call). Default: false */
+  leading?: boolean;
+}
+
+/** Private symbol to store debounced functions on instance */
+const DEBOUNCED_FNS = Symbol('debouncedFns');
+const LAST_RESULTS = Symbol('lastResults');
+
+interface DebouncedInstance {
+  [DEBOUNCED_FNS]?: Map<string | symbol, (...args: unknown[]) => void>;
+  [LAST_RESULTS]?: Map<string | symbol, unknown>;
+}
+
+/**
  * A method decorator that applies a debounce mechanism to the decorated method.
  * The method will only execute after the specified delay has elapsed since the last call.
  *
- * @param delay - The debounce delay in milliseconds. Defaults to 300ms.
+ * @param options - Debounce options or delay in milliseconds
  *
  * @returns A `MethodDecorator` that wraps the original method with a debounced function.
  *
- * ### Example
+ * @example
  * ```typescript
  * class Example {
+ *   // Basic usage (trailing edge)
  *   @debounce(500)
  *   onResize() {
  *     console.log('Resized!');
  *   }
+ *
+ *   // With options
+ *   @debounce({ delay: 300, leading: true })
+ *   onScroll() {
+ *     console.log('Scrolled!');
+ *   }
  * }
  * ```
  *
- * ### How it works:
- * - The decorator replaces the original method with a debounced version.
- * - A private `__debouncedFns` map is created on the instance to store debounced functions for each decorated method.
- *   This is needed to avoid modifiygin method at the prototype level.
- * - If a debounced function for the method does not exist, it is created and stored in the map.
- * - Subsequent calls to the method within the delay period will reset the timer, ensuring the method is only executed once after the delay.
- *
  * @remarks
- * This decorator is particularly useful for event handlers like `resize` or `scroll`
- * where frequent calls can lead to performance issues.
+ * - The decorator replaces the original method with a debounced version.
+ * - A private Symbol-keyed map stores debounced functions per instance.
+ * - Returns the last result from the original method (useful for caching).
+ * - With `leading: true`, executes immediately on first call, then debounces.
  */
-export function debounce(delay = 300): MethodDecorator {
+export function debounce(
+  options: number | DebounceOptions = 300
+): MethodDecorator {
+  const config: Required<DebounceOptions> =
+    typeof options === 'number'
+      ? { delay: options, leading: false }
+      : { delay: options.delay ?? 300, leading: options.leading ?? false };
+
   return (
-    target: unknown,
+    _target: unknown,
     propertyKey: string | symbol,
     descriptor: PropertyDescriptor
   ) => {
     const original = descriptor.value;
 
-    descriptor.value = function (this: unknown, ...args: unknown[]) {
-      const self = this as {
-        __debouncedFns?: Map<string | symbol, (...args: unknown[]) => void>;
-      };
-      if (!self.__debouncedFns) {
-        self.__debouncedFns = new Map();
+    descriptor.value = function (this: DebouncedInstance, ...args: unknown[]) {
+      if (!this[DEBOUNCED_FNS]) {
+        this[DEBOUNCED_FNS] = new Map();
       }
-      if (!self.__debouncedFns.has(propertyKey)) {
-        self.__debouncedFns.set(
-          propertyKey,
-          createDebouncedFunction(original.bind(this), delay)
-        );
+      if (!this[LAST_RESULTS]) {
+        this[LAST_RESULTS] = new Map();
       }
 
-      const debouncedFn = self.__debouncedFns.get(propertyKey)!;
+      if (!this[DEBOUNCED_FNS].has(propertyKey)) {
+        const debouncedFn = createDebouncedFunction(
+          (...callArgs: unknown[]) => {
+            const result = original.apply(this, callArgs);
+            this[LAST_RESULTS]!.set(propertyKey, result);
+            return result;
+          },
+          config.delay,
+          config.leading
+        );
+        this[DEBOUNCED_FNS].set(propertyKey, debouncedFn);
+      }
+
+      const debouncedFn = this[DEBOUNCED_FNS].get(propertyKey)!;
       debouncedFn(...args);
+
+      // Return last cached result
+      return this[LAST_RESULTS].get(propertyKey);
     };
 
     return descriptor;
@@ -58,12 +96,30 @@ export function debounce(delay = 300): MethodDecorator {
 }
 
 function createDebouncedFunction(
-  fn: (...args: unknown[]) => void,
-  delay: number
+  fn: (...args: unknown[]) => unknown,
+  delay: number,
+  leading: boolean
 ) {
-  let timeoutId: ReturnType<typeof setTimeout>;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  let isLeadingInvoked = false;
+
   return (...args: unknown[]) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
+    if (leading && !isLeadingInvoked) {
+      isLeadingInvoked = true;
+      fn(...args);
+    }
+
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      // Skip calling if leading is true to avoid duplicate calls
+      // In next call, the above case will execute it
+      if (!leading) {
+        fn(...args);
+      }
+      isLeadingInvoked = false;
+      timeoutId = null;
+    }, delay);
   };
 }
