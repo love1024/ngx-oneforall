@@ -3,7 +3,6 @@ import { RangePipe } from '@ngx-oneforall/pipes/range';
 
 @Component({
   selector: 'app-range-pipe-demo',
-  standalone: true,
   imports: [RangePipe],
   template: `
     <div class="demo-container">
