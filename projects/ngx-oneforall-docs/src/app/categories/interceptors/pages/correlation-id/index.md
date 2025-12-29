@@ -1,19 +1,23 @@
-The `withCorrelationIdInterceptor` is an Angular HTTP interceptor that automatically adds a unique correlation ID to each HTTP request. This enables better request tracking, debugging, and distributed tracing across your application and backend services.
+The `withCorrelationIdInterceptor` is an Angular HTTP interceptor that automatically adds a unique correlation ID header to each HTTP request. It enables request tracking, debugging, and distributed tracing across services.
 
-## Why Use a Correlation ID Interceptor?
+## Features
 
-In modern distributed applications, tracking requests across multiple services is crucial for debugging and monitoring. A correlation ID is a unique identifier attached to each request that allows you to:
+- **Automatic ID generation** — Unique ID added to every request
+- **Distributed tracing** — Track requests across microservices
+- **Custom header name** — Use your own header (default: `X-Correlation-Id`)
+- **Custom ID generator** — Provide your own ID generation logic
+- **Per-request control** — Disable or override via `HttpContext`
+- **SSR-safe** — Automatically skips server-side rendering
 
-- **Trace requests** through multiple services and microservices
-- **Debug issues** by correlating logs across different systems
-- **Monitor performance** by tracking individual request lifecycles
-- **Analyze user journeys** by following requests from start to finish
+## Installation
 
-The `withCorrelationIdInterceptor` automates this process, ensuring every HTTP request gets a unique identifier without manual intervention.
+```typescript
+import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors/correlation-id';
+```
 
-## How to Use
+## Quick Start
 
-Register the interceptor in your Angular application's providers:
+### Standalone Applications
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -28,7 +32,7 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-or for NgModule-based applications:
+### NgModule Applications
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -46,57 +50,95 @@ import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors/correl
 export class AppModule {}
 ```
 
-By default, the interceptor adds an `X-Correlation-Id` header to all HTTP requests made from the browser.
+### Result
 
-> **Note:** The interceptor only works in the browser environment and will be skipped in server-side rendering (SSR).
+Every request automatically includes a correlation ID:
 
-> **Note:** If a correlation ID header already exists, it won't be overridden.
+```
+GET /api/users
+X-Correlation-Id: 550e8400-e29b-41d4-a716-446655440000
+```
 
-## Configuration Options
+## Configuration
 
-You can customize the interceptor's behavior by passing a configuration object:
+### CorrelationIdConfig
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `header` | `string` | `'X-Correlation-Id'` | Header name for the correlation ID |
+| `idGenerator` | `() => string` | `crypto.randomUUID()` | Function to generate unique IDs |
+
+### Custom Header Name
 
 ```typescript
 withCorrelationIdInterceptor({
-  header: 'X-Request-Id',  // Custom header name
-  idGenerator: () => `req-${Date.now()}-${Math.random()}`  // Custom ID generator
+  header: 'X-Request-Id'
 })
 ```
 
-### Available Options
+### Custom ID Generator
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `header` | `string` | `'X-Correlation-Id'` | The name of the header to add to requests |
-| `idGenerator` | `() => string` | `crypto.randomUUID()` fallback | Function to generate unique IDs |
+```typescript
+withCorrelationIdInterceptor({
+  idGenerator: () => `req-${Date.now()}-${Math.random().toString(16).slice(2)}`
+})
+```
 
 ### Default ID Generator
 
-The default ID generator uses `crypto.randomUUID()` if available, otherwise falls back to a timestamp-based approach:
+Uses `crypto.randomUUID()` when available, with a fallback for older browsers:
 
 ```typescript
-const defaultId = crypto.randomUUID() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`
+```
+
+## Behavior
+
+### Processing Order
+
+The interceptor processes requests in the following order:
+
+1. **Check platform** — Skip if not in browser (SSR)
+2. **Check context** — If disabled via `HttpContext`, pass through
+3. **Check existing header** — If header already present, don't override
+4. **Add correlation ID** — Use context ID, or generate a new one
+
+### SSR Handling
+
+The interceptor automatically skips server-side rendering. On the server, requests pass through unchanged. On the browser, correlation ID is added.
+
+### Existing Headers Preserved
+
+If a request already has the correlation ID header, it won't be overridden:
+
+```typescript
+// Manual header takes precedence
+this.http.get('/api/data', {
+  headers: { 'X-Correlation-Id': 'my-custom-id' }
+});
 ```
 
 ## Context API
 
-You can control the correlation ID on a per-request basis using the `useCorrelationId` context function:
-
-### Disable for Specific Requests
+Control the interceptor on a per-request basis using `useCorrelationId`:
 
 ```typescript
 import { useCorrelationId } from '@ngx-oneforall/interceptors/correlation-id';
+```
 
+### Disable for a Request
+
+```typescript
 this.http.get('/api/public', {
   context: useCorrelationId({ enabled: false })
 });
 ```
 
-### Provide Custom ID
+### Use a Specific ID
 
 ```typescript
-this.http.post('/api/data', payload, {
-  context: useCorrelationId({ id: 'custom-correlation-id-123' })
+this.http.post('/api/checkout', cart, {
+  context: useCorrelationId({ id: 'checkout-flow-12345' })
 });
 ```
 
@@ -104,54 +146,74 @@ this.http.post('/api/data', payload, {
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `enabled` | `boolean` | Set to `false` to disable correlation ID for this request |
-| `id` | `string` | Provide a specific correlation ID instead of generating one |
-| `context` | `HttpContext` | Use an existing HttpContext object |
+| `enabled` | `boolean` | Set `false` to skip adding correlation ID |
+| `id` | `string` | Use a specific ID instead of generating one |
+| `context` | `HttpContext` | Extend an existing `HttpContext` |
 
-## Behavior
-
-The interceptor follows these rules:
-
-1. **Browser Only**: Only operates in browser environments (skips SSR)
-2. **No Override**: If a correlation ID header already exists, it won't be overridden
-3. **Context Priority**: Context configuration takes precedence over global settings
-4. **Automatic Generation**: Generates a unique ID for each request if not provided
-
-## Use Cases
+## Examples
 
 ### Distributed Tracing
 
+Track requests across your entire system:
+
 ```typescript
-// Frontend request with correlation ID
+// Frontend sends request
 this.http.get('/api/orders/123').subscribe();
 // Header: X-Correlation-Id: 550e8400-e29b-41d4-a716-446655440000
 
-// Backend can use this ID in logs:
-// [550e8400-e29b-41d4-a716-446655440000] Order service: Fetching order 123
-// [550e8400-e29b-41d4-a716-446655440000] Database: Query executed
+// Backend logs with the same ID
+// [550e8400-...] API Gateway: Received request
+// [550e8400-...] Order Service: Fetching order 123
+// [550e8400-...] Database: Query executed in 15ms
 ```
 
-### Custom ID Format
+### User-Scoped IDs
+
+Include user context in correlation IDs:
 
 ```typescript
 withCorrelationIdInterceptor({
   idGenerator: () => {
-    const userId = getCurrentUserId();
-    const timestamp = Date.now();
-    return `${userId}-${timestamp}`;
+    const userId = inject(AuthService).userId();
+    return `${userId}-${crypto.randomUUID()}`;
   }
 })
 ```
 
-### Per-Request Tracking
+### Action Tracking
+
+Track specific user actions:
 
 ```typescript
-// Track a specific user action
-const actionId = 'checkout-' + crypto.randomUUID();
+const checkoutId = `checkout-${crypto.randomUUID()}`;
 
-this.http.post('/api/checkout', cart, {
-  context: useCorrelationId({ id: actionId })
-}).subscribe();
+// All checkout-related requests share the same correlation ID
+this.http.post('/api/validate-cart', cart, {
+  context: useCorrelationId({ id: checkoutId })
+});
+
+this.http.post('/api/process-payment', payment, {
+  context: useCorrelationId({ id: checkoutId })
+});
+
+this.http.post('/api/create-order', order, {
+  context: useCorrelationId({ id: checkoutId })
+});
+```
+
+### Multiple Header Formats
+
+Different backend services may expect different headers:
+
+```typescript
+// For AWS X-Ray
+withCorrelationIdInterceptor({ header: 'X-Amzn-Trace-Id' });
+
+// For Zipkin
+withCorrelationIdInterceptor({ header: 'X-B3-TraceId' });
+
+// For custom systems
+withCorrelationIdInterceptor({ header: 'X-Request-Id' });
 ```
 
 ## Demo
