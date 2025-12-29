@@ -3,7 +3,6 @@ import { PluralizePipe } from '@ngx-oneforall/pipes/pluralize';
 
 @Component({
   selector: 'app-pluralize-pipe-demo',
-  standalone: true,
   imports: [PluralizePipe],
   template: `
     <div class="demo-container">

@@ -106,7 +106,9 @@ describe('PluralizePipe', () => {
     });
 
     it('should throw error if singular form is not provided', () => {
-      expect(() => pipe.transform(1, '')).toThrow('pluralize pipe requires at least a singular form');
+      expect(() => pipe.transform(1, '')).toThrow(
+        'pluralize pipe requires at least a singular form'
+      );
     });
 
     it('should handle decimal numbers', () => {
@@ -122,9 +124,10 @@ describe('PluralizePipe', () => {
       expect(pipe.transform(2, 'apple', '')).toBe('2 apples');
     });
 
-    it('should handle whitespace-only singular form after trimming', () => {
-      // After trimming, this becomes empty string which hits the !word guard
-      expect(pipe.transform(2, '   ', undefined, false)).toBe('');
+    it('should throw for whitespace-only singular form after trimming', () => {
+      expect(() => pipe.transform(2, '   ')).toThrow(
+        'pluralize pipe requires at least a singular form'
+      );
     });
   });
 

@@ -1,9 +1,13 @@
 <!-- snippet: basic-usage -->
 <p>{{ 1 | pluralize: 'apple' }}</p>
+<!-- Output: 1 apple-->
 <p>{{ 2 | pluralize: 'apple' }}</p>
+<!-- Output: 2 apples-->
 
 <!-- snippet: custom-plural -->
-<p>{{ 2 | pluralize: 'person':'people' }}</p>
+<p>{{ 2 | pluralize: 'person' : 'people' }}</p>
+<!-- Output: 2 people-->
 
 <!-- snippet: without-number -->
-<p>{{ 2 | pluralize: 'apple':undefined:false }}</p>
+<p>{{ 2 | pluralize: 'apple' : undefined : false }}</p>
+<!-- Output: apples-->
