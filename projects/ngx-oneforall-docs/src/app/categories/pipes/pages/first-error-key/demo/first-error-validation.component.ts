@@ -8,7 +8,9 @@ import { FirstErrorKeyPipe } from '@ngx-oneforall/pipes/first-error-key';
   template: `
     <label for="name">Name: </label>
     <input [formControl]="nameControl" name="name" placeholder="Enter name" />
-    <div>{{ errorMessages[nameControl.errors | firstErrorKey] }}</div>
+    @if (nameControl.errors | firstErrorKey; as error) {
+      <div>{{ errorMessages[error] }}</div>
+    }
   `,
   styles: `
     input.ng-invalid.ng-touched {

@@ -2,9 +2,16 @@
 <p [innerHTML]="'Hello World' | highlightSearch: 'World'"></p>
 <!-- Output: Hello <mark>World</mark> -->
 
-<!-- snippet: case-insensitive -->
-<p [innerHTML]="'Angular is Awesome' | highlightSearch: 'angular'"></p>
-<!-- Output: <mark>Angular</mark> is Awesome -->
+<!-- snippet: custom-tag -->
+<p [innerHTML]="'Hello World' | highlightSearch: 'World' : 'span'"></p>
+<!-- Output: Hello <span>World</span> -->
+
+<!-- snippet: custom-class -->
+<p
+  [innerHTML]="
+    'Hello World' | highlightSearch: 'World' : 'mark' : 'highlight'
+  "></p>
+<!-- Output: Hello <mark class="highlight">World</mark> -->
 
 <!-- snippet: special-chars -->
 <p [innerHTML]="'Price: $100' | highlightSearch: '$100'"></p>
