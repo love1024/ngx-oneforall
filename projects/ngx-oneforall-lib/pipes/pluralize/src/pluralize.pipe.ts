@@ -33,11 +33,10 @@ export class PluralizePipe implements PipeTransform {
   ): string {
     const num = Number(value ?? 0);
 
-    if (!singular) {
+    const singularForm = (singular ?? '').trim();
+    if (!singularForm) {
       throw new Error('pluralize pipe requires at least a singular form');
     }
-
-    const singularForm = singular.trim();
     const pluralForm = plural
       ? plural.trim()
       : this.simplePluralize(singularForm);
@@ -48,8 +47,6 @@ export class PluralizePipe implements PipeTransform {
   }
 
   private simplePluralize(word: string): string {
-    if (!word || word.length === 0) return word;
-
     const lower = word.toLowerCase();
 
     // box → boxes, bus → buses, buzz → buzzes, church → churches, dish → dishes

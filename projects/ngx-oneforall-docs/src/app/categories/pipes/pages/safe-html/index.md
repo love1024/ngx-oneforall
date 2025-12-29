@@ -1,24 +1,43 @@
-The `safeHtml` pipe is a custom Angular pipe that allows rendering of raw HTML content in your Angular application. It uses Angular's `DomSanitizer` service to mark the provided HTML as trusted, bypassing Angular's built-in security mechanisms. This means the developer must ensure the content is safe to avoid security vulnerabilities such as Cross-Site Scripting (XSS) attacks.
+The `SafeHtmlPipe` bypasses Angular's HTML sanitization to render trusted HTML content.
 
-#### Purpose
-Binding raw HTML directly to the DOM using Angular's `innerHTML` is blocked by Angular's security mechanisms to prevent vulnerabilities. The `safeHtml` pipe allows you to bypass these restrictions and render raw HTML, but it requires you to validate the content for safety before passing it to the pipe.
+> **⚠️ Security Warning** Only use with trusted content. User input must be sanitized server-side.
 
-#### How It Works
-The `safeHtml` pipe uses Angular's `DomSanitizer.bypassSecurityTrustHtml` method to mark the provided HTML string as trusted. It validates that the input is a string and throws an error if it is not. If the input is `null` or `undefined`, it returns an empty string. However, it does not sanitize or modify the content to make it safe—this responsibility lies entirely with the developer.
-
-#### Usage
-To use the `safeHtml` pipe, pass a dynamic HTML string to the pipe in your Angular template. The pipe will mark the content as trusted and render it in the DOM.
-
-Example:
+### Usage
 
 ```html
-<div [innerHTML]="unsafeHtml | safeHtml"></div>
+<div [innerHTML]="htmlContent | safeHtml"></div>
 ```
 
-**Important:** Ensure that the HTML content passed to the pipe is safe and free from malicious code. This pipe bypasses Angular's security checks, so improper use can expose your application to XSS attacks.
+### Parameters
 
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `value` | `string \| null` | The HTML string to trust |
 
-#### Live Demonstration
-Experience the `safeHtml` pipe in action through the following live demonstration:
+### When to Use
+
+- **CMS content** - Admin-generated HTML from a trusted CMS
+- **Markdown output** - Pre-rendered markdown that's already sanitized
+- **Static HTML** - Hardcoded HTML strings in your codebase
+
+### When NOT to Use
+
+- **User input** - Never use with unsanitized user-provided content
+- **External APIs** - Content from untrusted third-party sources
+- **Query parameters** - URL parameters or form inputs
+
+### Behavior
+
+- Returns `SafeHtml` for valid strings
+- Returns empty `SafeHtml` for `null`/`undefined`
+- Throws error for non-string values
+
+### How it Works
+
+Uses Angular's `DomSanitizer.bypassSecurityTrustHtml()` to mark content as trusted. This bypasses XSS protection, so ensure content is safe before use.
+
+---
+
+#### Live Demo
 
 {{ NgDocActions.demo("SafeHtmlPipeDemoComponent") }}

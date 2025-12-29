@@ -13,42 +13,40 @@ import { TruncatePipe } from '@ngx-oneforall/pipes/truncate';
       </p>
 
       <div class="demo-section">
-        <h3>Default Usage</h3>
-        <p>
-          <code>{{ longText }} | truncate</code>
-        </p>
-        <div class="result">
-          {{ longText | truncate }}
-        </div>
-      </div>
-
-      <div class="demo-section">
-        <h3>Custom Limit (30 characters)</h3>
-        <p>
-          <code>{{ longText }} | truncate:30</code>
-        </p>
+        <h3>End Truncation (default)</h3>
+        <code>longText | truncate:30</code>
         <div class="result">
           {{ longText | truncate: 30 }}
         </div>
       </div>
 
       <div class="demo-section">
-        <h3>Complete Words (limit: 30)</h3>
-        <p>
-          <code>{{ longText }} | truncate:30:true</code>
-        </p>
+        <h3>Start Truncation</h3>
+        <code>longText | truncate:30:false:'…':'start'</code>
+        <div class="result">
+          {{ longText | truncate: 30 : false : '…' : 'start' }}
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h3>Middle Truncation</h3>
+        <code>longText | truncate:30:false:'…':'middle'</code>
+        <div class="result">
+          {{ longText | truncate: 30 : false : '…' : 'middle' }}
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h3>Complete Words (end only)</h3>
+        <code>longText | truncate:30:true</code>
         <div class="result">
           {{ longText | truncate: 30 : true }}
         </div>
       </div>
 
       <div class="demo-section">
-        <h3>
-          Custom Ellipsis (limit: 30, completeWords: true, ellipsis: '...')
-        </h3>
-        <p>
-          <code>{{ longText }} | truncate:30:true:'...'</code>
-        </p>
+        <h3>Custom Ellipsis</h3>
+        <code>longText | truncate:30:true:'...'</code>
         <div class="result">
           {{ longText | truncate: 30 : true : '...' }}
         </div>
@@ -56,7 +54,6 @@ import { TruncatePipe } from '@ngx-oneforall/pipes/truncate';
     </div>
   `,
   styleUrl: 'truncate-pipe-demo.component.scss',
-  standalone: true,
 })
 export class TruncatePipeDemoComponent {
   longText =

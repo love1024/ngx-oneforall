@@ -105,7 +105,19 @@ describe('PluralizePipe', () => {
       expect(pipe.transform(undefined as any, 'apple')).toBe('0 apples');
     });
 
-    it('should throw error if singular form is not provided', () => {
+    it('should throw error if singular is null', () => {
+      expect(() => pipe.transform(1, null as any)).toThrow(
+        'pluralize pipe requires at least a singular form'
+      );
+    });
+
+    it('should throw error if singular is undefined', () => {
+      expect(() => pipe.transform(1, undefined as any)).toThrow(
+        'pluralize pipe requires at least a singular form'
+      );
+    });
+
+    it('should throw error if singular form is empty string', () => {
       expect(() => pipe.transform(1, '')).toThrow(
         'pluralize pipe requires at least a singular form'
       );

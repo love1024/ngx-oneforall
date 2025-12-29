@@ -36,20 +36,27 @@ describe('SafeHtmlPipe', () => {
     );
   });
 
-  it('should return an empty string for null or undefined values', () => {
-    expect(pipe.transform(null)).toBe('');
-    expect(pipe.transform(undefined)).toBe('');
+  it('should return empty SafeHtml for null value', () => {
+    const result = pipe.transform(null);
+    expect(sanitizer.bypassSecurityTrustHtml).toHaveBeenCalledWith('');
+    expect(result).toBe('');
+  });
+
+  it('should return empty SafeHtml for undefined value', () => {
+    const result = pipe.transform(undefined);
+    expect(sanitizer.bypassSecurityTrustHtml).toHaveBeenCalledWith('');
+    expect(result).toBe('');
   });
 
   it('should throw an error if the value is not a string', () => {
     expect(() => pipe.transform(123)).toThrowError(
-      new TypeError('Value must be a string')
+      'SafeHtmlPipe: Value must be a string'
     );
     expect(() => pipe.transform({})).toThrowError(
-      new TypeError('Value must be a string')
+      'SafeHtmlPipe: Value must be a string'
     );
     expect(() => pipe.transform([])).toThrowError(
-      new TypeError('Value must be a string')
+      'SafeHtmlPipe: Value must be a string'
     );
   });
 });

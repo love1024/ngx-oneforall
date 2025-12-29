@@ -1,4 +1,18 @@
-<p>{{ longText | truncate:limit:completeWords:ellipsis }}</p>
+<!-- snippet: basic-usage -->
+<p>{{ longText | truncate: limit : completeWords : ellipsis : position }}</p>
 
-<p>{{ 'Angular pipes are powerful tools for transforming data.' | truncate:20:true:'...' }}</p>
+<!-- snippet: end-truncation -->
+<p>{{ 'Hello World' | truncate: 8 }}</p>
+<!-- Output: Hello Wo… -->
 
+<!-- snippet: start-truncation -->
+<p>{{ 'Hello World' | truncate: 8 : false : '…' : 'start' }}</p>
+<!-- Output: …lo World -->
+
+<!-- snippet: middle-truncation -->
+<p>{{ 'Hello World' | truncate: 8 : false : '…' : 'middle' }}</p>
+<!-- Output: Hell…rld -->
+
+<!-- snippet: complete-words -->
+<p>{{ 'Angular pipes are powerful tools.' | truncate: 20 : true }}</p>
+<!-- Output: Angular pipes are… -->
