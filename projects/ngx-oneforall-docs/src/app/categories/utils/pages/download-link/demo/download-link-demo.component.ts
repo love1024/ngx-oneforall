@@ -14,32 +14,7 @@ import { downloadLink } from '@ngx-oneforall/utils/download-link';
       <button (click)="downloadImage()">Download Placeholder Image</button>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-        border: 1px solid var(--ng-doc-border-color);
-        border-radius: 4px;
-      }
-      button {
-        padding: 0.6rem 1.2rem;
-        cursor: pointer;
-        align-self: flex-start;
-        background-color: var(--ng-doc-primary, #007bff);
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: opacity 0.2s;
-      }
-      button:hover {
-        opacity: 0.9;
-      }
-    `,
-  ],
+  styleUrl: './download-link-demo.component.scss',
 })
 export class DownloadLinkDemoComponent {
   downloadTextFile() {

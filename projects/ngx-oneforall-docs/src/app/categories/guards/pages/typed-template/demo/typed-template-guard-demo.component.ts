@@ -38,36 +38,7 @@ interface User {
       </ng-template>
     </div>
   `,
-  styles: `
-    .demo-container {
-      max-width: 400px;
-      margin: 2rem auto;
-      padding: 1.5rem;
-      border-radius: 8px;
-      background: #f9f9fc;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
-      font-family: 'Segoe UI', Arial, sans-serif;
-    }
-    h2 {
-      margin-bottom: 0.5rem;
-      color: #2d3a4b;
-    }
-    .user-card {
-      margin-top: 1rem;
-      padding: 1rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      background: #fff;
-    }
-    .label {
-      font-weight: 600;
-      color: #4a5568;
-    }
-    .value {
-      margin-left: 0.5rem;
-      color: #2b6cb0;
-    }
-  `,
+  styleUrl: './typed-template-guard-demo.component.scss',
 })
 export class TypedTemplateGuardDemoComponent {
   userContext: User = { id: 1, fullName: 'Jane Doe', years: 29 };

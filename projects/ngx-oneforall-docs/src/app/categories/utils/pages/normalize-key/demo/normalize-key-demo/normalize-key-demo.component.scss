@@ -1,0 +1,28 @@
+.demo-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+input {
+  padding: 0.5rem;
+  border: 1px solid var(--ng-doc-border-color);
+  border-radius: 4px;
+  background: var(--ng-doc-input-background);
+  color: var(--ng-doc-text-color);
+}
+.result {
+  padding: 1rem;
+  background: var(--ng-doc-code-block-background);
+  border-radius: 4px;
+}
+code {
+  background: var(--ng-doc-code-inline-background);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+}

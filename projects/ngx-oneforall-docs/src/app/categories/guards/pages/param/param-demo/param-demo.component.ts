@@ -28,25 +28,7 @@ import { ActivatedRoute } from '@angular/router';
       </p>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        padding: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-      }
-      .note {
-        margin-top: 1rem;
-        font-size: 0.85rem;
-        color: #666;
-      }
-      code {
-        background-color: #f8f9fa;
-        padding: 0.2rem 0.4rem;
-        border-radius: 3px;
-      }
-    `,
-  ],
+  styleUrl: './param-demo.component.scss',
 })
 export class ParamDemoComponent {
   protected route = inject(ActivatedRoute);

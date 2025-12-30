@@ -37,42 +37,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
       </p>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        padding: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-      }
-      .buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 1rem;
-      }
-      .btn {
-        padding: 0.5rem 1rem;
-        background-color: #007bff;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        font-size: 0.9rem;
-      }
-      .btn:hover {
-        background-color: #0056b3;
-      }
-      .note {
-        margin-top: 1rem;
-        font-size: 0.85rem;
-        color: #666;
-      }
-      code {
-        background-color: #f8f9fa;
-        padding: 0.2rem 0.4rem;
-        border-radius: 3px;
-      }
-    `,
-  ],
+  styleUrl: './query-param-demo.component.scss',
 })
 export class QueryParamDemoComponent {
   protected route = inject(ActivatedRoute);

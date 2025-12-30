@@ -10,15 +10,7 @@ import { HostPlatform } from '@ngx-oneforall/constants';
       <p><strong>Is Apple Platform:</strong> {{ isApple }}</p>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        padding: 1rem;
-        background: var(--ng-doc-code-block-background);
-        border-radius: 4px;
-      }
-    `,
-  ],
+  styleUrl: './host-platform-demo.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -11,7 +11,6 @@ import {
     <h2>Unsaved Guard Demo</h2>
     <p>Try to navigate away to run this guard.</p>
   `,
-  styles: ``,
 })
 export class UnsavedChangesDemoComponent
   implements HasUnsavedChanges, OnDestroy
