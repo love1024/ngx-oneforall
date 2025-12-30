@@ -23,43 +23,7 @@ import { InfiniteScrollDirective } from '@ngx-oneforall/directives/infinite-scro
       </div>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        padding: 20px;
-        border: 1px solid var(--ng-doc-border-color);
-        border-radius: 4px;
-      }
-
-      .scroll-container {
-        height: 300px;
-        overflow-y: auto;
-        border: 1px solid var(--ng-doc-border-color);
-        border-radius: 4px;
-        padding: 10px;
-      }
-
-      .list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .item {
-        padding: 15px;
-        background-color: var(--ng-doc-code-bg);
-        border-radius: 4px;
-        border: 1px solid var(--ng-doc-border-color);
-      }
-
-      .loading {
-        text-align: center;
-        padding: 10px;
-        color: var(--ng-doc-text-muted);
-        font-style: italic;
-      }
-    `,
-  ],
+  styleUrl: './infinite-scroll-demo.component.scss',
   imports: [InfiniteScrollDirective],
 })
 export class InfiniteScrollDemoComponent {

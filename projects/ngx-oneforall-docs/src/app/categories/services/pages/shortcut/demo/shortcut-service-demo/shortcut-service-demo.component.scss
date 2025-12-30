@@ -1,0 +1,26 @@
+.demo-container {
+    padding: 20px;
+    border: 1px solid var(--ng-doc-border-color);
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.message {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: var(--ng-doc-code-bg);
+    border-left: 4px solid var(--ng-doc-primary);
+    border-radius: 0 4px 4px 0;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

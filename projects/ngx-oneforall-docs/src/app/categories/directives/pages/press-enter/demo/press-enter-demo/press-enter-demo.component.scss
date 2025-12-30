@@ -1,0 +1,43 @@
+.demo-container {
+    padding: 20px;
+    border: 1px solid var(--ng-doc-border-color);
+    border-radius: 4px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--ng-doc-border-color);
+    border-radius: 4px;
+    background-color: var(--ng-doc-code-bg);
+    color: var(--ng-doc-text);
+    font-size: 14px;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--ng-doc-primary);
+}
+
+.message {
+    padding: 10px;
+    background-color: var(--ng-doc-code-bg);
+    border-left: 4px solid var(--ng-doc-primary);
+    border-radius: 0 4px 4px 0;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

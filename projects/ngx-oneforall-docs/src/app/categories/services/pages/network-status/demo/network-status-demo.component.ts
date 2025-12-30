@@ -18,28 +18,7 @@ import { NetworkStatusService } from '@ngx-oneforall/services/network-status';
       </p>
     </div>
   `,
-  styles: `
-    #status {
-      padding: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background-color: #f9f9f9;
-    }
-    #status h3 {
-      margin: 0;
-      font-size: 1.5rem;
-      color: #333;
-    }
-    #status p {
-      margin: 0.5rem 0;
-      font-size: 1rem;
-      color: #555;
-    }
-    #status strong {
-      font-weight: bold;
-      color: #000;
-    }
-  `,
+  styleUrl: './network-status-demo.component.scss',
   providers: [NetworkStatusService],
 })
 export class NetworkStatusDemoComponent {

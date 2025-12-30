@@ -6,6 +6,7 @@ import {
   NgDocSidebarComponent,
 } from '@ng-doc/app';
 import { routingAnimation } from './animations/routing.animation';
+import { NgDocThemeService } from '@ng-doc/app/services/theme';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -22,6 +23,11 @@ import { routingAnimation } from './animations/routing.animation';
 })
 export class AppComponent {
   private contexts = inject(ChildrenOutletContexts);
+  private readonly themeService = inject(NgDocThemeService);
+
+  constructor() {
+    this.themeService.set('auto');
+  }
 
   get routingAnimations() {
     return this.contexts.getContext('primary')?.route?.snapshot?.title;
