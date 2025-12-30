@@ -5,10 +5,10 @@ describe('minDate', () => {
   const MIN_DATE = new Date('2023-01-01');
 
   it('should throw error if invalid min date is provided', () => {
-    expect(() => minDate(new Date('invalid'))).toThrowError(
+    expect(() => minDate(new Date('invalid'))).toThrow(
       'minDate: invalid date provided as minimum.'
     );
-    expect(() => minDate('invalid-date-string')).toThrowError(
+    expect(() => minDate('invalid-date-string')).toThrow(
       'minDate: invalid date provided as minimum.'
     );
   });

@@ -5,10 +5,10 @@ describe('maxDate', () => {
   const MAX_DATE = new Date('2023-01-01');
 
   it('should throw error if invalid max date is provided', () => {
-    expect(() => maxDate(new Date('invalid'))).toThrowError(
+    expect(() => maxDate(new Date('invalid'))).toThrow(
       'maxDate: invalid date provided as maximum.'
     );
-    expect(() => maxDate('invalid-date-string')).toThrowError(
+    expect(() => maxDate('invalid-date-string')).toThrow(
       'maxDate: invalid date provided as maximum.'
     );
   });

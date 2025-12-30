@@ -13,7 +13,6 @@ const NON_RECORD_CONSTRUCTORS = new Set<unknown>([
   WeakMap,
   WeakSet,
   ArrayBuffer,
-  SharedArrayBuffer,
   DataView,
   Blob,
   File,

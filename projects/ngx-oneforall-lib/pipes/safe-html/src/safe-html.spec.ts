@@ -49,13 +49,13 @@ describe('SafeHtmlPipe', () => {
   });
 
   it('should throw an error if the value is not a string', () => {
-    expect(() => pipe.transform(123)).toThrowError(
+    expect(() => pipe.transform(123)).toThrow(
       'SafeHtmlPipe: Value must be a string'
     );
-    expect(() => pipe.transform({})).toThrowError(
+    expect(() => pipe.transform({})).toThrow(
       'SafeHtmlPipe: Value must be a string'
     );
-    expect(() => pipe.transform([])).toThrowError(
+    expect(() => pipe.transform([])).toThrow(
       'SafeHtmlPipe: Value must be a string'
     );
   });
