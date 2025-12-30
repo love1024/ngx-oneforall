@@ -1,4 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import {
+  Component,
+  EnvironmentInjector,
+  inject,
+  OnDestroy,
+  runInInjectionContext,
+} from '@angular/core';
 import {
   HasUnsavedChanges,
   unsavedChangesGuard,
@@ -15,10 +21,14 @@ import {
 export class UnsavedChangesDemoComponent
   implements HasUnsavedChanges, OnDestroy
 {
+  environmentInjector = inject(EnvironmentInjector);
   guard = unsavedChangesGuard();
 
   ngOnDestroy() {
-    this.guard(this);
+    // This is just for demo purposes
+    runInInjectionContext(this.environmentInjector, () => {
+      this.guard(this, {} as any, {} as any, {} as any);
+    });
   }
 
   hasUnsavedChanges() {

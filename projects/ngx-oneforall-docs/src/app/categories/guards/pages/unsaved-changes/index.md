@@ -1,42 +1,45 @@
 
 
-Unsaved changes guards are essential for protecting users from accidentally losing their work when navigating away from a page with unsaved modifications. These guards are commonly used in forms, editors, or any interactive components where users can input or modify data.
+Unsaved changes guards are essential for protecting users from accidentally losing their work when navigating away from a page with unsaved modifications. This guard leverages the native `window.confirm` dialog to prompt the user for confirmation.
 
 #### How to Use
 
-1. **Register the Guard in Route Configuration**  
-    Add the unsaved changes guard to the `canDeactivate` property of the relevant route:
+1. **Import the Guard**
+    Import `unsavedChangesGuard` and the `HasUnsavedChanges` interface:
+    ```typescript
+    import { HasUnsavedChanges, unsavedChangesGuard } from '@ngx-oneforall/guards/unsaved-changes';
+    ```
+
+2. **Register the Guard**
+    Add the guard to your route configuration using `canDeactivate`:
     ```typescript {4}
     {
-      path: '/form',
+      path: 'form',
       canDeactivate: [
          unsavedChangesGuard()
       ]
     }
     ```
 
-2. **Implement the `HasUnsavedChanges` Interface**  
-    In the component that should be protected, implement the `HasUnsavedChanges` interface:
+3. **Implement the Interface**
+    Implement `HasUnsavedChanges` in your component:
     ```typescript
     export class UnsavedChangesDemoComponent implements HasUnsavedChanges {
-      ...
+      // ...
       hasUnsavedChanges() {
-         return true;
+         return this.form.dirty;
       }
     }
     ```
 
-3. **Customize the `hasUnsavedChanges` Method**  
-    Define the logic within `hasUnsavedChanges` to determine if there are unsaved changes. This method can return a boolean, a `Promise`, or an `Observable`:
-    > **Note** The guard supports synchronous and asynchronous checks.
+4. **Async Checks (Optional)**
+    The `hasUnsavedChanges` method can return a `boolean`, `Promise<boolean>`, or `Observable<boolean>`.
     
     ```typescript
-    export class UnsavedChangesDemoComponent implements HasUnsavedChanges {
-      ...
-      hasUnsavedChanges(): Observable<boolean> {
-         // Example: resolve after 3 seconds
-         return timer(3000).pipe(map(() => true));
-      }
+    hasUnsavedChanges(): Observable<boolean> {
+       return this.apiClient.checkDraftStatus().pipe(
+         map(status => status.hasChanges)
+       );
     }
     ```
 
@@ -44,27 +47,23 @@ Unsaved changes guards are essential for protecting users from accidentally losi
 - Preventing navigation away from a form with unsaved data.
 - Alerting users before closing a tab or browser window if changes haven't been saved.
 - Guarding against accidental loss of progress in multi-step wizards or editors.
-- Providing a consistent user experience across different routes or modules that involve user input.
 
 #### Live Demo
-> **Warning**
-> Note that this demo will not block you from moving away.
+
+> **Note**
+> This demo manually triggers the guard check to show the confirmation dialog. In a real routing scenario, this would happen automatically before navigation.
 
 {{ NgDocActions.demo("UnsavedChangesDemoComponent") }}
 
 
-
-
 #### Customizing the Confirmation Message
-The unsaved changes guard allows you to override the default confirmation message. By supplying a custom message, you can tailor the prompt to fit the context of your application or provide more specific guidance to users. This flexibility ensures that users receive clear and relevant information before making a decision to leave the page.
+You can customize the message displayed in the confirmation dialog by passing a string to the factory function.
 
-
-#### Example
 ```typescript {4}
   {
-    path: '/form',
+    path: 'form',
     canDeactivate: [
-      unsavedChangesGuard('The form changes will be lost. Are you sure?')
+      unsavedChangesGuard('You have unsaved work! Are you sure you want to leave?')
     ]
   }
 ```

@@ -1,36 +1,54 @@
 import { DOCUMENT } from '@angular/common';
 import { inject } from '@angular/core';
-import { lastValueFrom, Observable } from 'rxjs';
+import { CanDeactivateFn } from '@angular/router';
+import { isObservable, Observable } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 
 export interface HasUnsavedChanges {
   hasUnsavedChanges: () => boolean | Observable<boolean> | Promise<boolean>;
 }
 
+/**
+ * A guard that checks if a component has unsaved changes before deactivation.
+ * It prompts the user for confirmation using `window.confirm` if changes exist.
+ *
+ * @param message - The message to display in the confirmation dialog. Default is 'You have unsaved changes. Do you want to leave this page?'.
+ * @returns A `CanDeactivateFn` that returns `true` if navigation should proceed, `false` otherwise.
+ *
+ * @example
+ * // In your routes:
+ * {
+ *   path: 'edit',
+ *   component: EditComponent,
+ *   canDeactivate: [unsavedChangesGuard('Discard changes?')]
+ * }
+ */
 export const unsavedChangesGuard = (
   message = 'You have unsaved changes. Do you want to leave this page?'
-) => {
-  const window = inject(DOCUMENT).defaultView;
-
+): CanDeactivateFn<HasUnsavedChanges> => {
   return (component: HasUnsavedChanges) => {
+    const window = inject(DOCUMENT).defaultView;
+
+    // If SSR or no window, allow navigation
     if (!window || !window.confirm) {
       return true;
     }
+
     const result = component.hasUnsavedChanges();
-    if (typeof result === 'boolean') {
-      return result ? window.confirm(message) : true;
+
+    if (isObservable(result)) {
+      return result.pipe(
+        take(1),
+        map(hasChanges => (hasChanges ? window.confirm(message) : true))
+      );
     }
 
-    let hasChangesPromise = Promise.resolve(false);
-    if (result instanceof Observable) {
-      hasChangesPromise = lastValueFrom(result);
-    } else if (result instanceof Promise) {
-      hasChangesPromise = result;
+    if (result instanceof Promise) {
+      return result.then(hasChanges =>
+        hasChanges ? window.confirm(message) : true
+      );
     }
-    return hasChangesPromise.then(hasChanges => {
-      if (hasChanges) {
-        return window.confirm(message);
-      }
-      return true;
-    });
+
+    return result ? window.confirm(message) : true;
   };
 };

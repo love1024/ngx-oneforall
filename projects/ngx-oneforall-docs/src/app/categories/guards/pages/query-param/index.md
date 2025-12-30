@@ -31,12 +31,12 @@ The `queryParamGuard` factory takes a `QueryParamGuardConfig` object:
 | Property     | Type                                       | Description                                                                 |
 | ------------ | ------------------------------------------ | --------------------------------------------------------------------------- |
 | `required`   | `string[]`                                 | List of query parameter keys that must be present and non-empty.            |
-| `predicate`  | `(params: Record<string, string>) => boolean` | A custom function to validate query parameters.                             |
+| `predicate`  | `(params: Params) => boolean` | A custom function to validate query parameters.                             |
 | `redirectTo` | `string`                                   | Optional URL to redirect to if validation fails (uses `RedirectCommand`). |
 
 ## Demo
 
 {{ NgDocActions.demo("QueryParamDemoComponent") }}
 
-> [!NOTE]
+> **Note**
 > If `redirectTo` is not provided, the guard will simply return `false` on failure.
