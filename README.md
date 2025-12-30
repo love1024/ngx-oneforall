@@ -29,6 +29,11 @@ Full API documentation and demos are available at: [https://love1024.github.io/n
 npm install ngx-oneforall
 ```
 
+Or
+
+```bash
+yarn add ngx-oneforall
+```
 
 ## Contributing
 
