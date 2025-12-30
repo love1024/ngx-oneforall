@@ -35,6 +35,18 @@ describe('unsavedChangesGuard', () => {
     });
   });
 
+  it('should return true if component does not have hasUnsavedChanges method', done => {
+    const environment = TestBed.inject(EnvironmentInjector);
+    runInInjectionContext(environment, async () => {
+      const guard = unsavedChangesGuard();
+      // Pass a component without hasUnsavedChanges
+      const result = guard({} as any, {} as any, {} as any, {} as any);
+      expect(result).toBe(true);
+      expect(mockWindow.confirm).not.toHaveBeenCalled();
+      done();
+    });
+  });
+
   it('should call window.confirm if hasUnsavedChanges returns true (boolean)', done => {
     mockWindow.confirm.mockReturnValueOnce(false);
 

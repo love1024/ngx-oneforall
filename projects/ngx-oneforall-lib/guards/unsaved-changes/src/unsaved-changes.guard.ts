@@ -34,6 +34,10 @@ export const unsavedChangesGuard = (
       return true;
     }
 
+    if (!component?.hasUnsavedChanges) {
+      return true;
+    }
+
     const result = component.hasUnsavedChanges();
 
     if (isObservable(result)) {
