@@ -12,6 +12,7 @@ import {
 import {
   withEncryptionInterceptor,
   EncryptionAdapter,
+  EncryptionInterceptorConfig,
 } from './encryption.interceptor';
 import { useEncryption, ENCRYPTION_CONTEXT } from './encryption-context';
 
@@ -20,7 +21,9 @@ describe('EncryptionInterceptor', () => {
   let http: HttpClient;
   let mockAdapter: jest.Mocked<EncryptionAdapter>;
 
-  const configureTestBed = (config: any = {}) => {
+  const configureTestBed = (
+    config: Partial<EncryptionInterceptorConfig> = {}
+  ) => {
     mockAdapter = {
       encrypt: jest.fn(data => `encrypted:${JSON.stringify(data)}`),
       decrypt: jest.fn(data =>

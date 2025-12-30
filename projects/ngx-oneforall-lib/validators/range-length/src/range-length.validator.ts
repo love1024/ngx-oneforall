@@ -6,6 +6,14 @@ import {
 } from '@angular/forms';
 import { isPresent } from '@ngx-oneforall/utils/is-present';
 
+/**
+ * Validator that checks if the length of the control's value is within a specified range (inclusive).
+ * It supports strings, arrays, and numbers (converted to string).
+ *
+ * @param min - The minimum allowed length (inclusive).
+ * @param max - The maximum allowed length (inclusive).
+ * @returns A validator function that returns `{ rangeLength: { requiredMinLength, requiredMaxLength, actualLength } }` if invalid, or `null` if valid.
+ */
 export function rangeLength(min: number, max: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!isPresent(min) || !isPresent(max)) return null;

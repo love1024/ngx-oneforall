@@ -57,40 +57,7 @@ import {
       </div>
     </div>
   `,
-  styles: [
-    `
-      .demo-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-        border: 1px solid var(--ng-doc-border-color);
-        border-radius: 4px;
-        margin-bottom: 2rem;
-      }
-      h3 {
-        margin-top: 0;
-      }
-      input,
-      select {
-        padding: 0.5rem;
-        border: 1px solid var(--ng-doc-border-color);
-        border-radius: 4px;
-        width: 100%;
-        background: var(--ng-doc-input-bg);
-        color: var(--ng-doc-text-color);
-        margin-top: 0.5rem;
-      }
-      .error {
-        color: #f44336;
-        font-size: 0.9rem;
-      }
-      .success {
-        color: #4caf50;
-        font-size: 0.9rem;
-      }
-    `,
-  ],
+  styleUrl: './phone-demo.component.scss',
 })
 export class PhoneDemoComponent {
   control = new FormControl(null, phoneValidator('US'));

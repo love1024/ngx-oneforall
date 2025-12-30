@@ -6,6 +6,13 @@ import {
 } from '@angular/forms';
 import { date } from '../../date/src/date.validator';
 
+/**
+ * Validator that requires the control's value to be greater than or equal to a minimum date.
+ *
+ * @param min - The minimum allowed date (Date object or date string).
+ * @returns An error object `{ minDate: { requiredDate, actualValue } }` if validation fails, or `null` if valid.
+ * @throws Error if the provided `min` date is invalid.
+ */
 export function minDate(min: Date | string): ValidatorFn {
   const minDateObj = typeof min === 'string' ? new Date(min) : min;
 

@@ -10,14 +10,14 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { withBaseUrlInterceptor } from './base-url.interceptor';
+import { withBaseUrlInterceptor, BaseUrlConfig } from './base-url.interceptor';
 import { useBaseUrl, BASE_URL_CONTEXT } from './base-url-context';
 
 describe('BaseUrlInterceptor', () => {
   let httpTesting: HttpTestingController;
   let http: HttpClient;
 
-  const configureTestBed = (config: any) => {
+  const configureTestBed = (config: BaseUrlConfig) => {
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([withBaseUrlInterceptor(config)])),
