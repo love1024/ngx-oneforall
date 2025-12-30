@@ -1,3 +1,10 @@
+/**
+ * Common file extension constants organized by category.
+ * Use for file type validation, filtering, or display.
+ *
+ * @example
+ * const allowedImages = [FILE_EXTENSION.PNG, FILE_EXTENSION.JPG, FILE_EXTENSION.WEBP];
+ */
 export const FILE_EXTENSION = {
   // Images
   PNG: 'png',
@@ -43,5 +50,6 @@ export const FILE_EXTENSION = {
   MOV: 'mov',
 } as const;
 
+/** Union type of all file extensions. */
 export type FileExtension =
   (typeof FILE_EXTENSION)[keyof typeof FILE_EXTENSION];

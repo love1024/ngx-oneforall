@@ -1,3 +1,6 @@
+/**
+ * HTTP method constants.
+ */
 export const HTTP_METHOD = {
   GET: 'GET',
   POST: 'POST',
@@ -8,6 +11,9 @@ export const HTTP_METHOD = {
   HEAD: 'HEAD',
 } as const;
 
+/**
+ * Common HTTP header names.
+ */
 export const HTTP_HEADER = {
   Authorization: 'Authorization',
   ContentType: 'Content-Type',

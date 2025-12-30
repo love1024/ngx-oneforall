@@ -1,3 +1,7 @@
+/**
+ * JavaScript type identifiers returned by `findType()` utility.
+ * Covers all primitive types, collections, typed arrays, and iterators.
+ */
 export enum Types {
   Undefined = 'undefined',
   Null = 'null',

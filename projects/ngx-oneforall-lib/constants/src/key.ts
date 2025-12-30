@@ -1,3 +1,10 @@
+/**
+ * Keyboard key values matching `KeyboardEvent.key`.
+ * Use for keyboard event handling.
+ *
+ * @example
+ * if (event.key === Key.Enter) { submit(); }
+ */
 export const Key = {
   Backspace: 'Backspace',
   Tab: 'Tab',
@@ -75,6 +82,10 @@ export const Key = {
   F12: 'F12',
 } as const;
 
+/**
+ * Keyboard key codes (deprecated `KeyboardEvent.keyCode` values).
+ * Prefer `Key` for modern browsers, but useful for legacy support.
+ */
 export const KeyCode = {
   Backspace: 8,
   Tab: 9,
@@ -149,5 +160,8 @@ export const KeyCode = {
   F12: 123,
 } as const;
 
+/** Union type of key code values. */
 export type KeyCode = (typeof KeyCode)[keyof typeof KeyCode];
+
+/** Union type of key values. */
 export type Key = (typeof Key)[keyof typeof Key];
