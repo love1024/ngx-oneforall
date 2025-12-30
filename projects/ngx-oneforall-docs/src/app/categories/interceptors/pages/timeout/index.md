@@ -55,7 +55,7 @@ this.http.get('/api/data').pipe(
 interface TimeoutErrorInfo {
   name: 'TimeoutError';        // Always 'TimeoutError'
   message: string;             // 'Request timed out after Xms'
-  request: HttpRequest<any>;   // Original request
+  request: HttpRequest<unknown>;   // Original request
 }
 ```
 

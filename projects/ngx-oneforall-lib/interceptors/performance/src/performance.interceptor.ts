@@ -112,43 +112,39 @@ export const withPerformanceInterceptor = (
     const start = getTimestamp();
     const label = contextConfig?.label;
 
+    const createEntry = (status?: number): PerformanceEntry => {
+      const durationMs = Math.round(getTimestamp() - start);
+      const isSlow = slowThresholdMs ? durationMs > slowThresholdMs : false;
+
+      return {
+        url: request.url,
+        method: request.method,
+        durationMs,
+        status,
+        label,
+        isSlow: slowThresholdMs ? isSlow : undefined,
+      };
+    };
+
     return next(request).pipe(
       tap({
         next: event => {
           if (event instanceof HttpResponse) {
-            const durationMs = Math.round(getTimestamp() - start);
-            const isSlow = slowThresholdMs
-              ? durationMs > slowThresholdMs
-              : false;
+            const entry = createEntry(event.status);
 
-            if (reportOnlyIfSlow && !isSlow) {
+            if (reportOnlyIfSlow && !entry.isSlow) {
               return;
             }
 
-            report({
-              url: request.url,
-              method: request.method,
-              durationMs,
-              status: event.status,
-              label,
-              isSlow: slowThresholdMs ? isSlow : undefined,
-            });
+            report(entry);
           }
         },
       }),
       catchError(error => {
-        const durationMs = Math.round(getTimestamp() - start);
-        const isSlow = slowThresholdMs ? durationMs > slowThresholdMs : false;
+        const entry = createEntry(error?.status);
 
-        if (!reportOnlyIfSlow || isSlow) {
-          report({
-            url: request.url,
-            method: request.method,
-            durationMs,
-            status: error?.status,
-            label,
-            isSlow: slowThresholdMs ? isSlow : undefined,
-          });
+        if (!reportOnlyIfSlow || entry.isSlow) {
+          report(entry);
         }
         return throwError(() => error);
       })

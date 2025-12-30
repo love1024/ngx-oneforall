@@ -48,6 +48,11 @@ export interface CacheInterceptorConfig {
 
 /**
  * Resolves the cache key for a request.
+ * Uses custom key function if provided, otherwise defaults to URL with params.
+ *
+ * @param req - The HTTP request
+ * @param context - Cache context options from the request
+ * @returns The cache key string
  */
 function resolveKey(req: HttpRequest<unknown>, context: CacheContextOptions) {
   const { key } = context;
@@ -60,11 +65,16 @@ function resolveKey(req: HttpRequest<unknown>, context: CacheContextOptions) {
 }
 
 /**
- * Determines if a request is cacheable.
+ * Determines if a request is cacheable based on strategy and context.
  *
- * Cacheable in following cases:
- * 1. Strategy is 'auto' and request is GET with JSON response
- * 2. Strategy is 'manual' and context.enabled is true
+ * @param req - The HTTP request
+ * @param strategy - The caching strategy ('auto' or 'manual')
+ * @param context - Cache context options from the request
+ * @returns true if the request should be cached
+ *
+ * @remarks
+ * - 'auto': Caches GET requests with JSON response type
+ * - 'manual': Only caches when context.enabled is true
  */
 function isCacheable(
   req: HttpRequest<unknown>,
@@ -101,7 +111,9 @@ function isCacheable(
  * - Supports per-request overrides via `CACHE_CONTEXT`
  * - Creates internal CacheService instance
  */
-export function withCacheInterceptor(config: CacheInterceptorConfig = {}) {
+export function withCacheInterceptor(
+  config: CacheInterceptorConfig = {}
+): HttpInterceptorFn {
   const {
     strategy = 'manual',
     storage = 'memory',

@@ -1,4 +1,4 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { timeout, catchError, throwError, TimeoutError } from 'rxjs';
 import { TIMEOUT_CONTEXT } from './timeout-context';
 
@@ -17,7 +17,7 @@ export interface TimeoutErrorInfo {
   /** Human-readable error message */
   message: string;
   /** The original request that timed out */
-  request: unknown;
+  request: HttpRequest<unknown>;
 }
 
 /**
@@ -50,11 +50,14 @@ export function withTimeoutInterceptor(timeoutMs: number) {
       timeout(effectiveTimeout),
       catchError(error => {
         if (error instanceof TimeoutError) {
-          return throwError(() => ({
-            name: TIMEOUT_ERROR,
-            message: `Request timed out after ${effectiveTimeout}ms`,
-            request: req,
-          }));
+          return throwError(
+            () =>
+              ({
+                name: TIMEOUT_ERROR,
+                message: `Request timed out after ${effectiveTimeout}ms`,
+                request: req,
+              }) satisfies TimeoutErrorInfo
+          );
         }
         return throwError(() => error);
       })
