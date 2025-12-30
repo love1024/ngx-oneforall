@@ -9,12 +9,12 @@ import { date } from '../../date/src/date.validator';
 /**
  * Validator that requires the control's value to be less than or equal to a maximum date.
  *
- * @param max - The maximum allowed date (Date object or date string).
- * @returns An error object `{ maxDate: { requiredDate, actualValue } }` if validation fails, or `null` if valid.
+ * @param max - The maximum allowed date (Date object, date string, or numeric timestamp).
+ * @returns An error object with reason if validation fails, or `null` if valid.
  * @throws Error if the provided `max` date is invalid.
  */
-export function maxDate(max: Date | string): ValidatorFn {
-  const maxDateObj = typeof max === 'string' ? new Date(max) : max;
+export function maxDate(max: Date | string | number): ValidatorFn {
+  const maxDateObj = max instanceof Date ? max : new Date(max);
 
   if (isNaN(maxDateObj.getTime())) {
     throw new Error('maxDate: invalid date provided as maximum.');
@@ -30,7 +30,13 @@ export function maxDate(max: Date | string): ValidatorFn {
       control.value instanceof Date ? control.value : new Date(control.value);
 
     return value > maxDateObj
-      ? { maxDate: { requiredDate: maxDateObj, actualValue: value } }
+      ? {
+          maxDate: {
+            reason: 'date_exceeds_max',
+            requiredDate: maxDateObj,
+            actualValue: value,
+          },
+        }
       : null;
   };
 }

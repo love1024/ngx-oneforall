@@ -1,4 +1,4 @@
-`date` is a validator that ensures the control's value is a valid date. It supports `Date` objects, date strings, and numeric timestamps.
+`date` is a validator that ensures the control's value is a valid date. It supports `Date` objects and date strings.
 
 ## Usage
 
@@ -34,7 +34,7 @@ Returns a validation error object with a reason code if validation fails, or `nu
 | Reason | Description |
 |--------|-------------|
 | `invalid_date` | Value cannot be parsed as a valid date |
-| `unsupported_type` | Value is not a string, number, or Date object |
+| `unsupported_type` | Value is not a string or Date object |
 
 ```typescript
 // Example error objects

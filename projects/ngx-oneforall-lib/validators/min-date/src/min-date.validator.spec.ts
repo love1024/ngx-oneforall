@@ -41,6 +41,7 @@ describe('minDate', () => {
     const result = validator(new FormControl(actualDate));
     expect(result).toEqual({
       minDate: {
+        reason: 'date_before_min',
         requiredDate: MIN_DATE,
         actualValue: actualDate,
       },
@@ -50,18 +51,30 @@ describe('minDate', () => {
   it('should return error if string value parses to date less than min date', () => {
     const validator = minDate(MIN_DATE);
     const actualValue = '2022-12-31';
-    // Note: The validator converts string input to Date object for the error return
-    // We need to check if result matches the structure, but Date comparison might be strict equality in toEqual
-    // So we just check properties
     const result = validator(new FormControl(actualValue));
     expect(result).toBeTruthy();
     expect(result!['minDate']).toBeDefined();
+    expect(result!['minDate'].reason).toBe('date_before_min');
     expect(result!['minDate'].requiredDate).toEqual(MIN_DATE);
-    // The actual value in error is a Date object created from the string
     expect(result!['minDate'].actualValue).toBeInstanceOf(Date);
     expect(result!['minDate'].actualValue.toISOString()).toContain(
       '2022-12-31'
     );
+  });
+
+  it('should support numeric timestamps', () => {
+    const MIN_TS = new Date('2023-01-01').getTime();
+    const validator = minDate(MIN_TS);
+
+    // Valid: timestamp after min
+    expect(
+      validator(new FormControl(new Date('2024-01-01').getTime()))
+    ).toBeNull();
+
+    // Invalid: timestamp before min
+    const result = validator(new FormControl(new Date('2022-01-01').getTime()));
+    expect(result).toBeTruthy();
+    expect(result!['minDate'].reason).toBe('date_before_min');
   });
 
   it('should rely on underlying date validator for invalid formats', () => {

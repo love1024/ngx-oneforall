@@ -9,12 +9,12 @@ import { date } from '../../date/src/date.validator';
 /**
  * Validator that requires the control's value to be greater than or equal to a minimum date.
  *
- * @param min - The minimum allowed date (Date object or date string).
- * @returns An error object `{ minDate: { requiredDate, actualValue } }` if validation fails, or `null` if valid.
+ * @param min - The minimum allowed date (Date object, date string, or numeric timestamp).
+ * @returns An error object with reason if validation fails, or `null` if valid.
  * @throws Error if the provided `min` date is invalid.
  */
-export function minDate(min: Date | string): ValidatorFn {
-  const minDateObj = typeof min === 'string' ? new Date(min) : min;
+export function minDate(min: Date | string | number): ValidatorFn {
+  const minDateObj = min instanceof Date ? min : new Date(min);
 
   if (isNaN(minDateObj.getTime())) {
     throw new Error('minDate: invalid date provided as minimum.');
@@ -30,7 +30,13 @@ export function minDate(min: Date | string): ValidatorFn {
       control.value instanceof Date ? control.value : new Date(control.value);
 
     return value < minDateObj
-      ? { minDate: { requiredDate: minDateObj, actualValue: value } }
+      ? {
+          minDate: {
+            reason: 'date_before_min',
+            requiredDate: minDateObj,
+            actualValue: value,
+          },
+        }
       : null;
   };
 }

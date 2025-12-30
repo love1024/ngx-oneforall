@@ -41,6 +41,7 @@ describe('maxDate', () => {
     const result = validator(new FormControl(actualDate));
     expect(result).toEqual({
       maxDate: {
+        reason: 'date_exceeds_max',
         requiredDate: MAX_DATE,
         actualValue: actualDate,
       },
@@ -54,11 +55,27 @@ describe('maxDate', () => {
     const result = validator(new FormControl(actualValue));
     expect(result).toBeTruthy();
     expect(result!['maxDate']).toBeDefined();
+    expect(result!['maxDate'].reason).toBe('date_exceeds_max');
     expect(result!['maxDate'].requiredDate).toEqual(MAX_DATE);
     expect(result!['maxDate'].actualValue).toBeInstanceOf(Date);
     expect(result!['maxDate'].actualValue.toISOString()).toContain(
       '2024-12-31'
     );
+  });
+
+  it('should support numeric timestamps', () => {
+    const MAX_TS = new Date('2023-01-01').getTime();
+    const validator = maxDate(MAX_TS);
+
+    // Valid: timestamp before max
+    expect(
+      validator(new FormControl(new Date('2022-12-31').getTime()))
+    ).toBeNull();
+
+    // Invalid: timestamp after max
+    const result = validator(new FormControl(new Date('2024-01-01').getTime()));
+    expect(result).toBeTruthy();
+    expect(result!['maxDate'].reason).toBe('date_exceeds_max');
   });
 
   it('should rely on underlying date validator for invalid formats', () => {
