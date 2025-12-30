@@ -1,4 +1,4 @@
-![Project Image](https://github.com/love1024/ngx-oneforall/blob/main/projects/ngx-oneforall-docs/public/brand.png)
+![Project Image](https://github.com/love1024/ngx-oneforall/blob/main/projects/ngx-oneforall-docs/public/brand2.png)
 
 **ngx-oneforall** is a collection of 80+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
 
@@ -34,10 +34,11 @@ npm install ngx-oneforall
 
 Contributions are welcome!
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit your changes.
-4. Submit a pull request.
+1. Create a feature branch.
+2. Commit your changes.
+3. Make sure tests are passing and coverage is 100%.
+4. Make sure build is successful and there are no linting errors.
+5. Submit a pull request.
 
 ## License
 
