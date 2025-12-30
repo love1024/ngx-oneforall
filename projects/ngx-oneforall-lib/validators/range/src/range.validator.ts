@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { isNumberString, isNumberValue } from '@ngx-oneforall/utils/is-number';
 import { isPresent } from '@ngx-oneforall/utils/is-present';
 
@@ -9,11 +9,15 @@ import { isPresent } from '@ngx-oneforall/utils/is-present';
  * @param min - The minimum allowed value (inclusive).
  * @param max - The maximum allowed value (inclusive).
  * @returns A validator function that returns `{ range: { min, max, actualValue } }` if invalid, or `null` if valid.
+ * @throws Error if `min` is greater than `max`.
  */
-export function range(min: number, max: number) {
+export function range(min: number, max: number): ValidatorFn {
+  if (min > max) {
+    throw new Error('[RangeValidator] min must be less than or equal to max');
+  }
+
   return (control: AbstractControl): ValidationErrors | null => {
-    if (!isPresent(min) || !isPresent(max)) return null;
-    else if (isPresent(Validators.required(control))) return null;
+    if (!isPresent(control.value)) return null;
 
     const value = control.value;
     if (!isNumberValue(value) && !isNumberString(value)) return null;

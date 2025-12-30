@@ -1,4 +1,4 @@
-`date` is a validator that ensures the control's value is a valid Date object or a string that can be successfully parsed into a Date.
+`date` is a validator that ensures the control's value is a valid date. It supports `Date` objects, date strings, and numeric timestamps.
 
 ## Usage
 
@@ -25,6 +25,20 @@ You can use the `date` attribute directive (or `[date]`) with template-driven fo
 
 ## API
 
-`date(): ValidatorFn`
+`date: ValidatorFn`
 
-Returns a validation error object `{ date: { actualValue } }` if validation fails, or `null` if valid.
+Returns a validation error object with a reason code if validation fails, or `null` if valid.
+
+### Error Codes
+
+| Reason | Description |
+|--------|-------------|
+| `invalid_date` | Value cannot be parsed as a valid date |
+| `unsupported_type` | Value is not a string, number, or Date object |
+
+```typescript
+// Example error objects
+{ date: { reason: 'invalid_date', actualValue: 'not a date' } }
+{ date: { reason: 'unsupported_type', actualValue: true } }
+```
+

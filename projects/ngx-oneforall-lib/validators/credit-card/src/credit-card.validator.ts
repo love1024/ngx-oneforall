@@ -1,5 +1,13 @@
-import { AbstractControl, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { isPresent } from '@ngx-oneforall/utils/is-present';
+
+/** Valid PAN lengths per ISO 7812 standard */
+const VALID_PAN_LENGTHS = [13, 15, 16, 19] as const;
 
 /**
  * Validator that checks if the control's value is a valid credit card number.
@@ -7,26 +15,30 @@ import { isPresent } from '@ngx-oneforall/utils/is-present';
  * It also validates that 15-digit cards are valid American Express cards (starting with 34 or 37).
  *
  * @param control - The control to validate.
- * @returns An error object `{ creditCard: true }` if validation fails, or `null` if valid.
+ * @returns An error object with reason if validation fails, or `null` if valid.
  */
-export const creditCard: ValidatorFn = (control: AbstractControl) => {
+export const creditCard: ValidatorFn = (
+  control: AbstractControl
+): ValidationErrors | null => {
   if (isPresent(Validators.required(control))) return null;
 
   const digits = String(control.value).replace(/\D/g, '');
 
   // Reject repeated digits (0000..., 1111...)
   if (/^(\d)\1+$/.test(digits)) {
-    return { creditCard: true };
+    return { creditCard: { reason: 'repeated_digits' } };
   }
 
   // Allowed PAN lengths (ISO 7812)
-  if (![13, 15, 16, 19].includes(digits.length)) {
-    return { creditCard: true };
+  if (!VALID_PAN_LENGTHS.includes(digits.length as 13 | 15 | 16 | 19)) {
+    return {
+      creditCard: { reason: 'invalid_length', actualLength: digits.length },
+    };
   }
 
   // 15-digit cards must be Amex (34 or 37)
   if (digits.length === 15 && !/^3[47]/.test(digits)) {
-    return { creditCard: true };
+    return { creditCard: { reason: 'invalid_amex_prefix' } };
   }
 
   // Luhn Algorithm
@@ -43,5 +55,5 @@ export const creditCard: ValidatorFn = (control: AbstractControl) => {
     double = !double;
   }
 
-  return sum % 10 === 0 ? null : { creditCard: true };
+  return sum % 10 === 0 ? null : { creditCard: { reason: 'luhn_failed' } };
 };
