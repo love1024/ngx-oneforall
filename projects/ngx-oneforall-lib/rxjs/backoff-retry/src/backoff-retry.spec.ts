@@ -68,4 +68,19 @@ describe('backOffRetry', () => {
       expectObservable(customSource$.pipe(backOffRetry(config))).toBe(expected);
     });
   });
+
+  it('should cap delay at maxDelay when specified', () => {
+    testScheduler.run(({ expectObservable }) => {
+      // With maxDelay: 1500, delays should be: 1000ms, 1500ms (capped from 2000ms)
+      const config = { count: 2, delay: 1000, base: 2, maxDelay: 1500 };
+      const customSource$ = new Observable<number>(subscriber => {
+        subscriber.error('error');
+      });
+
+      // 1st retry at 1000ms, 2nd retry at 1500ms (capped), then error
+      const expected = '1s 1500ms #';
+
+      expectObservable(customSource$.pipe(backOffRetry(config))).toBe(expected);
+    });
+  });
 });

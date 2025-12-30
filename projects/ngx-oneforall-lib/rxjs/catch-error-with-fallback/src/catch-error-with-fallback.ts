@@ -1,5 +1,11 @@
 import { isFunction } from '@ngx-oneforall/utils/find-type';
-import { catchError, isObservable, Observable, of } from 'rxjs';
+import {
+  catchError,
+  isObservable,
+  Observable,
+  of,
+  OperatorFunction,
+} from 'rxjs';
 
 /**
  * Options for the `catchErrorWithFallback` operator.
@@ -14,10 +20,9 @@ export interface CatchErrorWithFallbackOptions {
 
 /**
  * Defines what can be used as a fallback.
- * It can be:
- * - A static value
- * - An Observable
- * - A factory function returning a value or an Observable
+ * - A static value of type T
+ * - An Observable that emits T
+ * - A factory function that receives the error and returns T or Observable<T>
  */
 export type FallbackFactory<T> =
   | T
@@ -25,11 +30,12 @@ export type FallbackFactory<T> =
   | ((error: unknown) => T | Observable<T>);
 
 /**
- * Catches errors on the source observable and returns a fallback value or observable.
+ * RxJS operator that catches errors on the source observable and returns a fallback value or observable.
+ * Provides flexibility in error handling by supporting static values, observables, or dynamic factory functions.
  *
  * @param fallback - The value, observable, or factory function to use when an error occurs.
- * @param options - Configuration options, including an `onError` callback.
- * @returns An Observable that emits the fallback logic in case of an error.
+ * @param options - Configuration options, including an `onError` callback for side effects.
+ * @returns An OperatorFunction that emits the fallback in case of an error.
  *
  * @example
  * // Fallback to a static value
@@ -59,7 +65,7 @@ export type FallbackFactory<T> =
 export function catchErrorWithFallback<T>(
   fallback: FallbackFactory<T>,
   options: CatchErrorWithFallbackOptions = {}
-) {
+): OperatorFunction<T, T> {
   const { onError } = options;
 
   return (source$: Observable<T>): Observable<T> =>

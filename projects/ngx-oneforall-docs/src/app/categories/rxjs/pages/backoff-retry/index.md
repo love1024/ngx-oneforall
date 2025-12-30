@@ -30,6 +30,7 @@ The operator accepts an optional `BackoffRetryConfig` object:
 | `count` | `number` | `3` | Maximum number of retry attempts |
 | `delay` | `number` | `1000` | Initial delay in milliseconds |
 | `base` | `number` | `2` | Base for exponential calculation |
+| `maxDelay` | `number` | - | Optional cap for maximum delay (in ms) |
 
 ### Custom Configuration
 
@@ -43,11 +44,27 @@ this.http.get('/api/unstable').pipe(
 ).subscribe();
 ```
 
+### With Max Delay Cap
+
+Prevent delays from growing too large:
+
+```typescript
+this.http.get('/api/data').pipe(
+  backOffRetry({
+    count: 10,       // Many retries
+    delay: 1000,     // Start at 1 second
+    base: 2,         // Double each time
+    maxDelay: 30000  // But never wait more than 30 seconds
+  })
+).subscribe();
+// Delays: 1s, 2s, 4s, 8s, 16s, 30s, 30s, 30s, 30s, 30s
+```
+
 ## How It Works
 
 The delay for each retry is calculated using the formula:
 
-`delay * Math.pow(base, retryCount - 1)`
+`min(delay * Math.pow(base, retryCount - 1), maxDelay)`
 
 For default values (`delay=1000`, `base=2`):
 - **Retry 1**: 1000ms
