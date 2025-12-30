@@ -1,11 +1,11 @@
-The `@ngx-oneforall/constants` package provides sets of constants for common HTTP methods and headers. Using these constants helps prevent typos and improves code maintainability.
+The `ngx-oneforall/constants` package provides sets of constants for common HTTP methods and headers. Using these constants helps prevent typos and improves code maintainability.
 
 ## Usage
 
 Import the constants from the constants package and use them in your HTTP requests or interceptors.
 
 ```typescript
-import { HTTP_METHOD, HTTP_HEADER } from '@ngx-oneforall/constants';
+import { HTTP_METHOD, HTTP_HEADER } from 'ngx-oneforall/constants';
 
 // In an interceptor or service
 const headers = new HttpHeaders({

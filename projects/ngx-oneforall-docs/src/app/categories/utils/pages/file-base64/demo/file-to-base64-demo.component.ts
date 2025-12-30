@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { fileToBase64 } from '@ngx-oneforall/utils/base64';
+import { fileToBase64 } from 'ngx-oneforall/utils/base64';
 
 @Component({
   selector: 'lib-file-to-base64-demo',

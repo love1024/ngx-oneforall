@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { InfiniteScrollDirective } from '@ngx-oneforall/directives/infinite-scroll';
+import { InfiniteScrollDirective } from 'ngx-oneforall/directives/infinite-scroll';
 
 @Component({
   selector: 'infinite-scroll-demo',

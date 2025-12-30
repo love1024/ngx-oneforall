@@ -12,7 +12,7 @@ Throttles click events to prevent accidental double-clicks and rapid repeated in
 ## Installation
 
 ```typescript
-import { ClickThrottleDirective } from '@ngx-oneforall/directives/click-throttle';
+import { ClickThrottleDirective } from 'ngx-oneforall/directives/click-throttle';
 ```
 
 ---

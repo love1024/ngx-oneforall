@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { ShortcutDirective } from '@ngx-oneforall/directives/shortcut';
+import { ShortcutDirective } from 'ngx-oneforall/directives/shortcut';
 
 @Component({
   selector: 'shortcut-demo',

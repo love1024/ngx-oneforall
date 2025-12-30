@@ -12,7 +12,7 @@ Use `maxDate` to validate that a date is not after a certain boundary.
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { maxDate } from '@ngx-oneforall/validators/max-date';
+import { maxDate } from 'ngx-oneforall/validators/max-date';
 
 const control = new FormControl(null, maxDate(new Date('2025-12-31')));
 // OR with string

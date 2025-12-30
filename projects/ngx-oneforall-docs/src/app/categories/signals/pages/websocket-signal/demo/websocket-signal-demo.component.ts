@@ -1,7 +1,7 @@
 import { Component, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { webSocketSignal } from '@ngx-oneforall/signals/websocket-signal';
+import { webSocketSignal } from 'ngx-oneforall/signals/websocket-signal';
 
 @Component({
   selector: 'app-websocket-signal-demo',

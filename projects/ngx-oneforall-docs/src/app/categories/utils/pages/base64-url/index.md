@@ -5,7 +5,7 @@ URL-safe Base64 encoding utilities for safely transmitting data in URLs, query p
 Import the functions from the base64 utility:
 
 ```typescript
-import { base64UrlEncode, base64UrlDecode } from '@ngx-oneforall/utils/base64';
+import { base64UrlEncode, base64UrlDecode } from 'ngx-oneforall/utils/base64';
 ```
 
 ### Encoding

@@ -1,4 +1,4 @@
-import { hashCode } from '@ngx-oneforall/utils/hash';
+import { hashCode } from 'ngx-oneforall/utils/hash';
 
 /**
  * Safely serializes any JavaScript value to a JSON string.

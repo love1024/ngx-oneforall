@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { date, DateValidator } from '@ngx-oneforall/validators/date';
+import { date, DateValidator } from 'ngx-oneforall/validators/date';
 
 @Component({
   selector: 'app-date-demo',

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { minDate, MinDateDirective } from '@ngx-oneforall/validators/min-date';
+import { minDate, MinDateDirective } from 'ngx-oneforall/validators/min-date';
 
 @Component({
   selector: 'app-min-date-demo',

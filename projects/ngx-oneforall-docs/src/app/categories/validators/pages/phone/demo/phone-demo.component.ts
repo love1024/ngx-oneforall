@@ -5,7 +5,7 @@ import {
   CountryCode,
   phoneValidator,
   PhoneValidator,
-} from '@ngx-oneforall/validators/phone';
+} from 'ngx-oneforall/validators/phone';
 
 @Component({
   selector: 'app-phone-demo',

@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NumbersOnlyDirective } from '@ngx-oneforall/directives/numbers-only';
+import { NumbersOnlyDirective } from 'ngx-oneforall/directives/numbers-only';
 
 @Component({
   selector: 'lib-numbers-only-demo',

@@ -3,7 +3,7 @@ Type guard utility that checks if a value is neither `null` nor `undefined`. Nar
 ## Usage
 
 ```typescript
-import { isPresent } from '@ngx-oneforall/utils/is-present';
+import { isPresent } from 'ngx-oneforall/utils/is-present';
 ```
 
 ## API

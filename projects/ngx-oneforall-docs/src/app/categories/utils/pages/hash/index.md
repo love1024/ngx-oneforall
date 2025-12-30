@@ -3,7 +3,7 @@ Fast, non-cryptographic string hashing utilities for generating numeric hash cod
 ## Usage
 
 ```typescript
-import { hashCode, hashCodeWithSalt } from '@ngx-oneforall/utils/hash';
+import { hashCode, hashCodeWithSalt } from 'ngx-oneforall/utils/hash';
 ```
 
 ### Basic Hashing

@@ -5,7 +5,7 @@ import {
   url,
   UrlValidator,
   UrlValidatorOptions,
-} from '@ngx-oneforall/validators/url';
+} from 'ngx-oneforall/validators/url';
 
 @Component({
   selector: 'app-url-demo',

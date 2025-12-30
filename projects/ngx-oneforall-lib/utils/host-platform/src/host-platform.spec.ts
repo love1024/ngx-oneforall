@@ -1,4 +1,4 @@
-import { HostPlatform } from '@ngx-oneforall/constants';
+import { HostPlatform } from 'ngx-oneforall/constants';
 import { getHostPlatform } from './host-platform';
 
 describe('getHostPlatform', () => {

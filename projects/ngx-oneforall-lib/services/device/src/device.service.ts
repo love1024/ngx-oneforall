@@ -8,7 +8,7 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 import { fromEvent, merge, startWith } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DeviceType, Orientation } from '@ngx-oneforall/constants';
+import { DeviceType, Orientation } from 'ngx-oneforall/constants';
 
 const MOBILE_RE =
   /(iPhone|Android.*Mobile|Windows Phone|BlackBerry|webOS|Opera Mini|Mobile(\/|\s)|Mobile Safari)/i;

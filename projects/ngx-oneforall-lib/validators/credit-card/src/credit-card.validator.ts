@@ -4,7 +4,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { isPresent } from '@ngx-oneforall/utils/is-present';
+import { isPresent } from 'ngx-oneforall/utils/is-present';
 
 /** Valid PAN lengths per ISO 7812 standard */
 const VALID_PAN_LENGTHS = [13, 15, 16, 19] as const;

@@ -3,7 +3,7 @@ import {
   provideTimeAgoPipeLabels,
   TimeAgoLabels,
   TimeAgoPipe,
-} from '@ngx-oneforall/pipes/time-ago';
+} from 'ngx-oneforall/pipes/time-ago';
 
 @Component({
   selector: 'lib-time-ago-custom-labels-demo',

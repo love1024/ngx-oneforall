@@ -7,7 +7,7 @@ import {
 import {
   provideShortcutService,
   ShortcutService,
-} from '@ngx-oneforall/services/shortcut';
+} from 'ngx-oneforall/services/shortcut';
 
 @Component({
   selector: 'shortcut-service-demo',

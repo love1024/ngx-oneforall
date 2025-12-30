@@ -9,7 +9,7 @@ const mockStorage: any = {
   }),
 };
 
-jest.mock('@ngx-oneforall/services/cache', () => ({
+jest.mock('ngx-oneforall/services/cache', () => ({
   getStorageEngine: () => mockStorage,
 }));
 

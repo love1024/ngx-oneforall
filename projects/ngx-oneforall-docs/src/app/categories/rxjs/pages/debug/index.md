@@ -8,7 +8,7 @@
 
 ```typescript
 import { of } from 'rxjs';
-import { debug } from '@ngx-oneforall/rxjs/debug';
+import { debug } from 'ngx-oneforall/rxjs/debug';
 
 const source$ = of(1, 2, 3).pipe(
     debug('NumbersStream')
@@ -37,7 +37,7 @@ source$.subscribe();
 
 ```typescript
 import { of } from 'rxjs';
-import { debug } from '@ngx-oneforall/rxjs/debug';
+import { debug } from 'ngx-oneforall/rxjs/debug';
 
 const isDev = true;
 const source$ = of('data').pipe(

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EventService } from '@ngx-oneforall/services/event';
+import { EventService } from 'ngx-oneforall/services/event';
 
 enum AppEvents {
   IncreaseCount = 'INCREASE_COUNT',

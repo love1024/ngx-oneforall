@@ -15,7 +15,7 @@ The `TypedTemplateDirective` provides a way to strictly type the context of your
 Import `TypedTemplateDirective` into your component or module.
 
 ```typescript
-import { TypedTemplateDirective } from '@ngx-oneforall/directives/typed-template';
+import { TypedTemplateDirective } from 'ngx-oneforall/directives/typed-template';
 
 @Component({
   imports: [TypedTemplateDirective],

@@ -12,7 +12,7 @@ A lightweight service for managing browser cookies with SSR safety and security-
 ## Installation
 
 ```typescript
-import { CookieService, provideCookieService } from '@ngx-oneforall/services/cookie';
+import { CookieService, provideCookieService } from 'ngx-oneforall/services/cookie';
 ```
 
 ---
@@ -21,7 +21,7 @@ import { CookieService, provideCookieService } from '@ngx-oneforall/services/coo
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { CookieService, provideCookieService } from '@ngx-oneforall/services/cookie';
+import { CookieService, provideCookieService } from 'ngx-oneforall/services/cookie';
 
 @Component({
   selector: 'app-demo',

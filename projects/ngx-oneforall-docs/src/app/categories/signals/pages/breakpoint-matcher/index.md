@@ -9,8 +9,8 @@ Use `breakpointMatcher` to reactively adapt your UI based on viewport size witho
 ### Single Breakpoint
 
 ```typescript
-import { breakpointMatcher } from '@ngx-oneforall/signals/breakpoint-matcher';
-import { BREAKPOINT } from '@ngx-oneforall/constants';
+import { breakpointMatcher } from 'ngx-oneforall/signals/breakpoint-matcher';
+import { BREAKPOINT } from 'ngx-oneforall/constants';
 
 @Component({ ... })
 export class ResponsiveComponent {
@@ -29,8 +29,8 @@ For checking multiple breakpoints at once, use `breakpointMatcherMultiple`:
 {{ NgDocActions.demo("BreakpointMatcherMultipleSignalDemoComponent", { container: true }) }}
 
 ```typescript
-import { breakpointMatcherMultiple } from '@ngx-oneforall/signals/breakpoint-matcher';
-import { BREAKPOINT } from '@ngx-oneforall/constants';
+import { breakpointMatcherMultiple } from 'ngx-oneforall/signals/breakpoint-matcher';
+import { BREAKPOINT } from 'ngx-oneforall/constants';
 
 @Component({ ... })
 export class LayoutComponent {
@@ -70,7 +70,7 @@ Returns a signal that is `true` when the viewport matches.
 
 ## Predefined Breakpoints
 
-The `@ngx-oneforall/constants` package provides standard breakpoints:
+The `ngx-oneforall/constants` package provides standard breakpoints:
 
 ## When to Use
 

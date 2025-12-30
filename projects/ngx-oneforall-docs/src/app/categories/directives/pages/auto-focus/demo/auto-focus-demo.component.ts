@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { AutoFocusDirective } from '@ngx-oneforall/directives/auto-focus';
+import { AutoFocusDirective } from 'ngx-oneforall/directives/auto-focus';
 
 @Component({
   selector: 'lib-auto-focus-demo',

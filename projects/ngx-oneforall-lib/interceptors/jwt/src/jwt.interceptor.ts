@@ -8,7 +8,7 @@ import {
   HttpStatusCode,
 } from '@angular/common/http';
 import { inject, PLATFORM_ID } from '@angular/core';
-import { isRegexp } from '@ngx-oneforall/utils/find-type';
+import { isRegexp } from 'ngx-oneforall/utils/find-type';
 import {
   Observable,
   catchError,
@@ -18,7 +18,7 @@ import {
   throwError,
 } from 'rxjs';
 import { SKIP_JWT_INTERCEPTOR } from './jwt-context';
-import { JwtService } from '@ngx-oneforall/services/jwt';
+import { JwtService } from 'ngx-oneforall/services/jwt';
 
 let refreshToken$: Observable<string> | null = null;
 

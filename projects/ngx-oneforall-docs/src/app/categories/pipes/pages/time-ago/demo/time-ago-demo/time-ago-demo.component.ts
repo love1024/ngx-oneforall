@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TimeAgoPipe } from '@ngx-oneforall/pipes/time-ago';
+import { TimeAgoPipe } from 'ngx-oneforall/pipes/time-ago';
 
 @Component({
   selector: 'lib-time-ago-demo',

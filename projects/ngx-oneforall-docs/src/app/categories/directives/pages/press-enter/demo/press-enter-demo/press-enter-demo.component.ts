@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { PressEnterDirective } from '@ngx-oneforall/directives/press-enter';
+import { PressEnterDirective } from 'ngx-oneforall/directives/press-enter';
 
 @Component({
   selector: 'press-enter-demo',

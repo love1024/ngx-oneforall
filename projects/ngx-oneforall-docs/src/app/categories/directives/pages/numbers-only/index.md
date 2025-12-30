@@ -13,7 +13,7 @@ Restricts user input to valid numeric values with configurable decimal places an
 ## Installation
 
 ```typescript
-import { NumbersOnlyDirective } from '@ngx-oneforall/directives/numbers-only';
+import { NumbersOnlyDirective } from 'ngx-oneforall/directives/numbers-only';
 ```
 
 ---

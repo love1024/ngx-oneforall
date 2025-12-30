@@ -1,5 +1,5 @@
 // import { Component, linkedSignal } from '@angular/core';
-// import { injectLocalStorage } from '@ngx-oneforall/services';
+// import { injectLocalStorage } from 'ngx-oneforall/services';
 
 // @Component({
 //   selector: 'lib-local-storage-typed-service-demo',

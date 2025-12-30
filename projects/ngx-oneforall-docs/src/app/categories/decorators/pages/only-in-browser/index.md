@@ -15,7 +15,7 @@ The `OnlyInBrowser` decorator ensures methods only execute in browser environmen
 ### Basic Usage
 
 ```typescript
-import { OnlyInBrowser } from '@ngx-oneforall/decorators/only-in-browser';
+import { OnlyInBrowser } from 'ngx-oneforall/decorators/only-in-browser';
 
 @OnlyInBrowser()
 initLocalStorage(): void {

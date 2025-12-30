@@ -1,22 +1,39 @@
 
 
 
-Welcome to **ngx-oneforall**, a powerful and versatile Angular library designed to simplify and streamline your development process. This library provides a unified solution for common challenges, enabling developers to focus on building robust and scalable applications.
+**ngx-oneforall** is a collection of 80+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
 
-## Goal
+> **One For All** - A single library providing the essential blocks for modern Angular development.
 
-The primary goal of **ngx-oneforall** is to offer a comprehensive set of tools and utilities that reduce repetitive tasks, enhance productivity, and promote best practices in Angular development. By consolidating essential features into a single library, it minimizes the need for multiple dependencies.
+# Key Features
 
-## Trust it
-- **Fully Tested**: Built with a commitment to quality, achieving 100% test coverage to ensure reliability and robustness.
-- **Modern Architecture**: Leverages Angular Signals for state management, ensuring a reactive and efficient development experience.
-- **Server-Side Rendering Ready**: Designed with server-side rendering (SSR) in mind, enabling better performance and SEO for your Angular applications.
+### Performance & Efficiency
+Every utility is written from scratch and optimized specifically for Angular. We prioritize memory efficiency and runtime performance rather than just wrapping existing heavy libraries.
 
-## How It Helps
+### Modular & Tree-shakable
+Import only what you use. The library is fully tree-shakable, so adding one utility doesn't bloat your bundle with the rest of the library.
 
-- **Simplifies Development**: Provides ready-to-use components, directives, and services to accelerate your workflow.
-- **Consistency**: Encourages uniformity across your application by adhering to Angular standards.
-- **Efficiency**: Reduces boilerplate code, allowing you to focus on core functionality.
-- **Scalability**: Designed to support projects of all sizes, from small apps to enterprise-level solutions.
+### Zero Dependencies
+We keep the dependency tree clean. **ngx-oneforall** has **NO third-party dependencies** (except `libphonenumber-js` for the phone validator). This reduces security risks, simplifies updates, and prevents version conflicts.
 
-Start leveraging **ngx-oneforall** today to build better Angular applications with ease and confidence!
+### First-Class SSR Support
+Built for modern hydration. Every component and utility is designed to work seamlessly in Server-Side Rendering (SSR) environments out of the box.
+
+### 100% Test Coverage
+We take reliability seriously. The entire library is fully covered by tests to ensure edge cases are handled and behavior remains consistent across updates.
+
+### Built for Modern Angular
+Designed with **Signals** and **Standalone Components** in mind. This isn't a legacy port—it's built for the current and future state of Angular.
+
+---
+
+# Why Use It?
+
+### Stop Re-writing Utilities
+Avoid copy-pasting the same regex patterns, validators, and helper functions between projects. Use a standardized, tested set of utilities instead.
+
+### Focus on Business Logic
+Don't waste time maintaining generic boilerplate code. Use these proven primitives to build your actual application features faster.
+
+### Better Developer Experience
+Fully typed APIs and consistent behavior make these utilities predictable and easy to work with. You get strict typing and comprehensive documentation right in your IDE.

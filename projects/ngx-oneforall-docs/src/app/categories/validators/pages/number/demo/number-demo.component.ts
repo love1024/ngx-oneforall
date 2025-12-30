@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { number, NumberValidator } from '@ngx-oneforall/validators/number';
+import { number, NumberValidator } from 'ngx-oneforall/validators/number';
 
 @Component({
   selector: 'app-number-demo',

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { downloadLink } from '@ngx-oneforall/utils/download-link';
+import { downloadLink } from 'ngx-oneforall/utils/download-link';
 
 @Component({
   selector: 'app-download-link-demo',

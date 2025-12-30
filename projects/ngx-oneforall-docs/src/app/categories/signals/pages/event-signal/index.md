@@ -9,7 +9,7 @@ Use `eventSignal` to track DOM events reactively. Must be called within an injec
 ### Basic Example
 
 ```typescript
-import { eventSignal } from '@ngx-oneforall/signals/event-signal';
+import { eventSignal } from 'ngx-oneforall/signals/event-signal';
 
 @Component({ ... })
 export class ClickTrackerComponent {

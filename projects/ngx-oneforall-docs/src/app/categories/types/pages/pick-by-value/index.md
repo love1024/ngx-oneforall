@@ -5,7 +5,7 @@
 Use `PickByValue` when you want to create a new object type containing only properties of a specific type.
 
 ```typescript
-import { PickByValue } from '@ngx-oneforall/types';
+import { PickByValue } from 'ngx-oneforall/types';
 
 interface User {
     id: number;

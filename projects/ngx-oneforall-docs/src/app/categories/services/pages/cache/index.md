@@ -17,7 +17,7 @@ import {
   CacheService, 
   provideCacheService,
   CacheOptions 
-} from '@ngx-oneforall/services/cache';
+} from 'ngx-oneforall/services/cache';
 ```
 
 ---
@@ -26,7 +26,7 @@ import {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { CacheService, provideCacheService } from '@ngx-oneforall/services/cache';
+import { CacheService, provideCacheService } from 'ngx-oneforall/services/cache';
 
 @Component({
   selector: 'app-demo',

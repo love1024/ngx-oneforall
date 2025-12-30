@@ -7,7 +7,7 @@ import { inject, PLATFORM_ID } from '@angular/core';
 import {
   InternalCacheService,
   getStorageEngine,
-} from '@ngx-oneforall/services/cache';
+} from 'ngx-oneforall/services/cache';
 import { CACHE_CONTEXT, CacheContextOptions } from './cache-context';
 import { of, tap } from 'rxjs';
 import { isPlatformServer } from '@angular/common';

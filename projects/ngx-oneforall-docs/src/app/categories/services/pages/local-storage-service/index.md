@@ -16,7 +16,7 @@ import {
   LocalStorageService, 
   provideLocalStorage, 
   StorageTransformers 
-} from '@ngx-oneforall/services/storage';
+} from 'ngx-oneforall/services/storage';
 ```
 
 ---
@@ -25,7 +25,7 @@ import {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { LocalStorageService, provideLocalStorage } from '@ngx-oneforall/services/storage';
+import { LocalStorageService, provideLocalStorage } from 'ngx-oneforall/services/storage';
 
 @Component({
   selector: 'app-demo',
@@ -62,7 +62,7 @@ export class DemoComponent {
 ## Transformers
 
 ```typescript
-import { StorageTransformers } from '@ngx-oneforall/services/storage';
+import { StorageTransformers } from 'ngx-oneforall/services/storage';
 
 // Store as JSON
 storage.set('user', { name: 'John' }, StorageTransformers.JSON);

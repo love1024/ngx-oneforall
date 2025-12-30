@@ -18,7 +18,7 @@ import {
   DISABLE_LOGGER,
   CUSTOM_LOGGER,
   CustomLogger
-} from '@ngx-oneforall/services/logger';
+} from 'ngx-oneforall/services/logger';
 ```
 
 ---
@@ -27,7 +27,7 @@ import {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { LoggerService, provideLoggerService } from '@ngx-oneforall/services/logger';
+import { LoggerService, provideLoggerService } from 'ngx-oneforall/services/logger';
 
 @Component({
   selector: 'app-demo',
@@ -64,7 +64,7 @@ export class DemoComponent {
 Disable all logging (useful for production):
 
 ```typescript
-import { DISABLE_LOGGER, provideLoggerService } from '@ngx-oneforall/services/logger';
+import { DISABLE_LOGGER, provideLoggerService } from 'ngx-oneforall/services/logger';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -83,7 +83,7 @@ When disabled, all log methods become no-ops.
 Replace the default console with your own implementation:
 
 ```typescript
-import { CUSTOM_LOGGER, CustomLogger, provideLoggerService } from '@ngx-oneforall/services/logger';
+import { CUSTOM_LOGGER, CustomLogger, provideLoggerService } from 'ngx-oneforall/services/logger';
 
 const serverLogger: CustomLogger = {
   log: (...args) => sendToServer('log', args),

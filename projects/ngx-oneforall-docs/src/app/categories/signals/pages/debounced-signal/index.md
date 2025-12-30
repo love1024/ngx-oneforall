@@ -10,7 +10,7 @@ Use `debouncedSignal` to wait for rapid changes to settle before reacting.
 
 ```typescript
 import { signal } from '@angular/core';
-import { debouncedSignal } from '@ngx-oneforall/signals/debounced-signal';
+import { debouncedSignal } from 'ngx-oneforall/signals/debounced-signal';
 
 @Component({ ... })
 export class SearchComponent {

@@ -3,7 +3,7 @@ Type guard utilities for validating numeric values. Provides robust checking for
 ## Usage
 
 ```typescript
-import { isNumberValue, isNumberString, isNumeric, isNumberObject } from '@ngx-oneforall/utils/is-number';
+import { isNumberValue, isNumberString, isNumeric, isNumberObject } from 'ngx-oneforall/utils/is-number';
 ```
 
 ## API

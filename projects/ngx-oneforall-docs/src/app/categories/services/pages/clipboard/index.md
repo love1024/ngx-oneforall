@@ -12,7 +12,7 @@ A simple service for copying and reading text from the system clipboard with aut
 ## Installation
 
 ```typescript
-import { ClipboardService } from '@ngx-oneforall/services/clipboard';
+import { ClipboardService } from 'ngx-oneforall/services/clipboard';
 ```
 
 ---
@@ -21,7 +21,7 @@ import { ClipboardService } from '@ngx-oneforall/services/clipboard';
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { ClipboardService } from '@ngx-oneforall/services/clipboard';
+import { ClipboardService } from 'ngx-oneforall/services/clipboard';
 
 @Component({
   selector: 'app-demo',

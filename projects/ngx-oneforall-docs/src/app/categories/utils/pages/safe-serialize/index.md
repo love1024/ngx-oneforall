@@ -3,7 +3,7 @@ Safely serializes any JavaScript value to a JSON string, including non-JSON type
 ## Usage
 
 ```typescript
-import { safeSerialize } from '@ngx-oneforall/utils/safe-serialize';
+import { safeSerialize } from 'ngx-oneforall/utils/safe-serialize';
 
 const key = safeSerialize({ name: 'John', count: BigInt(42) });
 // '{"count":"__bigint:42","name":"John"}'

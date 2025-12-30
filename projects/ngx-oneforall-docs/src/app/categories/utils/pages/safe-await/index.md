@@ -3,7 +3,7 @@ Go-style error handling for async operations. Returns a tuple `[result, error]` 
 ## Usage
 
 ```typescript
-import { safeAwait } from '@ngx-oneforall/utils/safe-await';
+import { safeAwait } from 'ngx-oneforall/utils/safe-await';
 ```
 
 ## API

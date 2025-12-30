@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { deepComputed } from '@ngx-oneforall/signals/deep-computed';
+import { deepComputed } from 'ngx-oneforall/signals/deep-computed';
 import { JsonPipe } from '@angular/common';
 
 @Component({

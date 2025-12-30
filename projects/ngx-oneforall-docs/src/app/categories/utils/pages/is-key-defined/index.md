@@ -3,7 +3,7 @@ Type guard utility that checks if an object has a defined (non-undefined) value 
 ## Usage
 
 ```typescript
-import { isKeyDefined } from '@ngx-oneforall/utils/is-key-defined';
+import { isKeyDefined } from 'ngx-oneforall/utils/is-key-defined';
 
 const user = { name: 'John', age: undefined };
 

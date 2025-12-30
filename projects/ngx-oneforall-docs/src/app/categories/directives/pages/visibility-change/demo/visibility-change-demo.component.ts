@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import {
   VisibilityChange,
   VisibilityChangeDirective,
-} from '@ngx-oneforall/directives/visibility-change';
+} from 'ngx-oneforall/directives/visibility-change';
 
 @Component({
   selector: 'lib-visibility-change-demo',

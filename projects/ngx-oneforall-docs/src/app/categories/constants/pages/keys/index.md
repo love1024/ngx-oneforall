@@ -1,11 +1,11 @@
-The `@ngx-oneforall/constants` package provides sets of constants for keyboard keys and their corresponding numeric codes. These are useful for handling keyboard events in a type-safe and readable way.
+The `ngx-oneforall/constants` package provides sets of constants for keyboard keys and their corresponding numeric codes. These are useful for handling keyboard events in a type-safe and readable way.
 
 ## Usage
 
 You can use these constants when listening to keyboard events to avoid hardcoding strings or magic numbers.
 
 ```typescript
-import { Key, KeyCode } from '@ngx-oneforall/constants';
+import { Key, KeyCode } from 'ngx-oneforall/constants';
 
 // Using Key strings
 if (event.key === Key.Enter) {

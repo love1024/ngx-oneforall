@@ -13,7 +13,7 @@ Binds keyboard shortcuts to trigger actions with support for modifiers and globa
 ## Installation
 
 ```typescript
-import { ShortcutDirective } from '@ngx-oneforall/directives/shortcut';
+import { ShortcutDirective } from 'ngx-oneforall/directives/shortcut';
 ```
 
 ---

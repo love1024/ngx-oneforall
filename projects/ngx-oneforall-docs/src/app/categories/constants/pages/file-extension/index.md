@@ -1,11 +1,11 @@
-The `@ngx-oneforall/constants` package provides a comprehensive set of common file extensions. These constants are useful for file type validation, filtering, and handling file uploads.
+The `ngx-oneforall/constants` package provides a comprehensive set of common file extensions. These constants are useful for file type validation, filtering, and handling file uploads.
 
 ## Usage
 
 Import the `FILE_EXTENSION` constant to use in your file handling logic.
 
 ```typescript
-import { FILE_EXTENSION } from '@ngx-oneforall/constants';
+import { FILE_EXTENSION } from 'ngx-oneforall/constants';
 
 // Example: Checking if a file is an image
 const isImage = [

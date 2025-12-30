@@ -12,7 +12,7 @@ The `withBaseUrlInterceptor` is an Angular HTTP interceptor that automatically p
 ## Installation
 
 ```typescript
-import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors/base-url';
+import { withBaseUrlInterceptor } from 'ngx-oneforall/interceptors/base-url';
 ```
 
 ## Quick Start
@@ -21,7 +21,7 @@ import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors/base-url';
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors/base-url';
+import { withBaseUrlInterceptor } from 'ngx-oneforall/interceptors/base-url';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -38,7 +38,7 @@ export const appConfig: ApplicationConfig = {
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { withBaseUrlInterceptor } from '@ngx-oneforall/interceptors/base-url';
+import { withBaseUrlInterceptor } from 'ngx-oneforall/interceptors/base-url';
 
 @NgModule({
   providers: [
@@ -123,7 +123,7 @@ this.http.get('https://other-api.com/data');      // → https://other-api.com/d
 Control the interceptor on a per-request basis using `useBaseUrl`:
 
 ```typescript
-import { useBaseUrl } from '@ngx-oneforall/interceptors/base-url';
+import { useBaseUrl } from 'ngx-oneforall/interceptors/base-url';
 ```
 
 ### Disable for a Request

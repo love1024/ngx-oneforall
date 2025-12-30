@@ -4,7 +4,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { isPresent } from '@ngx-oneforall/utils/is-present';
+import { isPresent } from 'ngx-oneforall/utils/is-present';
 
 /**
  * Validator that checks if the control's value is a valid date.

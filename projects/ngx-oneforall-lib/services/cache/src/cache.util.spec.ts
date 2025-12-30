@@ -3,7 +3,7 @@ import { getStorageEngine } from './cache.util';
 import {
   MemoryStorageService,
   WebStorageService,
-} from '@ngx-oneforall/services/storage';
+} from 'ngx-oneforall/services/storage';
 
 describe('getStorageEngine', () => {
   it('should return a MemoryStorageService for "memory"', () => {

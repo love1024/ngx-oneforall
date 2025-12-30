@@ -7,7 +7,7 @@ Use `routeQueryParamSignal` to reactively access query parameters in signal-base
 ### Single Query Parameter
 
 ```typescript
-import { routeQueryParamSignal } from '@ngx-oneforall/signals/route-query-param-signal';
+import { routeQueryParamSignal } from 'ngx-oneforall/signals/route-query-param-signal';
 
 @Component({ ... })
 export class SearchComponent {
@@ -28,7 +28,7 @@ export class SearchComponent {
 ### All Query Parameters
 
 ```typescript
-import { routeQueryParamsMapSignal } from '@ngx-oneforall/signals/route-query-param-signal';
+import { routeQueryParamsMapSignal } from 'ngx-oneforall/signals/route-query-param-signal';
 
 @Component({ ... })
 export class FilterComponent {

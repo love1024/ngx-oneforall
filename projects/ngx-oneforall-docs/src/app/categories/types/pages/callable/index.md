@@ -5,7 +5,7 @@
 Use `Callable` when you need to define a generic function type with specific arguments or return type, essentially a shorthand for `{ (...args: Args): Return }`.
 
 ```typescript
-import { Callable } from '@ngx-oneforall/types';
+import { Callable } from 'ngx-oneforall/types';
 
 // Function taking any args and returning any
 const fn: Callable = () => {};

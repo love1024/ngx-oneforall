@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { NetworkStatusService } from '@ngx-oneforall/services/network-status';
+import { NetworkStatusService } from 'ngx-oneforall/services/network-status';
 
 @Component({
   selector: 'lib-network-status-demo',

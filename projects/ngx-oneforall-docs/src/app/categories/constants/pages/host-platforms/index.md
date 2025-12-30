@@ -9,7 +9,7 @@ The `HostPlatform` enum defines the supported host platforms (operating systems)
 Import `HostPlatform` from `ngx-oneforall`:
 
 ```typescript
-import {HostPlatform} from '@ngx-oneforall/constants';
+import {HostPlatform} from 'ngx-oneforall/constants';
 
 // Usage with getHostPlatform
 const platform = getHostPlatform();

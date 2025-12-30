@@ -5,7 +5,7 @@
 Use `RequiredOnly` when you need a subset of a type where the selected properties must be present and non-optional.
 
 ```typescript
-import { RequiredOnly } from '@ngx-oneforall/types';
+import { RequiredOnly } from 'ngx-oneforall/types';
 
 interface User {
     id: number;

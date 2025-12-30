@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BytesPipe } from '@ngx-oneforall/pipes/bytes';
+import { BytesPipe } from 'ngx-oneforall/pipes/bytes';
 
 @Component({
   selector: 'app-bytes-pipe-demo',

@@ -10,7 +10,7 @@ Use `rangeLength` to validate form controls where the input size matters, such a
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { rangeLength } from '@ngx-oneforall/validators/range-length';
+import { rangeLength } from 'ngx-oneforall/validators/range-length';
 
 const control = new FormControl('', rangeLength(5, 10));
 ```

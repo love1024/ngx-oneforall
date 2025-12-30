@@ -14,7 +14,7 @@ Detects when an element enters or leaves the viewport using IntersectionObserver
 ## Installation
 
 ```typescript
-import { VisibilityChangeDirective, VisibilityChange } from '@ngx-oneforall/directives/visibility-change';
+import { VisibilityChangeDirective, VisibilityChange } from 'ngx-oneforall/directives/visibility-change';
 ```
 
 ---

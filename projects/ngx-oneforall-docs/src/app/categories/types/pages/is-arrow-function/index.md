@@ -5,7 +5,7 @@
 Use `IsArrowFunction` when you need to conditionally type based on whether a function is an arrow function or a standard function.
 
 ```typescript
-import { IsArrowFunction } from '@ngx-oneforall/types';
+import { IsArrowFunction } from 'ngx-oneforall/types';
 
 const arrow = () => {};
 function standard() {}

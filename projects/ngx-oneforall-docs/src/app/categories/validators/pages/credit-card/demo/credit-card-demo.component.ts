@@ -4,7 +4,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   creditCard,
   CreditCardValidator,
-} from '@ngx-oneforall/validators/credit-card';
+} from 'ngx-oneforall/validators/credit-card';
 
 @Component({
   selector: 'app-credit-card-demo',

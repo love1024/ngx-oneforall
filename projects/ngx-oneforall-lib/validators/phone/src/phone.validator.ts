@@ -8,7 +8,7 @@ import {
   CountryCode as CountryCodeType,
   isValidPhoneNumber,
 } from 'libphonenumber-js';
-import { isPresent } from '@ngx-oneforall/utils/is-present';
+import { isPresent } from 'ngx-oneforall/utils/is-present';
 
 export type CountryCode = CountryCodeType;
 

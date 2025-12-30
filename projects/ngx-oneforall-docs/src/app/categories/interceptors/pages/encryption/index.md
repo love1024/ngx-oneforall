@@ -11,7 +11,7 @@ The `withEncryptionInterceptor` encrypts request bodies and decrypts response bo
 ## Installation
 
 ```typescript
-import { withEncryptionInterceptor, EncryptionAdapter } from '@ngx-oneforall/interceptors/encryption';
+import { withEncryptionInterceptor, EncryptionAdapter } from 'ngx-oneforall/interceptors/encryption';
 ```
 
 ## Quick Start
@@ -70,7 +70,7 @@ withEncryptionInterceptor({
 ## Context API
 
 ```typescript
-import { useEncryption } from '@ngx-oneforall/interceptors/encryption';
+import { useEncryption } from 'ngx-oneforall/interceptors/encryption';
 ```
 
 ### Disable for a Request

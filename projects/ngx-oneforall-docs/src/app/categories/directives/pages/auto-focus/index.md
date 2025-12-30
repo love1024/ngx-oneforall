@@ -11,7 +11,7 @@ Automatically focuses an element when rendered, with reactive two-way binding su
 ## Installation
 
 ```typescript
-import { AutoFocusDirective } from '@ngx-oneforall/directives/auto-focus';
+import { AutoFocusDirective } from 'ngx-oneforall/directives/auto-focus';
 ```
 
 ---

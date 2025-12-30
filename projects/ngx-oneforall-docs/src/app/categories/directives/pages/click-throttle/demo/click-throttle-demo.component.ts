@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ClickThrottleDirective } from '@ngx-oneforall/directives/click-throttle';
+import { ClickThrottleDirective } from 'ngx-oneforall/directives/click-throttle';
 
 @Component({
   selector: 'lib-click-throttle-demo',

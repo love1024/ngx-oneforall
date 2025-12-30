@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { useCorrelationId } from '@ngx-oneforall/interceptors/correlation-id';
+import { useCorrelationId } from 'ngx-oneforall/interceptors/correlation-id';
 
 interface Todo {
   id: number;

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PluralizePipe } from '@ngx-oneforall/pipes/pluralize';
+import { PluralizePipe } from 'ngx-oneforall/pipes/pluralize';
 
 @Component({
   selector: 'app-pluralize-pipe-demo',

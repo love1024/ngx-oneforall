@@ -1,4 +1,4 @@
-import { HostPlatform } from '@ngx-oneforall/constants';
+import { HostPlatform } from 'ngx-oneforall/constants';
 import { normalizeKey } from './normalize-key';
 
 describe('normalizeKey', () => {

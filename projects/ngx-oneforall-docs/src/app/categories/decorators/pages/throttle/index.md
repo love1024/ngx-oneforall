@@ -18,7 +18,7 @@ The `throttle` decorator limits method execution to once per delay period. Unlik
 ### Basic Usage
 
 ```typescript
-import { throttle } from '@ngx-oneforall/decorators/throttle';
+import { throttle } from 'ngx-oneforall/decorators/throttle';
 
 @throttle(500)
 handleScroll() {

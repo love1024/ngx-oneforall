@@ -11,7 +11,7 @@ The `withPerformanceInterceptor` measures and reports HTTP request performance a
 ## Installation
 
 ```typescript
-import { withPerformanceInterceptor } from '@ngx-oneforall/interceptors/performance';
+import { withPerformanceInterceptor } from 'ngx-oneforall/interceptors/performance';
 ```
 
 ## Quick Start
@@ -75,7 +75,7 @@ The default reporter prefixes slow requests with `[HTTP Performance - SLOW]`.
 ## Context API
 
 ```typescript
-import { usePerformance } from '@ngx-oneforall/interceptors/performance';
+import { usePerformance } from 'ngx-oneforall/interceptors/performance';
 ```
 
 ### Disable for a Request

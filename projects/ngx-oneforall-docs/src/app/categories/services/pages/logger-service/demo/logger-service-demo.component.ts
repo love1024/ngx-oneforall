@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { DISABLE_LOGGER, LoggerService } from '@ngx-oneforall/services/logger';
+import { DISABLE_LOGGER, LoggerService } from 'ngx-oneforall/services/logger';
 
 @Component({
   selector: 'lib-logger-service-demo',

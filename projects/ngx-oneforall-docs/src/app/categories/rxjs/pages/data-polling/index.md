@@ -10,7 +10,7 @@ It uses `timer` and `switchMap` to repeatedly call a loader function, making it 
 
 ```typescript
 import { Subject } from 'rxjs';
-import { dataPolling } from '@ngx-oneforall/rxjs/data-polling';
+import { dataPolling } from 'ngx-oneforall/rxjs/data-polling';
 
 const trigger = new Subject<void>();
 
@@ -32,7 +32,7 @@ trigger.next();
 ```typescript
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
-import { dataPolling } from '@ngx-oneforall/rxjs/data-polling';
+import { dataPolling } from 'ngx-oneforall/rxjs/data-polling';
 
 export class MyComponent {
     constructor(private http: HttpClient) {}

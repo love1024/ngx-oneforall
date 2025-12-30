@@ -5,7 +5,7 @@
 Use `PartialOnly` when you need a subset of a type where the selected properties should be optional.
 
 ```typescript
-import { PartialOnly } from '@ngx-oneforall/types';
+import { PartialOnly } from 'ngx-oneforall/types';
 
 interface User {
     id: number;

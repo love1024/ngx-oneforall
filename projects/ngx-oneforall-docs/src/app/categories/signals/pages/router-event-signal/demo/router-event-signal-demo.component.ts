@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { JsonPipe } from '@angular/common';
-import { routerEventSignal } from '@ngx-oneforall/signals/router-event-signal';
+import { routerEventSignal } from 'ngx-oneforall/signals/router-event-signal';
 
 @Component({
   selector: 'router-event-signal-demo',

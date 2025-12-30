@@ -12,7 +12,7 @@ Dynamically applies CSS classes on hover with reactive updates and toggle suppor
 ## Installation
 
 ```typescript
-import { HoverClassDirective } from '@ngx-oneforall/directives/hover-class';
+import { HoverClassDirective } from 'ngx-oneforall/directives/hover-class';
 ```
 
 ---

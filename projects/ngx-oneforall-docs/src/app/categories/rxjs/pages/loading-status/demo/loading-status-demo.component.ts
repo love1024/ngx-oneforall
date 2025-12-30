@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { of, delay, throwError, Observable } from 'rxjs';
-import { loadingStatus } from '@ngx-oneforall/rxjs/loading-status';
+import { loadingStatus } from 'ngx-oneforall/rxjs/loading-status';
 
 @Component({
   selector: 'app-loading-status-demo',

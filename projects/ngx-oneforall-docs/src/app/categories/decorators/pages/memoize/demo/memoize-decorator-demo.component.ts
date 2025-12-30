@@ -1,6 +1,6 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { memoize } from '@ngx-oneforall/decorators/memoize';
+import { memoize } from 'ngx-oneforall/decorators/memoize';
 import { Observable, of, delay } from 'rxjs';
 
 interface Response {

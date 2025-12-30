@@ -12,7 +12,7 @@ A lightweight pub-sub service for event-based communication between Angular comp
 ## Installation
 
 ```typescript
-import { EventService, provideEventService, AppEvent } from '@ngx-oneforall/services/event';
+import { EventService, provideEventService, AppEvent } from 'ngx-oneforall/services/event';
 ```
 
 ---
@@ -22,7 +22,7 @@ import { EventService, provideEventService, AppEvent } from '@ngx-oneforall/serv
 ```typescript
 import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EventService, provideEventService } from '@ngx-oneforall/services/event';
+import { EventService, provideEventService } from 'ngx-oneforall/services/event';
 
 @Component({
   selector: 'app-demo',

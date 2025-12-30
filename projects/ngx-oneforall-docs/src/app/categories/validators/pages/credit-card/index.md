@@ -12,7 +12,7 @@ Use `creditCard` to validate credit card inputs.
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { creditCard } from '@ngx-oneforall/validators/credit-card';
+import { creditCard } from 'ngx-oneforall/validators/credit-card';
 
 const control = new FormControl(null, creditCard);
 ```

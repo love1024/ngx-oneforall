@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SafeHtmlPipe } from '@ngx-oneforall/pipes/safe-html';
+import { SafeHtmlPipe } from 'ngx-oneforall/pipes/safe-html';
 @Component({
   selector: 'lib-safe-html-pipe-demo',
   imports: [SafeHtmlPipe],

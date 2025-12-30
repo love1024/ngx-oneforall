@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { BaseUrlContextConfig, BASE_URL_CONTEXT } from './base-url-context';
-import { isFunction } from '@ngx-oneforall/utils/find-type';
+import { isFunction } from 'ngx-oneforall/utils/find-type';
 
 /**
  * Configuration for URL-specific base URL overrides.

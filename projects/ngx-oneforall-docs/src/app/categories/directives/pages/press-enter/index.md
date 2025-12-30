@@ -11,7 +11,7 @@ Emits an event when the Enter key is pressed on any element.
 ## Installation
 
 ```typescript
-import { PressEnterDirective } from '@ngx-oneforall/directives/press-enter';
+import { PressEnterDirective } from 'ngx-oneforall/directives/press-enter';
 ```
 
 ---

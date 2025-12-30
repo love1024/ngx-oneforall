@@ -9,7 +9,7 @@ Use `storageSignal` to persist state across page refreshes or share state betwee
 ### Basic Example
 
 ```typescript
-import { storageSignal } from '@ngx-oneforall/signals/storage-signal';
+import { storageSignal } from 'ngx-oneforall/signals/storage-signal';
 
 @Component({ ... })
 export class MyComponent {

@@ -13,7 +13,7 @@ Implements infinite scroll behavior using IntersectionObserver for efficient det
 ## Installation
 
 ```typescript
-import { InfiniteScrollDirective } from '@ngx-oneforall/directives/infinite-scroll';
+import { InfiniteScrollDirective } from 'ngx-oneforall/directives/infinite-scroll';
 ```
 
 ---

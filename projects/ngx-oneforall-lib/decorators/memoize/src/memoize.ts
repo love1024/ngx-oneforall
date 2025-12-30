@@ -1,4 +1,4 @@
-import { safeSerialize } from '@ngx-oneforall/utils/safe-serialize';
+import { safeSerialize } from 'ngx-oneforall/utils/safe-serialize';
 
 /**
  * Configuration options for the memoize decorator.

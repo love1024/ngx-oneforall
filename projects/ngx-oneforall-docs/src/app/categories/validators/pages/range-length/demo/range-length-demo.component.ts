@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import {
   rangeLength,
   RangeLengthValidator,
-} from '@ngx-oneforall/validators/range-length';
+} from 'ngx-oneforall/validators/range-length';
 
 @Component({
   selector: 'app-range-length-demo',

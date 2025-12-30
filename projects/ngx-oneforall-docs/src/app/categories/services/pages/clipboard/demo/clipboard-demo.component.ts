@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { ClipboardService } from '@ngx-oneforall/services/clipboard';
+import { ClipboardService } from 'ngx-oneforall/services/clipboard';
 import { FormsModule } from '@angular/forms';
 
 @Component({

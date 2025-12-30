@@ -3,7 +3,7 @@ A type-safe version of Angular's `SimpleChanges` that provides proper typing for
 ## Usage
 
 ```typescript
-import { SimpleChangesTyped } from '@ngx-oneforall/types';
+import { SimpleChangesTyped } from 'ngx-oneforall/types';
 ```
 
 ## API

@@ -4,8 +4,8 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { isNumberString, isNumberValue } from '@ngx-oneforall/utils/is-number';
-import { isPresent } from '@ngx-oneforall/utils/is-present';
+import { isNumberString, isNumberValue } from 'ngx-oneforall/utils/is-number';
+import { isPresent } from 'ngx-oneforall/utils/is-present';
 
 /**
  * Validator that checks if the control's value is a valid number.

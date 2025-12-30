@@ -12,7 +12,7 @@ The `withJwtInterceptor` attaches JWT tokens to outgoing HTTP requests for allow
 ## Installation
 
 ```typescript
-import { withJwtInterceptor } from '@ngx-oneforall/interceptors/jwt';
+import { withJwtInterceptor } from 'ngx-oneforall/interceptors/jwt';
 ```
 
 ## Quick Start
@@ -76,7 +76,7 @@ interface RefreshTokenHandler {
 ## Context API
 
 ```typescript
-import { withSkipJwtInterceptor } from '@ngx-oneforall/interceptors/jwt';
+import { withSkipJwtInterceptor } from 'ngx-oneforall/interceptors/jwt';
 ```
 
 ### Skip for a Request

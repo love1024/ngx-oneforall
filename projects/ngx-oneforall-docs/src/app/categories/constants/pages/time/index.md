@@ -1,11 +1,11 @@
-The `@ngx-oneforall/constants` package provides a set of common time duration constants in milliseconds. These are useful for timeouts, intervals, and date manipulations.
+The `ngx-oneforall/constants` package provides a set of common time duration constants in milliseconds. These are useful for timeouts, intervals, and date manipulations.
 
 ## Usage
 
 Import the `TIME` constant to use in your timers or logic.
 
 ```typescript
-import { TIME } from '@ngx-oneforall/constants';
+import { TIME } from 'ngx-oneforall/constants';
 
 // Set an interval of one minute
 setInterval(() => {

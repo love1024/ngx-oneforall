@@ -13,7 +13,7 @@ Decode, validate, and extract claims from JSON Web Tokens (JWTs) with a configur
 ## Installation
 
 ```typescript
-import { JwtService, provideJwtService } from '@ngx-oneforall/services/jwt';
+import { JwtService, provideJwtService } from 'ngx-oneforall/services/jwt';
 ```
 
 ---
@@ -22,7 +22,7 @@ import { JwtService, provideJwtService } from '@ngx-oneforall/services/jwt';
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { JwtService, provideJwtService } from '@ngx-oneforall/services/jwt';
+import { JwtService, provideJwtService } from 'ngx-oneforall/services/jwt';
 
 @Component({
   selector: 'app-demo',

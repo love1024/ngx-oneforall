@@ -3,7 +3,7 @@ Type guard that checks if a value is a plain object (record) as opposed to built
 ## Usage
 
 ```typescript
-import { isRecord } from '@ngx-oneforall/utils/is-record';
+import { isRecord } from 'ngx-oneforall/utils/is-record';
 ```
 
 ## API

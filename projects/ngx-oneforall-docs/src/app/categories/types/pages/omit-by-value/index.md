@@ -5,7 +5,7 @@
 Use `OmitByValue` when you want to exclude properties of a specific type from an object.
 
 ```typescript
-import { OmitByValue } from '@ngx-oneforall/types';
+import { OmitByValue } from 'ngx-oneforall/types';
 
 interface User {
     id: number;

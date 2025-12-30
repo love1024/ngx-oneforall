@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { debouncedSignal } from '@ngx-oneforall/signals/debounced-signal';
+import { debouncedSignal } from 'ngx-oneforall/signals/debounced-signal';
 
 @Component({
   selector: 'app-debounced-signal-demo',

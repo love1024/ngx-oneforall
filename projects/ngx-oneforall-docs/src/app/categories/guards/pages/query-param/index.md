@@ -7,7 +7,7 @@
 To use `queryParamGuard`, provide it in your route configuration using `canActivate`:
 
 ```typescript
-import { queryParamGuard } from '@ngx-oneforall/guards/query-param';
+import { queryParamGuard } from 'ngx-oneforall/guards/query-param';
 
 const routes: Routes = [
   {

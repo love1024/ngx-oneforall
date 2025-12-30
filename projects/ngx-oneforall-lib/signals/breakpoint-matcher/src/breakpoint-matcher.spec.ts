@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { BREAKPOINT } from '@ngx-oneforall/constants';
+import { BREAKPOINT } from 'ngx-oneforall/constants';
 import {
   breakpointMatcher,
   breakpointMatcherMultiple,

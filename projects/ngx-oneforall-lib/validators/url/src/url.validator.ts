@@ -4,7 +4,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { isPresent } from '@ngx-oneforall/utils/is-present';
+import { isPresent } from 'ngx-oneforall/utils/is-present';
 
 export interface UrlValidatorOptions {
   protocols?: readonly string[];

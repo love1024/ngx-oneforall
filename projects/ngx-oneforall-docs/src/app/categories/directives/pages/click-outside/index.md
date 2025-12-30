@@ -12,7 +12,7 @@ Detects clicks outside an element, useful for closing dropdowns, modals, and pop
 ## Installation
 
 ```typescript
-import { ClickOutsideDirective } from '@ngx-oneforall/directives/click-outside';
+import { ClickOutsideDirective } from 'ngx-oneforall/directives/click-outside';
 ```
 
 ---

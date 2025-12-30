@@ -15,7 +15,7 @@ Use `deepComputed` when you have complex nested objects in signals and want indi
 
 ```typescript
 import { signal, computed } from '@angular/core';
-import { deepComputed } from '@ngx-oneforall/signals/deep-computed';
+import { deepComputed } from 'ngx-oneforall/signals/deep-computed';
 
 @Component({ ... })
 export class MyComponent {

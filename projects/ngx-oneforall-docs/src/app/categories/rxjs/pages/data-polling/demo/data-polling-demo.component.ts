@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 
 import { Subject, of, delay } from 'rxjs';
-import { dataPolling } from '@ngx-oneforall/rxjs/data-polling';
+import { dataPolling } from 'ngx-oneforall/rxjs/data-polling';
 
 interface ServerData {
   timestamp: string;

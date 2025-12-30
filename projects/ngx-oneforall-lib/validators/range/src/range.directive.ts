@@ -1,6 +1,6 @@
 import { Directive, effect, forwardRef, input } from '@angular/core';
 import { NG_VALIDATORS } from '@angular/forms';
-import { isPresent } from '@ngx-oneforall/utils/is-present';
+import { isPresent } from 'ngx-oneforall/utils/is-present';
 import { range } from './range.validator';
 import { BaseValidator } from '../../base/base.validator';
 

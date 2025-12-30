@@ -42,7 +42,7 @@ async getUsers(): Promise<User[]> {
 ### Disable in Production
 
 ```typescript
-import { disableLogExecutionTime } from '@ngx-oneforall/decorators/log-execution-time';
+import { disableLogExecutionTime } from 'ngx-oneforall/decorators/log-execution-time';
 
 // main.ts
 if (environment.production) {

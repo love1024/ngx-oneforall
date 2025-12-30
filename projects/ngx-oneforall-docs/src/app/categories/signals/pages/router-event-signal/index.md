@@ -9,7 +9,7 @@ Use `routerEventSignal` to react to navigation changes with Angular signals.
 ### Basic Example
 
 ```typescript
-import { routerEventSignal } from '@ngx-oneforall/signals/router-event-signal';
+import { routerEventSignal } from 'ngx-oneforall/signals/router-event-signal';
 
 @Component({ ... })
 export class NavigationComponent {

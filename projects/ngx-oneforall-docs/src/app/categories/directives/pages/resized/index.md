@@ -13,7 +13,7 @@ Detects element resize events using ResizeObserver and emits current/previous di
 ## Installation
 
 ```typescript
-import { ResizedDirective, ResizedEvent } from '@ngx-oneforall/directives/resized';
+import { ResizedDirective, ResizedEvent } from 'ngx-oneforall/directives/resized';
 ```
 
 ---

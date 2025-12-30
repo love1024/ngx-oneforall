@@ -12,7 +12,7 @@ Detect device type and orientation with automatic updates on resize and orientat
 ## Installation
 
 ```typescript
-import { DeviceService, provideDeviceService } from '@ngx-oneforall/services/device';
+import { DeviceService, provideDeviceService } from 'ngx-oneforall/services/device';
 ```
 
 ---
@@ -21,7 +21,7 @@ import { DeviceService, provideDeviceService } from '@ngx-oneforall/services/dev
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { DeviceService, provideDeviceService } from '@ngx-oneforall/services/device';
+import { DeviceService, provideDeviceService } from 'ngx-oneforall/services/device';
 
 @Component({
   selector: 'app-demo',

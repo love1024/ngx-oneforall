@@ -1,4 +1,4 @@
-import { isNumberString } from '@ngx-oneforall/utils/is-number';
+import { isNumberString } from 'ngx-oneforall/utils/is-number';
 
 export abstract class BaseStorageTransformer<T, S = string> {
   abstract serialize(value: T): S;

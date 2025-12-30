@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { normalizeKey } from '@ngx-oneforall/utils/normalize-key';
+import { normalizeKey } from 'ngx-oneforall/utils/normalize-key';
 
 @Component({
   selector: 'normalize-key-demo',

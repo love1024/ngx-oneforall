@@ -9,7 +9,7 @@ Use `intervalSignal` to create timers, countdowns, or periodic updates with star
 ### Basic Example
 
 ```typescript
-import { intervalSignal } from '@ngx-oneforall/signals/interval-signal';
+import { intervalSignal } from 'ngx-oneforall/signals/interval-signal';
 
 @Component({ ... })
 export class TimerComponent {

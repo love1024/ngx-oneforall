@@ -23,9 +23,9 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
-import { withCacheInterceptor } from '@ngx-oneforall/interceptors/cache';
-import { withTimeoutInterceptor } from '@ngx-oneforall/interceptors/timeout';
-import { provideCacheService } from '@ngx-oneforall/services/cache';
+import { withCacheInterceptor } from 'ngx-oneforall/interceptors/cache';
+import { withTimeoutInterceptor } from 'ngx-oneforall/interceptors/timeout';
+import { provideCacheService } from 'ngx-oneforall/services/cache';
 
 export const appConfig: ApplicationConfig = {
   providers: [

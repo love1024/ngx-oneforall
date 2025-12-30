@@ -9,7 +9,7 @@ The `withTimeoutInterceptor` adds automatic timeouts to HTTP requests.
 ## Installation
 
 ```typescript
-import { withTimeoutInterceptor } from '@ngx-oneforall/interceptors/timeout';
+import { withTimeoutInterceptor } from 'ngx-oneforall/interceptors/timeout';
 ```
 
 ## Quick Start
@@ -27,7 +27,7 @@ provideHttpClient(
 Override the default timeout for specific requests:
 
 ```typescript
-import { withTimeout } from '@ngx-oneforall/interceptors/timeout';
+import { withTimeout } from 'ngx-oneforall/interceptors/timeout';
 
 this.http.get('/api/slow-endpoint', {
   context: withTimeout({ timeout: 60000 }) // 60 seconds
@@ -37,7 +37,7 @@ this.http.get('/api/slow-endpoint', {
 ## Error Handling
 
 ```typescript
-import { TIMEOUT_ERROR } from '@ngx-oneforall/interceptors/timeout';
+import { TIMEOUT_ERROR } from 'ngx-oneforall/interceptors/timeout';
 
 this.http.get('/api/data').pipe(
   catchError(error => {

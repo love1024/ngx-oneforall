@@ -1,5 +1,5 @@
 import { CacheService } from './cache.service';
-import { StorageEngine } from '@ngx-oneforall/services/storage';
+import { StorageEngine } from 'ngx-oneforall/services/storage';
 
 class MockStorageEngine extends StorageEngine {
   private store: Record<string, string> = {};

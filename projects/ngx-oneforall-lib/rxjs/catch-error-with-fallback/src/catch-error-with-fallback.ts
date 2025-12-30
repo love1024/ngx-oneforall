@@ -1,4 +1,4 @@
-import { isFunction } from '@ngx-oneforall/utils/find-type';
+import { isFunction } from 'ngx-oneforall/utils/find-type';
 import {
   catchError,
   isObservable,

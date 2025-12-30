@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { range, RangeValidator } from '@ngx-oneforall/validators/range';
+import { range, RangeValidator } from 'ngx-oneforall/validators/range';
 
 @Component({
   selector: 'app-range-demo',

@@ -17,7 +17,7 @@ import {
   ShortcutService, 
   provideShortcutService,
   ShortcutOptions 
-} from '@ngx-oneforall/services/shortcut';
+} from 'ngx-oneforall/services/shortcut';
 ```
 
 ---
@@ -26,7 +26,7 @@ import {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { ShortcutService, provideShortcutService } from '@ngx-oneforall/services/shortcut';
+import { ShortcutService, provideShortcutService } from 'ngx-oneforall/services/shortcut';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({

@@ -20,7 +20,7 @@ The `@memoize` decorator caches method results based on arguments. Works with sy
 ### Basic Usage
 
 ```typescript
-import { memoize } from '@ngx-oneforall/decorators/memoize';
+import { memoize } from 'ngx-oneforall/decorators/memoize';
 
 @memoize()
 factorial(n: number): number {

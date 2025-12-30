@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RangePipe } from '@ngx-oneforall/pipes/range';
+import { RangePipe } from 'ngx-oneforall/pipes/range';
 
 @Component({
   selector: 'app-range-pipe-demo',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { base64UrlEncode, base64UrlDecode } from '@ngx-oneforall/utils/base64';
+import { base64UrlEncode, base64UrlDecode } from 'ngx-oneforall/utils/base64';
 
 @Component({
   selector: 'lib-base64-url-demo',

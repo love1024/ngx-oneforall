@@ -3,8 +3,8 @@ Comprehensive type detection utility that returns a `Types` enum value for any J
 ## Usage
 
 ```typescript
-import { findType } from '@ngx-oneforall/utils/find-type';
-import { Types } from '@ngx-oneforall/constants';
+import { findType } from 'ngx-oneforall/utils/find-type';
+import { Types } from 'ngx-oneforall/constants';
 
 findType(42);           // Types.Number
 findType('hello');      // Types.String
@@ -46,7 +46,7 @@ findType({});               // Types.Object
 All type checking functions are also exported as type guards:
 
 ```typescript
-import { isString, isNumber, isBigInt, isArray, isMap } from '@ngx-oneforall/utils/find-type';
+import { isString, isNumber, isBigInt, isArray, isMap } from 'ngx-oneforall/utils/find-type';
 
 const value: unknown = getData();
 

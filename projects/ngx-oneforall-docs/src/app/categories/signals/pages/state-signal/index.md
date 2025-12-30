@@ -9,7 +9,7 @@ Use `stateSignal` when you have complex nested objects and want ergonomic proper
 ### Basic Example
 
 ```typescript
-import { stateSignal } from '@ngx-oneforall/signals/state-signal';
+import { stateSignal } from 'ngx-oneforall/signals/state-signal';
 
 @Component({ ... })
 export class MyComponent {
@@ -58,7 +58,7 @@ state.profile.address.city.update(city => city.toUpperCase());
 
 ```typescript
 import { signal } from '@angular/core';
-import { stateSignal } from '@ngx-oneforall/signals/state-signal';
+import { stateSignal } from 'ngx-oneforall/signals/state-signal';
 
 // Wrap an existing signal
 const source = signal({ count: 0 });

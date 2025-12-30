@@ -3,7 +3,7 @@ import { CommonModule, NgClass, TitleCasePipe } from '@angular/common';
 import {
   DeviceService,
   provideDeviceService,
-} from '@ngx-oneforall/services/device';
+} from 'ngx-oneforall/services/device';
 
 @Component({
   selector: 'lib-device-service-demo',

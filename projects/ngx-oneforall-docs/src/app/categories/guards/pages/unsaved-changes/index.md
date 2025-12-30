@@ -7,7 +7,7 @@ Unsaved changes guards are essential for protecting users from accidentally losi
 1. **Import the Guard**
     Import `unsavedChangesGuard` and the `HasUnsavedChanges` interface:
     ```typescript
-    import { HasUnsavedChanges, unsavedChangesGuard } from '@ngx-oneforall/guards/unsaved-changes';
+    import { HasUnsavedChanges, unsavedChangesGuard } from 'ngx-oneforall/guards/unsaved-changes';
     ```
 
 2. **Register the Guard**

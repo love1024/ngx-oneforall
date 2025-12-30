@@ -11,7 +11,7 @@ A structural directive that repeats a template a specified number of times.
 ## Installation
 
 ```typescript
-import { RepeatDirective } from '@ngx-oneforall/directives/repeat';
+import { RepeatDirective } from 'ngx-oneforall/directives/repeat';
 ```
 
 ---

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { getHostPlatform } from '@ngx-oneforall/utils/host-platform';
-import { HostPlatform } from '@ngx-oneforall/constants';
+import { getHostPlatform } from 'ngx-oneforall/utils/host-platform';
+import { HostPlatform } from 'ngx-oneforall/constants';
 
 @Component({
   selector: 'host-platform-demo',

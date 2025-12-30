@@ -3,7 +3,7 @@ Converts a `File` object to a base64-encoded data URL string asynchronously.
 ## Usage
 
 ```typescript
-import { fileToBase64 } from '@ngx-oneforall/utils/base64';
+import { fileToBase64 } from 'ngx-oneforall/utils/base64';
 ```
 
 ### Basic Example

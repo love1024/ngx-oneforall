@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import {
   CacheService,
   provideCacheService,
-} from '@ngx-oneforall/services/cache';
+} from 'ngx-oneforall/services/cache';
 
 @Component({
   selector: 'lib-cache-service-demo',

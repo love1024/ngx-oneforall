@@ -12,10 +12,10 @@ Error handling is essential for robust applications, but RxJS's native `catchErr
 
 ## How to Use
 
-Import the operator from `@ngx-oneforall/rxjs`:
+Import the operator from `ngx-oneforall/rxjs`:
 
 ```typescript
-import { catchErrorWithFallback } from '@ngx-oneforall/rxjs/catch-error-with-fallback';
+import { catchErrorWithFallback } from 'ngx-oneforall/rxjs/catch-error-with-fallback';
 ```
 
 ### Basic Usage with Static Fallback

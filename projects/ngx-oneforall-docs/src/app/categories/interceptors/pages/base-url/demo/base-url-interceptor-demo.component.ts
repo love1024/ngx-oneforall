@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { useBaseUrl } from '@ngx-oneforall/interceptors/base-url';
+import { useBaseUrl } from 'ngx-oneforall/interceptors/base-url';
 
 interface User {
   id: number;

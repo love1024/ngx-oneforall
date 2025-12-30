@@ -1,4 +1,4 @@
-import { HostPlatform } from '@ngx-oneforall/constants';
+import { HostPlatform } from 'ngx-oneforall/constants';
 
 /**
  * Detects the host platform/operating system based on the user agent string.

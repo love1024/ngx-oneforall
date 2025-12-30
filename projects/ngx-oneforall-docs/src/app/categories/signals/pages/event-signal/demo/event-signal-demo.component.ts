@@ -5,7 +5,7 @@ import {
   viewChild,
   inject,
 } from '@angular/core';
-import { eventSignal } from '@ngx-oneforall/signals/event-signal';
+import { eventSignal } from 'ngx-oneforall/signals/event-signal';
 
 @Component({
   selector: 'event-signal-demo',

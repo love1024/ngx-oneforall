@@ -3,7 +3,7 @@ import { Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { delay, filter, tap } from 'rxjs/operators';
-import { liveSearch } from '@ngx-oneforall/rxjs/live-search';
+import { liveSearch } from 'ngx-oneforall/rxjs/live-search';
 
 interface SearchResult {
   id: number;

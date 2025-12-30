@@ -1,4 +1,4 @@
-import { Types } from '@ngx-oneforall/constants';
+import { Types } from 'ngx-oneforall/constants';
 
 /**
  * Determines the JavaScript type of a value.

@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { of, throwError, delay, Subject, Observable } from 'rxjs';
-import { debug } from '@ngx-oneforall/rxjs/debug';
+import { debug } from 'ngx-oneforall/rxjs/debug';
 
 @Component({
   selector: 'app-debug-demo',

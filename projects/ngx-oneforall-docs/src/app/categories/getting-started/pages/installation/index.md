@@ -1,26 +1,21 @@
 
-
-Follow the steps below to install and set up the `ngx-oneforall` library in your Angular project.
-
-## Step 1: Install ngx-oneforall
-
-To add the `ngx-oneforall` library to your Angular project, run the following command in your project directory:
+Install the library via npm or yarn:
 
 ```bash
-npm install ngx-oneforall --save
+npm install ngx-oneforall
 ```
 
-Alternatively, if you are using `yarn`, use:
+Or
 
 ```bash
 yarn add ngx-oneforall
 ```
 
+# Usage
 
-## Step 2: Import Specific Features
+**ngx-oneforall** is fully modular. You can import individual pipes, directives, or services directly into your standalone components.
 
-After installation, you can import only the specific parts of the `ngx-oneforall` library that you need, such as pipes or services. 
-### Example: Importing a Pipe and a Service into a Standalone Component
+### Example
 
 ```typescript
 import { Component } from '@angular/core';
@@ -28,7 +23,7 @@ import { MemoizePipe, SomeService } from 'ngx-oneforall';
 
 @Component({
   selector: 'app-component',
-  templateUrl: 'app.component.html'
+  templateUrl: 'app.component.html',
   standalone: true,
   imports: [MemoizePipe],
   providers: [SomeService]
@@ -37,20 +32,13 @@ export class AppComponent {
 }
 ```
 
+Since the library is tree-shakable, only the features you actually import will be included in your final bundle.
 
-This approach allows you to include only the features you need, keeping your application lightweight and optimized.
+# Troubleshooting
 
-
-## Troubleshooting
-
-If you encounter any issues during installation, consider the following:
-
-1. Ensure that your Angular version is compatible with the library.
-2. Delete the `node_modules` folder and reinstall dependencies:
-   ```bash
-   rm -rf node_modules
-   npm install
-   ```
-3. Check for any peer dependency warnings during installation and resolve them.
+If you run into issues:
+1. Check that your Angular version is compatible.
+2. Try clearing your `node_modules` and reinstalling.
+3. Check for any peer dependency warnings during installation.
 
 

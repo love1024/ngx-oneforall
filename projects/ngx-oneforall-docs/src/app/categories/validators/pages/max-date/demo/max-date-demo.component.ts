@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { maxDate, MaxDateDirective } from '@ngx-oneforall/validators/max-date';
+import { maxDate, MaxDateDirective } from 'ngx-oneforall/validators/max-date';
 
 @Component({
   selector: 'app-max-date-demo',

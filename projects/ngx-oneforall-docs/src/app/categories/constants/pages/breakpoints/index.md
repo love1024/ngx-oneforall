@@ -1,11 +1,11 @@
-The `@ngx-oneforall/constants` package provides a set of constants for responsive design breakpoints, including their names, numeric values, and CSS media query strings.
+The `ngx-oneforall/constants` package provides a set of constants for responsive design breakpoints, including their names, numeric values, and CSS media query strings.
 
 ## Usage
 
 Import the constants to handle responsive logic in your components or services.
 
 ```typescript
-import { BREAKPOINT, BREAKPOINT_QUERY } from '@ngx-oneforall/constants';
+import { BREAKPOINT, BREAKPOINT_QUERY } from 'ngx-oneforall/constants';
 
 // Example: Using a media query in a component
 const isMobileQuery = BREAKPOINT_QUERY[BREAKPOINT.XS];

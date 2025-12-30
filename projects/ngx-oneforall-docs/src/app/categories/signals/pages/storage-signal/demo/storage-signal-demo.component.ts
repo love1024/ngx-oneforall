@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { storageSignal } from '@ngx-oneforall/signals/storage-signal';
+import { storageSignal } from 'ngx-oneforall/signals/storage-signal';
 
 @Component({
   selector: 'lib-storage-signal-demo',

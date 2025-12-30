@@ -3,7 +3,7 @@ Generates unique ID strings for Angular components. Useful for form elements, AR
 ## Usage
 
 ```typescript
-import { uniqueComponentId } from '@ngx-oneforall/utils/unique-component-id';
+import { uniqueComponentId } from 'ngx-oneforall/utils/unique-component-id';
 ```
 
 ## API

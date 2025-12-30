@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { isNumberString, isNumberValue } from '@ngx-oneforall/utils/is-number';
-import { isPresent } from '@ngx-oneforall/utils/is-present';
+import { isNumberString, isNumberValue } from 'ngx-oneforall/utils/is-number';
+import { isPresent } from 'ngx-oneforall/utils/is-present';
 
 /**
  * Validator that checks if the control's value is within a specified numeric range (inclusive).

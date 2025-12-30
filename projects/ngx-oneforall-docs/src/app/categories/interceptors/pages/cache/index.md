@@ -11,7 +11,7 @@ The `withCacheInterceptor` caches HTTP responses to improve performance.
 ## Installation
 
 ```typescript
-import { withCacheInterceptor } from '@ngx-oneforall/interceptors/cache';
+import { withCacheInterceptor } from 'ngx-oneforall/interceptors/cache';
 ```
 
 ## Quick Start
@@ -50,7 +50,7 @@ withCacheInterceptor({ strategy: 'auto' })
 Only caches requests with explicit context:
 
 ```typescript
-import { useCache } from '@ngx-oneforall/interceptors/cache';
+import { useCache } from 'ngx-oneforall/interceptors/cache';
 
 this.http.get('/api/data', {
   context: useCache()

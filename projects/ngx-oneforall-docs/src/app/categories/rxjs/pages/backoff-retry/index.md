@@ -10,7 +10,7 @@ The `backOffRetry` RxJS operator automatically retries failed observables with a
 ## Installation
 
 ```typescript
-import { backOffRetry } from '@ngx-oneforall/rxjs/backoff-retry';
+import { backOffRetry } from 'ngx-oneforall/rxjs/backoff-retry';
 ```
 
 ## Quick Start

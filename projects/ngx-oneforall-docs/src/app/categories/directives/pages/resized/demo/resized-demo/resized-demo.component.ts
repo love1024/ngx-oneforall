@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import {
   ResizedDirective,
   ResizedEvent,
-} from '@ngx-oneforall/directives/resized';
+} from 'ngx-oneforall/directives/resized';
 
 @Component({
   selector: 'lib-resized-demo',

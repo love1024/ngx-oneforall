@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
-import { throttledSignal } from '@ngx-oneforall/signals/throttled-signal';
+import { throttledSignal } from 'ngx-oneforall/signals/throttled-signal';
 
 @Component({
   selector: 'app-throttled-signal-demo',

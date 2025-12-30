@@ -10,7 +10,7 @@ Use `range` to validate numeric inputs against a minimum and maximum value.
 
 ```typescript
 import { FormControl } from '@angular/forms';
-import { range } from '@ngx-oneforall/validators/range';
+import { range } from 'ngx-oneforall/validators/range';
 
 const control = new FormControl(null, range(5, 10));
 ```

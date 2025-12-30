@@ -17,7 +17,7 @@ import {
   SessionStorageService, 
   provideSessionStorage, 
   StorageTransformers 
-} from '@ngx-oneforall/services/storage';
+} from 'ngx-oneforall/services/storage';
 ```
 
 ---
@@ -26,7 +26,7 @@ import {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { SessionStorageService, provideSessionStorage } from '@ngx-oneforall/services/storage';
+import { SessionStorageService, provideSessionStorage } from 'ngx-oneforall/services/storage';
 
 @Component({
   selector: 'app-demo',
@@ -63,7 +63,7 @@ export class DemoComponent {
 ## Transformers
 
 ```typescript
-import { StorageTransformers } from '@ngx-oneforall/services/storage';
+import { StorageTransformers } from 'ngx-oneforall/services/storage';
 
 // Store as JSON
 storage.set('session', { id: '123' }, StorageTransformers.JSON);

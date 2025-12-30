@@ -12,7 +12,7 @@ The `withCorrelationIdInterceptor` is an Angular HTTP interceptor that automatic
 ## Installation
 
 ```typescript
-import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors/correlation-id';
+import { withCorrelationIdInterceptor } from 'ngx-oneforall/interceptors/correlation-id';
 ```
 
 ## Quick Start
@@ -21,7 +21,7 @@ import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors/correl
 
 ```typescript
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors/correlation-id';
+import { withCorrelationIdInterceptor } from 'ngx-oneforall/interceptors/correlation-id';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,7 +36,7 @@ export const appConfig: ApplicationConfig = {
 
 ```typescript
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { withCorrelationIdInterceptor } from '@ngx-oneforall/interceptors/correlation-id';
+import { withCorrelationIdInterceptor } from 'ngx-oneforall/interceptors/correlation-id';
 
 @NgModule({
   providers: [
@@ -122,7 +122,7 @@ this.http.get('/api/data', {
 Control the interceptor on a per-request basis using `useCorrelationId`:
 
 ```typescript
-import { useCorrelationId } from '@ngx-oneforall/interceptors/correlation-id';
+import { useCorrelationId } from 'ngx-oneforall/interceptors/correlation-id';
 ```
 
 ### Disable for a Request

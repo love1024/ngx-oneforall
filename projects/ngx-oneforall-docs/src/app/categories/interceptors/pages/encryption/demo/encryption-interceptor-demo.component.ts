@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import {
   EncryptionAdapter,
   useEncryption,
-} from '@ngx-oneforall/interceptors/encryption';
+} from 'ngx-oneforall/interceptors/encryption';
 
 interface Message {
   id: number;

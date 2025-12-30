@@ -7,7 +7,7 @@ Use `routeParamSignal` to reactively access route parameters in signal-based com
 ### Single Parameter
 
 ```typescript
-import { routeParamSignal } from '@ngx-oneforall/signals/route-param-signal';
+import { routeParamSignal } from 'ngx-oneforall/signals/route-param-signal';
 
 @Component({ ... })
 export class ProductDetailComponent {
@@ -28,7 +28,7 @@ export class ProductDetailComponent {
 ### All Parameters
 
 ```typescript
-import { routeParamsMapSignal } from '@ngx-oneforall/signals/route-param-signal';
+import { routeParamsMapSignal } from 'ngx-oneforall/signals/route-param-signal';
 
 @Component({ ... })
 export class RouteInfoComponent {

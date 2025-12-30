@@ -5,7 +5,7 @@
 Use `KeysOfType` to filter keys of an object based on their value types.
 
 ```typescript
-import { KeysOfType } from '@ngx-oneforall/types';
+import { KeysOfType } from 'ngx-oneforall/types';
 
 interface User {
     id: number;

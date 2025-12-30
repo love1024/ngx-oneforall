@@ -10,7 +10,7 @@ Use `throttledSignal` when you need to limit the rate of updates from high-frequ
 
 ```typescript
 import { signal } from '@angular/core';
-import { throttledSignal } from '@ngx-oneforall/signals/throttled-signal';
+import { throttledSignal } from 'ngx-oneforall/signals/throttled-signal';
 
 @Component({ ... })
 export class MouseTrackerComponent {

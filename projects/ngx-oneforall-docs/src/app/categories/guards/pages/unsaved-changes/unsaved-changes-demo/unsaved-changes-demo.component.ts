@@ -8,7 +8,7 @@ import {
 import {
   HasUnsavedChanges,
   unsavedChangesGuard,
-} from '@ngx-oneforall/guards/unsaved-changes';
+} from 'ngx-oneforall/guards/unsaved-changes';
 
 @Component({
   selector: 'lib-unsaved-changes-demo',

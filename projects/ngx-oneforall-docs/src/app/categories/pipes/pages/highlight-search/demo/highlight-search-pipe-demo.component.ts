@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HighlightSearchPipe } from '@ngx-oneforall/pipes/highlight-search';
+import { HighlightSearchPipe } from 'ngx-oneforall/pipes/highlight-search';
 
 @Component({
   selector: 'app-highlight-search-pipe-demo',

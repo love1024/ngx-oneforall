@@ -1,6 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { Cache } from '@ngx-oneforall/decorators/cache';
+import { Cache } from 'ngx-oneforall/decorators/cache';
 import { Observable, of, delay } from 'rxjs';
 
 interface Response {

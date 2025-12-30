@@ -7,8 +7,8 @@ Detects the host platform/operating system based on the user agent string. SSR-s
 ## Usage
 
 ```typescript
-import { getHostPlatform } from '@ngx-oneforall/utils/host-platform';
-import { HostPlatform } from '@ngx-oneforall/constants';
+import { getHostPlatform } from 'ngx-oneforall/utils/host-platform';
+import { HostPlatform } from 'ngx-oneforall/constants';
 
 const platform = getHostPlatform();
 

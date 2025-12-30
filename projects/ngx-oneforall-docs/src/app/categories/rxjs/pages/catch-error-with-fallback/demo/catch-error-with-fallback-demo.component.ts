@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { catchErrorWithFallback } from '@ngx-oneforall/rxjs/catch-error-with-fallback';
+import { catchErrorWithFallback } from 'ngx-oneforall/rxjs/catch-error-with-fallback';
 import { of, throwError, delay } from 'rxjs';
 
 interface LogEntry {

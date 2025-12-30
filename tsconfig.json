@@ -8,7 +8,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@ngx-oneforall/*": ["./projects/ngx-oneforall-lib/*/src/public_api.ts"],
+      "ngx-oneforall/*": ["./projects/ngx-oneforall-lib/*/src/public_api.ts"],
       "@ng-doc/generated": ["./ng-doc/ngx-oneforall-docs/index.ts"],
       "@ng-doc/generated/*": ["./ng-doc/ngx-oneforall-docs/*"]
     },

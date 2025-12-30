@@ -1,11 +1,11 @@
-The `@ngx-oneforall/constants` package provides a set of common regular expressions for data validation. These constants help you maintain consistency and avoid duplicate regex definitions across your application.
+The `ngx-oneforall/constants` package provides a set of common regular expressions for data validation. These constants help you maintain consistency and avoid duplicate regex definitions across your application.
 
 ## Usage
 
 Import the `REGEX` constant to use in your validators or logic.
 
 ```typescript
-import { REGEX } from '@ngx-oneforall/constants';
+import { REGEX } from 'ngx-oneforall/constants';
 
 // Example: Using regex for manual validation
 const value = '12345';

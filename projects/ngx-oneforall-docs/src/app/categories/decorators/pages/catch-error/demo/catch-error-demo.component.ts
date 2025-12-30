@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { CatchError } from '@ngx-oneforall/decorators/catch-error';
+import { CatchError } from 'ngx-oneforall/decorators/catch-error';
 
 import { delay, of, throwError } from 'rxjs';
 

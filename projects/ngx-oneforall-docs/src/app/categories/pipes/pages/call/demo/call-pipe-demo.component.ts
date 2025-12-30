@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CallPipe } from '@ngx-oneforall/pipes/call';
+import { CallPipe } from 'ngx-oneforall/pipes/call';
 
 @Component({
   selector: 'app-call-pipe-demo',

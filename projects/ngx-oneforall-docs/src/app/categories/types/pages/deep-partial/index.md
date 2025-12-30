@@ -5,7 +5,7 @@
 Use `DeepPartial` when you need to construct an object that might only have some deep properties defined, for example when mocking data in tests or applying partial updates.
 
 ```typescript
-import { DeepPartial } from '@ngx-oneforall/types';
+import { DeepPartial } from 'ngx-oneforall/types';
 
 interface Config {
     theme: {

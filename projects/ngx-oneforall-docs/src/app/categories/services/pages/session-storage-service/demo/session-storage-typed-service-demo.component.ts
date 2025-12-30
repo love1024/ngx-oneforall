@@ -1,5 +1,5 @@
 // import { Component, linkedSignal } from '@angular/core';
-// import { provideSessionStorage } from '@ngx-oneforall/services';
+// import { provideSessionStorage } from 'ngx-oneforall/services';
 
 // @Component({
 //   selector: 'lib-session-storage-typed-service-demo',

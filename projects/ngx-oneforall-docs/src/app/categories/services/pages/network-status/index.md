@@ -16,7 +16,7 @@ Monitor browser network connectivity with reactive signals and observables.
 import { 
   NetworkStatusService, 
   provideNetworkStatusService 
-} from '@ngx-oneforall/services/network-status';
+} from 'ngx-oneforall/services/network-status';
 ```
 
 ---
@@ -25,7 +25,7 @@ import {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { NetworkStatusService, provideNetworkStatusService } from '@ngx-oneforall/services/network-status';
+import { NetworkStatusService, provideNetworkStatusService } from 'ngx-oneforall/services/network-status';
 
 @Component({
   selector: 'app-demo',

@@ -4,7 +4,7 @@ import {
   BREAKPOINT,
   Breakpoint,
   BREAKPOINT_QUERY,
-} from '@ngx-oneforall/constants';
+} from 'ngx-oneforall/constants';
 
 type BreakpointInput = Breakpoint | string;
 

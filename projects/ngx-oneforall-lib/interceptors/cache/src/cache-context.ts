@@ -3,7 +3,7 @@ import {
   HttpContextToken,
   HttpRequest,
 } from '@angular/common/http';
-import { CacheOptions } from '@ngx-oneforall/services/cache';
+import { CacheOptions } from 'ngx-oneforall/services/cache';
 
 export type CacheContextOptions = Omit<CacheOptions, 'storagePrefix'> & {
   enabled?: boolean;

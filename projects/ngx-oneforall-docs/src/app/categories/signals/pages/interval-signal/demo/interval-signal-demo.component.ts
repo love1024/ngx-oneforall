@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { intervalSignal } from '@ngx-oneforall/signals/interval-signal';
+import { intervalSignal } from 'ngx-oneforall/signals/interval-signal';
 
 @Component({
   selector: 'interval-signal-demo',

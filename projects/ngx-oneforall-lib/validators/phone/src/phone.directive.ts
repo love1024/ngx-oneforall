@@ -2,7 +2,7 @@ import { Directive, effect, forwardRef, input, Input } from '@angular/core';
 import { NG_VALIDATORS } from '@angular/forms';
 import { BaseValidator } from '../../base/base.validator';
 import { CountryCode, phoneValidator } from './phone.validator';
-import { isPresent } from '@ngx-oneforall/utils/is-present';
+import { isPresent } from 'ngx-oneforall/utils/is-present';
 
 @Directive({
   selector: '[phone][formControlName],[phone][formControl],[phone][ngModel]',

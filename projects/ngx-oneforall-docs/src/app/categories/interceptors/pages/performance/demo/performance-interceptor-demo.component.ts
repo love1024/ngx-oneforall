@@ -3,7 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import {
   usePerformance,
   PerformanceEntry,
-} from '@ngx-oneforall/interceptors/performance';
+} from 'ngx-oneforall/interceptors/performance';
 
 interface Post {
   id: number;

@@ -9,7 +9,7 @@ Use `webSocketSignal` to integrate real-time WebSocket features with Angular's s
 ### Basic Example
 
 ```typescript
-import { webSocketSignal } from '@ngx-oneforall/signals/websocket-signal';
+import { webSocketSignal } from 'ngx-oneforall/signals/websocket-signal';
 
 @Component({ ... })
 export class ChatComponent {
