@@ -56,11 +56,12 @@ const source$ = of(1, 10, 100).pipe(
 
 ### Console Styles
 
-The operator uses different colors to help you distinguish between event types at a glance:
+The operator uses different console methods and colors to help you distinguish between event types:
 
-- **Next**: Cyan background with white text.
-- **Error**: Pinkish-red background with white text.
-- **Complete**: Teal background with white text.
+
+- **Next**: `console.log` - Cyan background with white text.
+- **Error**: `console.error` - Pinkish-red background with white text.
+- **Complete**: `console.info` - Teal background with white text.
 
 ### Benefits
 

@@ -1,15 +1,61 @@
 import { isFunction } from '@ngx-oneforall/utils/find-type';
 import { catchError, isObservable, Observable, of } from 'rxjs';
 
+/**
+ * Options for the `catchErrorWithFallback` operator.
+ */
 export interface CatchErrorWithFallbackOptions {
+  /**
+   * Callback function executed when an error occurs.
+   * Useful for logging or side effects before the fallback is applied.
+   */
   onError?: (error: unknown) => void;
 }
 
+/**
+ * Defines what can be used as a fallback.
+ * It can be:
+ * - A static value
+ * - An Observable
+ * - A factory function returning a value or an Observable
+ */
 export type FallbackFactory<T> =
   | T
   | Observable<T>
   | ((error: unknown) => T | Observable<T>);
 
+/**
+ * Catches errors on the source observable and returns a fallback value or observable.
+ *
+ * @param fallback - The value, observable, or factory function to use when an error occurs.
+ * @param options - Configuration options, including an `onError` callback.
+ * @returns An Observable that emits the fallback logic in case of an error.
+ *
+ * @example
+ * // Fallback to a static value
+ * source$.pipe(catchErrorWithFallback('fallback value'));
+ *
+ * @example
+ * // Fallback to an Observable
+ * source$.pipe(catchErrorWithFallback(of('fallback observable')));
+ *
+ * @example
+ * // Fallback using a factory function
+ * source$.pipe(
+ *   catchErrorWithFallback((err) => {
+ *      console.error(err);
+ *      return 'dynamic fallback';
+ *   })
+ * );
+ *
+ * @example
+ * // Using options for side effects
+ * source$.pipe(
+ *   catchErrorWithFallback('safe value', {
+ *     onError: (err) => console.error('Error occurred:', err)
+ *   })
+ * );
+ */
 export function catchErrorWithFallback<T>(
   fallback: FallbackFactory<T>,
   options: CatchErrorWithFallbackOptions = {}

@@ -17,7 +17,7 @@ const trigger = new Subject<void>();
 trigger.pipe(
     dataPolling({
         loader: () => fetchData(), // Your data fetching function
-        interval: 5 // Poll every 5 seconds
+        interval: 5000 // Poll every 5 seconds
     })
 ).subscribe(data => {
     console.log('Received data:', data);
@@ -43,7 +43,7 @@ export class MyComponent {
         trigger.pipe(
             dataPolling({
                 loader: () => this.http.get('/api/status'),
-                interval: 10 // Poll every 10 seconds
+                interval: 10000 // Poll every 10 seconds
             })
         ).subscribe(status => {
             console.log('Server status:', status);
@@ -61,11 +61,11 @@ export class MyComponent {
 ### Parameters
 
 - **loader**: A function that returns an Observable of the data to poll
-- **interval**: Polling interval in seconds
+- **interval**: Polling interval in milliseconds
 
 ### Behavior
 
 - Immediately calls the loader when the source emits
 - Continues polling at the specified interval
 - Cancels previous polling if the source emits again
-- The interval is specified in **seconds**, not milliseconds
+- The interval is specified in **milliseconds**
