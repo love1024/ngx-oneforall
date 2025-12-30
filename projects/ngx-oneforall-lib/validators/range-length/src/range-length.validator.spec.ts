@@ -54,13 +54,6 @@ describe('rangeLength', () => {
 
   it('should return error for invalid array length', () => {
     const validator = rangeLength(1, 2);
-    const error = {
-      rangeLength: {
-        requiredMinLength: 1,
-        requiredMaxLength: 2,
-        actualLength: 0,
-      },
-    };
     expect(validator(new FormControl([]))).toBeNull();
   });
 

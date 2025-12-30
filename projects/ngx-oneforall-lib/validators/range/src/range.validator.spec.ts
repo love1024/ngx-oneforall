@@ -1,4 +1,4 @@
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { range } from './range.validator';
 
 describe('range', () => {

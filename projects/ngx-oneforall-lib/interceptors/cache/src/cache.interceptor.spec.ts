@@ -291,9 +291,9 @@ describe('cacheInterceptor - config options', () => {
   });
 
   it('should run cacheBust in injection context', () => {
-    const cacheBustFn = jest.fn((req: HttpRequest<unknown>) => {
+    const cacheBustFn = jest.fn(() => {
       // Should not throw
-      const platform = inject(PLATFORM_ID);
+      inject(PLATFORM_ID);
       return false;
     });
 

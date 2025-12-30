@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { computed, isDevMode, isSignal, untracked } from '@angular/core';
 import { DeepComputed } from './deep-computed.model';
 import { isRecord } from 'ngx-oneforall/utils/is-record';

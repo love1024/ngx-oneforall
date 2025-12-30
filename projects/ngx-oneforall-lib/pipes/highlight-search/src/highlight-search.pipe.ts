@@ -29,7 +29,7 @@ export class HighlightSearchPipe implements PipeTransform {
   transform(
     value: string | null | undefined,
     search: string | null | undefined,
-    tag: string = 'mark',
+    tag = 'mark',
     cssClass?: string
   ): string {
     if (!value || !search) return value || '';

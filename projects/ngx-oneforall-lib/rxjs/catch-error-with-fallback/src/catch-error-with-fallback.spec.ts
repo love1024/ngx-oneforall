@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { catchErrorWithFallback } from './catch-error-with-fallback';
 import { of, throwError, Observable } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';

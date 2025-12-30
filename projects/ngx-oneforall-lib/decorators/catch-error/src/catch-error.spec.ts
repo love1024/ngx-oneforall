@@ -1,11 +1,11 @@
-import { isObservable, of, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { CatchError } from './catch-error';
 
 describe('CatchError Decorator', () => {
   let consoleSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => void 0);
   });
 
   afterEach(() => {

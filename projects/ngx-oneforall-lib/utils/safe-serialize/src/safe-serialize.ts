@@ -82,7 +82,7 @@ export function safeSerialize(...args: unknown[]): string {
 }
 
 /** Serializes a function to a string identifier with optional hash for anonymous functions. */
-function serializeFunction(value: Function): string {
+function serializeFunction(value: (...args: unknown[]) => unknown): string {
   const fn = value as { name?: string };
   const name = fn.name || 'anonymous';
 

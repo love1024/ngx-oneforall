@@ -1,4 +1,5 @@
 import { Component, PLATFORM_ID } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { webSocketSignal } from './websocket-signal';
 

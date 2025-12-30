@@ -1,4 +1,4 @@
-import { Component, DebugElement, signal } from '@angular/core';
+import { Component, DebugElement } from '@angular/core';
 import {
   ComponentFixture,
   TestBed,
@@ -7,7 +7,6 @@ import {
 } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { InfiniteScrollDirective } from './infinite-scroll.directive';
-import { PLATFORM_ID } from '@angular/core';
 
 @Component({
   template: `
@@ -44,7 +43,13 @@ describe('InfiniteScrollDirective', () => {
   let component: TestComponent;
   let directiveEl: DebugElement;
   let directiveInstance: InfiniteScrollDirective;
-  let intersectionObserverMock: any;
+  let intersectionObserverMock: {
+    observe: jest.Mock;
+    disconnect: jest.Mock;
+    takeRecords: jest.Mock;
+    callback?: (entries: unknown[]) => void;
+    options?: { root?: unknown };
+  };
 
   beforeEach(async () => {
     intersectionObserverMock = {
@@ -53,7 +58,9 @@ describe('InfiniteScrollDirective', () => {
       takeRecords: jest.fn(),
     };
 
-    (window as any).IntersectionObserver = jest
+    (
+      window as unknown as { IntersectionObserver: unknown }
+    ).IntersectionObserver = jest
       .fn()
       .mockImplementation((callback, options) => {
         intersectionObserverMock.callback = callback;
@@ -82,14 +89,22 @@ describe('InfiniteScrollDirective', () => {
   });
 
   it('should throw error if IntersectionObserver is not supported', () => {
-    const originalIntersectionObserver = (window as any).IntersectionObserver;
-    delete (window as any).IntersectionObserver;
+    const originalIntersectionObserver = (
+      window as unknown as { IntersectionObserver: unknown }
+    ).IntersectionObserver;
+    delete (
+      window as unknown as {
+        IntersectionObserver?: unknown;
+      }
+    ).IntersectionObserver;
 
     expect(() => {
       directiveInstance['setupInfiniteScroll']();
     }).toThrow('IntersectionObserver is not supported in this browser');
 
-    (window as any).IntersectionObserver = originalIntersectionObserver;
+    (
+      window as unknown as { IntersectionObserver: unknown }
+    ).IntersectionObserver = originalIntersectionObserver;
   });
 
   it('should use afterNextRender for SSR safety', () => {
@@ -98,12 +113,18 @@ describe('InfiniteScrollDirective', () => {
     // The directive uses afterNextRender which is inherently SSR-safe
     // This test verifies the directive initializes correctly in browser
     fixture.detectChanges();
-    expect((window as any).IntersectionObserver).toHaveBeenCalled();
+    expect(
+      (window as unknown as { IntersectionObserver: jest.Mock })
+        .IntersectionObserver
+    ).toHaveBeenCalled();
   });
 
   it('should initialize and setup observer on view init', () => {
     fixture.detectChanges();
-    expect((window as any).IntersectionObserver).toHaveBeenCalled();
+    expect(
+      (window as unknown as { IntersectionObserver: jest.Mock })
+        .IntersectionObserver
+    ).toHaveBeenCalled();
     expect(intersectionObserverMock.observe).toHaveBeenCalled();
   });
 
@@ -116,7 +137,10 @@ describe('InfiniteScrollDirective', () => {
   it('should not initialize if disabled', () => {
     component.disabled = true;
     fixture.detectChanges();
-    expect((window as any).IntersectionObserver).not.toHaveBeenCalled();
+    expect(
+      (window as unknown as { IntersectionObserver: jest.Mock })
+        .IntersectionObserver
+    ).not.toHaveBeenCalled();
   });
 
   it('should emit scrolled event when intersecting', fakeAsync(() => {
@@ -127,7 +151,7 @@ describe('InfiniteScrollDirective', () => {
       time: 2000,
     };
 
-    intersectionObserverMock.callback([entry]);
+    intersectionObserverMock.callback!([entry]);
     tick();
 
     expect(component.scrolledCount).toBe(1);
@@ -141,7 +165,7 @@ describe('InfiniteScrollDirective', () => {
       time: 2000,
     };
 
-    intersectionObserverMock.callback([entry]);
+    intersectionObserverMock.callback!([entry]);
     tick();
 
     expect(component.scrolledCount).toBe(0);
@@ -156,7 +180,7 @@ describe('InfiniteScrollDirective', () => {
       time: 500,
     };
 
-    intersectionObserverMock.callback([entry]);
+    intersectionObserverMock.callback!([entry]);
     tick();
 
     expect(component.scrolledCount).toBe(0);
@@ -171,7 +195,7 @@ describe('InfiniteScrollDirective', () => {
       time: 1500,
     };
 
-    intersectionObserverMock.callback([entry]);
+    intersectionObserverMock.callback!([entry]);
     tick();
 
     expect(component.scrolledCount).toBe(1);
@@ -180,7 +204,7 @@ describe('InfiniteScrollDirective', () => {
   it('should use window as root when useWindow is true', () => {
     component.useWindow = true;
     fixture.detectChanges();
-    expect(intersectionObserverMock.options.root).toBeNull();
+    expect(intersectionObserverMock.options?.root).toBeNull();
   });
 
   it('should use specific container when scrollContainer is provided', () => {
@@ -189,7 +213,7 @@ describe('InfiniteScrollDirective', () => {
     fixture.detectChanges();
 
     const container = fixture.nativeElement.querySelector('.scroll-container');
-    expect(intersectionObserverMock.options.root === container).toBe(true);
+    expect(intersectionObserverMock.options?.root === container).toBe(true);
   });
 
   it('should throw error if scrollContainer element is not found', () => {
@@ -209,7 +233,7 @@ describe('InfiniteScrollDirective', () => {
     fixture.detectChanges();
 
     // The directive should find the closest scrollable parent
-    const container = fixture.nativeElement.querySelector('.scroll-container');
+    fixture.nativeElement.querySelector('.scroll-container');
     // Note: In JSDOM/Jest, getComputedStyle might not return expected values for overflow unless mocked or styles applied correctly.
     // However, we can check if it found *something*.
     // Given the template, .scroll-container has overflow-y: scroll.
@@ -251,7 +275,7 @@ describe('InfiniteScrollDirective', () => {
     directiveInstance.ngOnDestroy();
     directiveInstance['setupInfiniteScroll']();
 
-    expect(intersectionObserverMock.options.root === container).toBe(true);
+    expect(intersectionObserverMock.options?.root === container).toBe(true);
   });
 
   it('should fallback to host element if no scrollable parent found', () => {
@@ -268,7 +292,7 @@ describe('InfiniteScrollDirective', () => {
     directiveInstance['setupInfiniteScroll']();
 
     expect(
-      intersectionObserverMock.options.root === directiveEl.nativeElement
+      intersectionObserverMock.options?.root === directiveEl.nativeElement
     ).toBe(true);
   });
 
@@ -303,7 +327,7 @@ describe('InfiniteScrollDirective', () => {
       time: 2000,
     };
 
-    intersectionObserverMock.callback([entry]);
+    intersectionObserverMock.callback!([entry]);
     tick();
 
     expect(component.scrolledCount).toBe(0);
@@ -316,7 +340,7 @@ describe('InfiniteScrollDirective', () => {
     // Verify that observerRoot is null (Window case)
     expect(directiveInstance['observerRoot']()).toBeNull();
     // Verify that the IntersectionObserver root option is null
-    expect(intersectionObserverMock.options.root).toBeNull();
+    expect(intersectionObserverMock.options?.root).toBeNull();
   });
 
   it('should set root to null when observerRoot is null (line 58 true branch)', () => {
@@ -340,6 +364,6 @@ describe('InfiniteScrollDirective', () => {
     // Verify that observerRoot is the container (HTMLElement)
     expect(directiveInstance['observerRoot']()).toBe(container);
     // Verify that the IntersectionObserver root option is the container (not null)
-    expect(intersectionObserverMock.options.root).toBe(container);
+    expect(intersectionObserverMock.options?.root).toBe(container);
   });
 });

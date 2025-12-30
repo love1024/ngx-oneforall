@@ -3,10 +3,10 @@ import { DOCUMENT } from '@angular/common';
 import { isObservable, lastValueFrom, Observable, of } from 'rxjs';
 import { unsavedChangesGuard } from './unsaved-changes.guard';
 import { EnvironmentInjector, runInInjectionContext } from '@angular/core';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 describe('unsavedChangesGuard', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let mockWindow: any;
+  let mockWindow: { confirm: jest.Mock };
 
   beforeEach(() => {
     mockWindow = { confirm: jest.fn() };
@@ -26,9 +26,9 @@ describe('unsavedChangesGuard', () => {
       const guard = unsavedChangesGuard();
       const result = guard(
         { hasUnsavedChanges: () => true },
-        {} as any,
-        {} as any,
-        {} as any
+        {} as unknown as ActivatedRouteSnapshot,
+        {} as unknown as RouterStateSnapshot,
+        {} as unknown as RouterStateSnapshot
       );
       expect(result).toBe(true);
       done();
@@ -40,7 +40,13 @@ describe('unsavedChangesGuard', () => {
     runInInjectionContext(environment, async () => {
       const guard = unsavedChangesGuard();
       // Pass a component without hasUnsavedChanges
-      const result = guard({} as any, {} as any, {} as any, {} as any);
+      const result = guard(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        {} as any,
+        {} as unknown as ActivatedRouteSnapshot,
+        {} as unknown as RouterStateSnapshot,
+        {} as unknown as RouterStateSnapshot
+      );
       expect(result).toBe(true);
       expect(mockWindow.confirm).not.toHaveBeenCalled();
       done();
@@ -55,9 +61,9 @@ describe('unsavedChangesGuard', () => {
       const guard = unsavedChangesGuard('Leave?');
       const result = guard(
         { hasUnsavedChanges: () => true },
-        {} as any,
-        {} as any,
-        {} as any
+        {} as unknown as ActivatedRouteSnapshot,
+        {} as unknown as RouterStateSnapshot,
+        {} as unknown as RouterStateSnapshot
       );
       expect(mockWindow.confirm).toHaveBeenCalledWith('Leave?');
       expect(result).toBe(false);
@@ -71,9 +77,9 @@ describe('unsavedChangesGuard', () => {
       const guard = unsavedChangesGuard();
       const result = guard(
         { hasUnsavedChanges: () => false },
-        {} as any,
-        {} as any,
-        {} as any
+        {} as unknown as ActivatedRouteSnapshot,
+        {} as unknown as RouterStateSnapshot,
+        {} as unknown as RouterStateSnapshot
       );
       expect(result).toBe(true);
       done();
@@ -89,9 +95,9 @@ describe('unsavedChangesGuard', () => {
         {
           hasUnsavedChanges: () => of(true),
         },
-        {} as any,
-        {} as any,
-        {} as any
+        {} as unknown as ActivatedRouteSnapshot,
+        {} as unknown as RouterStateSnapshot,
+        {} as unknown as RouterStateSnapshot
       );
 
       let result: boolean;
@@ -117,9 +123,9 @@ describe('unsavedChangesGuard', () => {
         {
           hasUnsavedChanges: () => Promise.resolve(true),
         },
-        {} as any,
-        {} as any,
-        {} as any
+        {} as unknown as ActivatedRouteSnapshot,
+        {} as unknown as RouterStateSnapshot,
+        {} as unknown as RouterStateSnapshot
       );
       expect(mockWindow.confirm).toHaveBeenCalledWith('Leave?');
       expect(result).toBe(false);
@@ -137,9 +143,9 @@ describe('unsavedChangesGuard', () => {
         {
           hasUnsavedChanges: () => of(false),
         },
-        {} as any,
-        {} as any,
-        {} as any
+        {} as unknown as ActivatedRouteSnapshot,
+        {} as unknown as RouterStateSnapshot,
+        {} as unknown as RouterStateSnapshot
       );
 
       // Promise case - Call guard synchronously (while still in injection context)
@@ -147,9 +153,9 @@ describe('unsavedChangesGuard', () => {
         {
           hasUnsavedChanges: () => Promise.resolve(false),
         },
-        {} as any,
-        {} as any,
-        {} as any
+        {} as unknown as ActivatedRouteSnapshot,
+        {} as unknown as RouterStateSnapshot,
+        {} as unknown as RouterStateSnapshot
       );
 
       // Now handle results

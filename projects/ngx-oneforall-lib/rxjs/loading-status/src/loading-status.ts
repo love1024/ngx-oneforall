@@ -10,12 +10,12 @@ import {
 /**
  * Represents the result of an async resource operation.
  */
-export type ResourceResult<T> = {
+export interface ResourceResult<T> {
   isLoading: boolean;
   status: 'loading' | 'success' | 'error';
   data: T | null;
   error?: unknown;
-};
+}
 
 /**
  * RxJS operator that tracks the loading state of an observable.

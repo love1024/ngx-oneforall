@@ -1,5 +1,10 @@
-
-import { inject, Injectable, Injector, linkedSignal, DOCUMENT } from '@angular/core';
+import {
+  inject,
+  Injectable,
+  Injector,
+  linkedSignal,
+  DOCUMENT,
+} from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { fromEvent, map, merge } from 'rxjs';
 

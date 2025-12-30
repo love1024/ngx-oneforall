@@ -1,9 +1,9 @@
 import { HttpContext, HttpContextToken } from '@angular/common/http';
 
-export type TimeoutContextOptions = {
+export interface TimeoutContextOptions {
   timeout: number;
   context?: HttpContext;
-};
+}
 
 export const TIMEOUT_CONTEXT = new HttpContextToken<number | null>(() => null);
 

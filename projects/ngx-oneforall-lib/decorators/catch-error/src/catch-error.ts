@@ -33,7 +33,7 @@ import { catchError } from 'rxjs/operators';
  */
 export function CatchError(fallback?: unknown, logError = true) {
   return function (
-    _target: any,
+    _target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {

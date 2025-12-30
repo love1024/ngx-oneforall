@@ -25,7 +25,7 @@ export class ClipboardService {
       try {
         await navigator.clipboard.writeText(text);
         return true;
-      } catch (error) {
+      } catch {
         // Fallback to execCommand if Clipboard API fails
       }
     }
@@ -45,7 +45,7 @@ export class ClipboardService {
     if (navigator.clipboard && navigator.clipboard.readText) {
       try {
         return await navigator.clipboard.readText();
-      } catch (error) {
+      } catch {
         return '';
       }
     }
@@ -69,7 +69,7 @@ export class ClipboardService {
     let success = false;
     try {
       success = this.document.execCommand('copy');
-    } catch (err) {
+    } catch {
       // execCommand failed
     }
 

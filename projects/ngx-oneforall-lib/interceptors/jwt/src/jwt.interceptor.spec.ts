@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import {
   HttpClient,

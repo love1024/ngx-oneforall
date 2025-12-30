@@ -23,7 +23,6 @@ class TestStorageEngine extends StorageEngine {
     return Object.keys(this.store).length;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   key(index: number): string | null {
     return Object.keys(this.store)[index] ?? null;
   }

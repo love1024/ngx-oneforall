@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Signal } from '@angular/core';
 
 export type Builtin =

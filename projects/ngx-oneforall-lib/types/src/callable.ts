@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Represents any callable function type.
  * Useful for generic function parameters or method signatures.
@@ -14,6 +15,6 @@
  *   return fn;
  * }
  */
-export type Callable<Args extends any[] = any[], Return = any> = {
-  (...args: Args): Return;
-};
+export type Callable<Args extends any[] = any[], Return = any> = (
+  ...args: Args
+) => Return;

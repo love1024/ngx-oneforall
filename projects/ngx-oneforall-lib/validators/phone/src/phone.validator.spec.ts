@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormControl } from '@angular/forms';
 import { phoneValidator } from './phone.validator';
 

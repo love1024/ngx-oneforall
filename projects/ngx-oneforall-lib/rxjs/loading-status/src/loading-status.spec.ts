@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { of, throwError, timer } from 'rxjs';
 import { loadingStatus } from './loading-status';
 import { map } from 'rxjs/operators';

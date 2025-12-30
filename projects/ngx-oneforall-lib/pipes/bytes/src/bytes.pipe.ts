@@ -30,9 +30,9 @@ export class BytesPipe implements PipeTransform {
    */
   transform(
     value: number | string,
-    decimals: number = 2,
+    decimals = 2,
     units: string[] | null = DEFAULT_UNITS,
-    useSI: boolean = false
+    useSI = false
   ): string {
     const unitLabels = units ?? DEFAULT_UNITS;
     const base = useSI ? SI_BASE : BINARY_BASE;

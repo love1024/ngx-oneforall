@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Conditional type that evaluates to `true` if T is an arrow function, `false` otherwise.
  * Arrow functions cannot have a `this` binding, which is how this type distinguishes them.

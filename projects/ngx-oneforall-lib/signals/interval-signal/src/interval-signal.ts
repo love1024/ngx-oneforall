@@ -1,11 +1,4 @@
-import {
-  signal,
-  WritableSignal,
-  Signal,
-  inject,
-  DestroyRef,
-  NgZone,
-} from '@angular/core';
+import { signal, Signal, inject, DestroyRef, NgZone } from '@angular/core';
 
 /**
  * Controller interface for interval signal.

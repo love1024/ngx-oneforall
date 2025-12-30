@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fakeAsync, tick } from '@angular/core/testing';
 import { dataPolling } from './data-polling';
 import { Subject, of, throwError } from 'rxjs';

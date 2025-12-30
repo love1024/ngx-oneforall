@@ -117,7 +117,8 @@ describe('ResizedDirective', () => {
     } as ResizeObserverEntry;
 
     // Set debounce time
-    (directive as any).debounceTime = () => 100;
+    (directive as unknown as { debounceTime: () => number }).debounceTime =
+      () => 100;
 
     fixture.detectChanges();
 
@@ -150,7 +151,8 @@ describe('ResizedDirective', () => {
     } as ResizeObserverEntry;
 
     // Set debounce time
-    (directive as any).debounceTime = () => 100;
+    (directive as unknown as { debounceTime: () => number }).debounceTime =
+      () => 100;
 
     fixture.detectChanges();
 

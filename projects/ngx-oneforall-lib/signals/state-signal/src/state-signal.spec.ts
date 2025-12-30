@@ -1,5 +1,6 @@
-import { computed, effect, signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
+import { computed, signal } from '@angular/core';
 import { stateSignal } from './state-signal';
 
 describe('stateSignal', () => {

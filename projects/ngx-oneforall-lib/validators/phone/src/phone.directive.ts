@@ -1,4 +1,4 @@
-import { Directive, effect, forwardRef, input, Input } from '@angular/core';
+import { Directive, effect, forwardRef, input } from '@angular/core';
 import { NG_VALIDATORS } from '@angular/forms';
 import { BaseValidator } from '../../base/base.validator';
 import { CountryCode, phoneValidator } from './phone.validator';

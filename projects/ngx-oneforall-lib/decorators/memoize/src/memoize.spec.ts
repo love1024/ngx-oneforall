@@ -85,7 +85,8 @@ describe('memoize', () => {
       class TestClass {
         callCount = 0;
 
-        @memoize((a: number, b: number) => `key-${a}`)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        @memoize((a: number, _b: number) => `key-${a}`)
         expensiveMethod(a: number, b: number): number {
           this.callCount++;
           return a + b;
@@ -163,7 +164,8 @@ describe('memoize', () => {
         callCount = 0;
 
         @memoize()
-        async asyncMethod(a: number): Promise<number> {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        async asyncMethod(_a: number): Promise<number> {
           this.callCount++;
           throw new Error('Test error');
         }
@@ -511,15 +513,16 @@ describe('memoize', () => {
         callCount = 0;
 
         @memoize()
-        expensiveMethod(obj: any): string {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        expensiveMethod(_obj: unknown): string {
           this.callCount++;
           return 'processed';
         }
       }
 
       const instance = new TestClass();
-      const circular: any = { a: 1 };
-      circular.self = circular;
+      const circular: Record<string, unknown> = { a: 1 };
+      circular['self'] = circular;
 
       instance.expensiveMethod(circular);
       instance.expensiveMethod(circular);
@@ -554,13 +557,21 @@ describe('memoize', () => {
   describe('edge cases', () => {
     it('should return descriptor when descriptor is undefined', () => {
       const descriptor = undefined;
-      const result = memoize()({}, 'test', descriptor as any);
+      const result = memoize()(
+        {},
+        'test',
+        descriptor as unknown as PropertyDescriptor
+      );
       expect(result).toBe(descriptor);
     });
 
     it('should return descriptor when descriptor.value is not a function', () => {
       const descriptor = { value: 'not a function' };
-      const result = memoize()({}, 'test', descriptor as any);
+      const result = memoize()(
+        {},
+        'test',
+        descriptor as unknown as PropertyDescriptor
+      );
       expect(result).toBe(descriptor);
     });
 
@@ -591,7 +602,8 @@ describe('memoize', () => {
           num: number,
           str: string,
           obj: { a: number },
-          fn: () => void
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          _fn: () => void
         ): string {
           this.callCount++;
           return `${num}-${str}-${obj.a}`;
@@ -599,7 +611,7 @@ describe('memoize', () => {
       }
 
       const instance = new TestClass();
-      const fn = () => {};
+      const fn = () => void 0;
       instance.expensiveMethod(1, 'test', { a: 2 }, fn);
       instance.expensiveMethod(1, 'test', { a: 2 }, fn);
 

@@ -1,4 +1,3 @@
-
 import { inject, DOCUMENT } from '@angular/core';
 import { CanDeactivateFn } from '@angular/router';
 import { isObservable, Observable } from 'rxjs';

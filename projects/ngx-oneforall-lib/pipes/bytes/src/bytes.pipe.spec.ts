@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BytesPipe } from './bytes.pipe';
 
 describe('BytesPipe', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HostPlatform } from 'ngx-oneforall/constants';
 import { getHostPlatform } from './host-platform';
 
@@ -18,7 +19,7 @@ describe('getHostPlatform', () => {
     });
   });
 
-  function mockUserAgent(userAgent: string, vendor: string = '') {
+  function mockUserAgent(userAgent: string, vendor = '') {
     Object.defineProperty(global, 'navigator', {
       value: {
         userAgent,

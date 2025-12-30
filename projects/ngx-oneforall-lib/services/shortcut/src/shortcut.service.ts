@@ -96,9 +96,7 @@ export class ShortcutService implements OnDestroy {
           return false;
         }
 
-        return descriptors.some(d =>
-          this.matchesDescriptor(d, event, isGlobal)
-        );
+        return descriptors.some(d => this.matchesDescriptor(d, event));
       }),
       tap(event => {
         if (preventDefault) event.preventDefault();
@@ -132,8 +130,7 @@ export class ShortcutService implements OnDestroy {
 
   private matchesDescriptor(
     descriptor: { mainKey: string; modifiers: Set<string> },
-    event: KeyboardEvent,
-    isGlobal: boolean
+    event: KeyboardEvent
   ): boolean {
     const { mainKey, modifiers } = descriptor;
     const eventKey = normalizeKey(event.key, this.platform);

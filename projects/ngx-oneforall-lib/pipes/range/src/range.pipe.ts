@@ -24,7 +24,7 @@ export class RangePipe implements PipeTransform {
    * @param step - Step increment (default: 1). Direction is auto-detected from start/end
    * @returns Array of numbers in the range
    */
-  transform(start: number, end?: number, step: number = 1): number[] {
+  transform(start: number, end?: number, step = 1): number[] {
     let actualStart = start;
     let actualEnd = end;
 

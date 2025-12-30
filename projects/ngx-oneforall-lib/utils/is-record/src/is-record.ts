@@ -68,7 +68,7 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
  * @param value - The value to check.
  * @returns `true` if value is a plain object.
  */
-function isPlainObject(value: any): boolean {
+function isPlainObject(value: unknown): boolean {
   if (Object.prototype.toString.call(value) !== '[object Object]') {
     return false;
   }
