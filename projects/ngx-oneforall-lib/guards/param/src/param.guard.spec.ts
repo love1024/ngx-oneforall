@@ -44,17 +44,17 @@ describe('paramGuard', () => {
     expect(result).toBe(true);
   });
 
-  it('should allow activation when required query parameters are present', () => {
+  it('should allow activation when required parameters are present', () => {
     const result = getGuardResult({ required: ['id'] }, { id: '123' });
     expect(result).toBe(true);
   });
 
-  it('should deny activation when required query parameters are missing', () => {
+  it('should deny activation when required parameters are missing', () => {
     const result = getGuardResult({ required: ['id'] }, {});
     expect(result).toBe(false);
   });
 
-  it('should redirect when required query parameters are missing and redirectTo is provided', () => {
+  it('should redirect when required parameters are missing and redirectTo is provided', () => {
     const result = getGuardResult(
       { required: ['id'], redirectTo: '/login' },
       {}
@@ -91,18 +91,18 @@ describe('paramGuard', () => {
     expect(router.parseUrl).toHaveBeenCalledWith('/unauthorized');
   });
 
-  it('should handle empty or null values for required query parameters as missing', () => {
+  it('should handle empty or null values for required parameters as missing', () => {
     expect(getGuardResult({ required: ['id'] }, { id: '' })).toBe(false);
     expect(getGuardResult({ required: ['id'] }, { id: null })).toBe(false);
     expect(getGuardResult({ required: ['id'] }, { id: undefined })).toBe(false);
   });
 
-  it('should handle missing queryParams in route', () => {
+  it('should handle missing params in route', () => {
     const environment = TestBed.inject(EnvironmentInjector);
     const result = runInInjectionContext(environment, () => {
       const guard = paramGuard({ required: ['id'] });
-      // route without queryParams should be treated as empty params
-      const route = {} as ActivatedRouteSnapshot;
+      // route with empty params
+      const route = { params: {} } as ActivatedRouteSnapshot;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (guard as any)(route, {} as any);
     });
