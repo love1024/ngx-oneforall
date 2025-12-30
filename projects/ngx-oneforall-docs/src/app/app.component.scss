@@ -13,3 +13,13 @@
 .logo-text {
   margin-left: 7px;
 }
+
+.ng-doc-header-controls {
+  display: flex;
+
+  a[ng-doc-button-icon],
+  button[ng-doc-button-icon],
+  ng-doc-theme-toggle {
+    margin-left: calc(var(--ng-doc-base-gutter) * 2);
+  }
+}

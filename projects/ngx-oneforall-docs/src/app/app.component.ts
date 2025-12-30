@@ -4,9 +4,11 @@ import {
   NgDocNavbarComponent,
   NgDocRootComponent,
   NgDocSidebarComponent,
+  NgDocThemeToggleComponent,
 } from '@ng-doc/app';
 import { routingAnimation } from './animations/routing.animation';
 import { NgDocThemeService } from '@ng-doc/app/services/theme';
+import { NgDocButtonIconComponent, NgDocIconComponent } from '@ng-doc/ui-kit';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -17,6 +19,9 @@ import { NgDocThemeService } from '@ng-doc/app/services/theme';
     NgDocRootComponent,
     NgDocNavbarComponent,
     NgDocSidebarComponent,
+    NgDocIconComponent,
+    NgDocButtonIconComponent,
+    NgDocThemeToggleComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
