@@ -30,4 +30,7 @@ You can also use `[rangeLength]` directive with template-driven forms:
 - **min**: Minimum required length.
 - **max**: Maximum allowed length.
 
-Returns a validation error object `{ rangeLength: { requiredMinLength, requiredMaxLength, actualLength } }` if validation fails, or `null` if valid.
+Returns `{ rangeLength: { reason: 'length_out_of_range', requiredMinLength, requiredMaxLength, actualLength } }` if validation fails, or `null` if valid.
+
+Throws an error if `min` is greater than `max`.
+

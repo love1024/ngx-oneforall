@@ -31,4 +31,11 @@ Options:
 - `protocols?: readonly string[]`: List of allowed protocols (e.g., `['https', 'ftp']`). Only checked for absolute URLs.
 - `skipProtocol?: boolean`: If `true`, allows URLs without a protocol scheme (e.g., `google.com`). Default `false`.
 
-Returns a validation error object `{ url: { ... } }` if validation fails, or `null` if valid.
+### Error Codes
+
+| Reason | Description |
+|--------|-------------|
+| `invalid_format` | Value is not a valid URL |
+| `invalid_protocol` | Protocol does not match allowed list |
+| `unsupported_type` | Value is not a string |
+

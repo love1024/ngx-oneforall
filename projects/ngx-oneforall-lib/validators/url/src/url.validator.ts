@@ -4,6 +4,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { isPresent } from '@ngx-oneforall/utils/is-present';
 
 export interface UrlValidatorOptions {
   protocols?: readonly string[];
@@ -17,17 +18,17 @@ export interface UrlValidatorOptions {
  * @param options - Configuration options for URL validation:
  *   - `protocols`: List of allowed protocols (e.g., `['http', 'https']`). If provided, validates protocol matches.
  *   - `skipProtocol`: If `true`, allows keys like `google.com` to be valid by tentatively prepending `http://`.
- * @returns A validator function that returns error object if invalid, or `null` if valid.
+ * @returns A validator function that returns an error object with reason if invalid, or `null` if valid.
  */
 export function url(options: UrlValidatorOptions = {}): ValidatorFn {
   const { protocols, skipProtocol = false } = options;
 
   return (control: AbstractControl): ValidationErrors | null => {
-    if (Validators.required(control)) return null;
+    if (isPresent(Validators.required(control))) return null;
 
     const value = control.value;
     if (typeof value !== 'string') {
-      return { url: { actualValue: value } };
+      return { url: { reason: 'unsupported_type', actualValue: value } };
     }
 
     try {
@@ -40,6 +41,7 @@ export function url(options: UrlValidatorOptions = {}): ValidatorFn {
         if (!protocols.includes(protocol)) {
           return {
             url: {
+              reason: 'invalid_protocol',
               protocols,
               actualProtocol: protocol,
             },
@@ -56,11 +58,11 @@ export function url(options: UrlValidatorOptions = {}): ValidatorFn {
           // If successful, we consider it valid without protocol
           return null;
         } catch {
-          return { url: { actualValue: value } };
+          return { url: { reason: 'invalid_format', actualValue: value } };
         }
       }
 
-      return { url: { actualValue: value } };
+      return { url: { reason: 'invalid_format', actualValue: value } };
     }
   };
 }

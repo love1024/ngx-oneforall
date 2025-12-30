@@ -12,11 +12,17 @@ import { isPresent } from '@ngx-oneforall/utils/is-present';
  *
  * @param min - The minimum allowed length (inclusive).
  * @param max - The maximum allowed length (inclusive).
- * @returns A validator function that returns `{ rangeLength: { requiredMinLength, requiredMaxLength, actualLength } }` if invalid, or `null` if valid.
+ * @returns A validator function that returns an error object with reason if invalid, or `null` if valid.
+ * @throws Error if `min` is greater than `max`.
  */
 export function rangeLength(min: number, max: number): ValidatorFn {
+  if (min > max) {
+    throw new Error(
+      '[RangeLengthValidator] min must be less than or equal to max'
+    );
+  }
+
   return (control: AbstractControl): ValidationErrors | null => {
-    if (!isPresent(min) || !isPresent(max)) return null;
     if (isPresent(Validators.required(control))) return null;
 
     const value = control.value;
@@ -35,6 +41,7 @@ export function rangeLength(min: number, max: number): ValidatorFn {
       ? null
       : {
           rangeLength: {
+            reason: 'length_out_of_range',
             requiredMinLength: min,
             requiredMaxLength: max,
             actualLength: length,
