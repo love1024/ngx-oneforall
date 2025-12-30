@@ -19,15 +19,16 @@ yarn add ngx-oneforall
 
 ```typescript
 import { Component } from '@angular/core';
-import { MemoizePipe } from 'ngx-oneforall/pipes/memoize';
-import { SomeService } from 'ngx-oneforall/services/some-service';
+import { TruncatePipe } from 'ngx-oneforall/pipes/truncate';
+import { ClickOutsideDirective } from 'ngx-oneforall/directives/click-outside';
+import { CacheService } from 'ngx-oneforall/services/cache';
 
 @Component({
   selector: 'app-component',
   templateUrl: 'app.component.html',
   standalone: true,
-  imports: [MemoizePipe],
-  providers: [SomeService]
+  imports: [TruncatePipe, ClickOutsideDirective],
+  providers: [CacheService]
 })
 export class AppComponent {
 }
