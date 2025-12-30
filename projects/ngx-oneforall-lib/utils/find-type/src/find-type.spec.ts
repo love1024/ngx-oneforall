@@ -30,6 +30,11 @@ describe('findType', () => {
     expect(findType(Symbol('s'))).toBe(Types.Symbol);
   });
 
+  it('should detect bigint', () => {
+    expect(findType(BigInt(123))).toBe(Types.BigInt);
+    expect(findType(BigInt('9007199254740991'))).toBe(Types.BigInt);
+  });
+
   it('should detect function', () => {
     const sum = (a: number, b: number): number => a + b;
     expect(findType(sum)).toBe(Types.Function);

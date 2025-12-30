@@ -1,128 +1,93 @@
-### Utility Functions for Number Validation
+Type guard utilities for validating numeric values. Provides robust checking for number primitives, numeric strings, and Number objects.
 
-In TypeScript and Angular applications, validating data types is essential for maintaining data integrity and avoiding runtime errors. This document introduces three utility functions that help determine whether a value is a number, a numeric string, or a `Number` object. These functions utilize TypeScript's type guard capabilities to ensure type safety and enhance code reliability.
+## Usage
 
----
-
-## Overview of Utility Functions
-
-### 1. `isNumeric`
-
-This function determines if a value is either a finite number or a string that represents a finite number.
-
-#### Key Features:
-- Combines the checks of `isNumberValue` and `isNumberString`.
-- Returns `true` for numbers, numeric strings, and `Number` objects that represent finite numbers.
-- Returns `false` for `NaN`, `Infinity`, and strings like `'NaN'` or `'Infinity'`.
-
-#### Example Usage:
 ```typescript
-const num = 123;
-const numStr = '456';
-const notNum = 'abc';
-
-console.log(`Is ${num} numeric? ${isNumeric(num)}`);       // true
-console.log(`Is '${numStr}' numeric? ${isNumeric(numStr)}`); // true
-console.log(`Is '${notNum}' numeric? ${isNumeric(notNum)}`); // false
+import { isNumberValue, isNumberString, isNumeric, isNumberObject } from '@ngx-oneforall/utils/is-number';
 ```
 
----
+## API
 
+| Function | Returns `true` for | Returns `false` for |
+|----------|-------------------|---------------------|
+| `isNumberValue(value)` | Finite number primitives | `NaN`, `Infinity`, strings, objects |
+| `isNumberString(value)` | Strings parseable as numbers | Empty strings, whitespace, non-numeric |
+| `isNumberObject(value)` | `new Number()` objects | Primitives, other objects |
+| `isNumeric(value)` | Numbers OR numeric strings | Everything else |
 
-### 2. `isNumberValue`
+## Quick Examples
 
-This function determines if a value is a finite number.
-
-#### Key Features:
-- Confirms the value is of type `number`.
-- Excludes special numeric values like `NaN` and `Infinity`.
-
-#### Example Usage:
 ```typescript
-const value = 42;
-if (isNumberValue(value)) {
-    console.log(`${value} is a valid number.`);
-} else {
-    console.log(`${value} is not a valid number.`);
+// isNumberValue - finite number primitives only
+isNumberValue(42);        // true
+isNumberValue(3.14);      // true
+isNumberValue(NaN);       // false
+isNumberValue(Infinity);  // false
+isNumberValue('42');      // false
+
+// isNumberString - valid numeric strings
+isNumberString('42');     // true
+isNumberString('3.14');   // true
+isNumberString('');       // false
+isNumberString('   ');    // false
+isNumberString('abc');    // false
+
+// isNumeric - either number or numeric string
+isNumeric(42);            // true
+isNumeric('42');          // true
+isNumeric(null);          // false
+```
+
+## Edge Cases
+
+| Input | `isNumberValue` | `isNumberString` | `isNumeric` |
+|-------|-----------------|------------------|-------------|
+| `42` | ✅ | ❌ | ✅ |
+| `'42'` | ❌ | ✅ | ✅ |
+| `NaN` | ❌ | ❌ | ❌ |
+| `Infinity` | ❌ | ❌ | ❌ |
+| `''` | ❌ | ❌ | ❌ |
+| `'   '` | ❌ | ❌ | ❌ |
+| `null` | ❌ | ❌ | ❌ |
+| `new Number(42)` | ❌ | ❌ | ❌ |
+
+> **Note**
+> `isNumeric` does NOT include `Number` objects. Use `isNumberObject` separately if needed.
+
+## Use Cases
+
+- **Form Validation**: Validate numeric input fields
+- **Type Narrowing**: Let TypeScript know a value is a number
+- **API Responses**: Safely handle mixed `number | string` data
+- **Data Parsing**: Check before `parseInt` or `parseFloat`
+
+## Example: Safe Numeric Parsing
+
+```typescript
+function parseValue(input: unknown): number | null {
+  if (isNumberValue(input)) {
+    return input; // Already a number
+  }
+  if (isNumberString(input)) {
+    return parseFloat(input);
+  }
+  return null;
+}
+
+parseValue(42);     // 42
+parseValue('3.14'); // 3.14
+parseValue('abc');  // null
+```
+
+## Example: Type-Safe Calculation
+
+```typescript
+function double(value: unknown): number | null {
+  if (isNumeric(value)) {
+    const num = typeof value === 'string' ? parseFloat(value) : value;
+    return num * 2;
+  }
+  return null;
 }
 ```
 
----
-
-### 3. `isNumberString`
-
-This function checks if a value is a string that represents a valid numeric value.
-
-#### Key Features:
-- Ensures the value is a string.
-- Validates that the string can be converted to a finite number.
-- Filters out invalid numeric strings such as `'NaN'` or `'Infinity'`.
-
-#### Example Usage:
-```typescript
-const value = '123.45';
-if (isNumberString(value)) {
-    console.log(`${value} is a valid numeric string.`);
-} else {
-    console.log(`${value} is not a valid numeric string.`);
-}
-```
-
----
-
-### 4. `isNumberObject`
-
-This function verifies if a value is an instance of the `Number` object.
-
-#### Key Features:
-- Confirms the value is an object.
-- Validates that the object is an instance of the `Number` wrapper class.
-
-#### Example Usage:
-```typescript
-const value = new Number(42);
-if (isNumberObject(value)) {
-    console.log(`${value} is a valid Number object.`);
-} else {
-    console.log(`${value} is not a valid Number object.`);
-}
-```
-
----
-
-## Practical Applications in Angular
-
-These utility functions are particularly useful in Angular applications for validating inputs, ensuring type safety, and handling data effectively.
-
-### Example: Validating Form Inputs
-```typescript
-const inputValue = '123';
-
-if (isNumberString(inputValue)) {
-    console.log('The input is a valid numeric string.');
-} else {
-    console.log('The input is not a valid numeric string.');
-}
-```
-
-### Example: Type-Safe Operations
-```typescript
-const value: unknown = 100;
-
-if (isNumberValue(value)) {
-    const result = value * 2; // TypeScript infers `value` as a number
-    console.log('Result:', result);
-}
-```
-
----
-
-## Best Practices
-
-1. **Leverage Type Guards**: These functions utilize TypeScript's type guard feature to enable safer and more predictable code.
-2. **Prefer Primitive Types**: While `Number` objects are supported, using primitive `number` types is recommended for simplicity and performance.
-3. **Validate External Data**: Always validate user inputs or external data to prevent unexpected behavior or errors.
-
----
-
-By integrating these utility functions into your TypeScript or Angular projects, you can achieve robust type validation and improve the overall quality of your codebase.

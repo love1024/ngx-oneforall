@@ -107,6 +107,14 @@ describe('safeSerialize', () => {
     expect(parsed[1]).toEqual({ __type: 'Set', values: [1, 2, 3] });
   });
 
+  it('serializes WeakMap and WeakSet with not-iterable note', () => {
+    const wm = new WeakMap();
+    const ws = new WeakSet();
+    const parsed = JSON.parse(safeSerialize([wm, ws]));
+    expect(parsed[0]).toEqual({ __type: 'WeakMap', note: 'Not iterable' });
+    expect(parsed[1]).toEqual({ __type: 'WeakSet', note: 'Not iterable' });
+  });
+
   it('serializes class instances with constructor name and stable key order', () => {
     class Point {
       constructor(

@@ -1,35 +1,48 @@
-The `fileToBase64` utility is a simple yet powerful function in Angular that converts a file into a Base64-encoded string. This can be particularly useful in scenarios where you need to handle file uploads, display images directly in the browser, or store file data in a format suitable for transmission or storage.
+Converts a `File` object to a base64-encoded data URL string asynchronously.
 
-
-### Benefits of Using `fileToBase64`
-
-1. **Direct Image Display**: Convert image files to Base64 strings and display them directly in the browser using the `src` attribute of an `<img>` tag.
-2. **Simplified File Handling**: Easily encode files for transmission over APIs or storage in databases.
-3. **Cross-Browser Compatibility**: Leverages the `FileReader` API, which is supported in all modern browsers.
-4. **Asynchronous Processing**: Returns a `Promise`, allowing seamless integration with `async/await` syntax for better readability and error handling.
-
-### Example Usage
+## Usage
 
 ```typescript
-const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-
-fileInput.addEventListener('change', async (event) => {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-        try {
-            const base64String = await fileToBase64(file);
-            console.log('Base64 String:', base64String);
-        } catch (error) {
-            console.error('Error converting file to Base64:', error);
-        }
-    }
-});
+import { fileToBase64 } from '@ngx-oneforall/utils/base64';
 ```
 
-#### Live Demonstration
-Explore the functionality of the `fileToBase64` utility with the following live demonstration:
+### Basic Example
+
+```typescript
+async onFileChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  
+  if (file) {
+    const dataUrl = await fileToBase64(file);
+    // dataUrl: "data:image/png;base64,iVBORw0KGgo..."
+  }
+}
+```
+
+### Angular Template
+
+```html
+<input type="file" (change)="onFileChange($event)">
+<img [src]="imagePreview" *ngIf="imagePreview">
+```
+
+## API
+
+`fileToBase64(file: File): Promise<string>`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `file` | `File` | The file object from an input element |
+| **Returns** | `Promise<string>` | Data URL (e.g., `data:image/png;base64,...`) |
+
+## Use Cases
+
+- **Image Previews**: Display uploaded images before submission
+- **File Uploads**: Convert files to base64 for API transmission
+- **Avatar Editors**: Create inline image previews
+- **Form Data**: Store file content in JSON payloads
+
+## Live Demo
 
 {{ NgDocActions.demo("FileToBase64DemoComponent") }}
-
-
-This utility simplifies file processing in Angular applications, making it an essential tool for developers working with file uploads or image previews.

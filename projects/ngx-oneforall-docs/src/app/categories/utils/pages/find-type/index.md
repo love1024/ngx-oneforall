@@ -1,90 +1,89 @@
-### Comprehensive Type Detection with `findType` Utility
+Comprehensive type detection utility that returns a `Types` enum value for any JavaScript value. Supports all primitives, collections, typed arrays, and iterators.
 
-Accurately identifying the type of a value is fundamental in TypeScript and Angular applications, especially when handling dynamic or external data. The `findType` utility provides a robust and extensible solution for type detection, supporting a wide range of JavaScript and TypeScript types, including primitives, objects, iterators, and typed arrays.
-
-
-## What is `findType`?
-The `findType` function examines any value and returns its type as a member of the `Types` enum. The `Types` enum can be imported from your project's constants and provides a comprehensive set of type identifiers. `findType` uses a sequence of dedicated type guard helpers to identify the most accurate type, supporting both common and advanced JavaScript objects.
+## Usage
 
 ```typescript
-import { findType }  from "@ngxoneforall/utils";
-import { Types } from "@ngxoneforall/constants";
+import { findType } from '@ngx-oneforall/utils/find-type';
+import { Types } from '@ngx-oneforall/constants';
 
-const type: Types = findType(1);
-console.log(type);
+findType(42);           // Types.Number
+findType('hello');      // Types.String
+findType(BigInt(123));  // Types.BigInt
+findType(new Map());    // Types.Map
 ```
 
+## Supported Types
 
-### Supported Types
+| Category | Types |
+|----------|-------|
+| **Primitives** | `Null`, `Undefined`, `Boolean`, `String`, `Number`, `BigInt`, `Symbol` |
+| **Functions** | `Function`, `GeneratorFunction` |
+| **Collections** | `Array`, `Map`, `WeakMap`, `Set`, `WeakSet` |
+| **Typed Arrays** | `Int8Array`, `Uint8Array`, `Uint8ClampedArray`, `Int16Array`, `Uint16Array`, `Int32Array`, `Uint32Array`, `Float32Array`, `Float64Array` |
+| **Iterators** | `MapIterator`, `SetIterator`, `StringIterator`, `ArrayIterator`, `GeneratorObject` |
+| **Fallback** | `Object` (for plain objects and class instances) |
 
-- **Primitive Types**: `Null`, `Undefined`, `Boolean`, `String`, `Number`, `Symbol`
-- **Functions**: `Function`, `GeneratorFunction`
-- **Collections**: `Array`, `Map`, `WeakMap`, `Set`, `WeakSet`
-- **Typed Arrays**: `Int8Array`, `Uint8Array`, `Uint8ClampedArray`, `Int16Array`, `Uint16Array`, `Int32Array`, `Uint32Array`, `Float32Array`, `Float64Array`
-- **Iterators**: `MapIterator`, `SetIterator`, `StringIterator`, `ArrayIterator`, `GeneratorObject`
-- **Fallback**: `Object` (for all other cases)
-
-
-## How Does `findType` Work?
-
-The function sequentially applies a set of type guard checks, each tailored to a specific type. As soon as a match is found, the corresponding `Types` enum value is returned. If no specific type is matched, it defaults to `Types.Object`.
-
-
-
-## Example Usage
+## Quick Examples
 
 ```typescript
-const values = [null, 42, 'hello', new Map(), new Int8Array(), function* () {}];
-
-values.forEach(value => {
-    const type = findType(value);
-    console.log(`Type of value:`, type);
-});
+findType(null);             // Types.Null
+findType(undefined);        // Types.Undefined
+findType(true);             // Types.Boolean
+findType(42);               // Types.Number
+findType(BigInt(999));      // Types.BigInt
+findType(Symbol('id'));     // Types.Symbol
+findType(() => {});         // Types.Function
+findType(function* () {});  // Types.GeneratorFunction
+findType([1, 2, 3]);        // Types.Array
+findType(new Map());        // Types.Map
+findType(new Set());        // Types.Set
+findType(new Int8Array());  // Types.Int8Array
+findType({});               // Types.Object
 ```
 
-**Output:**
-```
-Type of value: Null
-Type of value: Number
-Type of value: String
-Type of value: Map
-Type of value: Int8Array
-Type of value: GeneratorFunction
-```
+## Type Guard Helpers
 
-## Helper Functions
+All type checking functions are also exported as type guards:
 
-Each helper function, such as `isArray`, `isMap`, or `isInt8Array`, encapsulates the logic for detecting its respective type, using techniques like constructor name inspection or `Object.prototype.toString` tag comparison.
-
-### Example Helper Functions
-
-Below are some example implementations of helper functions used by `findType`:
 ```typescript
-// Usage examples of helper functions:
+import { isString, isNumber, isBigInt, isArray, isMap } from '@ngx-oneforall/utils/find-type';
 
-isNull(null); // true
-isUndefined(undefined); // true
-isArray([1, 2, 3]); // true
-isMap(new Map()); // true
-isInt8Array(new Int8Array()); // true
-isGeneratorFunction(function* () {}); // true
+const value: unknown = getData();
+
+if (isString(value)) {
+  console.log(value.toUpperCase()); // TypeScript knows it's string
+}
+
+if (isArray(value)) {
+  console.log(value.length); // TypeScript knows it's unknown[]
+}
 ```
 
-These helpers can be extended or customized to support additional types as needed.
+## Available Type Guards
 
-## Practical Applications
+| Function | Type Guard |
+|----------|------------|
+| `isNull(v)` | `v is null` |
+| `isUndefined(v)` | `v is undefined` |
+| `isBoolean(v)` | `v is boolean` |
+| `isString(v)` | `v is string` |
+| `isNumber(v)` | `v is number` |
+| `isBigInt(v)` | `v is bigint` |
+| `isSymbol(v)` | `v is symbol` |
+| `isFunction(v)` | `v is (...args) => any` |
+| `isArray(v)` | `v is unknown[]` |
+| `isMap(v)` | `v is Map<unknown, unknown>` |
+| `isSet(v)` | `v is Set<unknown>` |
+| `isDate(v)` | `v is Date` |
+| `isRegexp(v)` | `v is RegExp` |
+| `isError(v)` | `v is Error` |
 
-- **Form Validation**: Ensure input values are of expected types before processing.
-- **API Data Handling**: Safely parse and validate data from external sources.
-- **Utility Libraries**: Build robust, reusable functions that adapt to various data types.
-- **Debugging**: Quickly inspect and log the precise type of runtime values.
+> **Note**
+> Detection order is optimized for common types first. More specific types (like `GeneratorFunction`) are checked before general ones (like `Function`).
 
----
+## Use Cases
 
-## Best Practices
-
-1. **Use Type Guards**: The utility relies on well-defined type guards for accuracy and type safety.
-2. **Extend as Needed**: Add new type checks to support custom or emerging JavaScript types.
-3. **Prefer Specificity**: The order of checks matters—more specific types should be checked before general ones.
-4. **Validate External Data**: Always use type detection when working with untrusted or dynamic data.
-
+- **API validation**: Check data types from external sources
+- **Dynamic rendering**: Render different UI based on value type
+- **Form handling**: Validate input values before processing
+- **Debugging**: Log precise runtime types

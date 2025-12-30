@@ -1,91 +1,91 @@
-`isRecord` is a type guard that checks if a value is a plain object (record) as opposed to built-in types like Date, Map, Array, or class instances.
+Type guard that checks if a value is a plain object (record) as opposed to built-in types, arrays, or class instances.
 
 ## Usage
 
-Use `isRecord` when you need to distinguish plain objects from other object types for type-safe operations like iteration, cloning, or serialization.
-
-### Basic Example
-
 ```typescript
 import { isRecord } from '@ngx-oneforall/utils/is-record';
-
-const plainObject = { name: 'John', age: 30 };
-const date = new Date();
-const map = new Map();
-
-console.log(isRecord(plainObject)); // true
-console.log(isRecord(date));        // false
-console.log(isRecord(map));         // false
-console.log(isRecord([]));          // false
-```
-
-### Type Guard
-
-```typescript
-function processData(value: unknown) {
-    if (isRecord(value)) {
-        // TypeScript knows value is Record<string, unknown>
-        Object.keys(value).forEach(key => {
-            console.log(key, value[key]);
-        });
-    }
-}
-```
-
-### Null-Prototype Objects
-
-```typescript
-const nullProto = Object.create(null);
-nullProto.foo = 'bar';
-
-console.log(isRecord(nullProto)); // true - handles dictionary pattern
 ```
 
 ## API
 
 `isRecord(value: unknown): value is Record<string, unknown>`
 
-- **value**: The value to check.
+Returns `true` if value is a plain object, `false` otherwise.
 
-Returns `true` if the value is a plain object, `false` otherwise.
-
-### What is Considered a Record?
-
-✅ **Accepted:**
-- Plain objects: `{}`
-- Object literals: `{ a: 1, b: 2 }`
-- `new Object()`
-- `Object.create(null)` (null-prototype objects)
-
-❌ **Rejected:**
-- Arrays: `[]`
-- Built-in types: `Date`, `Map`, `Set`, `RegExp`, `Error`, `Promise`
-- Weak collections: `WeakMap`, `WeakSet`
-- Class instances: `new MyClass()`
-- Primitives: `string`, `number`, `boolean`, `null`, `undefined`
-
-## Implementation
-
-Uses `Object.prototype.toString.call()` for reliable type checking:
+## Quick Examples
 
 ```typescript
-export const isRecord = (value: unknown): value is Record<string, unknown> => {
-  return Object.prototype.toString.call(value) === '[object Object]';
-};
+isRecord({});              // true
+isRecord({ a: 1, b: 2 });  // true
+isRecord(Object.create(null)); // true (null-prototype)
+
+isRecord([1, 2, 3]);       // false (array)
+isRecord(new Date());      // false (built-in)
+isRecord(new Map());       // false (built-in)
+isRecord(new MyClass());   // false (class instance)
+isRecord(null);            // false
 ```
 
+## Truth Table
+
+| Input | Result | Reason |
+|-------|--------|--------|
+| `{}` | ✅ | Plain object literal |
+| `{ a: 1 }` | ✅ | Plain object with properties |
+| `Object.create(null)` | ✅ | Null-prototype object |
+| `[]` | ❌ | Array |
+| `new Date()` | ❌ | Built-in |
+| `new Map()` | ❌ | Built-in |
+| `new Set()` | ❌ | Built-in |
+| `new Error()` | ❌ | Built-in |
+| `new MyClass()` | ❌ | Class instance |
+| `null` | ❌ | Not an object |
+| `undefined` | ❌ | Not an object |
+
+## Detection Strategy
+
+The implementation uses a multi-step approach for accuracy and performance:
+
+1. **Fast path**: Check if prototype is `null` or `Object.prototype`
+2. **Built-in exclusion**: Check against known non-record constructors (Date, Map, Set, etc.)
+3. **Fallback**: Use `Object.prototype.toString` for edge cases
+
 > **Note**
-> This check is fast and reliable. However, it accepts class instances. If you need stricter checking excluding class instances, consider additional prototype chain validation.
+> This implementation explicitly excludes class instances and all JavaScript built-in types including `ArrayBuffer`, `Blob`, `File`, `URL`, and more.
 
-## When to Use
+## Example: Type-Safe Iteration
 
-✅ **Good use cases:**
-- Safe object iteration
-- Type-safe serialization
-- Validating API responses
-- Type guards for unknowns
+```typescript
+function processData(value: unknown) {
+  if (isRecord(value)) {
+    // TypeScript knows value is Record<string, unknown>
+    Object.entries(value).forEach(([key, val]) => {
+      console.log(key, val);
+    });
+  }
+}
+```
 
-❌ **Avoid when:**
-- You need to accept arrays
-- You want to include class instances
-- Performance is extremely critical (though this is very fast)
+## Example: Deep Clone Safety
+
+```typescript
+function safeClone(obj: unknown): unknown {
+  if (!isRecord(obj)) {
+    return obj; // Return primitives/built-ins as-is
+  }
+  
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    result[key] = safeClone(value);
+  }
+  return result;
+}
+```
+
+## Use Cases
+
+- **Safe object iteration**: Avoid iterating arrays or class instances
+- **Serialization**: Validate objects before JSON.stringify
+- **API validation**: Check if response is a plain object
+- **State management**: Distinguish records from other object types
+

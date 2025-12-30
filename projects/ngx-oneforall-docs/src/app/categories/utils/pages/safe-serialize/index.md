@@ -1,39 +1,70 @@
-`safeSerialize` is a utility for serializing an array of values or function arguments—including types that are not supported by JSON.stringify, such as functions, symbols, bigint, circular references, Maps, Sets, Dates, RegExps, Errors, and class instances. It is designed to produce a stable string representation for any combination of JavaScript values, making it ideal for use cases like memoization, caching, or argument hashing.
-
----
+Safely serializes any JavaScript value to a JSON string, including non-JSON types like functions, symbols, BigInt, and circular references. Produces deterministic output for caching and memoization.
 
 ## Usage
 
-```ts
+```typescript
 import { safeSerialize } from '@ngx-oneforall/utils/safe-serialize';
 
-const args = [1, 'foo', Symbol('bar'), () => 42, { a: 1 }, BigInt(123), new Date(), /abc/g, new Map([[1,2]]), new Set([1,2]), new Error('fail')];
-const key = safeSerialize(args);
+const key = safeSerialize({ name: 'John', count: BigInt(42) });
+// '{"count":"__bigint:42","name":"John"}'
 ```
 
----
+## Serialization Format
 
-## Features
-- Handles all JavaScript value types, including functions, symbols, bigint, circular references, Maps, Sets, Dates, RegExps, Errors, and class instances
-- Serializes anonymous functions as `__fn:anonymous|h:HASH` (using a hash of their source and argument length)
-- Produces a stable, deterministic string for any array of arguments
-- Preserves class constructor names for class instances
-- Ensures stable key ordering for plain objects (object key order does not affect output)
-- Useful for memoization, cache keys, or argument hashing
+| Type | Serialized Format |
+|------|-------------------|
+| Function (named) | `"__fn:functionName"` |
+| Function (anonymous) | `"__fn:anonymous\|h:hash"` |
+| Symbol | `"__sym:Symbol(description)"` |
+| BigInt | `"__bigint:123"` |
+| Date | ISO string (built-in JSON behavior) |
+| RegExp | `{ __type: 'RegExp', value: '/pattern/flags' }` |
+| Error | `{ __type: 'Error', name, message }` |
+| Map | `{ __type: 'Map', entries: [[k, v], ...] }` |
+| Set | `{ __type: 'Set', values: [...] }` |
+| WeakMap | `{ __type: 'WeakMap', note: 'Not iterable' }` |
+| WeakSet | `{ __type: 'WeakSet', note: 'Not iterable' }` |
+| Class instance | `{ __type: 'ClassName', ...props }` |
+| Circular ref | `"__circular__"` |
 
----
+> **Note**
+> Object keys are sorted alphabetically for deterministic output. `{ b: 2, a: 1 }` serializes the same as `{ a: 1, b: 2 }`.
+
+## Quick Examples
+
+```typescript
+// Functions
+safeSerialize(() => {}); // '"__fn:anonymous|h:-1234567"'
+
+// Symbols and BigInt
+safeSerialize([Symbol('id'), BigInt(999)]);
+// '["__sym:Symbol(id)","__bigint:999"]'
+
+// Circular references
+const obj = { name: 'root' };
+obj.self = obj;
+safeSerialize(obj); // '{"name":"root","self":"__circular__"}'
+
+// Map and Set
+safeSerialize(new Map([['a', 1]]));
+// '{"__type":"Map","entries":[["a",1]]}'
+```
+
+## Use Cases
+
+- **Memoization keys**: Generate cache keys from any arguments
+- **Argument hashing**: Create stable fingerprints for function calls
+- **Deep comparison**: Compare complex objects by their serialized form
+- **Logging**: Serialize non-JSON values for debugging
 
 ## Demo
-See the interactive demo below for example inputs and their serialized outputs.
 
 {{ NgDocActions.demo("SafeSerializeDemoComponent") }}
 
----
+## Limitations
 
-## Drawbacks & Limitations
+- **Not reversible**: Cannot deserialize back to original values
+- **Lossy for functions/symbols**: Only names/descriptions are preserved
+- **WeakMap/WeakSet**: Cannot iterate, serialized with placeholder
+- **Same-name collision**: Different functions with same name produce same output
 
-- Not reversible: The output of `safeSerialize` cannot be reliably deserialized back to the original values, especially for functions, symbols, bigints, and circular references.
-- Not a full object diff: It is designed for stable stringification, not for deep equality or diffing complex objects.
-- Function and symbol representation is lossy: Functions are represented as `__fn:name` (or `__fn:anonymous|h:HASH` for anonymous functions) and symbols as `__sym:desc`, so their actual implementation or identity is lost.
-- Class name is preserved for class instances, but prototype methods and non-enumerable properties are not: Only enumerable own properties and the constructor name are serialized; methods and prototype are not restored.
-- May not distinguish between some edge cases: Different functions with the same name, or different symbols with the same description, will serialize to the same string.

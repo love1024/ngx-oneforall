@@ -1,61 +1,95 @@
-Handling asynchronous operations in Angular often involves working with both Promises and Observables. Managing errors and results in a consistent, type-safe manner can be challenging, especially when integrating with RxJS streams or third-party APIs. The `safeAwait` utility provides a unified approach to safely await Promises or Observables, returning a tuple that clearly separates successful results from errors.
+Go-style error handling for async operations. Returns a tuple `[result, error]` instead of throwing, eliminating try/catch blocks.
 
-
-
-
-## Key Features
-
-- **Supports Promises and Observables**: Accepts both, converting Observables to Promises internally.
-- **Consistent Tuple Response**: Always returns a tuple, making error handling explicit and type-safe.
-- **Simplifies Error Handling**: Eliminates the need for try/catch blocks in your business logic.
-
----
-
-## Example Usage
-
-### Handling a Promise
+## Usage
 
 ```typescript
-const fetchData = (): Promise<string> => Promise.resolve('Angular');
+import { safeAwait } from '@ngx-oneforall/utils/safe-await';
+```
 
-const [result, error] = await safeAwait(fetchData());
+## API
+
+```typescript
+safeAwait<T>(input: Promise<T> | Observable<T>): Promise<[T, null] | [null, Error]>
+```
+
+| Input | Success | Failure |
+|-------|---------|---------|
+| `Promise<T>` | `[result, null]` | `[null, error]` |
+| `Observable<T>` | `[lastValue, null]` | `[null, error]` |
+
+> **Note**
+> Observables are converted using `lastValueFrom`. Empty Observables (complete without emitting) will return an `EmptyError`.
+
+## Quick Example
+
+```typescript
+const [user, error] = await safeAwait(fetchUser(id));
 
 if (error) {
-    console.error('Error:', error);
-} else {
-    console.log('Result:', result);
+  console.error('Failed:', error.message);
+  return;
+}
+
+console.log(user.name); // TypeScript knows user is defined
+```
+
+## Comparison: Traditional vs safeAwait
+
+```typescript
+// ❌ Traditional try/catch
+async function getUser(id: string) {
+  try {
+    const user = await fetchUser(id);
+    return { user, error: null };
+  } catch (error) {
+    return { user: null, error };
+  }
+}
+
+// ✅ With safeAwait
+async function getUser(id: string) {
+  const [user, error] = await safeAwait(fetchUser(id));
+  return { user, error };
 }
 ```
 
-### Handling an Observable
+## Example: HTTP Request
 
 ```typescript
-import { of } from 'rxjs';
+async loadData() {
+  const [data, error] = await safeAwait(
+    this.http.get<User[]>('/api/users')
+  );
 
-const observable$ = of(42);
+  if (error) {
+    this.errorMessage = 'Failed to load users';
+    return;
+  }
 
-const [result, error] = await safeAwait(observable$);
-
-if (error) {
-    // Handle error
-} else {
-    // Use result
+  this.users = data;
 }
 ```
 
----
+## Example: Multiple Async Operations
 
-## Practical Applications in Angular
+```typescript
+async saveOrder() {
+  const [inventory, invError] = await safeAwait(checkInventory(this.items));
+  if (invError) return this.showError('Inventory check failed');
 
-- **API Calls**: Safely handle HTTP requests that return either Promises or Observables.
-- **Reactive Forms**: Await asynchronous validators or data sources.
-- **Reusable Error Handling**: Centralize error management for asynchronous logic.
+  const [payment, payError] = await safeAwait(processPayment(this.total));
+  if (payError) return this.showError('Payment failed');
 
----
+  const [order, orderError] = await safeAwait(createOrder(inventory, payment));
+  if (orderError) return this.showError('Order creation failed');
 
-## Best Practices
+  return order;
+}
+```
 
-1. **Always Check Both Tuple Values**: Ensure you handle both the result and error cases.
-2. **Use with Async/Await**: Integrates seamlessly with modern async/await syntax.
-3. **Consistent Error Handling**: Use `safeAwait` to standardize error handling across your codebase.
+## Use Cases
 
+- **HTTP requests**: Handle API errors without try/catch
+- **Form submission**: Clean async validation and submission
+- **Sequential operations**: Chain multiple async calls with clear error points
+- **Observable integration**: Use with Angular's HttpClient seamlessly

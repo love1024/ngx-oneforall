@@ -1,38 +1,44 @@
-The `base64UrlEncode` and `base64UrlDecode` utilities are essential functions for encoding and decoding strings in a Base64 URL-safe format. These utilities are particularly useful in scenarios where you need to handle data in web-safe formats, such as generating tokens, encoding query parameters, or working with APIs that require Base64 URL-safe strings.
+URL-safe Base64 encoding utilities for safely transmitting data in URLs, query parameters, and tokens.
 
-### Benefits of Using `base64UrlEncode` and `base64UrlDecode`
+## Usage
 
-1. **Error Handling for Special Characters**: Ensures proper encoding of strings containing special characters, avoiding errors that can occur with the native `btoa` function.
-2. **Simplified Decoding**: Decodes URL-safe Base64 strings back to their original format, handling special characters seamlessly.
-4. **Cross-Browser Compatibility**: Leverages the `btoa` and `atob` browser APIs, ensuring support in modern environments.
-5. **Customizable**: Built on top of standard Base64 encoding/decoding, allowing for easy adaptation to specific use cases.
-
-#### Encoding a String to Base64 URL-Safe Format
+Import the functions from the base64 utility:
 
 ```typescript
-const originalString = "http://google.com";
-const encodedString = base64UrlEncode(originalString);
-console.log('Base64 URL Encoded:', encodedString);
+import { base64UrlEncode, base64UrlDecode } from '@ngx-oneforall/utils/base64';
 ```
 
-#### Decoding a Base64 URL-Safe String
+### Encoding
 
 ```typescript
-const encodedString = "SGVsbG8sIFdvcmxkIQ";
-const decodedString = base64UrlDecode(encodedString);
-console.log('Decoded String:', decodedString);
+const encoded = base64UrlEncode('Hello, 世界!');
+// Result: "SGVsbG8sIOS4lueVjCE"
 ```
 
-### Key Use Cases
+### Decoding
 
-1. **Token Generation**: Encode sensitive data into a URL-safe format for use in authentication tokens.
-2. **Query Parameters**: Safely encode data to include in URLs without worrying about special characters.
-3. **API Interactions**: Work with APIs that require Base64 URL-safe strings for data transmission.
+```typescript
+const decoded = base64UrlDecode('SGVsbG8sIOS4lueVjCE');
+// Result: "Hello, 世界!"
+```
 
-### Live Demonstration
+## API
 
-Explore the functionality of `base64UrlEncode` and `base64UrlDecode` with the following live demonstration:
+| Function | Description |
+|----------|-------------|
+| `base64UrlEncode(value: string)` | Encodes a UTF-8 string to URL-safe base64 (RFC 4648) |
+| `base64UrlDecode(value: string)` | Decodes a URL-safe base64 string to UTF-8 |
+
+> **Note**
+> These utilities correctly handle multi-byte Unicode characters (e.g., Chinese, emoji) using `TextEncoder`/`TextDecoder`.
+
+## Use Cases
+
+- **JWT Tokens**: Encode/decode JWT payload segments
+- **Query Parameters**: Safely embed binary data in URLs
+- **OAuth State**: Encode state parameters for OAuth flows
+- **Data URIs**: Create URL-safe data identifiers
+
+## Live Demo
 
 {{ NgDocActions.demo("Base64UrlDemoComponent") }}
-
-These utilities provide a robust solution for encoding and decoding data in a web-safe format, making them indispensable for modern web development.

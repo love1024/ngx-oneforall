@@ -2,35 +2,61 @@
 keyword: HostPlatformPage
 ---
 
-The `getHostPlatform` utility allows you to detect the current host platform (OS) based on the user agent. It returns a value from the `HostPlatform` enum.
+Detects the host platform/operating system based on the user agent string. SSR-safe with modern iPadOS 13+ detection.
 
 ## Usage
 
-Import `getHostPlatform` and `HostPlatform` from `ngx-oneforall`:
-
 ```typescript
-import {getHostPlatform} from '@ngx-oneforall/utils/host-platform';
-import {HostPlatform} from '@ngx-oneforall/constants';
+import { getHostPlatform } from '@ngx-oneforall/utils/host-platform';
+import { HostPlatform } from '@ngx-oneforall/constants';
 
 const platform = getHostPlatform();
 
-if (platform === HostPlatform.MAC) {
-    console.log('Running on macOS');
+if (platform === HostPlatform.IOS) {
+  // iOS-specific logic (includes iPad)
 }
 ```
 
-## Supported Platforms
+## API
 
-The `HostPlatform` enum supports the following platforms:
+`getHostPlatform(): HostPlatform`
 
-- `MAC`
-- `IOS`
-- `WINDOWS`
-- `WINDOWS_PHONE`
-- `ANDROID`
-- `LINUX`
-- `UNKNOWN`
+Returns one of the following enum values:
+
+| Value | Description |
+|-------|-------------|
+| `HostPlatform.MAC` | macOS desktop |
+| `HostPlatform.IOS` | iPhone, iPad, iPod (including iPadOS 13+) |
+| `HostPlatform.WINDOWS` | Windows desktop |
+| `HostPlatform.WINDOWS_PHONE` | Windows Phone |
+| `HostPlatform.ANDROID` | Android devices |
+| `HostPlatform.LINUX` | Linux distributions |
+| `HostPlatform.UNKNOWN` | SSR or unrecognized platform |
+
+> **Note**
+> iPadOS 13+ reports as "Macintosh" in the user agent. This utility uses touch detection to correctly identify iPads.
+
+## Use Cases
+
+- **Platform-specific UI**: Show different layouts for mobile vs desktop
+- **Feature detection**: Enable/disable features based on platform
+- **Analytics**: Track user platform distribution
+- **Download links**: Show appropriate app store links
+
+## Example: Conditional Rendering
+
+```typescript
+@Component({...})
+export class AppComponent {
+  platform = getHostPlatform();
+  
+  get isMobile(): boolean {
+    return [HostPlatform.IOS, HostPlatform.ANDROID].includes(this.platform);
+  }
+}
+```
 
 ## Demo
 
 {{ NgDocActions.demo("HostPlatformDemoComponent", {container: true}) }}
+

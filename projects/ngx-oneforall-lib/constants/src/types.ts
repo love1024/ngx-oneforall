@@ -5,6 +5,7 @@ export enum Types {
   String = 'string',
   Number = 'number',
   Symbol = 'symbol',
+  BigInt = 'bigint',
   Function = 'function',
   Array = 'array',
   GeneratorFunction = 'generatorfunction',
