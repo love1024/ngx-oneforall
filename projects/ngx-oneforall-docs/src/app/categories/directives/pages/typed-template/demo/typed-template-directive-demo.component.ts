@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component } from '@angular/core';
-import { TypedTemplateDirective } from '@ngx-oneforall/guards/typed-template';
+import { TypedTemplateDirective } from '@ngx-oneforall/directives/typed-template';
 
 interface User {
   id: number;
@@ -9,7 +9,7 @@ interface User {
 }
 
 @Component({
-  selector: 'lib-typed-template-guard-demo',
+  selector: 'lib-typed-template-directive-demo',
   imports: [TypedTemplateDirective, NgTemplateOutlet],
   template: `
     <div class="demo-container">
@@ -38,9 +38,9 @@ interface User {
       </ng-template>
     </div>
   `,
-  styleUrl: './typed-template-guard-demo.component.scss',
+  styleUrl: './typed-template-directive-demo.component.scss',
 })
-export class TypedTemplateGuardDemoComponent {
+export class TypedTemplateDirectiveDemoComponent {
   userContext: User = { id: 1, fullName: 'Jane Doe', years: 29 };
 
   // Provide type information for the typed template directive

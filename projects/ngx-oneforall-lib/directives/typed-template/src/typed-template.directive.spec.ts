@@ -1,6 +1,6 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { TypedTemplateDirective } from './typed-template.guard';
+import { TypedTemplateDirective } from './typed-template.directive';
 
 interface User {
   id: number;
