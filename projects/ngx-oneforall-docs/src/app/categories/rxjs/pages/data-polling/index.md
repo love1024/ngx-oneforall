@@ -56,16 +56,34 @@ export class MyComponent {
 
 ## API
 
-`dataPolling<T>(config: { loader: () => Observable<T>; interval: number }): OperatorFunction<any, T>`
+`dataPolling<T>(config: DataPollingConfig<T>): OperatorFunction<unknown, T>`
 
-### Parameters
+### Configuration
 
-- **loader**: A function that returns an Observable of the data to poll
-- **interval**: Polling interval in milliseconds
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `loader` | `() => Observable<T>` | - | Function that returns an Observable of the data to poll |
+| `interval` | `number` | - | Polling interval in milliseconds |
+| `retryCount` | `number` | `0` | Number of retry attempts on error |
+| `retryDelay` | `number` | `1000` | Delay between retries in milliseconds |
 
 ### Behavior
 
 - Immediately calls the loader when the source emits
 - Continues polling at the specified interval
 - Cancels previous polling if the source emits again
-- The interval is specified in **milliseconds**
+- Retries failed requests up to `retryCount` times with `retryDelay` between attempts
+
+### Example with Retry
+
+```typescript
+trigger.pipe(
+    dataPolling({
+        loader: () => this.http.get('/api/data'),
+        interval: 5000,
+        retryCount: 3,  // Retry up to 3 times
+        retryDelay: 1000 // Wait 1 second between retries
+    })
+).subscribe(data => console.log(data));
+```
+

@@ -92,14 +92,16 @@ describe('dataPolling', () => {
     expect(results).toEqual(['data', 'data']);
   }));
 
-  it('should propagate errors from loader', fakeAsync(() => {
+  it('should propagate errors from loader when no retry configured', fakeAsync(() => {
     const source = new Subject<void>();
     let error: any = null;
     const loader = () => throwError(() => new Error('loader error'));
 
-    source.pipe(dataPolling({ loader, interval: 1000 })).subscribe({
-      error: err => (error = err),
-    });
+    source
+      .pipe(dataPolling({ loader, interval: 1000, retryCount: 0 }))
+      .subscribe({
+        error: err => (error = err),
+      });
 
     source.next();
     tick(0);

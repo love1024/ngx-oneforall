@@ -33,10 +33,12 @@ export function loadingStatus<T>(): OperatorFunction<T, ResourceResult<T>> {
       map(data => ({
         status: 'success' as const,
         data,
+        error: null,
       })),
       startWith({
         status: 'loading' as const,
         data: null,
+        error: null,
       }),
       catchError(error =>
         of({
