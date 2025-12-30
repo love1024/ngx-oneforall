@@ -1,1 +1,0 @@
-var o={title:"RxJS"},t=o;export{t as a};

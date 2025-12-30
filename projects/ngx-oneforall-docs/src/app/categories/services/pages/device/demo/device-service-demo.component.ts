@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { CommonModule, NgClass, NgIf, TitleCasePipe } from '@angular/common';
+import { CommonModule, NgClass, TitleCasePipe } from '@angular/common';
 import {
   DeviceService,
   provideDeviceService,
@@ -8,7 +8,7 @@ import {
 @Component({
   selector: 'lib-device-service-demo',
   standalone: true,
-  imports: [CommonModule, NgIf, NgClass, TitleCasePipe],
+  imports: [CommonModule, NgClass, TitleCasePipe],
   template: `
     <section class="device-demo-container">
       <h2>Device Service Demo</h2>
@@ -32,16 +32,22 @@ import {
         </div>
       </div>
       <div class="tips">
-        <span *ngIf="deviceType() === 'mobile'">
-          📱 You are on a mobile device.
-        </span>
-        <span *ngIf="deviceType() === 'tablet'"> 💊 You are on a tablet. </span>
-        <span *ngIf="deviceType() === 'desktop'">
-          🖥️ You are on a desktop.
-        </span>
+        @if (deviceType() === 'mobile') {
+          <span>
+            📱 You are on a mobile device.
+          </span>
+        }
+        @if (deviceType() === 'tablet') {
+          <span> 💊 You are on a tablet. </span>
+        }
+        @if (deviceType() === 'desktop') {
+          <span>
+            🖥️ You are on a desktop.
+          </span>
+        }
       </div>
     </section>
-  `,
+    `,
   styleUrl: './device-service-demo.component.scss',
   providers: [provideDeviceService()],
 })

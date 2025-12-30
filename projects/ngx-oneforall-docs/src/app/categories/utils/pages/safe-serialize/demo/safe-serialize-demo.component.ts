@@ -1,29 +1,31 @@
 import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { safeSerialize } from '@ngx-oneforall/utils/safe-serialize';
 
 @Component({
   selector: 'lib-safe-serialize-demo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="demo">
       <h3>Example cases</h3>
       <div class="examples-row">
-        <div class="example" *ngFor="let ex of examples; let i = index">
-          <div class="example-header">
-            <h4>{{ ex.title }}</h4>
+        @for (ex of examples; track ex; let i = $index) {
+          <div class="example">
+            <div class="example-header">
+              <h4>{{ ex.title }}</h4>
+            </div>
+            <div class="example-body">
+              <div class="label">Value</div>
+              <pre class="output">{{ ex.label }}</pre>
+              <div class="label">Serialized</div>
+              <pre class="output">{{ getOutput(i) }}</pre>
+            </div>
           </div>
-          <div class="example-body">
-            <div class="label">Value</div>
-            <pre class="output">{{ ex.label }}</pre>
-            <div class="label">Serialized</div>
-            <pre class="output">{{ getOutput(i) }}</pre>
-          </div>
-        </div>
+        }
       </div>
     </div>
-  `,
+    `,
   styleUrls: ['./safe-serialize-demo.component.scss'],
 })
 export class SafeSerializeDemoComponent {

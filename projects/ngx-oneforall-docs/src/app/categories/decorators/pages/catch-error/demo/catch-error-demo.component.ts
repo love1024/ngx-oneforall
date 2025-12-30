@@ -1,12 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { CatchError } from '@ngx-oneforall/decorators/catch-error';
-import { CommonModule } from '@angular/common';
+
 import { delay, of, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-catch-error-demo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="demo-container">
       <h3>CatchError Decorator</h3>
@@ -14,7 +14,7 @@ import { delay, of, throwError } from 'rxjs';
         This decorator catches errors in methods and returns a fallback value.
         It supports sync, async (Promise), and Observable methods.
       </p>
-
+    
       <div class="demo-section">
         <h4>Synchronous Error</h4>
         <div class="controls">
@@ -29,7 +29,7 @@ import { delay, of, throwError } from 'rxjs';
           Result: <span class="badge">{{ syncResult() }}</span>
         </p>
       </div>
-
+    
       <div class="demo-section">
         <h4>Asynchronous Error (Promise)</h4>
         <div class="controls">
@@ -50,7 +50,7 @@ import { delay, of, throwError } from 'rxjs';
           Result: <span class="badge">{{ asyncResult() }}</span>
         </p>
       </div>
-
+    
       <div class="demo-section">
         <h4>Observable Error</h4>
         <div class="controls">
@@ -65,7 +65,7 @@ import { delay, of, throwError } from 'rxjs';
           Result: <span class="badge">{{ observableResult() }}</span>
         </p>
       </div>
-
+    
       <div class="demo-section">
         <h4>Dynamic Fallback (Function)</h4>
         <p>The fallback returns <code>'Fallback: ' + error.message</code></p>
@@ -78,17 +78,19 @@ import { delay, of, throwError } from 'rxjs';
           Result: <span class="badge">{{ dynamicResult() }}</span>
         </p>
       </div>
-
+    
       <div class="logs">
         <h4>Console Logs (Simulated)</h4>
         <div class="log-output">
-          <div *ngFor="let log of logs()" [class]="log.type">
-            [{{ log.timestamp }}] {{ log.message }}
-          </div>
+          @for (log of logs(); track log) {
+            <div [class]="log.type">
+              [{{ log.timestamp }}] {{ log.message }}
+            </div>
+          }
         </div>
       </div>
     </div>
-  `,
+    `,
   styles: [
     `
       .demo-container {

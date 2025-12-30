@@ -14,24 +14,28 @@ import { minDate, MinDateDirective } from '@ngx-oneforall/validators/min-date';
         Enter date >= 2023-01-01:
         <input type="date" [formControl]="control" />
       </label>
-
-      <div *ngIf="control.errors?.['minDate'] as error" class="error">
-        Date must be after {{ error.requiredDate | date }}. Actual:
-        {{ error.actualValue | date }}
-      </div>
-
-      <div *ngIf="control.valid && control.value" class="success">
-        Valid date!
-      </div>
+    
+      @if (control.errors?.['minDate']; as error) {
+        <div class="error">
+          Date must be after {{ error.requiredDate | date }}. Actual:
+          {{ error.actualValue | date }}
+        </div>
+      }
+    
+      @if (control.valid && control.value) {
+        <div class="success">
+          Valid date!
+        </div>
+      }
     </div>
-
+    
     <div class="demo-container">
       <h3>Template-Driven (Dynamic Min Date)</h3>
       <label>
         Set Minimum Date:
         <input type="date" [(ngModel)]="minDateValue" />
       </label>
-
+    
       <label>
         Enter Date:
         <input
@@ -40,16 +44,20 @@ import { minDate, MinDateDirective } from '@ngx-oneforall/validators/min-date';
           [minDate]="minDateValue"
           #templateCtrl="ngModel" />
       </label>
-
-      <div *ngIf="templateCtrl.errors?.['minDate'] as error" class="error">
-        Date must be after {{ error.requiredDate | date }}.
-      </div>
-
-      <div *ngIf="templateCtrl.valid && templateCtrl.value" class="success">
-        Valid date!
-      </div>
+    
+      @if (templateCtrl.errors?.['minDate']; as error) {
+        <div class="error">
+          Date must be after {{ error.requiredDate | date }}.
+        </div>
+      }
+    
+      @if (templateCtrl.valid && templateCtrl.value) {
+        <div class="success">
+          Valid date!
+        </div>
+      }
     </div>
-  `,
+    `,
   styleUrl: './min-date-demo.component.scss',
 })
 export class MinDateDemoComponent {

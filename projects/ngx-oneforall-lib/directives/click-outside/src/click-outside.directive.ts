@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+
 import {
   afterNextRender,
   booleanAttribute,
@@ -9,6 +9,7 @@ import {
   NgZone,
   OnDestroy,
   output,
+  DOCUMENT
 } from '@angular/core';
 
 /**

@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { delay, filter, tap } from 'rxjs/operators';
@@ -14,7 +14,7 @@ interface SearchResult {
 @Component({
   selector: 'app-live-search-demo',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   template: `
     <div class="demo-container">
       <h3>Live Search Demo</h3>

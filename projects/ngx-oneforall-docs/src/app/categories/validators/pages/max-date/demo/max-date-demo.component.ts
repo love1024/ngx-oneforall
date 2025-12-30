@@ -14,24 +14,28 @@ import { maxDate, MaxDateDirective } from '@ngx-oneforall/validators/max-date';
         Enter date <= 2025-12-31:
         <input type="date" [formControl]="control" />
       </label>
-
-      <div *ngIf="control.errors?.['maxDate'] as error" class="error">
-        Date must be before {{ error.requiredDate | date }}. Actual:
-        {{ error.actualValue | date }}
-      </div>
-
-      <div *ngIf="control.valid && control.value" class="success">
-        Valid date!
-      </div>
+    
+      @if (control.errors?.['maxDate']; as error) {
+        <div class="error">
+          Date must be before {{ error.requiredDate | date }}. Actual:
+          {{ error.actualValue | date }}
+        </div>
+      }
+    
+      @if (control.valid && control.value) {
+        <div class="success">
+          Valid date!
+        </div>
+      }
     </div>
-
+    
     <div class="demo-container">
       <h3>Template-Driven (Dynamic Max Date)</h3>
       <label>
         Set Maximum Date:
         <input type="date" [(ngModel)]="maxDateValue" />
       </label>
-
+    
       <label>
         Enter Date:
         <input
@@ -40,16 +44,20 @@ import { maxDate, MaxDateDirective } from '@ngx-oneforall/validators/max-date';
           [maxDate]="maxDateValue"
           #templateCtrl="ngModel" />
       </label>
-
-      <div *ngIf="templateCtrl.errors?.['maxDate'] as error" class="error">
-        Date must be before {{ error.requiredDate | date }}.
-      </div>
-
-      <div *ngIf="templateCtrl.valid && templateCtrl.value" class="success">
-        Valid date!
-      </div>
+    
+      @if (templateCtrl.errors?.['maxDate']; as error) {
+        <div class="error">
+          Date must be before {{ error.requiredDate | date }}.
+        </div>
+      }
+    
+      @if (templateCtrl.valid && templateCtrl.value) {
+        <div class="success">
+          Valid date!
+        </div>
+      }
     </div>
-  `,
+    `,
   styleUrl: './max-date-demo.component.scss',
 })
 export class MaxDateDemoComponent {

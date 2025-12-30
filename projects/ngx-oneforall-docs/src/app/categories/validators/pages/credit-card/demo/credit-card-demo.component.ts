@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import {
   creditCard,
   CreditCardValidator,
@@ -11,10 +11,9 @@ import {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CommonModule,
     FormsModule,
-    CreditCardValidator,
-  ],
+    CreditCardValidator
+],
   template: `
     <div class="demo-container">
       <h3>Reactive Form</h3>
@@ -25,16 +24,20 @@ import {
           [formControl]="control"
           placeholder="0000 0000 0000 0000" />
       </label>
-
-      <div *ngIf="control.errors?.['creditCard']" class="error">
-        Invalid credit card number (Luhn check failed or invalid length).
-      </div>
-
-      <div *ngIf="control.valid && control.value" class="success">
-        Valid credit card number!
-      </div>
+    
+      @if (control.errors?.['creditCard']) {
+        <div class="error">
+          Invalid credit card number (Luhn check failed or invalid length).
+        </div>
+      }
+    
+      @if (control.valid && control.value) {
+        <div class="success">
+          Valid credit card number!
+        </div>
+      }
     </div>
-
+    
     <div class="demo-container">
       <h3>Template-Driven Form (Directive)</h3>
       <label>
@@ -46,16 +49,20 @@ import {
           #templateCtrl="ngModel"
           placeholder="Type CC number..." />
       </label>
-
-      <div *ngIf="templateCtrl.errors?.['creditCard']" class="error">
-        Invalid credit card number.
-      </div>
-
-      <div *ngIf="templateCtrl.valid && templateCtrl.value" class="success">
-        Valid credit card number!
-      </div>
+    
+      @if (templateCtrl.errors?.['creditCard']) {
+        <div class="error">
+          Invalid credit card number.
+        </div>
+      }
+    
+      @if (templateCtrl.valid && templateCtrl.value) {
+        <div class="success">
+          Valid credit card number!
+        </div>
+      }
     </div>
-  `,
+    `,
   styleUrl: './credit-card-demo.component.scss',
 })
 export class CreditCardDemoComponent {

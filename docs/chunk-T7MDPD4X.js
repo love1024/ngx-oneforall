@@ -1,1 +1,0 @@
-var o={title:"Guards"},t=o;export{t as a};

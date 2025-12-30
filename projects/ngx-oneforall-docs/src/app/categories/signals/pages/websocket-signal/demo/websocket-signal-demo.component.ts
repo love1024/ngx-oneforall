@@ -12,16 +12,17 @@ import { webSocketSignal } from '@ngx-oneforall/signals/websocket-signal';
       <div class="status-bar" [class]="socket.status()">
         Status: {{ socket.status() | uppercase }}
       </div>
-
+    
       <div class="chat-box">
-        <div
-          *ngFor="let msg of chatHistory()"
-          class="message"
-          [class.sent]="msg.sent">
-          {{ msg.text }}
-        </div>
+        @for (msg of chatHistory(); track msg) {
+          <div
+            class="message"
+            [class.sent]="msg.sent">
+            {{ msg.text }}
+          </div>
+        }
       </div>
-
+    
       <div class="input-area">
         <input
           type="text"
@@ -33,19 +34,23 @@ import { webSocketSignal } from '@ngx-oneforall/signals/websocket-signal';
           Send
         </button>
       </div>
-
+    
       <div class="controls">
-        <button
-          (click)="connect()"
-          *ngIf="socket.status() === 'closed' || socket.status() === 'error'">
-          Reconnect
-        </button>
-        <button (click)="socket.close()" *ngIf="socket.status() === 'open'">
-          Disconnect
-        </button>
+        @if (socket.status() === 'closed' || socket.status() === 'error') {
+          <button
+            (click)="connect()"
+            >
+            Reconnect
+          </button>
+        }
+        @if (socket.status() === 'open') {
+          <button (click)="socket.close()">
+            Disconnect
+          </button>
+        }
       </div>
     </div>
-  `,
+    `,
   styleUrl: './websocket-signal-demo.component.scss',
 })
 export class WebSocketSignalDemoComponent {

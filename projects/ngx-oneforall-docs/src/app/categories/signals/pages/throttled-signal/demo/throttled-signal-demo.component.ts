@@ -1,12 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { throttledSignal } from '@ngx-oneforall/signals/throttled-signal';
 
 @Component({
   selector: 'app-throttled-signal-demo',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   template: `
     <div class="demo-container">
       <div class="input-group">

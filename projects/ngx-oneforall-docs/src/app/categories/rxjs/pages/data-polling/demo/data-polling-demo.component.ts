@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Subject, of, delay } from 'rxjs';
 import { dataPolling } from '@ngx-oneforall/rxjs/data-polling';
 
@@ -12,7 +12,7 @@ interface ServerData {
 @Component({
   selector: 'app-data-polling-demo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="demo-container">
       <h3>Data Polling Demo</h3>

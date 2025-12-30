@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { range, RangeValidator } from '@ngx-oneforall/validators/range';
 
 @Component({
   selector: 'app-range-demo',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RangeValidator],
+  imports: [ReactiveFormsModule, FormsModule, RangeValidator],
   template: `
     <div class="demo-container">
       <h3>Reactive Form</h3>
@@ -17,17 +17,21 @@ import { range, RangeValidator } from '@ngx-oneforall/validators/range';
           [formControl]="control"
           placeholder="Type here..." />
       </label>
-
-      <div *ngIf="control.errors?.['range'] as error" class="error">
-        Value must be between {{ error.min }} and {{ error.max }}. Current:
-        {{ error.actualValue }}
-      </div>
-
-      <div *ngIf="control.valid && control.value" class="success">
-        Valid value!
-      </div>
+    
+      @if (control.errors?.['range']; as error) {
+        <div class="error">
+          Value must be between {{ error.min }} and {{ error.max }}. Current:
+          {{ error.actualValue }}
+        </div>
+      }
+    
+      @if (control.valid && control.value) {
+        <div class="success">
+          Valid value!
+        </div>
+      }
     </div>
-
+    
     <div class="demo-container">
       <h3>Template-Driven Form (Directive)</h3>
       <label>
@@ -39,17 +43,21 @@ import { range, RangeValidator } from '@ngx-oneforall/validators/range';
           #templateCtrl="ngModel"
           placeholder="Type here..." />
       </label>
-
-      <div *ngIf="templateCtrl.errors?.['range'] as error" class="error">
-        Value must be between {{ error.min }} and {{ error.max }}. Current:
-        {{ error.actualValue }}
-      </div>
-
-      <div *ngIf="templateCtrl.valid && templateCtrl.value" class="success">
-        Valid value!
-      </div>
+    
+      @if (templateCtrl.errors?.['range']; as error) {
+        <div class="error">
+          Value must be between {{ error.min }} and {{ error.max }}. Current:
+          {{ error.actualValue }}
+        </div>
+      }
+    
+      @if (templateCtrl.valid && templateCtrl.value) {
+        <div class="success">
+          Valid value!
+        </div>
+      }
     </div>
-  `,
+    `,
   styleUrl: './range-demo.component.scss',
 })
 export class RangeDemoComponent {
