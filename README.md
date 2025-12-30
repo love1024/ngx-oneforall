@@ -1,42 +1,38 @@
 ![Project Image](https://github.com/love1024/ngx-oneforall/blob/main/projects/ngx-oneforall-docs/public/brand.png)
 
-`ngx-oneforall` is a comprehensive Angular library designed to streamline development by providing a collection of reusable utilities. It includes a wide range of features such as pipes, directives, services, decorators, constants, and more to enhance productivity and maintainability in Angular projects.
+**ngx-oneforall** is a collection of 80+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
 
-## Goal
+> **One For All** - A single library providing the essential blocks for modern Angular development.
 
-The goal of this library is to reduce boilerplate in Angular applications by offering a single, dedicated package containing the most frequently used features.
+## Key Features
 
-## Principles
+- **Performance First**: Every utility is written from scratch and optimized specifically for Angular.
+- **Tree-Shakable**: Import only what you need. Zero bundle bloat.
+- **Zero Dependencies**: Keeps your dependency tree clean and secure.
+- **SSR Ready**: Built for modern hydration and server-side rendering.
+- **Modern Angular**: Designed for Signals and Standalone Components.
 
-- The library focuses on performance and a small memory footprint by including only the most commonly used features. For advanced use cases, consider using a dedicated library.
-- Import only what you need—each feature is available as a submodule. This helps keep your build size small.
-- Server-side rendering is considered throughout the library, especially in directives, so you can use it confidently in SSR scenarios.
+## Why Use It?
 
-## Features
-
-- **Pipes**: Simplify data transformation in templates with a variety of reusable pipes.
-- **Directives**: Extend Angular's functionality with custom directives for common use cases.
-- **Services**: Leverage pre-built services to handle common application logic.
-- **Decorators**: Use custom decorators to reduce boilerplate code and improve readability.
-- **Constants and Enums**: Access predefined constants and enums to maintain consistency across your application.
+- **Stop Re-writing Utilities**: Avoid copy-pasting the same regex patterns, validators, and helper functions between projects.
+- **Focus on Business Logic**: Don't waste time maintaining generic boilerplate code. Use proven primitives.
+- **Better Developer Experience**: Fully typed APIs and consistent behavior make coding a joy.
 
 ## Installation
 
-Work in progress—package will be published soon.
+```bash
+npm install ngx-oneforall
+```
 
 ## Contributing
 
-Contributions are welcome! To contribute:
+Contributions are welcome!
 
 1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes and push the branch.
+2. Create a feature branch.
+3. Commit your changes.
 4. Submit a pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Elevate your Angular development experience with Ngx-OneForAll. Simplify, standardize, and accelerate your workflow today!
+MIT License. See [LICENSE](LICENSE) for details.
