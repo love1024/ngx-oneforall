@@ -13,13 +13,14 @@ yarn add ngx-oneforall
 
 # Usage
 
-**ngx-oneforall** is fully modular. You can import individual pipes, directives, or services directly into your standalone components.
+**ngx-oneforall** is modular by design. Import only what you need from its specific path.
 
 ### Example
 
 ```typescript
 import { Component } from '@angular/core';
-import { MemoizePipe, SomeService } from 'ngx-oneforall';
+import { MemoizePipe } from 'ngx-oneforall/pipes/memoize';
+import { SomeService } from 'ngx-oneforall/services/some-service';
 
 @Component({
   selector: 'app-component',
