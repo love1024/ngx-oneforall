@@ -25,11 +25,11 @@ describe('range', () => {
     const validator = range(5, 10);
 
     expect(validator(new FormControl(4))).toEqual({
-      range: { min: 5, max: 10, actualValue: 4 },
+      range: { reason: 'out_of_range', min: 5, max: 10, actualValue: 4 },
     });
 
     expect(validator(new FormControl(11))).toEqual({
-      range: { min: 5, max: 10, actualValue: 11 },
+      range: { reason: 'out_of_range', min: 5, max: 10, actualValue: 11 },
     });
   });
 
@@ -39,7 +39,7 @@ describe('range', () => {
     expect(validator(new FormControl('10'))).toBeNull();
 
     expect(validator(new FormControl('4'))).toEqual({
-      range: { min: 5, max: 10, actualValue: 4 },
+      range: { reason: 'out_of_range', min: 5, max: 10, actualValue: 4 },
     });
   });
 

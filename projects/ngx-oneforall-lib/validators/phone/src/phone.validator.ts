@@ -26,6 +26,8 @@ export const phoneValidator = (country: CountryCode): ValidatorFn => {
     const phone = control.value?.toString().trim();
     if (!phone) return null;
 
-    return isValidPhoneNumber(phone, country as any) ? null : { phone: true };
+    return isValidPhoneNumber(phone, country)
+      ? null
+      : { phone: { reason: 'invalid_format', country } };
   };
 };

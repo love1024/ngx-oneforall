@@ -28,6 +28,7 @@ export function range(min: number, max: number): ValidatorFn {
       ? null
       : {
           range: {
+            reason: 'out_of_range',
             min,
             max,
             actualValue: numberValue,

@@ -35,5 +35,12 @@ export const date: ValidatorFn = (
       : null;
   }
 
+  if (typeof value === 'number') {
+    const parsed = new Date(value);
+    return isNaN(parsed.getTime())
+      ? { date: { reason: 'invalid_date', actualValue: value } }
+      : null;
+  }
+
   return { date: { reason: 'unsupported_type', actualValue: value } };
 };

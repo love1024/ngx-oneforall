@@ -62,17 +62,15 @@ describe('minDate', () => {
     );
   });
 
-  it('should support numeric timestamps', () => {
+  it('should support numeric timestamp as min parameter', () => {
     const MIN_TS = new Date('2023-01-01').getTime();
     const validator = minDate(MIN_TS);
 
-    // Valid: timestamp after min
-    expect(
-      validator(new FormControl(new Date('2024-01-01').getTime()))
-    ).toBeNull();
+    // Valid: date after min
+    expect(validator(new FormControl(new Date('2024-01-01')))).toBeNull();
 
-    // Invalid: timestamp before min
-    const result = validator(new FormControl(new Date('2022-01-01').getTime()));
+    // Invalid: date before min
+    const result = validator(new FormControl(new Date('2022-01-01')));
     expect(result).toBeTruthy();
     expect(result!['minDate'].reason).toBe('date_before_min');
   });

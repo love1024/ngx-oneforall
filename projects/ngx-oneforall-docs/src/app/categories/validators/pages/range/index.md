@@ -30,4 +30,5 @@ You can use the `[range]` directive with template-driven forms. It accepts a tup
 - **min**: The minimum required value.
 - **max**: The maximum required value.
 
-Returns a validation error object `{ range: { min, max, actualValue } }` if validation fails, or `null` if valid.
+Returns `{ range: { reason: 'out_of_range', min, max, actualValue } }` if validation fails, or `null` if valid.
+

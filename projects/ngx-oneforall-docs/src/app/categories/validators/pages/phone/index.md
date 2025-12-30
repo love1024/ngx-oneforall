@@ -2,7 +2,7 @@
 
 It uses `libphonenumber-js` under the hood to validate phone numbers.
 
-> **Warning** : This validator depends on `libphonenumber-js`, which is 145kb in size. Using this validator will increase your bundle size. Proceed with caution if bundle size is a critical constraint.
+> **Warning**  This validator depends on `libphonenumber-js`, which is 145kb in size. Using this validator will increase your bundle size. Proceed with caution if bundle size is a critical constraint.
 
 ## Usage
 
@@ -34,4 +34,5 @@ You can use the `[phone]` attribute directive.
 
 `phoneValidator(country: CountryCode): ValidatorFn`
 
-Returns a validation error object `{ phone: true }` if validation fails, or `null` if valid.
+Returns `{ phone: { reason: 'invalid_format', country } }` if validation fails, or `null` if valid.
+

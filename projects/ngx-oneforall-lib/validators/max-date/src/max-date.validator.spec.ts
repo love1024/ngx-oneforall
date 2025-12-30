@@ -63,17 +63,15 @@ describe('maxDate', () => {
     );
   });
 
-  it('should support numeric timestamps', () => {
+  it('should support numeric timestamp as max parameter', () => {
     const MAX_TS = new Date('2023-01-01').getTime();
     const validator = maxDate(MAX_TS);
 
-    // Valid: timestamp before max
-    expect(
-      validator(new FormControl(new Date('2022-12-31').getTime()))
-    ).toBeNull();
+    // Valid: date before max
+    expect(validator(new FormControl(new Date('2022-12-31')))).toBeNull();
 
-    // Invalid: timestamp after max
-    const result = validator(new FormControl(new Date('2024-01-01').getTime()));
+    // Invalid: date after max
+    const result = validator(new FormControl(new Date('2024-01-01')));
     expect(result).toBeTruthy();
     expect(result!['maxDate'].reason).toBe('date_exceeds_max');
   });
