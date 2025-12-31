@@ -1,0 +1,1 @@
+import{Ja as i,ka as r}from"./chunk-4VR2QSN3.js";function o(t){return t!=null}var n=class t{validator=null;onChange;validate(a){return this.validator?this.validator(a):null}registerOnValidatorChange(a){this.onChange=a}ngOnChanges(){this.onChange&&this.onChange()}static \u0275fac=function(e){return new(e||t)};static \u0275dir=i({type:t,features:[r]})};export{o as a,n as b};
