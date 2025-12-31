@@ -1,4 +1,11 @@
 
+# Requirements
+
+- **Angular**: 17.1+ / 18.x / 19.x / 20.x / 21.x
+- **RxJS**: 7.x or 8.x
+
+# Installation
+
 Install the library via npm or yarn:
 
 ```bash
@@ -9,6 +16,14 @@ Or
 
 ```bash
 yarn add ngx-oneforall
+```
+
+## Optional Dependencies
+
+For phone validator, install:
+
+```bash
+npm install libphonenumber-js
 ```
 
 # Usage

@@ -23,6 +23,11 @@ Full API documentation and demos are available at: [https://love1024.github.io/n
 - **Focus on Business Logic**: Don't waste time maintaining generic boilerplate code. Use proven primitives.
 - **Better Developer Experience**: Fully typed APIs and consistent behavior make coding a joy.
 
+## Requirements
+
+- **Angular**: 17.1+ / 18.x / 19.x / 20.x / 21.x
+- **RxJS**: 7.x or 8.x
+
 ## Installation
 
 ```bash
@@ -33,6 +38,14 @@ Or
 
 ```bash
 yarn add ngx-oneforall
+```
+
+### Optional Dependencies
+
+For phone validator, install:
+
+```bash
+npm install libphonenumber-js
 ```
 
 ## Contributing
