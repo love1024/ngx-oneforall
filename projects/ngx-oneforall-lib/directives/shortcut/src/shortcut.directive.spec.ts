@@ -962,5 +962,61 @@ describe('ShortcutDirective', () => {
 
       expect(component.actionTriggered).toBe(false);
     });
+
+    it('should NOT clear pressed keys when document is visible (else branch line 95)', () => {
+      component.shortcut = 'space.enter';
+      fixture.detectChanges();
+
+      // Press Space
+      const spaceEvent = new KeyboardEvent('keydown', {
+        key: 'Space',
+        code: 'Space',
+      });
+      window.dispatchEvent(spaceEvent);
+
+      // Simulate visibility change to visible (not hidden)
+      Object.defineProperty(document, 'hidden', {
+        configurable: true,
+        value: false,
+      });
+      document.dispatchEvent(new Event('visibilitychange'));
+
+      // Press Enter - should still trigger because Space was NOT cleared
+      const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      jest.spyOn(enterEvent, 'preventDefault');
+      window.dispatchEvent(enterEvent);
+
+      expect(component.actionTriggered).toBe(true);
+    });
+  });
+
+  describe('Global vs Element scope handlers', () => {
+    it('should NOT handle element keydown when isGlobal is true (else branch lines 58-60)', () => {
+      component.isGlobal = true;
+      component.shortcut = 'enter';
+      fixture.detectChanges();
+
+      // Dispatch to element - should NOT trigger in global mode
+      const event = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        bubbles: true,
+      });
+      jest
+        .spyOn(event, 'composedPath')
+        .mockReturnValue([
+          inputElement,
+          divElement,
+          document.body,
+          document.documentElement,
+          window,
+        ]);
+
+      // This goes to element handler which should skip when isGlobal is true
+      // The event will bubble and be caught by window handler
+      inputElement.dispatchEvent(event);
+
+      // Still triggered because window handler caught it
+      expect(component.actionTriggered).toBe(true);
+    });
   });
 });

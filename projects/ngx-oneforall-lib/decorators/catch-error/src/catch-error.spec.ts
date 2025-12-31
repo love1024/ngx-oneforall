@@ -85,6 +85,12 @@ describe('CatchError Decorator', () => {
       const result = instance.syncMethod(false);
       expect(result).toBe('success');
     });
+
+    it('should not log if logError is false for sync method', () => {
+      const result = instance.noLogMethod();
+      expect(result).toBe('fallback');
+      expect(consoleSpy).not.toHaveBeenCalled();
+    });
   });
 
   describe('Asynchronous Methods', () => {

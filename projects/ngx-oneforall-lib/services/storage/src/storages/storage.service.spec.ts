@@ -132,4 +132,27 @@ describe('WebStorageService', () => {
     expect(storage.removeItem).toHaveBeenCalledWith('app_bar');
     expect(storage.removeItem).not.toHaveBeenCalledWith('other');
   });
+
+  it('should handle null keys in keys() method (else branch line 45)', () => {
+    // Mock storage that returns null for some keys
+    storage = {
+      getItem: jest.fn(() => null),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+      key: jest.fn((i: number) => {
+        // Return null for index 1 to test the else branch
+        if (i === 0) return 'valid';
+        if (i === 1) return null; // This triggers the else branch
+        return null;
+      }),
+      length: 2,
+    };
+    service = new WebStorageService(storage);
+
+    const keys = service.keys();
+
+    // Should only include 'valid', skipping the null key
+    expect(keys).toEqual(['valid']);
+  });
 });

@@ -1,4 +1,11 @@
-import { findType, isObject } from './find-type';
+import {
+  findType,
+  isObject,
+  isDate,
+  isError,
+  isArrayBuffer,
+  isRegexp,
+} from './find-type';
 import { Types } from '../../../constants/src/types';
 
 describe('findType', () => {
@@ -131,5 +138,29 @@ describe('findType', () => {
     // JS quirk: typeof null === 'object', but implementation guards with !!value
     expect(typeof null).toBe('object');
     expect(isObject(null)).toBe(false);
+  });
+
+  it('should detect Date objects', () => {
+    expect(isDate(new Date())).toBe(true);
+    expect(isDate('2021-01-01')).toBe(false);
+    expect(isDate({})).toBe(false);
+  });
+
+  it('should detect Error objects', () => {
+    expect(isError(new Error('test'))).toBe(true);
+    expect(isError(new TypeError('test'))).toBe(true);
+    expect(isError({ message: 'not an error' })).toBe(false);
+  });
+
+  it('should detect ArrayBuffer objects', () => {
+    expect(isArrayBuffer(new ArrayBuffer(8))).toBe(true);
+    expect(isArrayBuffer(new Uint8Array(8))).toBe(false);
+    expect(isArrayBuffer([])).toBe(false);
+  });
+
+  it('should detect RegExp objects', () => {
+    expect(isRegexp(/test/)).toBe(true);
+    expect(isRegexp(new RegExp('test'))).toBe(true);
+    expect(isRegexp('test')).toBe(false);
   });
 });

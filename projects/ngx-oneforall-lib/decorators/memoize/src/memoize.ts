@@ -119,6 +119,7 @@ export function memoize<Args extends unknown[] = unknown[], R = unknown>(
 function evictIfNeeded<K, V>(cache: Map<K, V>, maxSize?: number): void {
   if (maxSize && cache.size >= maxSize) {
     const firstKey = cache.keys().next().value;
+    /* istanbul ignore else -- defensive check, always true when cache.size >= maxSize */
     if (firstKey !== undefined) {
       cache.delete(firstKey);
     }

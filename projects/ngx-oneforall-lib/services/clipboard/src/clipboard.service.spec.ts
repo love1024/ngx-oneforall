@@ -96,6 +96,33 @@ describe('ClipboardService', () => {
       const result = await service.copy('test text');
       expect(result).toBe(false);
     });
+
+    it('should use fallback when Clipboard API is not available', async () => {
+      TestBed.resetTestingModule();
+
+      // Set navigator without clipboard property
+      Object.defineProperty(window, 'navigator', {
+        value: {},
+        writable: true,
+        configurable: true,
+      });
+
+      TestBed.configureTestingModule({
+        providers: [
+          ClipboardService,
+          { provide: DOCUMENT, useValue: documentMock },
+          { provide: PLATFORM_ID, useValue: 'browser' },
+        ],
+      });
+      const serviceWithoutClipboard = TestBed.inject(ClipboardService);
+      documentMock.execCommand.mockReturnValue(true);
+
+      const result = await serviceWithoutClipboard.copy('test text');
+
+      expect(documentMock.createElement).toHaveBeenCalledWith('textarea');
+      expect(documentMock.execCommand).toHaveBeenCalledWith('copy');
+      expect(result).toBe(true);
+    });
   });
 
   describe('read', () => {

@@ -1,20 +1,14 @@
-import {
-  inject,
-  Injectable,
-  Injector,
-  linkedSignal,
-  DOCUMENT,
-} from '@angular/core';
+import { inject, Injectable, Injector, signal, DOCUMENT } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { fromEvent, map, merge } from 'rxjs';
 
 @Injectable()
 export class NetworkStatusService {
-  private readonly isNetworkOnline = linkedSignal(
-    () => this.window?.navigator?.onLine ?? true
-  );
-  private readonly injector = inject(Injector);
   private readonly window = inject(DOCUMENT).defaultView;
+  private readonly injector = inject(Injector);
+  private readonly isNetworkOnline = signal(
+    this.window?.navigator?.onLine ?? true
+  );
 
   constructor() {
     this.subscribeToNetworkStatus();

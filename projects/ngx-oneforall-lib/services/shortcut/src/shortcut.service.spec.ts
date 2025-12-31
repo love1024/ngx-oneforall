@@ -342,6 +342,36 @@ describe('ShortcutService', () => {
 
       expect(triggered).toBe(false);
     });
+
+    it('should NOT clear pressedKeys on visibilitychange when document is NOT hidden (else branch)', () => {
+      let triggered = false;
+      subscription = service
+        .observe({ key: 'shift.enter', isGlobal: true })
+        .subscribe(() => {
+          triggered = true;
+        });
+
+      // Press Shift
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Shift', shiftKey: true })
+      );
+
+      // Mock document.hidden as false
+      Object.defineProperty(document, 'hidden', {
+        configurable: true,
+        get: () => false,
+      });
+
+      // Trigger visibilitychange (should NOT clear pressed keys since not hidden)
+      document.dispatchEvent(new Event('visibilitychange'));
+
+      // Press Enter (Shift should still be pressed)
+      window.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Enter', shiftKey: true })
+      );
+
+      expect(triggered).toBe(true);
+    });
   });
 
   describe('Element fallback', () => {

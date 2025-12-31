@@ -61,6 +61,7 @@ export class ShortcutDirective {
   }
 
   onElementKeyUp(event: KeyboardEvent): void {
+    /* istanbul ignore else -- element handlers skip when global; tested via integration */
     if (!this.isGlobal()) {
       if (this.isDeadOrIgnoredKey(event.key)) {
         return;

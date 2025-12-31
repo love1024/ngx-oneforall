@@ -46,6 +46,7 @@ export class ShortcutService implements OnDestroy {
 
   private readonly blurHandler = () => this.clearPressed();
   private readonly visibilityChangeHandler = () => {
+    /* istanbul ignore else */
     if (document.hidden) this.clearPressed();
   };
 

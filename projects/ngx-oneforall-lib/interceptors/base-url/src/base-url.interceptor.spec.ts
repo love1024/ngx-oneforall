@@ -139,6 +139,17 @@ describe('BaseUrlInterceptor', () => {
     httpTesting.expectOne('https://api.example.com/users').flush({});
   });
 
+  it('should handle override with URL that does not start with slash', () => {
+    configureTestBed({
+      baseUrl: 'https://api.example.com',
+      overrides: [{ startWith: 'auth', url: 'https://auth.example.com' }],
+    });
+
+    // URL without leading slash - tests else branch of requestUrl.startsWith('/')
+    http.get('auth/login').subscribe();
+    httpTesting.expectOne('https://auth.example.com/auth/login').flush({});
+  });
+
   it('should handle multiple overrides and pick first match', () => {
     configureTestBed({
       baseUrl: 'https://api.example.com',

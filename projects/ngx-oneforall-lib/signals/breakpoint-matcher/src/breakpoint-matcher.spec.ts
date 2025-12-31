@@ -135,6 +135,18 @@ describe('breakpointMatcher', () => {
       expect(window.matchMedia).toHaveBeenCalledWith('(min-width: 768px)');
     });
   });
+
+  it('should return false signal on non-browser platform (else branch line 41)', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{ provide: PLATFORM_ID, useValue: 'server' }],
+    });
+
+    TestBed.runInInjectionContext(() => {
+      const signal = breakpointMatcher(BREAKPOINT.MD);
+      expect(signal()).toBe(false);
+    });
+  });
 });
 
 describe('breakpointMatcherMultiple', () => {
@@ -258,6 +270,20 @@ describe('breakpointMatcherMultiple', () => {
     handlers[1]({ matches: true });
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent.trim()).toBe('true-true');
+  });
+
+  it('should return default result on non-browser platform (else branch line 79)', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{ provide: PLATFORM_ID, useValue: 'server' }],
+    });
+
+    TestBed.runInInjectionContext(() => {
+      const signal = breakpointMatcherMultiple([BREAKPOINT.MD, BREAKPOINT.LG]);
+      expect(signal().some).toBe(false);
+      expect(signal().all).toBe(false);
+      expect(signal().breakpoints).toEqual({});
+    });
   });
 });
 

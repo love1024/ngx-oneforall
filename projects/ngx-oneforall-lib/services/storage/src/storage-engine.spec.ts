@@ -118,4 +118,23 @@ describe('StorageEngine', () => {
     const all = engine.getAll();
     expect(all.size).toBe(0);
   });
+
+  it('should skip undefined values in getAll (else branch)', () => {
+    // Custom transformer that returns undefined for certain values
+    const transformer: BaseStorageTransformer<string | undefined> = {
+      serialize: (v: string | undefined) => v ?? '',
+      deserialize: (v: string) => (v === '' ? undefined : v),
+    };
+
+    // Store an empty string which will deserialize to undefined
+    engine.set('valid', 'hello', transformer);
+    engine.set('invalid', '', transformer);
+
+    const all = engine.getAll(transformer);
+
+    // Only 'valid' should be in the map since 'invalid' deserializes to undefined
+    expect(all.size).toBe(1);
+    expect(all.get('valid')).toBe('hello');
+    expect(all.has('invalid')).toBe(false);
+  });
 });

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, PLATFORM_ID } from '@angular/core';
 import {
   TestBed,
   ComponentFixture,
@@ -173,5 +173,21 @@ describe('TestStorageSignalComponent', () => {
 
   it('should throw if not in injection context and no injector provided', () => {
     expect(() => storageSignal('noInjector', 'value')).toThrow();
+  });
+
+  it('should return default value on SSR platform without init (else branch line 57)', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{ provide: PLATFORM_ID, useValue: 'server' }],
+    });
+
+    // Use runInInjectionContext to test with server platform
+    TestBed.runInInjectionContext(() => {
+      const signal = storageSignal('ssrKey', 'defaultValue');
+
+      // Should return default value without trying to access storage
+      // since isPlatformBrowser returns false for 'server' platform
+      expect(signal()).toBe('defaultValue');
+    });
   });
 });

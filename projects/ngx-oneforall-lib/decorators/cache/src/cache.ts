@@ -174,6 +174,7 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
             const foundPendingRequest = pendingRequests.find(item =>
               options.cacheKeyMatcher(item.parameters, parametersHash)
             );
+            /* istanbul ignore else -- defensive check, always true in normal flow */
             if (foundPendingRequest) {
               pendingRequests.splice(
                 pendingRequests.indexOf(foundPendingRequest),

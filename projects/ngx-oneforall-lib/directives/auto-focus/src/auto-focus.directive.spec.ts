@@ -54,4 +54,20 @@ describe('AutoFocusDirective', () => {
     directive.hostBlurred();
     expect(directive.isFocused()).toBe(false);
   });
+
+  it('should not call focus on element when isFocused becomes false (else branch)', () => {
+    // First blur the element
+    inputEl.blur();
+    directive.isFocused.set(false);
+
+    // Spy on focus
+    const focusSpy = jest.spyOn(inputEl, 'focus');
+
+    // Trigger the effect by changing and accessing the signal
+    directive.hostBlurred();
+    fixture.detectChanges();
+
+    // Focus should not have been called since isFocused is false
+    expect(focusSpy).not.toHaveBeenCalled();
+  });
 });

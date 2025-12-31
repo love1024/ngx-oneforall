@@ -123,4 +123,25 @@ describe('VisibilityChangeDirective', () => {
     directive.ngOnDestroy();
     expect(disconnectSpy).toHaveBeenCalled();
   });
+
+  it('should NOT emit when visibility has not changed (else branch line 79)', () => {
+    // First, set to visible
+    const entry = {
+      isIntersecting: true,
+      target: hostEl,
+    } as unknown as IntersectionObserverEntry;
+
+    observerCallback([entry], {} as IntersectionObserver);
+    expect(component.event?.isVisible).toBe(true);
+
+    // Reset event tracking
+    const emitSpy = jest.spyOn(directive.visibilityChange, 'emit');
+    emitSpy.mockClear();
+
+    // Fire callback again with same visibility (isIntersecting: true again)
+    observerCallback([entry], {} as IntersectionObserver);
+
+    // Should NOT emit since visibility hasn't changed
+    expect(emitSpy).not.toHaveBeenCalled();
+  });
 });
