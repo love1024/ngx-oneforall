@@ -10,7 +10,8 @@
     "test": "jest --coverage",
     "serve:ssr:ngx-oneforall-docs": "node dist/ngx-oneforall-docs/server/server.mjs",
     "lint": "ng lint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "publish": "cd dist/ngx-oneforall && npm publish --access public"
   },
   "private": true,
   "dependencies": {
