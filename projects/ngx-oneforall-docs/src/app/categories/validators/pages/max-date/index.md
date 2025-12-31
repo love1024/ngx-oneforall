@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/validators/max-date&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `maxDate` is a validator that ensures the control's value is a date less than or equal to a specified maximum date.
 
 ## Usage

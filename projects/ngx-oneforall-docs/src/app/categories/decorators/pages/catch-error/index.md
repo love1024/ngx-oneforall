@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/decorators/catch-error&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `CatchError` decorator catches errors and provides fallback behavior for sync, Promise, and Observable methods.
 
 ### Parameters

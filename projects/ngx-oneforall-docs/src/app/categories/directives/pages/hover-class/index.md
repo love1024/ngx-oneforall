@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/directives/hover-class&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 Dynamically applies CSS classes on hover with reactive updates and toggle support.
 
 ## Features

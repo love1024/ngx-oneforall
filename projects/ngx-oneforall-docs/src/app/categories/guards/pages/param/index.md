@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/guards/param&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `paramGuard` is a functional guard that validates route parameters (path variables) before allowing activation of a route. It works similarly to `queryParamGuard` but for route parameters.
 
 ## Usage

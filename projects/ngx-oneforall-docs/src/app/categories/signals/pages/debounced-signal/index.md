@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/debounced-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `debouncedSignal` creates a read-only signal that delays updates until the source signal stops changing for a specified duration. Ideal for search inputs, form validation, and window resize handling.
 
 ## Usage

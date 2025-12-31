@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/pipes/time-ago&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `TimeAgoPipe` displays relative time (e.g., "2 hours ago", "in 3 days"). Supports live updates, future dates, and customizable labels.
 
 ### Usage

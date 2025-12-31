@@ -1,6 +1,6 @@
 {
   "name": "ngx-oneforall",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A comprehensive Angular utility library with decorators, directives, guards, interceptors, signals, pipes, validators, and more.",
   "keywords": [
     "angular",
@@ -32,12 +32,16 @@
     "@angular/common": "^17.1.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0",
     "@angular/core": "^17.1.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0",
     "@angular/forms": "^17.1.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0",
+    "@angular/platform-browser": "^17.1.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0",
     "@angular/router": "^17.1.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0",
     "rxjs": "^7.0.0 || ^8.0.0",
     "libphonenumber-js": "^1.10.0"
   },
   "peerDependenciesMeta": {
     "@angular/forms": {
+      "optional": true
+    },
+    "@angular/platform-browser": {
       "optional": true
     },
     "@angular/router": {

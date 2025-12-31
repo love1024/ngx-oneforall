@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/pipes/highlight-search&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `HighlightSearchPipe` highlights search matches by wrapping them in customizable HTML tags. Supports optional CSS classes for styling.
 
 ### Usage

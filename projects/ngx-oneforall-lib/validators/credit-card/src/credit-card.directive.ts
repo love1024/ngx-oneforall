@@ -1,5 +1,5 @@
 import { Directive, forwardRef } from '@angular/core';
-import { BaseValidator } from '../../base/base.validator';
+import { BaseValidator } from 'ngx-oneforall/validators/base';
 import { creditCard } from './credit-card.validator';
 import { NG_VALIDATORS } from '@angular/forms';
 

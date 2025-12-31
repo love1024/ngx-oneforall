@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/constants&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 =
 The `Types` enum above provides a comprehensive list of possible JavaScript and TypeScript types, including primitives like `String` and `Number`, complex structures like `Map` and `Set`, as well as iterators and typed arrays. Using such enums can help with type checking, validation, and implementing utility functions that depend on type information.
 ``` typescript

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/storage-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `storageSignal` creates a reactive signal that automatically syncs with browser storage (`localStorage` or `sessionStorage`). Changes to the signal persist to storage, and the signal can optionally sync across browser tabs.
 
 ## Usage

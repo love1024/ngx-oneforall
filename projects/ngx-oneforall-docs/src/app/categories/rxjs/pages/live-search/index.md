@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/rxjs/live-search&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `liveSearch` is an RxJS operator for implementing live search functionality with automatic debouncing, duplicate filtering, and request cancellation.
 
 It combines `debounceTime`, `distinctUntilChanged`, and `switchMap` to provide an optimal search experience.

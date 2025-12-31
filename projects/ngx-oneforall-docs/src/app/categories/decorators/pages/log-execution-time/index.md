@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/decorators/log-execution-time&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `LogExecutionTime` decorator logs method execution time. Works with sync, Promise, and Observable methods.
 
 ### Parameters

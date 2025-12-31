@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/rxjs/debug&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `debug` is a utility operator that provides styled logging for RxJS streams. It wraps the `tap` operator to log `next`, `error`, and `complete` events with a custom tag and distinct CSS styles, making it easier to debug complex observable chains in the browser console.
 
 ## Usage

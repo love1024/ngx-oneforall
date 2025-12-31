@@ -2,7 +2,7 @@ import { Directive, effect, forwardRef, input } from '@angular/core';
 import { NG_VALIDATORS } from '@angular/forms';
 import { isPresent } from 'ngx-oneforall/utils/is-present';
 import { range } from './range.validator';
-import { BaseValidator } from '../../base/base.validator';
+import { BaseValidator } from 'ngx-oneforall/validators/base';
 
 @Directive({
   selector: '[range][formControlName],[range][formControl],[range][ngModel]',

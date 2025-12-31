@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/pipes/safe-html&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `SafeHtmlPipe` bypasses Angular's HTML sanitization to render trusted HTML content.
 
 > **⚠️ Security Warning** Only use with trusted content. User input must be sanitized server-side.

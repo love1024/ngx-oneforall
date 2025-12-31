@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/decorators/debounce&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `debounce` decorator delays method execution until a specified time has passed since the last call. Supports leading/trailing edge execution.
 
 ### Parameters

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/utils/base64&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 URL-safe Base64 encoding utilities for safely transmitting data in URLs, query parameters, and tokens.
 
 ## Usage

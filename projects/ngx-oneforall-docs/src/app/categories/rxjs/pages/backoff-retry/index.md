@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/rxjs/backoff-retry&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `backOffRetry` RxJS operator automatically retries failed observables with an exponential backoff strategy. It is essential for handling transient failures in network requests or unstable services.
 
 ## Features

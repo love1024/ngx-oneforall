@@ -1,6 +1,6 @@
 import { forwardRef, Directive } from '@angular/core';
 import { NG_VALIDATORS } from '@angular/forms';
-import { BaseValidator } from '../../base/base.validator';
+import { BaseValidator } from 'ngx-oneforall/validators/base';
 import { number } from './number.validator';
 
 @Directive({

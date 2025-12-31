@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/validators/phone&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `phone` is a validator that checks if the control's value is a valid phone number for a specified country code.
 
 It uses `libphonenumber-js` under the hood to validate phone numbers.

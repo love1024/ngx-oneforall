@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/utils/is-present&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 Type guard utility that checks if a value is neither `null` nor `undefined`. Narrows the type to `NonNullable<T>`.
 
 ## Usage

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/decorators/only-in-browser&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `OnlyInBrowser` decorator ensures methods only execute in browser environment, not during SSR.
 
 ### Parameters

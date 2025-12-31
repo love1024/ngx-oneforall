@@ -1,5 +1,5 @@
 import { Directive, effect, forwardRef, input } from '@angular/core';
-import { BaseValidator } from '../../base/base.validator';
+import { BaseValidator } from 'ngx-oneforall/validators/base';
 import { minDate } from './min-date.validator';
 import { NG_VALIDATORS } from '@angular/forms';
 import { isPresent } from 'ngx-oneforall/utils/is-present';

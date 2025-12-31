@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/constants&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `ngx-oneforall/constants` package provides a constant for sort directions, helping you maintain consistency across your sorting logic.
 
 ## Usage

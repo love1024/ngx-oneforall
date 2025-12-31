@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/validators/range-length&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `rangeLength` is a validator that requires the length of the value (string, array, or number digits) to be within a specified range.
 
 ## Usage

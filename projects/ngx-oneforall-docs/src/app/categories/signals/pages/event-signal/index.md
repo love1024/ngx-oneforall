@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/event-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `eventSignal` creates a reactive signal from DOM events. It automatically handles event listener setup, cleanup, and Angular zone execution.
 
 ## Usage

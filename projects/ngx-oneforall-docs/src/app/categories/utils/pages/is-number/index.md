@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/utils/is-number&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 Type guard utilities for validating numeric values. Provides robust checking for number primitives, numeric strings, and Number objects.
 
 ## Usage

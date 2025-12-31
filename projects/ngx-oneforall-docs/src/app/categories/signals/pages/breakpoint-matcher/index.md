@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/breakpoint-matcher&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `breakpointMatcher` creates a reactive signal that tracks viewport size against media queries. It simplifies responsive design by providing real-time breakpoint matching with Angular signals.
 
 ## Usage

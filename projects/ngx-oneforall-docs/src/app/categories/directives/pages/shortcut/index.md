@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/directives/shortcut&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 Binds keyboard shortcuts to trigger actions with support for modifiers and global/scoped listening.
 
 ## Features

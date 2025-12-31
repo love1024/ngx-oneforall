@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/throttled-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `throttledSignal` creates a read-only signal that limits how often the source signal's updates are emitted. It ensures updates occur at most once per specified interval, regardless of how frequently the source changes.
 
 ## Usage

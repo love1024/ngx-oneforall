@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/utils/download-link&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `downloadLink` is a utility function that programmatically triggers a file download by creating a temporary anchor element.
 
 ## Usage

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/constants&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `ngx-oneforall/constants` package provides a set of common regular expressions for data validation. These constants help you maintain consistency and avoid duplicate regex definitions across your application.
 
 ## Usage

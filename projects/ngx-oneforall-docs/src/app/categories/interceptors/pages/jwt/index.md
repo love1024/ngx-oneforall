@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/interceptors/jwt&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `withJwtInterceptor` attaches JWT tokens to outgoing HTTP requests for allowed domains.
 
 ## Features

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/route-param-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `routeParamSignal` creates a reactive signal that tracks route parameters. It automatically updates when the URL's route parameters change, eliminating manual subscriptions.
 
 ## Usage

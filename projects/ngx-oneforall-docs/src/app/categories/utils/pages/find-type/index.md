@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/utils/find-type&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 Comprehensive type detection utility that returns a `Types` enum value for any JavaScript value. Supports all primitives, collections, typed arrays, and iterators.
 
 ## Usage

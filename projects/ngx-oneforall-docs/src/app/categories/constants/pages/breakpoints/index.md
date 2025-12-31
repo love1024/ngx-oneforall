@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/constants&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `ngx-oneforall/constants` package provides a set of constants for responsive design breakpoints, including their names, numeric values, and CSS media query strings.
 
 ## Usage

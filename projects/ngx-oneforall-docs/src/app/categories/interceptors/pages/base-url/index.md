@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/interceptors/base-url&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `withBaseUrlInterceptor` is an Angular HTTP interceptor that automatically prepends a base URL to all relative HTTP requests. It eliminates repetitive URL construction across your application.
 
 ## Features

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/interval-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `intervalSignal` creates a controllable interval timer that updates a signal. It runs the timer outside Angular's zone for performance and only triggers change detection when updating the signal.
 
 ## Usage

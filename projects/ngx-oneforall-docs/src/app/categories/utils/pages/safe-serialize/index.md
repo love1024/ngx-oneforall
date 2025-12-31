@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/utils/safe-serialize&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 Safely serializes any JavaScript value to a JSON string, including non-JSON types like functions, symbols, BigInt, and circular references. Produces deterministic output for caching and memoization.
 
 ## Usage

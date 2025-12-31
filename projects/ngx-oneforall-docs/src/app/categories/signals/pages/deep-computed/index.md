@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/deep-computed&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `deepComputed` creates a computed signal that allows readonly nested property access using proxy syntax. This is useful for accessing deeply nested properties as signals, rather than repeatedly calling the root signal.
 
 > **Note**

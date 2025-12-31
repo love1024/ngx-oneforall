@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/interceptors/encryption&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `withEncryptionInterceptor` encrypts request bodies and decrypts response bodies using a configurable adapter.
 
 ## Features

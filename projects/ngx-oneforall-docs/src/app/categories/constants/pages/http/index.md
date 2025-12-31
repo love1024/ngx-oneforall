@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/constants&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `ngx-oneforall/constants` package provides sets of constants for common HTTP methods and headers. Using these constants helps prevent typos and improves code maintainability.
 
 ## Usage

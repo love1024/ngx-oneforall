@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/constants&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `ngx-oneforall/constants` package provides sets of constants for keyboard keys and their corresponding numeric codes. These are useful for handling keyboard events in a type-safe and readable way.
 
 ## Usage

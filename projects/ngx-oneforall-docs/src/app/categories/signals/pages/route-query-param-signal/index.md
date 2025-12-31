@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/route-query-param-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `routeQueryParamSignal` creates a reactive signal that tracks URL query parameters. It automatically updates when query strings change, eliminating manual subscriptions.
 
 ## Usage

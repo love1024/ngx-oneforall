@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/utils/unique-component-id&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 Generates unique ID strings for Angular components. Useful for form elements, ARIA attributes, and dynamically created components.
 
 ## Usage

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/validators/credit-card&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `creditCard` is a validator that checks if the control's value is a valid credit card number using the Luhn algorithm.
 
 It enforces specific PAN lengths (13, 15, 16, 19) and validates 15-digit cards as American Express (must start with 34 or 37). It also handles non-numeric characters (separators) by stripping them before validation.

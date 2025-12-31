@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/rxjs/data-polling&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `dataPolling` is an RxJS operator that automatically polls a data source at specified intervals.
 
 It uses `timer` and `switchMap` to repeatedly call a loader function, making it perfect for real-time data updates.

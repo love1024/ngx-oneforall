@@ -4,7 +4,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { date } from '../../date/src/date.validator';
+import { date } from 'ngx-oneforall/validators/date';
 
 /**
  * Validator that requires the control's value to be greater than or equal to a minimum date.

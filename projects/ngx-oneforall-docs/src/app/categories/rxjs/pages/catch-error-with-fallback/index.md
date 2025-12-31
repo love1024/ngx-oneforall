@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/rxjs/catch-error-with-fallback&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `catchErrorWithFallback` operator provides a clean, flexible way to handle errors in RxJS streams by automatically switching to a fallback value, observable, or dynamically generated result when an error occurs.
 
 ## Why Use catchErrorWithFallback?

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/websocket-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `webSocketSignal` creates a reactive interface for WebSocket connections. It manages the connection lifecycle and provides signals for messages, status, and errors.
 
 ## Usage

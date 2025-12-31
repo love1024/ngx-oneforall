@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/pipes/bytes&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `BytesPipe` converts a number (in bytes) into a human-readable string with appropriate units (B, KB, MB, GB, TB, PB). It automatically selects the best unit and formats the number with configurable decimal places.
 
 ### Usage

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/router-event-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `routerEventSignal` creates a reactive signal that tracks Angular Router events. It provides easy access to the current event and computed helpers for common navigation states.
 
 ## Usage

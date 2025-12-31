@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/pipes/call&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `CallPipe` invokes a function directly from the template with pure pipe caching. This prevents unnecessary change detection cycles since the function is only re-evaluated when its reference or arguments change.
 
 ### Usage

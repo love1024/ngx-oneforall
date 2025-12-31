@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/interceptors/correlation-id&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `withCorrelationIdInterceptor` is an Angular HTTP interceptor that automatically adds a unique correlation ID header to each HTTP request. It enables request tracking, debugging, and distributed tracing across services.
 
 ## Features

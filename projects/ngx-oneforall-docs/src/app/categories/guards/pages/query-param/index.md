@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/guards/query-param&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 
 
 `queryParamGuard` is a functional guard that validates query parameters before allowing activation of a route. It can check for required parameters and apply custom logic via a predicate function.

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/signals/state-signal&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `stateSignal` creates a deep writable signal that allows nested property access and updates using proxy syntax. Updates to nested properties automatically propagate (bubble) up to the root signal.
 
 ## Usage

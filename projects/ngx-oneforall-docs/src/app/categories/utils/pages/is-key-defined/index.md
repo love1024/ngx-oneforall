@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/utils/is-key-defined&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 Type guard utility that checks if an object has a defined (non-undefined) value for a given key, with TypeScript type narrowing.
 
 ## Usage

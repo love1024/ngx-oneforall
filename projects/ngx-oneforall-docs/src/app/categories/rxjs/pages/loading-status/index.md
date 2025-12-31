@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/rxjs/loading-status&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 `loadingStatus` is an RxJS operator that simplifies tracking the state of an asynchronous operation (like an API call). It automatically catches errors and provides a unified `ResourceResult<T>` object containing the loading status, the data, and any potential error.
 
 ## Usage

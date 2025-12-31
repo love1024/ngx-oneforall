@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/guards/unsaved-changes&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 
 
 Unsaved changes guards are essential for protecting users from accidentally losing their work when navigating away from a page with unsaved modifications. This guard leverages the native `window.confirm` dialog to prompt the user for confirmation.

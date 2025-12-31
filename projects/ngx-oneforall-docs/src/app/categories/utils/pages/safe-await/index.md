@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/utils/safe-await&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 Go-style error handling for async operations. Returns a tuple `[result, error]` instead of throwing, eliminating try/catch blocks.
 
 ## Usage

@@ -1,3 +1,5 @@
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/pipes/first-error-key&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+
 The `FirstErrorKeyPipe` extracts the first validation error key from a form control's errors. It supports optional priority ordering to control which error displays first.
 
 ### Usage
