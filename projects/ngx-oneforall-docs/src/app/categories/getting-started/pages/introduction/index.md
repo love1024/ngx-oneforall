@@ -11,7 +11,7 @@
 # Key Features
 
 ### Performance & Efficiency
-Every utility is written from scratch and optimized specifically for Angular. We prioritize memory efficiency and runtime performance rather than just wrapping existing heavy libraries.
+Every utility is written from scratch and optimized specifically for Angular. We prioritize memory efficiency and runtime performance rather than just wrapping existing heavy libraries. Maximum size of a utility is 3kb gzipped.
 
 ### Modular & Tree-shakable
 Import only what you use. The library is fully tree-shakable, so adding one utility doesn't bloat your bundle with the rest of the library.

@@ -1,8 +1,3 @@
-
-
-
-# Installation
-
 Install the library via npm or yarn:
 
 ```bash

@@ -12,14 +12,14 @@ Full API documentation and demos are available at: [https://love1024.github.io/n
 ## Key Features
 
 - **Performance First**: Every utility is written from scratch and optimized specifically for Angular.
-- **Tree-Shakable**: Import only what you need. Zero bundle bloat.
+- **Tree-Shakable**: Import only what you need. Zero bundle bloat—no utility exceeds 3kb gzipped.
 - **Zero Dependencies**: Keeps your dependency tree clean and secure.
 - **SSR Ready**: Built for modern hydration and server-side rendering.
 - **Modern Angular**: Designed for Signals and Standalone Components.
 
 ## Why Use It?
 
-- **Stop Re-writing Utilities**: Avoid copy-pasting the same regex patterns, validators, and helper functions between projects.
+- **Stop Re-writing Utilities**: Avoid copy-pasting the same services, directives, validators, and helper functions between projects.
 - **Focus on Business Logic**: Don't waste time maintaining generic boilerplate code. Use proven primitives.
 - **Better Developer Experience**: Fully typed APIs and consistent behavior make coding a joy.
 
