@@ -13,9 +13,6 @@
   <a href="https://bundlephobia.com/package/ngx-oneforall">
     <img src="https://img.shields.io/badge/max_utility_size-3kb-success?style=flat-square" alt="size" />
   </a>
-  <a href="https://github.com/love1024/ngx-oneforall/stargazers">
-    <img src="https://img.shields.io/github/stars/love1024/ngx-oneforall?style=social" alt="GitHub stars" />
-  </a>
 </p>
 
 **ngx-oneforall** is a collection of 80+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
