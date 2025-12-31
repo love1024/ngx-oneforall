@@ -40,3 +40,12 @@ Don't waste time maintaining generic boilerplate code. Use these proven primitiv
 
 ### Better Developer Experience
 Fully typed APIs and consistent behavior make these utilities predictable and easy to work with. You get strict typing and comprehensive documentation right in your IDE.
+
+---
+
+# Issues & Feature Requests
+
+Found a bug or edge case? Have an idea for a new utility? We'd love to hear from you!
+
+- **Report Issues**: If you encounter any bugs or unexpected behavior, please [open an issue](https://github.com/love1024/ngx-oneforall/issues).
+- **Feature Requests**: Have a utility in mind that would benefit the community? Submit a feature request via [GitHub Issues](https://github.com/love1024/ngx-oneforall/issues).

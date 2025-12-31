@@ -48,6 +48,13 @@ For phone validator, install:
 npm install libphonenumber-js
 ```
 
+## Issues & Feature Requests
+
+Found a bug or edge case? Have an idea for a new utility? We'd love to hear from you!
+
+- **Report Issues**: If you encounter any bugs or unexpected behavior, please [open an issue](https://github.com/love1024/ngx-oneforall/issues).
+- **Feature Requests**: Have a utility in mind that would benefit the community? Submit a feature request via [GitHub Issues](https://github.com/love1024/ngx-oneforall/issues).
+
 ## Contributing
 
 Contributions are welcome!
