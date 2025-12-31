@@ -7,14 +7,11 @@
   <a href="https://github.com/love1024/ngx-oneforall/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="license" />
   </a>
-  <a href="https://github.com/love1024/ngx-oneforall/actions">
-    <img src="https://img.shields.io/github/actions/workflow/status/love1024/ngx-oneforall/build.yml?branch=main&style=flat-square" alt="build status" />
-  </a>
   <a href="https://github.com/love1024/ngx-oneforall">
     <img src="https://img.shields.io/badge/coverage-100%25-success?style=flat-square" alt="coverage" />
   </a>
   <a href="https://bundlephobia.com/package/ngx-oneforall">
-    <img src="https://img.shields.io/badge/minzipped-3kb-success?style=flat-square" alt="size" />
+    <img src="https://img.shields.io/badge/max_utility_size-3kb-success?style=flat-square" alt="size" />
   </a>
   <a href="https://github.com/love1024/ngx-oneforall/stargazers">
     <img src="https://img.shields.io/github/stars/love1024/ngx-oneforall?style=social" alt="GitHub stars" />
