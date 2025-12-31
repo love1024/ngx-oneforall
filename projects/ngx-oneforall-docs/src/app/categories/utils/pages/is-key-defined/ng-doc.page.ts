@@ -2,7 +2,7 @@ import { NgDocPage } from '@ng-doc/core';
 import UtilsCategory from '../../ng-doc.category';
 
 const isKeyDefined: NgDocPage = {
-  title: 'Is Kye Defined',
+  title: 'Is Key Defined',
   mdFile: './index.md',
   category: UtilsCategory,
 };
