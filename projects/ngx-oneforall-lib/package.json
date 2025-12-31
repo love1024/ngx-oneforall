@@ -1,6 +1,6 @@
 {
   "name": "ngx-oneforall",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A comprehensive Angular utility library with decorators, directives, guards, interceptors, signals, pipes, validators, and more.",
   "keywords": [
     "angular",
