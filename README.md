@@ -116,7 +116,7 @@ Found a bug or edge case? Have an idea for a new utility? We'd love to hear from
 
 Contributions are welcome!
 
-1. Create a feature branch.
+1. Create a feature/bugfix branch.
 2. Commit your changes.
 3. Make sure tests are passing and coverage is 100%.
 4. Make sure build is successful and there are no linting errors.
