@@ -43,6 +43,24 @@ Fully typed APIs and consistent behavior make these utilities predictable and ea
 
 ---
 
+# Available Utilities
+
+| Category | Utilities |
+|----------|-----------|
+| **Constants** | `breakpoints`, `device`, `file-extension`, `host-platforms`, `http`, `key`, `regex`, `sort-direction`, `time`, `types` |
+| **Decorators** | `cache`, `catch-error`, `debounce`, `log-execution-time`, `memoize`, `only-in-browser`, `throttle` |
+| **Directives** | `auto-focus`, `click-outside`, `click-throttle`, `hover-class`, `infinite-scroll`, `numbers-only`, `press-enter`, `repeat`, `resized`, `shortcut`, `typed-template`, `visibility-change` |
+| **Guards** | `param`, `query-param`, `unsaved-changes` |
+| **Interceptors** | `base-url`, `cache`, `correlation-id`, `encryption`, `jwt`, `performance`, `timeout` |
+| **Pipes** | `bytes`, `call`, `first-error-key`, `highlight-search`, `pluralize`, `range`, `safe-html`, `time-ago`, `truncate` |
+| **Rxjs** | `backoff-retry`, `catch-error-with-fallback`, `data-polling`, `debug`, `live-search`, `loading-status` |
+| **Services** | `cache`, `clipboard`, `cookie`, `device`, `event`, `jwt`, `logger`, `network-status`, `shortcut`, `storage` |
+| **Signals** | `breakpoint-matcher`, `debounced-signal`, `deep-computed`, `event-signal`, `interval-signal`, `route-param-signal`, `route-query-param-signal`, `router-event-signal`, `state-signal`, `storage-signal`, `throttled-signal`, `websocket-signal` |
+| **Utils** | `base64`, `download-link`, `find-type`, `hash`, `host-platform`, `is-key-defined`, `is-number`, `is-present`, `is-record`, `normalize-key`, `safe-await`, `safe-serialize`, `unique-component-id` |
+| **Validators** | `credit-card`, `date`, `max-date`, `min-date`, `number`, `phone`, `range`, `range-length`, `url` |
+
+---
+
 # Issues & Feature Requests
 
 Found a bug or edge case? Have an idea for a new utility? We'd love to hear from you!
