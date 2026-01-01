@@ -121,6 +121,7 @@ Contributions are welcome!
 3. Make sure tests are passing and coverage is 100%.
 4. Make sure build is successful and there are no linting errors.
 5. Submit a pull request.
+6. Pipeline must pass to merge.
 
 ## License
 
