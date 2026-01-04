@@ -9,6 +9,7 @@ import {
 import { routingAnimation } from './animations/routing.animation';
 import { NgDocThemeService } from '@ng-doc/app/services/theme';
 import { NgDocButtonIconComponent, NgDocIconComponent } from '@ng-doc/ui-kit';
+import { HistoryService } from 'ngx-oneforall/services/history';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -29,9 +30,11 @@ import { NgDocButtonIconComponent, NgDocIconComponent } from '@ng-doc/ui-kit';
 export class AppComponent {
   private contexts = inject(ChildrenOutletContexts);
   private readonly themeService = inject(NgDocThemeService);
+  private readonly historyService = inject(HistoryService);
 
   constructor() {
     this.themeService.set('auto');
+    this.historyService.startTracking();
   }
 
   get routingAnimations() {

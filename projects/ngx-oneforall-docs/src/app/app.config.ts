@@ -26,6 +26,7 @@ import {
 import { withCacheInterceptor } from 'ngx-oneforall/interceptors/cache';
 import { withTimeoutInterceptor } from 'ngx-oneforall/interceptors/timeout';
 import { provideCacheService } from 'ngx-oneforall/services/cache';
+import { provideHistoryService } from 'ngx-oneforall/services/history';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -51,5 +52,6 @@ export const appConfig: ApplicationConfig = {
     provideSearchEngine(NgDocDefaultSearchEngine),
     providePageSkeleton(NG_DOC_DEFAULT_PAGE_SKELETON),
     provideMainPageProcessor(NG_DOC_DEFAULT_PAGE_PROCESSORS),
+    provideHistoryService(),
   ],
 };

@@ -1,0 +1,106 @@
+.demo-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+h2 {
+  margin: 0;
+}
+
+h3 {
+  margin: 0 0 0.75rem;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--ng-doc-code-background);
+  border-radius: 8px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  .label {
+    font-weight: 500;
+    min-width: 120px;
+  }
+
+  code {
+    padding: 0.25rem 0.5rem;
+    background: var(--ng-doc-base-0);
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--ng-doc-border-color);
+  border-radius: 4px;
+  background: var(--ng-doc-base-0);
+  color: var(--ng-doc-text-color);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: var(--ng-doc-primary);
+    color: white;
+    border-color: var(--ng-doc-primary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.btn-danger:hover:not(:disabled) {
+    background: #f44336;
+    border-color: #f44336;
+  }
+}
+
+.history-stack {
+  padding: 1rem;
+  border: 1px solid var(--ng-doc-border-color);
+  border-radius: 8px;
+
+  ol {
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+
+  li {
+    padding: 0.25rem 0;
+
+    &.current code {
+      background: var(--ng-doc-primary);
+      color: white;
+    }
+
+    &.empty {
+      color: var(--ng-doc-text-muted);
+      font-style: italic;
+      list-style: none;
+      margin-left: -1.5rem;
+    }
+
+    code {
+      padding: 0.25rem 0.5rem;
+      background: var(--ng-doc-code-background);
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+  }
+}
