@@ -1,0 +1,15 @@
+<!-- snippet: basic-usage -->
+<p>{{ 'John Doe' | initials }}</p>
+<!-- Output: JD -->
+
+<!-- snippet: single-name -->
+<p>{{ 'John' | initials }}</p>
+<!-- Output: JO -->
+
+<!-- snippet: limit-1 -->
+<p>{{ 'John Doe' | initials: 1 }}</p>
+<!-- Output: J -->
+
+<!-- snippet: limit-3 -->
+<p>{{ 'John Middle Doe' | initials: 3 }}</p>
+<!-- Output: JMD -->

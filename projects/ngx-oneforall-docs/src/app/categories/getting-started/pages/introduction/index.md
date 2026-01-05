@@ -52,7 +52,7 @@ Fully typed APIs and consistent behavior make these utilities predictable and ea
 | **Directives** | `auto-focus`, `click-outside`, `click-throttle`, `hover-class`, `infinite-scroll`, `numbers-only`, `press-enter`, `repeat`, `resized`, `shortcut`, `typed-template`, `visibility-change` |
 | **Guards** | `param`, `query-param`, `unsaved-changes` |
 | **Interceptors** | `base-url`, `cache`, `correlation-id`, `encryption`, `jwt`, `performance`, `timeout` |
-| **Pipes** | `bytes`, `call`, `first-error-key`, `highlight-search`, `pluralize`, `range`, `safe-html`, `time-ago`, `truncate` |
+| **Pipes** | `bytes`, `call`, `first-error-key`, `highlight-search`, `initials`, `pluralize`, `range`, `safe-html`, `time-ago`, `truncate` |
 | **Rxjs** | `backoff-retry`, `catch-error-with-fallback`, `data-polling`, `debug`, `live-search`, `loading-status` |
 | **Services** | `cache`, `clipboard`, `cookie`, `device`, `event`, `jwt`, `logger`, `network-status`, `shortcut`, `storage` |
 | **Signals** | `breakpoint-matcher`, `debounced-signal`, `deep-computed`, `event-signal`, `interval-signal`, `route-param-signal`, `route-query-param-signal`, `router-event-signal`, `state-signal`, `storage-signal`, `throttled-signal`, `websocket-signal` |
