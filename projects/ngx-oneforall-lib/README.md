@@ -15,7 +15,7 @@
   </a>
 </p>
 
-**ngx-oneforall** is a collection of 80+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
+**ngx-oneforall** is a collection of 85+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
 
 > **One For All** - A single library providing the essential blocks for modern Angular development.
 
