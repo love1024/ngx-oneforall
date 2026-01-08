@@ -15,6 +15,7 @@ import { debouncedSignal } from 'ngx-oneforall/signals/debounced-signal';
           type="text"
           [ngModel]="searchTerm()"
           (ngModelChange)="searchTerm.set($event)"
+          maxlength="50"
           placeholder="Search..." />
       </div>
 
