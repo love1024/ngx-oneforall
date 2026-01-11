@@ -2,6 +2,12 @@
 
 The `PluralizePipe` handles word pluralization with automatic English rules and custom plural support.
 
+### Installation
+
+```ts
+import { PluralizePipe } from 'ngx-oneforall/pipes/pluralize';
+```
+
 ### Usage
 
 ```html file="./snippets.html"#L2-L5

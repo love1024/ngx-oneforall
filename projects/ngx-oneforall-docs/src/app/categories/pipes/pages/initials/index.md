@@ -2,12 +2,15 @@
 
 The `initials` pipe transforms a name or string into its initials. It handles single or multiple words and allows customizing the number of initials returned.
 
+### Installation
+
+```ts
+import { InitialsPipe } from 'ngx-oneforall/pipes/initials';
+```
+
 ### Usage
 
-Import the `InitialsPipe` from `ngx-oneforall/pipes/initials`.
-
-```typescript
-import { InitialsPipe } from 'ngx-oneforall/pipes/initials';
+```html file="./snippets.html"#L2-L3
 ```
 
 ### Examples
