@@ -2,6 +2,12 @@
 
 The `TruncatePipe` shortens strings to a specified length with optional word boundary and position support.
 
+### Installation
+
+```ts
+import { TruncatePipe } from 'ngx-oneforall/pipes/truncate';
+```
+
 ### Usage
 
 ```html file="./snippets.html"#L2-L2
