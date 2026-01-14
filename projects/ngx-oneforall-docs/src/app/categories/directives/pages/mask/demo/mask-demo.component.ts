@@ -26,19 +26,59 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
     </div>
 
     <div class="demo-section">
-      <label for="postal">Canadian Postal Code</label>
-      <input id="postal" type="text" [mask]="'S0S 0S0'" placeholder="___ ___" />
-      <span class="hint">Mask: A0A 0A0 (alphanumeric)</span>
+      <label for="time">Time (Optional Seconds)</label>
+      <input
+        id="time"
+        type="text"
+        [mask]="'00:00:0?0?'"
+        placeholder="HH:MM:SS" />
+      <span class="hint">Mask: 00:00:0?0?</span>
     </div>
 
     <div class="demo-section">
-      <label for="optional">Optional Digits</label>
+      <label for="timeSeconds">Time with Seconds</label>
       <input
-        id="optional"
+        id="timeSeconds"
         type="text"
-        [mask]="'(000) 000-00009'"
-        placeholder="Phone with optional extension" />
-      <span class="hint">Mask: (000) 000-00009 (last digit optional)</span>
+        [mask]="'00:00:00'"
+        placeholder="HH:MM:SS" />
+      <span class="hint">Mask: 00:00:00</span>
+    </div>
+
+    <div class="demo-section">
+      <label for="extension">Phone with Extension</label>
+      <input
+        id="extension"
+        type="text"
+        [mask]="'000-000-0000 x0?0?0?0?'"
+        placeholder="___-___-____ x____" />
+      <span class="hint"
+        >Mask: 000-000-0000 x0?0?0?0? — 1-5 digit extension</span
+      >
+    </div>
+
+    <div class="demo-section">
+      <label for="postal">Canadian Postal Code</label>
+      <input id="postal" type="text" [mask]="'S0S 0S0'" placeholder="A1A 1A1" />
+      <span class="hint">Mask: S0S 0S0</span>
+    </div>
+
+    <div class="demo-section">
+      <label for="email">Email (*)</label>
+      <input
+        id="email"
+        type="text"
+        [mask]="'A*@A*.SSS'"
+        placeholder="user@domain.com" />
+      <span class="hint"
+        >Mask: A*&#64;A*.SSS — alphanumeric username, domain, and TLD</span
+      >
+    </div>
+
+    <div class="demo-section">
+      <label for="hashtag">Hashtag (*)</label>
+      <input id="hashtag" type="text" [mask]="'#S*'" placeholder="#tag" />
+      <span class="hint">Mask: #S* — any number of letters after #</span>
     </div>
   `,
   styleUrl: 'mask-demo.component.scss',

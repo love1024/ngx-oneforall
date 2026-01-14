@@ -94,40 +94,6 @@ describe('MaskDirective', () => {
     });
   });
 
-  describe('Optional digits (9 pattern)', () => {
-    beforeEach(() => {
-      fixture.componentInstance.mask.set('(000) 000-00009');
-      fixture.detectChanges();
-    });
-
-    it('should work without optional digit', () => {
-      expect(triggerInput('1234567890')).toBe('(123) 456-7890');
-    });
-
-    it('should include optional digit when provided', () => {
-      expect(triggerInput('12345678901')).toBe('(123) 456-78901');
-    });
-
-    it('should skip optional and continue with next pattern', () => {
-      fixture.componentInstance.mask.set('9900');
-      fixture.detectChanges();
-      expect(triggerInput('12')).toBe('12');
-    });
-
-    it('should skip multiple optional patterns', () => {
-      fixture.componentInstance.mask.set('99900');
-      fixture.detectChanges();
-      expect(triggerInput('123')).toBe('123');
-    });
-
-    it('should skip optional pattern when input is non-digit', () => {
-      fixture.componentInstance.mask.set('90');
-      fixture.detectChanges();
-      // 'a' doesn't match optional '9', skip to '0'; 'a' doesn't match '0' either
-      expect(triggerInput('a1')).toBe('1');
-    });
-  });
-
   describe('Alpha patterns (S, A, U, L)', () => {
     it('should handle letter-only pattern (S)', () => {
       fixture.componentInstance.mask.set('SSS');
@@ -169,6 +135,23 @@ describe('MaskDirective', () => {
       fixture.componentInstance.mask.set('---000');
       fixture.detectChanges();
       expect(triggerInput('123')).toBe('---123');
+    });
+  });
+
+  describe('Quantifier at invalid position', () => {
+    it('should handle quantifier character when not preceded by pattern', () => {
+      // ? at start of mask - neither pattern nor non-pattern branch executes
+      // Loop advances input but not mask, causing no output
+      fixture.componentInstance.mask.set('?00');
+      fixture.detectChanges();
+      expect(triggerInput('12')).toBe('');
+    });
+
+    it('should handle * character when not preceded by pattern', () => {
+      // * at start of mask - same behavior
+      fixture.componentInstance.mask.set('*00');
+      fixture.detectChanges();
+      expect(triggerInput('12')).toBe('');
     });
   });
 
@@ -234,6 +217,99 @@ describe('MaskDirective', () => {
       fixture.componentInstance.mask.set('000-00-0000');
       fixture.detectChanges();
       expect(triggerInput('123456789')).toBe('123-45-6789');
+    });
+  });
+
+  describe('Optional quantifier (?)', () => {
+    it('should make preceding pattern optional', () => {
+      fixture.componentInstance.mask.set('0?00');
+      fixture.detectChanges();
+      // First digit is optional, so "12" should work
+      expect(triggerInput('12')).toBe('12');
+    });
+
+    it('should include optional pattern when matched', () => {
+      fixture.componentInstance.mask.set('0?00');
+      fixture.detectChanges();
+      expect(triggerInput('123')).toBe('123');
+    });
+
+    it('should skip optional when input does not match', () => {
+      fixture.componentInstance.mask.set('0?S0');
+      fixture.detectChanges();
+      // '0?' is optional digit, 'S' is letter, '0' is digit
+      expect(triggerInput('a1')).toBe('a1');
+    });
+
+    it('should work with optional at end of mask', () => {
+      fixture.componentInstance.mask.set('000?');
+      fixture.detectChanges();
+      expect(triggerInput('12')).toBe('12');
+      expect(triggerInput('123')).toBe('123');
+    });
+
+    it('should work with multiple optional patterns', () => {
+      fixture.componentInstance.mask.set('0?0?00');
+      fixture.detectChanges();
+      expect(triggerInput('12')).toBe('12');
+      expect(triggerInput('1234')).toBe('1234');
+    });
+
+    it('should work with separators', () => {
+      fixture.componentInstance.mask.set('0?0-00');
+      fixture.detectChanges();
+      // With mask 0?0-00: first 0? is optional, second 0 required
+      // "123" -> 0? matches 1, 0 matches 2, - inserted, 00 needs 2 digits but only 3 left
+      expect(triggerInput('123')).toBe('12-3');
+      expect(triggerInput('1234')).toBe('12-34');
+    });
+  });
+
+  describe('Zero or more quantifier (*)', () => {
+    it('should match zero occurrences', () => {
+      fixture.componentInstance.mask.set('0*S');
+      fixture.detectChanges();
+      // No digits, just letter
+      expect(triggerInput('a')).toBe('a');
+    });
+
+    it('should match one occurrence', () => {
+      fixture.componentInstance.mask.set('0*S');
+      fixture.detectChanges();
+      expect(triggerInput('1a')).toBe('1a');
+    });
+
+    it('should match multiple occurrences', () => {
+      fixture.componentInstance.mask.set('0*S');
+      fixture.detectChanges();
+      expect(triggerInput('12345a')).toBe('12345a');
+    });
+
+    it('should work at end of mask (unlimited digits)', () => {
+      fixture.componentInstance.mask.set('$0*');
+      fixture.detectChanges();
+      expect(triggerInput('12345')).toBe('$12345');
+    });
+
+    it('should work with separators before', () => {
+      fixture.componentInstance.mask.set('#0*');
+      fixture.detectChanges();
+      expect(triggerInput('123')).toBe('#123');
+    });
+
+    it('should handle transition from * pattern to next pattern', () => {
+      fixture.componentInstance.mask.set('0*-00');
+      fixture.detectChanges();
+      // * is greedy - consumes all matching input, separator/following pattern never reached
+      expect(triggerInput('12345')).toBe('12345');
+      // To get separator, user must type it explicitly
+      expect(triggerInput('123-45')).toBe('123-45');
+    });
+
+    it('should work with letter patterns', () => {
+      fixture.componentInstance.mask.set('S*0');
+      fixture.detectChanges();
+      expect(triggerInput('abc1')).toBe('abc1');
     });
   });
 });

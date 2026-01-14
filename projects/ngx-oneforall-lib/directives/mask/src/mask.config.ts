@@ -1,16 +1,21 @@
+/**
+ * Quantifier characters that modify how patterns are matched
+ */
+export enum MaskQuantifier {
+  /** Match zero or more occurrences of the preceding pattern */
+  ZeroOrMore = '*',
+  /** Match zero or one occurrence of the preceding pattern (optional) */
+  Optional = '?',
+}
+
 export interface IConfigPattern {
   pattern: RegExp;
-  optional?: boolean;
   symbol?: string;
 }
 
 export const patterns: Record<string, IConfigPattern> = {
   '0': {
     pattern: new RegExp('\\d'),
-  },
-  '9': {
-    pattern: new RegExp('\\d'),
-    optional: true,
   },
   A: {
     pattern: new RegExp('[a-zA-Z0-9]'),
@@ -25,3 +30,10 @@ export const patterns: Record<string, IConfigPattern> = {
     pattern: new RegExp('[a-z]'),
   },
 };
+
+/**
+ * Check if a character is a quantifier
+ */
+export function isQuantifier(char: string): char is MaskQuantifier {
+  return char === MaskQuantifier.ZeroOrMore || char === MaskQuantifier.Optional;
+}

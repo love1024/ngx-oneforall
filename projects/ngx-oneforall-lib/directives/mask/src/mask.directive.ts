@@ -1,5 +1,10 @@
 import { Directive, input } from '@angular/core';
-import { IConfigPattern, patterns } from './mask.config';
+import {
+  IConfigPattern,
+  isQuantifier,
+  MaskQuantifier,
+  patterns,
+} from './mask.config';
 
 interface MaskState {
   result: string;
@@ -28,13 +33,15 @@ export class MaskDirective {
     for (let i = 0; i < inputValue.length && maskPosition < mask.length; i++) {
       const inputChar = inputValue[i];
       const maskChar = mask[maskPosition];
+      const nextChar = mask[maskPosition + 1];
+      const quantifier = isQuantifier(nextChar) ? nextChar : null;
 
       const pattern = patterns[maskChar];
       const state: MaskState = { result, maskPosition, inputOffset: 0 };
 
       if (pattern) {
-        this.handlePatternChar(inputChar, pattern, state);
-      } else {
+        this.handlePatternChar(inputChar, pattern, quantifier, state);
+      } else if (!isQuantifier(maskChar)) {
         this.handleNonPatternChars(inputChar, mask, state);
       }
 
@@ -49,14 +56,29 @@ export class MaskDirective {
   private handlePatternChar(
     inputChar: string,
     pattern: IConfigPattern,
+    quantifier: MaskQuantifier | null,
     state: MaskState
   ): void {
-    if (pattern.pattern.test(inputChar)) {
+    const matches = pattern.pattern.test(inputChar);
+
+    if (matches) {
       state.result += inputChar;
-      state.maskPosition++;
-    } else if (pattern.optional) {
-      state.maskPosition++;
-      state.inputOffset = -1; // Retry this input char with next mask char
+
+      // For * quantifier, stay on the same pattern (don't advance mask position)
+      if (quantifier === MaskQuantifier.ZeroOrMore) {
+        // Don't advance maskPosition - allow more matches
+        return;
+      }
+
+      // For ? qunatifier as next, move one more step to pass it as well
+      state.maskPosition += quantifier ? 2 : 1;
+    } else if (
+      quantifier === MaskQuantifier.Optional ||
+      quantifier === MaskQuantifier.ZeroOrMore
+    ) {
+      // Optional or zero or more quantifier - skip pattern and quantifier, retry input
+      state.maskPosition += 2;
+      state.inputOffset = -1;
     }
   }
 
@@ -70,6 +92,7 @@ export class MaskDirective {
     while (
       maskChar &&
       !patterns[maskChar] &&
+      !isQuantifier(maskChar) &&
       state.maskPosition < mask.length
     ) {
       // User typed the separator explicitly
