@@ -28,7 +28,7 @@ interface MaskState {
   selector: '[mask]',
   host: {
     '(input)': 'onInput($event)',
-    '(blur)': 'onTouched()',
+    '(blur)': 'onBlur()',
   },
   providers: [
     {
@@ -47,6 +47,8 @@ export class MaskDirective implements Validator, ControlValueAccessor {
   mask = input.required<string>();
 
   customPatterns = input<Record<string, IConfigPattern>>({});
+
+  clearIfNotMatch = input(false);
 
   private elementRef = inject(ElementRef<HTMLInputElement>);
 
@@ -77,11 +79,30 @@ export class MaskDirective implements Validator, ControlValueAccessor {
     this.onTouched = fn;
   }
 
+  setDisabledState(isDisabled: boolean): void {
+    this.elementRef.nativeElement.disabled = isDisabled;
+  }
+
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
     const { masked, raw } = this.applyMask(input.value, this.mask());
     input.value = masked;
     this.onChange(raw);
+  }
+
+  onBlur() {
+    this.onTouched();
+
+    if (this.clearIfNotMatch()) {
+      const mask = this.mask();
+      const currentValue = this.elementRef.nativeElement.value;
+      const expectedLength = getExpectedLength(mask);
+
+      if (currentValue.length < expectedLength) {
+        this.elementRef.nativeElement.value = '';
+        this.onChange('');
+      }
+    }
   }
 
   validate(control: AbstractControl): ValidationErrors | null {

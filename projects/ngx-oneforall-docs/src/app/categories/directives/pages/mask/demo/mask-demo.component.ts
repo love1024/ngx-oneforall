@@ -92,6 +92,21 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         <span class="error">Incomplete: {{ error.actualValue }}</span>
       }
     </div>
+
+    <div class="demo-section">
+      <label for="clearIfNotMatch">Clear If Not Match</label>
+      <input
+        id="clearIfNotMatch"
+        type="text"
+        [formControl]="clearIfNotMatchControl"
+        [mask]="'(###) ###-####'"
+        [clearIfNotMatch]="true"
+        placeholder="(___) ___-____" />
+      <div class="info-row">
+        <span class="hint">Clears on blur if incomplete</span>
+        <span class="model">Value: {{ clearIfNotMatchControl.value }}</span>
+      </div>
+    </div>
   `,
   styleUrl: 'mask-demo.component.scss',
 })
@@ -101,6 +116,7 @@ export class MaskDemoComponent {
   hexControl = new FormControl('');
   timeControl = new FormControl('');
   extensionControl = new FormControl('');
+  clearIfNotMatchControl = new FormControl('');
 
   hexPattern: Record<string, IConfigPattern> = {
     X: { pattern: /[0-9A-Fa-f]/ },

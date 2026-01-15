@@ -567,4 +567,154 @@ describe('MaskDirective with Reactive Forms', () => {
 
     expect(control.touched).toBe(true);
   });
+
+  it('should disable input when FormControl is disabled', () => {
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ReactiveFormTestComponent);
+    fixture.detectChanges();
+
+    const inputEl: HTMLInputElement = fixture.debugElement.query(
+      By.css('input')
+    ).nativeElement;
+    const control = fixture.componentInstance.control;
+
+    expect(inputEl.disabled).toBe(false);
+
+    control.disable();
+    fixture.detectChanges();
+    expect(inputEl.disabled).toBe(true);
+
+    control.enable();
+    fixture.detectChanges();
+    expect(inputEl.disabled).toBe(false);
+  });
+});
+
+@Component({
+  template: `<input
+    [formControl]="control"
+    [mask]="'###-####'"
+    [clearIfNotMatch]="clearIfNotMatch()" />`,
+  imports: [MaskDirective, ReactiveFormsModule],
+})
+class ClearIfNotMatchTestComponent {
+  control = new FormControl('');
+  clearIfNotMatch = signal(false);
+}
+
+describe('MaskDirective clearIfNotMatch', () => {
+  it('should clear input on blur when clearIfNotMatch is true and mask is incomplete', () => {
+    TestBed.configureTestingModule({
+      imports: [ClearIfNotMatchTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ClearIfNotMatchTestComponent);
+    fixture.componentInstance.clearIfNotMatch.set(true);
+    fixture.detectChanges();
+
+    const inputEl: HTMLInputElement = fixture.debugElement.query(
+      By.css('input')
+    ).nativeElement;
+    const control = fixture.componentInstance.control;
+
+    // Simulate partial input
+    inputEl.value = '123';
+    inputEl.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(inputEl.value).toBe('123');
+    expect(control.value).toBe('123');
+
+    // Blur should clear the input
+    inputEl.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+
+    expect(inputEl.value).toBe('');
+    expect(control.value).toBe('');
+  });
+
+  it('should NOT clear input on blur when clearIfNotMatch is true and mask is complete', () => {
+    TestBed.configureTestingModule({
+      imports: [ClearIfNotMatchTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ClearIfNotMatchTestComponent);
+    fixture.componentInstance.clearIfNotMatch.set(true);
+    fixture.detectChanges();
+
+    const inputEl: HTMLInputElement = fixture.debugElement.query(
+      By.css('input')
+    ).nativeElement;
+    const control = fixture.componentInstance.control;
+
+    // Simulate complete input
+    inputEl.value = '1234567';
+    inputEl.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(inputEl.value).toBe('123-4567');
+    expect(control.value).toBe('1234567');
+
+    // Blur should NOT clear the input
+    inputEl.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+
+    expect(inputEl.value).toBe('123-4567');
+    expect(control.value).toBe('1234567');
+  });
+
+  it('should NOT clear input on blur when clearIfNotMatch is false (default)', () => {
+    TestBed.configureTestingModule({
+      imports: [ClearIfNotMatchTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ClearIfNotMatchTestComponent);
+    // clearIfNotMatch defaults to false
+    fixture.detectChanges();
+
+    const inputEl: HTMLInputElement = fixture.debugElement.query(
+      By.css('input')
+    ).nativeElement;
+    const control = fixture.componentInstance.control;
+
+    // Simulate partial input
+    inputEl.value = '123';
+    inputEl.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(inputEl.value).toBe('123');
+    expect(control.value).toBe('123');
+
+    // Blur should NOT clear the input when clearIfNotMatch is false
+    inputEl.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+
+    expect(inputEl.value).toBe('123');
+    expect(control.value).toBe('123');
+  });
+
+  it('should still mark control as touched on blur regardless of clearIfNotMatch', () => {
+    TestBed.configureTestingModule({
+      imports: [ClearIfNotMatchTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ClearIfNotMatchTestComponent);
+    fixture.componentInstance.clearIfNotMatch.set(true);
+    fixture.detectChanges();
+
+    const inputEl: HTMLInputElement = fixture.debugElement.query(
+      By.css('input')
+    ).nativeElement;
+    const control = fixture.componentInstance.control;
+
+    expect(control.touched).toBe(false);
+
+    inputEl.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+
+    expect(control.touched).toBe(true);
+  });
 });

@@ -82,6 +82,7 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
 |-------|------|-------------|
 | `mask` | `string` | The mask pattern to apply |
 | `customPatterns` | `Record<string, IConfigPattern>` | Custom patterns to extend or override built-in patterns |
+| `clearIfNotMatch` | `boolean` | If `true`, clears the input on blur when mask is incomplete (default: `false`) |
 
 ### IConfigPattern Interface
 
