@@ -14,7 +14,10 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         [formControl]="phoneControl"
         [mask]="'(###) ###-####'"
         placeholder="(___) ___-____" />
-      <span class="hint">Mask: (###) ###-####</span>
+      <div class="info-row">
+        <span class="hint">Mask: (###) ###-####</span>
+        <span class="model">Value: {{ phoneControl.value }}</span>
+      </div>
       @if (phoneControl.errors?.['mask']; as error) {
         <span class="error">Incomplete: {{ error.actualValue }}</span>
       }
@@ -28,7 +31,10 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         [formControl]="postalControl"
         [mask]="'@#@ #@#'"
         placeholder="A1A 1A1" />
-      <span class="hint">Mask: @#@ #@#</span>
+      <div class="info-row">
+        <span class="hint">Mask: @#@ #@#</span>
+        <span class="model">Value: {{ postalControl.value }}</span>
+      </div>
       @if (postalControl.errors?.['mask']; as error) {
         <span class="error">Incomplete: {{ error.actualValue }}</span>
       }
@@ -43,7 +49,10 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         [mask]="'XXXXXX'"
         [customPatterns]="hexPattern"
         placeholder="FFFFFF" />
-      <span class="hint">Custom X pattern: /[0-9A-Fa-f]/</span>
+      <div class="info-row">
+        <span class="hint">Custom X pattern: /[0-9A-Fa-f]/</span>
+        <span class="model">Value: {{ hexControl.value }}</span>
+      </div>
       @if (hexControl.errors?.['mask']; as error) {
         <span class="error">Incomplete: {{ error.actualValue }}</span>
       }
@@ -58,7 +67,10 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         [mask]="'H#:M#'"
         [customPatterns]="timePatterns"
         placeholder="23:59" />
-      <span class="hint">Custom: H=/[0-2]/, M=/[0-5]/</span>
+      <div class="info-row">
+        <span class="hint">Custom: H=/[0-2]/, M=/[0-5]/</span>
+        <span class="model">Value: {{ timeControl.value }}</span>
+      </div>
       @if (timeControl.errors?.['mask']; as error) {
         <span class="error">Incomplete: {{ error.actualValue }}</span>
       }
@@ -72,7 +84,10 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         [formControl]="extensionControl"
         [mask]="'###-###-#### x#?#?#?#?'"
         placeholder="___-___-____ x____" />
-      <span class="hint">Mask: ###-###-#### x#?#?#?#?</span>
+      <div class="info-row">
+        <span class="hint">Mask: ###-###-#### x#?#?#?#?</span>
+        <span class="model">Value: {{ extensionControl.value }}</span>
+      </div>
       @if (extensionControl.errors?.['mask']; as error) {
         <span class="error">Incomplete: {{ error.actualValue }}</span>
       }

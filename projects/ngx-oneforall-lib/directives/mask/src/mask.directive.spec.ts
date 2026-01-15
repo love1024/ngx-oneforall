@@ -54,6 +54,14 @@ describe('MaskDirective', () => {
     expect(directive).toBeTruthy();
   });
 
+  it('should call default onTouched on blur without error', () => {
+    // Without FormControl, the default empty onTouched should be called
+    expect(() => {
+      inputEl.dispatchEvent(new Event('blur'));
+      fixture.detectChanges();
+    }).not.toThrow();
+  });
+
   describe('Basic digit masking (# pattern)', () => {
     it('should format phone number with auto-inserted separators', () => {
       expect(triggerInput('1234567890')).toBe('(123) 456-7890');
@@ -469,5 +477,94 @@ describe('MaskDirective with Reactive Forms', () => {
     control.setValue('1234567');
     fixture.detectChanges();
     expect(control.errors).toBeNull();
+  });
+
+  it('should store raw value in FormControl and masked value in input', () => {
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ReactiveFormTestComponent);
+    fixture.detectChanges();
+
+    const inputEl: HTMLInputElement = fixture.debugElement.query(
+      By.css('input')
+    ).nativeElement;
+    const control = fixture.componentInstance.control;
+
+    // Simulate user input
+    inputEl.value = '1234567';
+    inputEl.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    // Input should show masked value
+    expect(inputEl.value).toBe('123-4567');
+    // FormControl should have raw value (without separators)
+    expect(control.value).toBe('1234567');
+  });
+
+  it('should write masked value to input from raw FormControl value', () => {
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ReactiveFormTestComponent);
+    fixture.detectChanges();
+
+    const inputEl: HTMLInputElement = fixture.debugElement.query(
+      By.css('input')
+    ).nativeElement;
+    const control = fixture.componentInstance.control;
+
+    // Set raw value programmatically
+    control.setValue('1234567');
+    fixture.detectChanges();
+
+    // Input should display masked value
+    expect(inputEl.value).toBe('123-4567');
+  });
+
+  it('should handle empty value in writeValue', () => {
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ReactiveFormTestComponent);
+    fixture.detectChanges();
+
+    const inputEl: HTMLInputElement = fixture.debugElement.query(
+      By.css('input')
+    ).nativeElement;
+    const control = fixture.componentInstance.control;
+
+    // Set value then clear it
+    control.setValue('1234567');
+    fixture.detectChanges();
+    expect(inputEl.value).toBe('123-4567');
+
+    control.setValue('');
+    fixture.detectChanges();
+    expect(inputEl.value).toBe('');
+  });
+
+  it('should call onTouched on blur', () => {
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ReactiveFormTestComponent);
+    fixture.detectChanges();
+
+    const inputEl: HTMLInputElement = fixture.debugElement.query(
+      By.css('input')
+    ).nativeElement;
+    const control = fixture.componentInstance.control;
+
+    expect(control.touched).toBe(false);
+
+    inputEl.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+
+    expect(control.touched).toBe(true);
   });
 });

@@ -1,7 +1,16 @@
-import { computed, Directive, forwardRef, input } from '@angular/core';
+import {
+  computed,
+  Directive,
+  ElementRef,
+  forwardRef,
+  inject,
+  input,
+} from '@angular/core';
 import {
   AbstractControl,
+  ControlValueAccessor,
   NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
   ValidationErrors,
   Validator,
 } from '@angular/forms';
@@ -9,7 +18,8 @@ import { IConfigPattern, MaskQuantifier, patterns } from './mask.config';
 import { getExpectedLength, isQuantifier } from './mask.utils';
 
 interface MaskState {
-  result: string;
+  raw: string;
+  masked: string;
   maskPosition: number;
   inputOffset: number;
 }
@@ -18,6 +28,7 @@ interface MaskState {
   selector: '[mask]',
   host: {
     '(input)': 'onInput($event)',
+    '(blur)': 'onTouched()',
   },
   providers: [
     {
@@ -25,21 +36,52 @@ interface MaskState {
       useExisting: forwardRef(() => MaskDirective),
       multi: true,
     },
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => MaskDirective),
+      multi: true,
+    },
   ],
 })
-export class MaskDirective implements Validator {
+export class MaskDirective implements Validator, ControlValueAccessor {
   mask = input.required<string>();
 
   customPatterns = input<Record<string, IConfigPattern>>({});
+
+  private elementRef = inject(ElementRef<HTMLInputElement>);
 
   private mergedPatterns = computed(() => ({
     ...patterns,
     ...this.customPatterns(),
   }));
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private onChange: (value: string) => void = () => {};
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onTouched: () => void = () => {};
+
+  writeValue(value: string): void {
+    if (value) {
+      const { masked } = this.applyMask(value, this.mask());
+      this.elementRef.nativeElement.value = masked;
+    } else {
+      this.elementRef.nativeElement.value = '';
+    }
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
-    input.value = this.applyMask(input.value, this.mask());
+    const { masked, raw } = this.applyMask(input.value, this.mask());
+    input.value = masked;
+    this.onChange(raw);
   }
 
   validate(control: AbstractControl): ValidationErrors | null {
@@ -47,15 +89,15 @@ export class MaskDirective implements Validator {
     if (!value) return null;
 
     const mask = this.mask();
-    const maskedValue = this.applyMask(value, mask);
+    const { masked } = this.applyMask(value, mask);
     const expectedLength = getExpectedLength(mask);
 
     // Check if input is complete (matches expected mask length)
-    if (maskedValue.length < expectedLength) {
+    if (masked.length < expectedLength) {
       return {
         mask: {
           requiredMask: mask,
-          actualValue: maskedValue,
+          actualValue: masked,
         },
       };
     }
@@ -63,9 +105,13 @@ export class MaskDirective implements Validator {
     return null;
   }
 
-  private applyMask(inputValue: string, mask: string): string {
+  private applyMask(
+    inputValue: string,
+    mask: string
+  ): { masked: string; raw: string } {
     const activePatterns = this.mergedPatterns();
-    let result = '';
+    let raw = '';
+    let masked = '';
     let maskPosition = 0;
 
     for (let i = 0; i < inputValue.length && maskPosition < mask.length; i++) {
@@ -75,7 +121,12 @@ export class MaskDirective implements Validator {
       const quantifier = isQuantifier(nextChar) ? nextChar : null;
 
       const pattern = activePatterns[maskChar];
-      const state: MaskState = { result, maskPosition, inputOffset: 0 };
+      const state: MaskState = {
+        raw,
+        masked,
+        maskPosition,
+        inputOffset: 0,
+      };
 
       if (pattern) {
         this.handlePatternChar(inputChar, pattern, quantifier, state);
@@ -83,12 +134,13 @@ export class MaskDirective implements Validator {
         this.handleNonPatternChars(inputChar, mask, activePatterns, state);
       }
 
-      result = state.result;
+      raw = state.raw;
+      masked = state.masked;
       maskPosition = state.maskPosition;
       i += state.inputOffset;
     }
 
-    return result;
+    return { masked, raw };
   }
 
   private handlePatternChar(
@@ -105,7 +157,8 @@ export class MaskDirective implements Validator {
       quantifier === MaskQuantifier.ZeroOrMore;
 
     if (matches) {
-      state.result += inputChar;
+      state.raw += inputChar;
+      state.masked += inputChar;
 
       // For * quantifier, stay on the same pattern (don't advance mask position)
       if (quantifier === MaskQuantifier.ZeroOrMore) {
@@ -138,13 +191,13 @@ export class MaskDirective implements Validator {
     ) {
       // User typed the separator explicitly
       if (maskChar === inputChar) {
-        state.result += inputChar;
+        state.masked += inputChar;
         state.maskPosition++;
         return;
       }
 
       // Auto-insert the separator
-      state.result += maskChar;
+      state.masked += maskChar;
       state.maskPosition++;
 
       if (state.maskPosition >= mask.length) break;
