@@ -7,6 +7,7 @@ Apply input masks to format user input as they type.
 - **Pattern-based masking** — Define mask patterns using simple characters
 - **Quantifiers** — Use `?` (optional) and `*` (zero or more) for flexible patterns
 - **Auto-insert separators** — Automatically adds separators like `-`, `/`, `(`, `)`
+- **Form validation** — Implements Angular's `Validator` interface for reactive forms
 - **SSR Safe** — Only runs in the browser
 
 ---
@@ -119,6 +120,32 @@ Define your own pattern characters or override built-in ones:
 
 ---
 
+## Validation
+
+The directive implements Angular's `Validator` interface. When used with reactive forms, it returns a `mask` error if the input is incomplete:
+
+```typescript
+// Error object when input is incomplete
+{
+  mask: {
+    requiredMask: '(###) ###-####',  // The mask pattern
+    actualValue: '(123'               // Current masked value
+  }
+}
+```
+
+```html
+<input [formControl]="phone" [mask]="'(###) ###-####'" />
+@if (phone.errors?.['mask']) {
+  <span class="error">
+    Incomplete: {{ phone.errors['mask'].actualValue }}
+  </span>
+}
+```
+
+---
+
 ## Demo
 
 {{ NgDocActions.demoPane("MaskDemoComponent") }}
+

@@ -1,5 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  AbstractControl,
+  FormControl,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { MaskDirective } from './mask.directive';
 import { IConfigPattern } from './mask.config';
@@ -11,6 +16,14 @@ import { IConfigPattern } from './mask.config';
 class TestHostComponent {
   mask = signal('(###) ###-####');
   customPatterns = signal<Record<string, IConfigPattern>>({});
+}
+
+@Component({
+  template: `<input [formControl]="control" [mask]="'###-####'" />`,
+  imports: [MaskDirective, ReactiveFormsModule],
+})
+class ReactiveFormTestComponent {
+  control = new FormControl('');
 }
 
 describe('MaskDirective', () => {
@@ -372,5 +385,89 @@ describe('MaskDirective', () => {
       fixture.detectChanges();
       expect(triggerInput('123')).toBe('123');
     });
+  });
+
+  describe('Validator interface', () => {
+    let directive: MaskDirective;
+
+    beforeEach(() => {
+      directive = fixture.debugElement
+        .query(By.directive(MaskDirective))
+        .injector.get(MaskDirective);
+    });
+
+    it('should return null for empty value', () => {
+      const result = directive.validate({ value: '' } as AbstractControl);
+      expect(result).toBeNull();
+    });
+
+    it('should return null for null value', () => {
+      const result = directive.validate({ value: null } as AbstractControl);
+      expect(result).toBeNull();
+    });
+
+    it('should return null when input is complete', () => {
+      const result = directive.validate({
+        value: '1234567890',
+      } as AbstractControl);
+      expect(result).toBeNull();
+    });
+
+    it('should return error when input is incomplete', () => {
+      const result = directive.validate({ value: '123' } as AbstractControl);
+      expect(result).toEqual({
+        mask: {
+          requiredMask: '(###) ###-####',
+          actualValue: '(123',
+        },
+      });
+    });
+
+    it('should handle masks with optional patterns correctly', () => {
+      fixture.componentInstance.mask.set('##:##:#?#?');
+      fixture.detectChanges();
+      // Expected length: ##:##: = 6 chars (optional #?#? are excluded)
+      // Providing '12345' gives masked value '12:34:5' = 6 chars, valid
+      const result = directive.validate({ value: '12345' } as AbstractControl);
+      expect(result).toBeNull();
+    });
+
+    it('should handle masks with * quantifier correctly', () => {
+      fixture.componentInstance.mask.set('$#*');
+      fixture.detectChanges();
+      // Expected length: just $ = 1 char (# with * is optional)
+      const result = directive.validate({ value: '1' } as AbstractControl);
+      expect(result).toBeNull();
+    });
+  });
+});
+
+describe('MaskDirective with Reactive Forms', () => {
+  it('should register as NG_VALIDATORS provider', () => {
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormTestComponent],
+    });
+
+    const fixture = TestBed.createComponent(ReactiveFormTestComponent);
+    fixture.detectChanges();
+
+    const control = fixture.componentInstance.control;
+
+    // Trigger validation with incomplete input
+    control.setValue('123');
+    fixture.detectChanges();
+
+    // Should have mask error because input is incomplete
+    expect(control.errors).toEqual({
+      mask: {
+        requiredMask: '###-####',
+        actualValue: '123',
+      },
+    });
+
+    // Complete input should be valid
+    control.setValue('1234567');
+    fixture.detectChanges();
+    expect(control.errors).toBeNull();
   });
 });

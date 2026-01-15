@@ -1,10 +1,12 @@
-import { computed, Directive, input } from '@angular/core';
+import { computed, Directive, forwardRef, input } from '@angular/core';
 import {
-  IConfigPattern,
-  isQuantifier,
-  MaskQuantifier,
-  patterns,
-} from './mask.config';
+  AbstractControl,
+  NG_VALIDATORS,
+  ValidationErrors,
+  Validator,
+} from '@angular/forms';
+import { IConfigPattern, MaskQuantifier, patterns } from './mask.config';
+import { getExpectedLength, isQuantifier } from './mask.utils';
 
 interface MaskState {
   result: string;
@@ -17,8 +19,15 @@ interface MaskState {
   host: {
     '(input)': 'onInput($event)',
   },
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => MaskDirective),
+      multi: true,
+    },
+  ],
 })
-export class MaskDirective {
+export class MaskDirective implements Validator {
   mask = input.required<string>();
 
   customPatterns = input<Record<string, IConfigPattern>>({});
@@ -31,6 +40,27 @@ export class MaskDirective {
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
     input.value = this.applyMask(input.value, this.mask());
+  }
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+
+    const mask = this.mask();
+    const maskedValue = this.applyMask(value, mask);
+    const expectedLength = getExpectedLength(mask);
+
+    // Check if input is complete (matches expected mask length)
+    if (maskedValue.length < expectedLength) {
+      return {
+        mask: {
+          requiredMask: mask,
+          actualValue: maskedValue,
+        },
+      };
+    }
+
+    return null;
   }
 
   private applyMask(inputValue: string, mask: string): string {

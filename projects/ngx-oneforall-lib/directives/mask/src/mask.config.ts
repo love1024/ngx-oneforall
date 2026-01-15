@@ -35,10 +35,3 @@ export const patterns: Record<string, IConfigPattern> = {
     pattern: new RegExp('[a-z]'),
   },
 };
-
-/**
- * Check if a character is a quantifier
- */
-export function isQuantifier(char: string): char is MaskQuantifier {
-  return char === MaskQuantifier.ZeroOrMore || char === MaskQuantifier.Optional;
-}
