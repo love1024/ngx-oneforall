@@ -1,4 +1,4 @@
-import { Directive, input } from '@angular/core';
+import { computed, Directive, input } from '@angular/core';
 import {
   IConfigPattern,
   isQuantifier,
@@ -21,12 +21,20 @@ interface MaskState {
 export class MaskDirective {
   mask = input.required<string>();
 
+  customPatterns = input<Record<string, IConfigPattern>>({});
+
+  private mergedPatterns = computed(() => ({
+    ...patterns,
+    ...this.customPatterns(),
+  }));
+
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
     input.value = this.applyMask(input.value, this.mask());
   }
 
   private applyMask(inputValue: string, mask: string): string {
+    const activePatterns = this.mergedPatterns();
     let result = '';
     let maskPosition = 0;
 
@@ -36,13 +44,13 @@ export class MaskDirective {
       const nextChar = mask[maskPosition + 1];
       const quantifier = isQuantifier(nextChar) ? nextChar : null;
 
-      const pattern = patterns[maskChar];
+      const pattern = activePatterns[maskChar];
       const state: MaskState = { result, maskPosition, inputOffset: 0 };
 
       if (pattern) {
         this.handlePatternChar(inputChar, pattern, quantifier, state);
       } else if (!isQuantifier(maskChar)) {
-        this.handleNonPatternChars(inputChar, mask, state);
+        this.handleNonPatternChars(inputChar, mask, activePatterns, state);
       }
 
       result = state.result;
@@ -60,6 +68,11 @@ export class MaskDirective {
     state: MaskState
   ): void {
     const matches = pattern.pattern.test(inputChar);
+    // Treat pattern.optional as equivalent to ? quantifier
+    const isOptional =
+      pattern.optional ||
+      quantifier === MaskQuantifier.Optional ||
+      quantifier === MaskQuantifier.ZeroOrMore;
 
     if (matches) {
       state.result += inputChar;
@@ -70,14 +83,11 @@ export class MaskDirective {
         return;
       }
 
-      // For ? qunatifier as next, move one more step to pass it as well
+      // For ? quantifier as next, move one more step to pass it as well
       state.maskPosition += quantifier ? 2 : 1;
-    } else if (
-      quantifier === MaskQuantifier.Optional ||
-      quantifier === MaskQuantifier.ZeroOrMore
-    ) {
-      // Optional or zero or more quantifier - skip pattern and quantifier, retry input
-      state.maskPosition += 2;
+    } else if (isOptional) {
+      // Optional pattern - skip pattern (and quantifier if present), retry input
+      state.maskPosition += quantifier ? 2 : 1;
       state.inputOffset = -1;
     }
   }
@@ -85,13 +95,14 @@ export class MaskDirective {
   private handleNonPatternChars(
     inputChar: string,
     mask: string,
+    activePatterns: Record<string, IConfigPattern>,
     state: MaskState
   ): void {
     let maskChar = mask[state.maskPosition];
 
     while (
       maskChar &&
-      !patterns[maskChar] &&
+      !activePatterns[maskChar] &&
       !isQuantifier(maskChar) &&
       state.maskPosition < mask.length
     ) {

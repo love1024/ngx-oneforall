@@ -8,19 +8,24 @@ export enum MaskQuantifier {
   Optional = '?',
 }
 
+/**
+ * Configuration for a mask pattern character.
+ */
 export interface IConfigPattern {
+  /** The regex pattern that the input character must match */
   pattern: RegExp;
-  symbol?: string;
+  /** If true, this pattern is optional (equivalent to ? quantifier) */
+  optional?: boolean;
 }
 
 export const patterns: Record<string, IConfigPattern> = {
-  '0': {
+  '#': {
     pattern: new RegExp('\\d'),
   },
   A: {
     pattern: new RegExp('[a-zA-Z0-9]'),
   },
-  S: {
+  '@': {
     pattern: new RegExp('[a-zA-Z]'),
   },
   U: {

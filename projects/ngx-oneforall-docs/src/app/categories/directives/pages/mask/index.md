@@ -23,13 +23,13 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
 
 ```html
 <!-- Phone number -->
-<input [mask]="'(000) 000-0000'" />
+<input [mask]="'(###) ###-####'" />
 
 <!-- Date -->
-<input [mask]="'00/00/0000'" />
+<input [mask]="'##/##/####'" />
 
 <!-- Credit card -->
-<input [mask]="'0000 0000 0000 0000'" />
+<input [mask]="'#### #### #### ####'" />
 ```
 
 ---
@@ -38,9 +38,9 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
 
 | Pattern | Description | Example |
 |---------|-------------|---------|
-| `0` | Required digit (0-9) | `000` → "123" |
+| `#` | Required digit (0-9) | `###` → "123" |
 | `A` | Required alphanumeric | `AAA` → "A1B" |
-| `S` | Required letter (a-z, A-Z) | `SSS` → "ABC" |
+| `@` | Required letter (a-z, A-Z) | `@@@` → "ABC" |
 | `U` | Required uppercase letter | `UUU` → "ABC" |
 | `L` | Required lowercase letter | `LLL` → "abc" |
 
@@ -58,19 +58,19 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
 **Optional (`?`):**
 ```html
 <!-- IP address (1-3 digits per octet) -->
-<input [mask]="'0?0?0.0?0?0.0?0?0.0?0?0'" />
+<input [mask]="'#?#?#.#?#?#.#?#?#.#?#?#'" />
 
 <!-- License plate: "ABC-1234" or "AB-1234" -->
-<input [mask]="'SS?S?-0000'" />
+<input [mask]="'@@?@?-####'" />
 ```
 
 **Zero or more (`*`):**
 ```html
 <!-- Email: "user@domain.com" -->
-<input [mask]="'A*@A*.A*'" />
+<input [mask]="'A*\@A*.A*'" />
 
 <!-- Hashtag: "#a", "#hello", "#Angular" -->
-<input [mask]="'#S*'" />
+<input [mask]="'\#@*'" />
 ```
 
 ---
@@ -80,6 +80,42 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
 | Input | Type | Description |
 |-------|------|-------------|
 | `mask` | `string` | The mask pattern to apply |
+| `customPatterns` | `Record<string, IConfigPattern>` | Custom patterns to extend or override built-in patterns |
+
+### IConfigPattern Interface
+
+```typescript
+interface IConfigPattern {
+  pattern: RegExp;     // The regex pattern to match
+  optional?: boolean;  // If true, equivalent to ? quantifier
+}
+```
+
+---
+
+## Custom Patterns
+
+Define your own pattern characters or override built-in ones:
+
+```html
+<!-- Custom hex digit pattern -->
+<input 
+  [mask]="'XX-XX-XX'" 
+  [customPatterns]="{ X: { pattern: /[0-9A-Fa-f]/ } }" />
+
+<!-- Time input with hour validation (0-2 for first digit) -->
+<input 
+  [mask]="'H#:M#'" 
+  [customPatterns]="{
+    H: { pattern: /[0-2]/ },
+    M: { pattern: /[0-5]/ }
+  }" />
+
+<!-- Optional pattern via property -->
+<input 
+  [mask]="'O##'" 
+  [customPatterns]="{ O: { pattern: /\\d/, optional: true } }" />
+```
 
 ---
 

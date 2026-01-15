@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MaskDirective } from 'ngx-oneforall/directives/mask';
+import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
 
 @Component({
   selector: 'lib-mask-demo',
@@ -10,9 +10,9 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
       <input
         id="phone"
         type="text"
-        [mask]="'(000) 000-0000'"
+        [mask]="'(###) ###-####'"
         placeholder="(___) ___-____" />
-      <span class="hint">Mask: (000) 000-0000</span>
+      <span class="hint">Mask: (###) ###-####</span>
     </div>
 
     <div class="demo-section">
@@ -20,9 +20,9 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
       <input
         id="date"
         type="text"
-        [mask]="'00/00/0000'"
+        [mask]="'##/##/####'"
         placeholder="MM/DD/YYYY" />
-      <span class="hint">Mask: 00/00/0000</span>
+      <span class="hint">Mask: ##/##/####</span>
     </div>
 
     <div class="demo-section">
@@ -30,19 +30,9 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
       <input
         id="time"
         type="text"
-        [mask]="'00:00:0?0?'"
+        [mask]="'##:##:#?#?'"
         placeholder="HH:MM:SS" />
-      <span class="hint">Mask: 00:00:0?0?</span>
-    </div>
-
-    <div class="demo-section">
-      <label for="timeSeconds">Time with Seconds</label>
-      <input
-        id="timeSeconds"
-        type="text"
-        [mask]="'00:00:00'"
-        placeholder="HH:MM:SS" />
-      <span class="hint">Mask: 00:00:00</span>
+      <span class="hint">Mask: ##:##:#?#?</span>
     </div>
 
     <div class="demo-section">
@@ -50,37 +40,69 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
       <input
         id="extension"
         type="text"
-        [mask]="'000-000-0000 x0?0?0?0?'"
+        [mask]="'###-###-#### x#?#?#?#?'"
         placeholder="___-___-____ x____" />
-      <span class="hint"
-        >Mask: 000-000-0000 x0?0?0?0? — 1-5 digit extension</span
-      >
+      <span class="hint">Mask: ###-###-#### x#?#?#?#? — 1-5 digit extension</span>
     </div>
 
     <div class="demo-section">
       <label for="postal">Canadian Postal Code</label>
-      <input id="postal" type="text" [mask]="'S0S 0S0'" placeholder="A1A 1A1" />
-      <span class="hint">Mask: S0S 0S0</span>
+      <input id="postal" type="text" [mask]="'@#@ #@#'" placeholder="A1A 1A1" />
+      <span class="hint">Mask: @#@ #@#</span>
     </div>
 
     <div class="demo-section">
-      <label for="email">Email (*)</label>
+      <label for="currency">Currency ($#*)</label>
+      <input id="currency" type="text" [mask]="'$#*'" placeholder="$0" />
+      <span class="hint">Mask: $#* — any number of digits after $</span>
+    </div>
+
+    <div class="demo-section">
+      <label for="hex">Hex Color (Custom Pattern)</label>
       <input
-        id="email"
+        id="hex"
         type="text"
-        [mask]="'A*@A*.SSS'"
-        placeholder="user@domain.com" />
-      <span class="hint"
-        >Mask: A*&#64;A*.SSS — alphanumeric username, domain, and TLD</span
-      >
+        [mask]="'XXXXXX'"
+        [customPatterns]="hexPattern"
+        placeholder="FFFFFF" />
+      <span class="hint">Custom X pattern: /[0-9A-Fa-f]/</span>
     </div>
 
     <div class="demo-section">
-      <label for="hashtag">Hashtag (*)</label>
-      <input id="hashtag" type="text" [mask]="'#S*'" placeholder="#tag" />
-      <span class="hint">Mask: #S* — any number of letters after #</span>
+      <label for="time24">24-Hour Time (Custom Validation)</label>
+      <input
+        id="time24"
+        type="text"
+        [mask]="'H#:M#'"
+        [customPatterns]="timePatterns"
+        placeholder="23:59" />
+      <span class="hint">Custom patterns: H=/[0-2]/, M=/[0-5]/</span>
+    </div>
+
+    <div class="demo-section">
+      <label for="optionalPrefix">Optional First Digit (Custom)</label>
+      <input
+        id="optionalPrefix"
+        type="text"
+        [mask]="'O##-####'"
+        [customPatterns]="optionalPattern"
+        placeholder="123-4567" />
+      <span class="hint">Custom O pattern with optional: true</span>
     </div>
   `,
   styleUrl: 'mask-demo.component.scss',
 })
-export class MaskDemoComponent {}
+export class MaskDemoComponent {
+  hexPattern: Record<string, IConfigPattern> = {
+    X: { pattern: /[0-9A-Fa-f]/ },
+  };
+
+  timePatterns: Record<string, IConfigPattern> = {
+    H: { pattern: /[0-2]/ },
+    M: { pattern: /[0-5]/ },
+  };
+
+  optionalPattern: Record<string, IConfigPattern> = {
+    O: { pattern: /\d/, optional: true },
+  };
+}
