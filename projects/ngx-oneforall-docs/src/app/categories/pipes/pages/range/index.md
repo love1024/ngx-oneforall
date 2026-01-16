@@ -2,6 +2,12 @@
 
 The `RangePipe` generates an array of numbers in a range. Follows Python's `range()` convention.
 
+### Installation
+
+```ts
+import { RangePipe } from 'ngx-oneforall/pipes/range';
+```
+
 ### Usage
 
 ```html file="./snippets.html"#L2-L5

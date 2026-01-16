@@ -2,6 +2,12 @@
 
 The `HighlightSearchPipe` highlights search matches by wrapping them in customizable HTML tags. Supports optional CSS classes for styling.
 
+### Installation
+
+```ts
+import { HighlightSearchPipe } from 'ngx-oneforall/pipes/highlight-search';
+```
+
 ### Usage
 
 ```html file="./snippets.html"#L2-L2
