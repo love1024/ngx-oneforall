@@ -2,6 +2,12 @@
 
 The `FirstErrorKeyPipe` extracts the first validation error key from a form control's errors. It supports optional priority ordering to control which error displays first.
 
+### Installation
+
+```ts
+import { FirstErrorKeyPipe } from 'ngx-oneforall/pipes/first-error-key';
+```
+
 ### Usage
 
 ```html file="./demo/snippets.html"#L4-L6

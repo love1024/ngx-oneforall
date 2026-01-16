@@ -2,6 +2,12 @@
 
 The `CallPipe` invokes a function directly from the template with pure pipe caching. This prevents unnecessary change detection cycles since the function is only re-evaluated when its reference or arguments change.
 
+### Installation
+
+```ts
+import { CallPipe } from 'ngx-oneforall/pipes/call';
+```
+
 ### Usage
 
 ```html file="./snippets.html"#L2-L2

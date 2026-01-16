@@ -2,6 +2,12 @@
 
 The `BytesPipe` converts a number (in bytes) into a human-readable string with appropriate units (B, KB, MB, GB, TB, PB). It automatically selects the best unit and formats the number with configurable decimal places.
 
+### Installation
+
+```ts
+import { BytesPipe } from 'ngx-oneforall/pipes/bytes';
+```
+
 ### Usage
 
 ```html file="./snippets.html"#L2-L4

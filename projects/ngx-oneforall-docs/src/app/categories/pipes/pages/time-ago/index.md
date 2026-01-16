@@ -2,6 +2,12 @@
 
 The `TimeAgoPipe` displays relative time (e.g., "2 hours ago", "in 3 days"). Supports live updates, future dates, and customizable labels.
 
+### Installation
+
+```ts
+import { TimeAgoPipe } from 'ngx-oneforall/pipes/time-ago';
+```
+
 ### Usage
 
 ```html file="./snippets.html"#L2-L2

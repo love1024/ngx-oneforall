@@ -4,6 +4,12 @@ The `SafeHtmlPipe` bypasses Angular's HTML sanitization to render trusted HTML c
 
 > **⚠️ Security Warning** Only use with trusted content. User input must be sanitized server-side.
 
+### Installation
+
+```ts
+import { SafeHtmlPipe } from 'ngx-oneforall/pipes/safe-html';
+```
+
 ### Usage
 
 ```html
