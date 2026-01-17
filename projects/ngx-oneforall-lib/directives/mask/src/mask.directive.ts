@@ -95,10 +95,10 @@ export class MaskDirective implements Validator, ControlValueAccessor {
 
     if (this.clearIfNotMatch()) {
       const mask = this.mask();
-      const currentValue = this.elementRef.nativeElement.value;
-      const expectedLength = getExpectedLength(mask);
+      const { raw } = this.applyMask(this.elementRef.nativeElement.value, mask);
+      const expectedLength = getExpectedLength(mask, this.mergedPatterns());
 
-      if (currentValue.length < expectedLength) {
+      if (raw.length < expectedLength) {
         this.elementRef.nativeElement.value = '';
         this.onChange('');
       }
@@ -110,15 +110,17 @@ export class MaskDirective implements Validator, ControlValueAccessor {
     if (!value) return null;
 
     const mask = this.mask();
-    const { masked } = this.applyMask(value, mask);
-    const expectedLength = getExpectedLength(mask);
+    const activePatterns = this.mergedPatterns();
+    const { raw } = this.applyMask(value, mask);
+    const expectedLength = getExpectedLength(mask, activePatterns);
 
-    // Check if input is complete (matches expected mask length)
-    if (masked.length < expectedLength) {
+    // Check if input is complete (has enough raw characters)
+    if (raw.length < expectedLength) {
       return {
         mask: {
           requiredMask: mask,
-          actualValue: masked,
+          actualLength: raw.length,
+          expectedLength: expectedLength,
         },
       };
     }
@@ -150,7 +152,14 @@ export class MaskDirective implements Validator, ControlValueAccessor {
       };
 
       if (pattern) {
-        this.handlePatternChar(inputChar, pattern, quantifier, state);
+        this.handlePatternChar(
+          inputChar,
+          pattern,
+          quantifier,
+          state,
+          mask,
+          activePatterns
+        );
       } else if (!isQuantifier(maskChar)) {
         this.handleNonPatternChars(inputChar, mask, activePatterns, state);
       }
@@ -168,10 +177,11 @@ export class MaskDirective implements Validator, ControlValueAccessor {
     inputChar: string,
     pattern: IConfigPattern,
     quantifier: MaskQuantifier | null,
-    state: MaskState
+    state: MaskState,
+    mask: string,
+    activePatterns: Record<string, IConfigPattern>
   ): void {
     const matches = pattern.pattern.test(inputChar);
-    // Treat pattern.optional as equivalent to ? quantifier
     const isOptional =
       pattern.optional ||
       quantifier === MaskQuantifier.Optional ||
@@ -183,16 +193,40 @@ export class MaskDirective implements Validator, ControlValueAccessor {
 
       // For * quantifier, stay on the same pattern (don't advance mask position)
       if (quantifier === MaskQuantifier.ZeroOrMore) {
-        // Don't advance maskPosition - allow more matches
         return;
       }
 
       // For ? quantifier as next, move one more step to pass it as well
       state.maskPosition += quantifier ? 2 : 1;
     } else if (isOptional) {
-      // Optional pattern - skip pattern (and quantifier if present), retry input
-      state.maskPosition += quantifier ? 2 : 1;
-      state.inputOffset = -1;
+      // Mismatch on optional pattern.
+      // Check if input matches any FUTURE pattern/literal in the mask.
+      // If yes, this optional pattern was skipped -> Advance mask.
+      // If no, this input is junk -> Skip input (do nothing to state).
+
+      const nextMaskPos = state.maskPosition + (quantifier ? 2 : 1);
+      let isFutureMatch = false;
+
+      for (let i = nextMaskPos; i < mask.length; i++) {
+        const char = mask[i];
+        if (
+          char === MaskQuantifier.Optional ||
+          char === MaskQuantifier.ZeroOrMore
+        ) {
+          continue;
+        }
+
+        const p = activePatterns[char];
+        if (p?.pattern.test(inputChar) || char === inputChar) {
+          isFutureMatch = true;
+          break;
+        }
+      }
+
+      if (isFutureMatch) {
+        state.maskPosition = nextMaskPos;
+        state.inputOffset = -1;
+      }
     }
   }
 

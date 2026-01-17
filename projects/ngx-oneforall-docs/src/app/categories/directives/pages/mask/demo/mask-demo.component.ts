@@ -19,7 +19,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         <span class="model">Value: {{ phoneControl.value }}</span>
       </div>
       @if (phoneControl.errors?.['mask']; as error) {
-        <span class="error">Incomplete: {{ error.actualValue }}</span>
+        <span class="error">Incomplete: {{ error.actualLength }}/{{ error.expectedLength }} characters</span>
       }
     </div>
 
@@ -36,7 +36,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         <span class="model">Value: {{ postalControl.value }}</span>
       </div>
       @if (postalControl.errors?.['mask']; as error) {
-        <span class="error">Incomplete: {{ error.actualValue }}</span>
+        <span class="error">Incomplete: {{ error.actualLength }}/{{ error.expectedLength }} characters</span>
       }
     </div>
 
@@ -54,7 +54,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         <span class="model">Value: {{ hexControl.value }}</span>
       </div>
       @if (hexControl.errors?.['mask']; as error) {
-        <span class="error">Incomplete: {{ error.actualValue }}</span>
+        <span class="error">Incomplete: {{ error.actualLength }}/{{ error.expectedLength }} characters</span>
       }
     </div>
 
@@ -72,7 +72,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         <span class="model">Value: {{ timeControl.value }}</span>
       </div>
       @if (timeControl.errors?.['mask']; as error) {
-        <span class="error">Incomplete: {{ error.actualValue }}</span>
+        <span class="error">Incomplete: {{ error.actualLength }}/{{ error.expectedLength }} characters</span>
       }
     </div>
 
@@ -89,7 +89,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         <span class="model">Value: {{ extensionControl.value }}</span>
       </div>
       @if (extensionControl.errors?.['mask']; as error) {
-        <span class="error">Incomplete: {{ error.actualValue }}</span>
+        <span class="error">Incomplete: {{ error.actualLength }}/{{ error.expectedLength }} characters</span>
       }
     </div>
 

@@ -236,6 +236,20 @@ describe('MaskDirective', () => {
       expect(triggerInput('1234')).toBe('12:34');
     });
 
+    it('should handle insertion without dropping valid characters', () => {
+      // Mask: ###-###-#### x#?#?#?
+      // Preceding digits optional (#?)
+      fixture.componentInstance.mask.set('###-###-#### x#?#?#?');
+      fixture.detectChanges();
+
+      // Initial: 1234567890123 -> 123-456-7890 x123
+      expect(triggerInput('1234567890123')).toBe('123-456-7890 x123');
+
+      // Insert '9' at start: 91234567890123
+      // Expected: 912-345-6789 x012 (last digit 3 dropped)
+      expect(triggerInput('91234567890123')).toBe('912-345-6789 x012');
+    });
+
     it('should handle SSN format', () => {
       fixture.componentInstance.mask.set('###-##-####');
       fixture.detectChanges();
@@ -426,7 +440,8 @@ describe('MaskDirective', () => {
       expect(result).toEqual({
         mask: {
           requiredMask: '(###) ###-####',
-          actualValue: '(123',
+          actualLength: 3,
+          expectedLength: 10,
         },
       });
     });
@@ -469,7 +484,8 @@ describe('MaskDirective with Reactive Forms', () => {
     expect(control.errors).toEqual({
       mask: {
         requiredMask: '###-####',
-        actualValue: '123',
+        actualLength: 3,
+        expectedLength: 7,
       },
     });
 
