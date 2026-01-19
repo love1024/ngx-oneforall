@@ -15,7 +15,12 @@ import {
   Validator,
 } from '@angular/forms';
 import { IConfigPattern, MaskQuantifier, patterns } from './mask.config';
-import { getExpectedLength, isQuantifier } from './mask.utils';
+import {
+  getExpectedLength,
+  getRequiredEndPosition,
+  isQuantifier,
+  canSkipOptional,
+} from './mask.utils';
 
 interface MaskState {
   raw: string;
@@ -29,6 +34,7 @@ interface MaskState {
   host: {
     '(input)': 'onInput($event)',
     '(blur)': 'onBlur()',
+    '(keydown.backspace)': 'onBackspace($event)',
   },
   providers: [
     {
@@ -85,9 +91,38 @@ export class MaskDirective implements Validator, ControlValueAccessor {
 
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
-    const { masked, raw } = this.applyMask(input.value, this.mask());
+    const initialSelection = input.selectionStart ?? input.value.length;
+
+    const { masked, raw, newCursorPosition } = this.applyMask(
+      input.value,
+      this.mask(),
+      initialSelection
+    );
+
     input.value = masked;
     this.onChange(raw);
+
+    input.setSelectionRange(newCursorPosition, newCursorPosition);
+  }
+
+  onBackspace(e: Event) {
+    const el = e.target as HTMLInputElement;
+
+    const cursor = el.selectionStart ?? 0;
+    // If cursor is just after a non pattern char, move it back without deleting the separator
+    if (cursor > 0) {
+      const charBefore = el.value[cursor - 1];
+      const activePatterns = this.mergedPatterns();
+
+      const isNonPatternChar =
+        !activePatterns[charBefore] && !/\w/.test(charBefore);
+
+      if (isNonPatternChar) {
+        // Move cursor back by 1 to skip over the non pattern char
+        el.setSelectionRange(cursor - 1, cursor - 1);
+        e.preventDefault(); // Prevent default - just move cursor
+      }
+    }
   }
 
   onBlur() {
@@ -111,11 +146,13 @@ export class MaskDirective implements Validator, ControlValueAccessor {
 
     const mask = this.mask();
     const activePatterns = this.mergedPatterns();
-    const { raw } = this.applyMask(value, mask);
+    const { raw, maskEndPosition } = this.applyMask(value, mask);
     const expectedLength = getExpectedLength(mask, activePatterns);
+    const requiredEndPosition = getRequiredEndPosition(mask, activePatterns);
 
-    // Check if input is complete (has enough raw characters)
-    if (raw.length < expectedLength) {
+    // Check if mask position reached past all required patterns
+    // This catches cases where optionals are filled but trailing required are not
+    if (maskEndPosition < requiredEndPosition || raw.length < expectedLength) {
       return {
         mask: {
           requiredMask: mask,
@@ -130,14 +167,28 @@ export class MaskDirective implements Validator, ControlValueAccessor {
 
   private applyMask(
     inputValue: string,
-    mask: string
-  ): { masked: string; raw: string } {
+    mask: string,
+    cursorPosition = 0
+  ): {
+    masked: string;
+    raw: string;
+    maskEndPosition: number;
+    newCursorPosition: number;
+  } {
     const activePatterns = this.mergedPatterns();
     let raw = '';
     let masked = '';
     let maskPosition = 0;
+    let newCursorPosition = 0;
+    let cursorSet = false;
 
     for (let i = 0; i < inputValue.length && maskPosition < mask.length; i++) {
+      // Track cursor position mapping
+      if (i === cursorPosition) {
+        newCursorPosition = masked.length;
+        cursorSet = true;
+      }
+
       const inputChar = inputValue[i];
       const maskChar = mask[maskPosition];
       const nextChar = mask[maskPosition + 1];
@@ -158,7 +209,9 @@ export class MaskDirective implements Validator, ControlValueAccessor {
           quantifier,
           state,
           mask,
-          activePatterns
+          activePatterns,
+          inputValue,
+          i
         );
       } else if (!isQuantifier(maskChar)) {
         this.handleNonPatternChars(inputChar, mask, activePatterns, state);
@@ -170,7 +223,12 @@ export class MaskDirective implements Validator, ControlValueAccessor {
       i += state.inputOffset;
     }
 
-    return { masked, raw };
+    // Handle cursor at the very end or if loop terminated early (mask full)
+    if (!cursorSet && cursorPosition > 0) {
+      newCursorPosition = masked.length;
+    }
+
+    return { masked, raw, maskEndPosition: maskPosition, newCursorPosition };
   }
 
   private handlePatternChar(
@@ -179,7 +237,9 @@ export class MaskDirective implements Validator, ControlValueAccessor {
     quantifier: MaskQuantifier | null,
     state: MaskState,
     mask: string,
-    activePatterns: Record<string, IConfigPattern>
+    activePatterns: Record<string, IConfigPattern>,
+    inputValue: string,
+    inputIndex: number
   ): void {
     const matches = pattern.pattern.test(inputChar);
     const isOptional =
@@ -193,39 +253,51 @@ export class MaskDirective implements Validator, ControlValueAccessor {
 
       // For * quantifier, stay on the same pattern (don't advance mask position)
       if (quantifier === MaskQuantifier.ZeroOrMore) {
+        this.handleZeroOrMoreTransition(inputChar, state, mask, activePatterns);
         return;
       }
 
       // For ? quantifier as next, move one more step to pass it as well
       state.maskPosition += quantifier ? 2 : 1;
     } else if (isOptional) {
-      // Mismatch on optional pattern.
-      // Check if input matches any FUTURE pattern/literal in the mask.
-      // If yes, this optional pattern was skipped -> Advance mask.
-      // If no, this input is junk -> Skip input (do nothing to state).
-
       const nextMaskPos = state.maskPosition + (quantifier ? 2 : 1);
-      let isFutureMatch = false;
 
-      for (let i = nextMaskPos; i < mask.length; i++) {
-        const char = mask[i];
-        if (
-          char === MaskQuantifier.Optional ||
-          char === MaskQuantifier.ZeroOrMore
-        ) {
-          continue;
-        }
+      // Use the new robust utility to check if we can skip
+      const { canSkip, skipToPos } = canSkipOptional(
+        inputChar,
+        mask,
+        state.maskPosition,
+        activePatterns,
+        inputValue,
+        inputIndex,
+        nextMaskPos
+      );
 
-        const p = activePatterns[char];
-        if (p?.pattern.test(inputChar) || char === inputChar) {
-          isFutureMatch = true;
-          break;
-        }
+      if (canSkip) {
+        state.maskPosition = skipToPos;
+        state.inputOffset = -1; // Retry input against new position
       }
+    }
+  }
 
-      if (isFutureMatch) {
+  private handleZeroOrMoreTransition(
+    inputChar: string,
+    state: MaskState,
+    mask: string,
+    activePatterns: Record<string, IConfigPattern>
+  ): void {
+    const nextMaskPos = state.maskPosition + 2;
+    if (nextMaskPos < mask.length) {
+      const nextChar = mask[nextMaskPos];
+      const nextPattern = activePatterns[nextChar];
+
+      // Non-greedy: if input matches what comes after *, transition immediately
+      // This allows masks like #*# to work where the subsequent char is the same type
+      if (
+        (nextPattern && nextPattern.pattern.test(inputChar)) ||
+        nextChar === inputChar
+      ) {
         state.maskPosition = nextMaskPos;
-        state.inputOffset = -1;
       }
     }
   }

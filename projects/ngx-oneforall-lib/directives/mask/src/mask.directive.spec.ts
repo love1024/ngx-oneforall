@@ -250,6 +250,25 @@ describe('MaskDirective', () => {
       expect(triggerInput('91234567890123')).toBe('912-345-6789 x012');
     });
 
+    it('should preserve trailing digits when inserting in optional section', () => {
+      // Mask: ###-###-#### x#?#?#?#? #
+      // 10 required digits, space, x, 4 optional digits, space, 1 required digit
+      fixture.componentInstance.mask.set('###-###-#### x#?#?#?#? #');
+      fixture.detectChanges();
+
+      // Initial value: 10 required + 4 optional + 1 required = 15 raw digits
+      // When masked: 123-121-2312 x3123 1
+      expect(triggerInput('123121231231231')).toBe('123-121-2312 x3123 1');
+
+      // User inserts 9 BEFORE the space (between 2312 and space)
+      // Input becomes: 123-121-23129  x3123 1 (11 digits before space+x, then 4+1 after)
+      // The 11th digit (9) can't fit in required positions, it becomes first optional
+      // Expected: 123-121-2312 x9312 3 (9 shifts into optional, 3123 becomes 9312, 1->3)
+      expect(triggerInput('123-121-23129  x3123 1')).toBe(
+        '123-121-2312 x9312 3'
+      );
+    });
+
     it('should handle SSN format', () => {
       fixture.componentInstance.mask.set('###-##-####');
       fixture.detectChanges();
@@ -276,6 +295,18 @@ describe('MaskDirective', () => {
       fixture.detectChanges();
       // '#?' is optional digit, '@' is letter, '#' is digit
       expect(triggerInput('a1')).toBe('a1');
+    });
+
+    it('should skip optionals to match literal separator', () => {
+      // #?#?-# = two optional digits, dash, required digit
+      fixture.componentInstance.mask.set('#?#?-#');
+      fixture.detectChanges();
+      // Input "-5" should skip both optionals and match the dash literal
+      expect(triggerInput('-5')).toBe('-5');
+      // Input "1-5" should fill one optional, then match dash
+      expect(triggerInput('1-5')).toBe('1-5');
+      // Input "12-5" should fill both optionals, then match dash
+      expect(triggerInput('12-5')).toBe('12-5');
     });
 
     it('should work with optional at end of mask', () => {
@@ -461,6 +492,16 @@ describe('MaskDirective', () => {
       // Expected length: just $ = 1 char (# with * is optional)
       const result = directive.validate({ value: '1' } as AbstractControl);
       expect(result).toBeNull();
+    });
+
+    it('should return error when optional is filled but trailing required is not', () => {
+      // Mask: #?-@# -> optional digit, dash, required letter, required digit
+      fixture.componentInstance.mask.set('#?-@#');
+      fixture.detectChanges();
+      // Input "1B" -> "1" fills optional #?, "-" auto-inserted, "B" fills @, but final # is missing
+      const result = directive.validate({ value: '1B' } as AbstractControl);
+      expect(result).not.toBeNull();
+      expect(result?.['mask']).toBeDefined();
     });
   });
 });
