@@ -94,6 +94,22 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
     </div>
 
     <div class="demo-section">
+      <label for="prefixSuffix">Prefix & Suffix</label>
+      <input
+        id="prefixSuffix"
+        type="text"
+        [formControl]="prefixSuffixControl"
+        [mask]="'###.##'"
+        prefix="$ "
+        suffix=" USD"
+        placeholder="$ ___,__ USD" />
+      <div class="info-row">
+        <span class="hint">Mask: ###.##, Prefix: '$ ', Suffix: ' USD'</span>
+        <span class="model">Value: {{ prefixSuffixControl.value }}</span>
+      </div>
+    </div>
+
+    <div class="demo-section">
       <label for="clearIfNotMatch">Clear If Not Match</label>
       <input
         id="clearIfNotMatch"
@@ -116,6 +132,7 @@ export class MaskDemoComponent {
   hexControl = new FormControl('');
   timeControl = new FormControl('');
   extensionControl = new FormControl('');
+  prefixSuffixControl = new FormControl('');
   clearIfNotMatchControl = new FormControl('');
 
   hexPattern: Record<string, IConfigPattern> = {

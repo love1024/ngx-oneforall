@@ -7,6 +7,7 @@ Apply input masks to format user input as they type.
 - **Pattern-based masking** — Define mask patterns using simple characters
 - **Quantifiers** — Use `?` (optional) and `*` (zero or more) for flexible patterns
 - **Auto-insert separators** — Automatically adds separators like `-`, `/`, `(`, `)`
+- **Prefix & Suffix** — Add unmodifiable prefix and suffix strings
 - **Form validation** — Implements Angular's `Validator` interface for reactive forms
 - **SSR Safe** — Only runs in the browser
 
@@ -81,6 +82,8 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
 | Input | Type | Description |
 |-------|------|-------------|
 | `mask` | `string` | The mask pattern to apply |
+| `prefix` | `string` | Text to prepend to the masked value |
+| `suffix` | `string` | Text to append to the masked value |
 | `customPatterns` | `Record<string, IConfigPattern>` | Custom patterns to extend or override built-in patterns |
 | `clearIfNotMatch` | `boolean` | If `true`, clears the input on blur when mask is incomplete (default: `false`) |
 
