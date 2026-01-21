@@ -35,3 +35,20 @@ export const patterns: Record<string, IConfigPattern> = {
     pattern: new RegExp('[a-z]'),
   },
 };
+
+export const DEFAULT_SPECIAL_CHARACTERS = [
+  '-',
+  '/',
+  '(',
+  ')',
+  '.',
+  ':',
+  ' ',
+  '+',
+  ',',
+  '@',
+  '[',
+  ']',
+  '"',
+  "'",
+];

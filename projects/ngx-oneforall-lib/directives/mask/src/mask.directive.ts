@@ -16,7 +16,12 @@ import {
   ValidationErrors,
   Validator,
 } from '@angular/forms';
-import { IConfigPattern, MaskQuantifier, patterns } from './mask.config';
+import {
+  DEFAULT_SPECIAL_CHARACTERS,
+  IConfigPattern,
+  MaskQuantifier,
+  patterns,
+} from './mask.config';
 import {
   getExpectedLength,
   getRequiredEndPosition,
@@ -58,6 +63,16 @@ export class MaskDirective implements Validator, ControlValueAccessor {
 
   prefix = input('');
   suffix = input('');
+  specialCharacters = input<string[]>(DEFAULT_SPECIAL_CHARACTERS);
+  mergeSpecialChars = input(false, {
+    transform: (value: boolean | string) =>
+      typeof value === 'string' ? value === '' || value === 'true' : value,
+  });
+
+  removeSpecialCharacters = input(true, {
+    transform: (value: boolean | string) =>
+      typeof value === 'string' ? value === '' || value === 'true' : value,
+  });
 
   customPatterns = input<Record<string, IConfigPattern>>({});
 
@@ -70,6 +85,15 @@ export class MaskDirective implements Validator, ControlValueAccessor {
     ...this.customPatterns(),
   }));
 
+  private effectiveSpecialCharacters = computed(() => {
+    const special = this.specialCharacters();
+    const merge = this.mergeSpecialChars();
+    if (merge) {
+      return Array.from(new Set([...DEFAULT_SPECIAL_CHARACTERS, ...special]));
+    }
+    return special;
+  });
+
   constructor() {
     effect(() => {
       const mask = this.mask();
@@ -77,6 +101,8 @@ export class MaskDirective implements Validator, ControlValueAccessor {
       const suffix = this.suffix();
       // Used for tracking purposes
       this.clearIfNotMatch();
+
+      this.validateMask();
 
       untracked(() => {
         const currentValue = this.elementRef.nativeElement.value;
@@ -452,16 +478,33 @@ export class MaskDirective implements Validator, ControlValueAccessor {
       !isQuantifier(maskChar) &&
       state.maskPosition < mask.length
     ) {
-      // User typed the separator explicitly
-      if (maskChar === inputChar) {
-        state.masked += inputChar;
-        state.maskPosition++;
-        return;
-      }
-
       // Auto-insert the separator
       state.masked += maskChar;
+
+      // Add to raw value conditions:
+      // ONLY add if removeSpecialCharacters is FALSE AND it IS a special character.
+      // This means literals NOT in the specialCharacters list are ALWAYS ignored from raw value.
+      const shouldRemove = this.removeSpecialCharacters();
+      const specialCharacters = this.effectiveSpecialCharacters();
+
+      if (shouldRemove) {
+        // Default Mode: Add to raw ONLY if it is NOT in the specialCharacters list
+        if (!specialCharacters.includes(maskChar)) {
+          state.raw += maskChar;
+        }
+      } else {
+        // Strict Mode (remove=false): Add to raw ONLY if it IS in the specialCharacters list
+        if (specialCharacters.includes(maskChar)) {
+          state.raw += maskChar;
+        }
+      }
+
       state.maskPosition++;
+
+      // User typed the separator explicitly
+      if (maskChar === inputChar) {
+        return;
+      }
 
       if (state.maskPosition >= mask.length) break;
       maskChar = mask[state.maskPosition];
@@ -469,5 +512,21 @@ export class MaskDirective implements Validator, ControlValueAccessor {
 
     // Stay on current input char to match against next pattern
     state.inputOffset = -1;
+  }
+
+  private validateMask(): void {
+    const mask = this.mask();
+    const specialCharacters = this.effectiveSpecialCharacters();
+    const activePatterns = this.mergedPatterns();
+
+    for (const char of mask) {
+      if (!activePatterns[char] && !isQuantifier(char)) {
+        if (!specialCharacters.includes(char)) {
+          throw new Error(
+            `Mask contains non-pattern character '${char}' which is not in specialCharacters list.`
+          );
+        }
+      }
+    }
   }
 }

@@ -7,15 +7,21 @@ import {
 } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { MaskDirective } from './mask.directive';
-import { IConfigPattern } from './mask.config';
+import { IConfigPattern, DEFAULT_SPECIAL_CHARACTERS } from './mask.config';
 
 @Component({
-  template: `<input [mask]="mask()" [customPatterns]="customPatterns()" />`,
+  template: `<input
+    [mask]="mask()"
+    [customPatterns]="customPatterns()"
+    [specialCharacters]="specialCharacters()"
+    [mergeSpecialChars]="mergeSpecialChars()" />`,
   imports: [MaskDirective],
 })
 class TestHostComponent {
   mask = signal('(###) ###-####');
   customPatterns = signal<Record<string, IConfigPattern>>({});
+  specialCharacters = signal<string[]>(DEFAULT_SPECIAL_CHARACTERS);
+  mergeSpecialChars = signal(false);
 }
 
 @Component({
@@ -239,6 +245,8 @@ describe('MaskDirective', () => {
     it('should handle insertion without dropping valid characters', () => {
       // Mask: ###-###-#### x#?#?#?
       // Preceding digits optional (#?)
+      fixture.componentInstance.specialCharacters.set(['x']);
+      fixture.componentInstance.mergeSpecialChars.set(true);
       fixture.componentInstance.mask.set('###-###-#### x#?#?#?');
       fixture.detectChanges();
 
@@ -253,6 +261,8 @@ describe('MaskDirective', () => {
     it('should preserve trailing digits when inserting in optional section', () => {
       // Mask: ###-###-#### x#?#?#?#? #
       // 10 required digits, space, x, 4 optional digits, space, 1 required digit
+      fixture.componentInstance.specialCharacters.set(['x']);
+      fixture.componentInstance.mergeSpecialChars.set(true);
       fixture.componentInstance.mask.set('###-###-#### x#?#?#?#? #');
       fixture.detectChanges();
 
@@ -354,12 +364,14 @@ describe('MaskDirective', () => {
     });
 
     it('should work at end of mask (unlimited digits)', () => {
+      fixture.componentInstance.specialCharacters.set(['$']);
       fixture.componentInstance.mask.set('$#*');
       fixture.detectChanges();
       expect(triggerInput('12345')).toBe('$12345');
     });
 
     it('should work with separators before', () => {
+      fixture.componentInstance.specialCharacters.set(['$']);
       fixture.componentInstance.mask.set('$#*');
       fixture.detectChanges();
       expect(triggerInput('123')).toBe('$123');
@@ -487,6 +499,7 @@ describe('MaskDirective', () => {
     });
 
     it('should handle masks with * quantifier correctly', () => {
+      fixture.componentInstance.specialCharacters.set(['$']);
       fixture.componentInstance.mask.set('$#*');
       fixture.detectChanges();
       // Expected length: just $ = 1 char (# with * is optional)

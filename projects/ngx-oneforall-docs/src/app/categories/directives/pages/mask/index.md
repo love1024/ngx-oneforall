@@ -86,6 +86,25 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
 | `suffix` | `string` | Text to append to the masked value |
 | `customPatterns` | `Record<string, IConfigPattern>` | Custom patterns to extend or override built-in patterns |
 | `clearIfNotMatch` | `boolean` | If `true`, clears the input on blur when mask is incomplete (default: `false`) |
+| `specialCharacters` | `string[]` | List of characters to be excluded from the raw value (default: `['-', '/', '(', ')', '.', ':', ' ', '+', ',', '@', '[', ']', '"', "'"]`) |
+| `mergeSpecialChars` | `boolean` | If `true`, merges your `specialCharacters` list with the default list. If `false` (default), uses ONLY your provided list. |
+| `removeSpecialCharacters` | `boolean` | If `true`, removes characters defined in `specialCharacters` from the raw value. If `false`, includes them. (default: `true`) |
+
+### Special Characters Configuration
+
+By default, the directive treats common separators (like `-`, `/`, `(`) as special characters. You can configure this behavior using the inputs described above.
+
+> **Warning** If your mask contains any literal characters (characters that are not patterns like `0` or `A`) that are NOT in the `specialCharacters` list (either the default list or your custom one), the directive will throw an error.
+
+**Example: Custom Special Characters**
+
+```html
+<input [mask]="'A-A'" [specialCharacters]="['-']" /> 
+<!-- Valid because '-' is in specialCharacters -->
+
+<input [mask]="'A/A'" [specialCharacters]="['-']" /> 
+<!-- ERROR: '/' is not a pattern and not in specialCharacters -->
+```
 
 ### IConfigPattern Interface
 

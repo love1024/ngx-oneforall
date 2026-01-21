@@ -82,7 +82,9 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         id="extension"
         type="text"
         [formControl]="extensionControl"
+        [specialCharacters]="['x']"
         [mask]="'###-###-#### x#?#?#?#?'"
+        [mergeSpecialChars]="true"
         placeholder="___-___-____ x____" />
       <div class="info-row">
         <span class="hint">Mask: ###-###-#### x#?#?#?#?</span>
@@ -123,6 +125,37 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         <span class="model">Value: {{ clearIfNotMatchControl.value }}</span>
       </div>
     </div>
+
+    <div class="demo-section">
+      <label for="specialChars">Special Characters</label>
+      <input
+        id="specialChars"
+        type="text"
+        [formControl]="specialCharsControl"
+        [mask]="'A/A/A'"
+        [specialCharacters]="['/']"
+        placeholder="X/X/X" />
+      <div class="info-row">
+        <span class="hint">Mask: A/A/A, specialCharacters: ['/'] (Removes '/')</span>
+        <span class="model">Value: {{ specialCharsControl.value }}</span>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <label for="keepSpecialChars">Keep Specified Special Characters</label>
+      <input
+        id="keepSpecialChars"
+        type="text"
+        [formControl]="keepSpecialCharsControl"
+        [mask]="'##/##/####'"
+        [specialCharacters]="['/']"
+        [removeSpecialCharacters]="false"
+        placeholder="00/00/0000" />
+      <div class="info-row">
+        <span class="hint">Mask: ##/##/####, special: ['/'], remove: false</span>
+        <span class="model">Value: {{ keepSpecialCharsControl.value }}</span>
+      </div>
+    </div>
   `,
   styleUrl: 'mask-demo.component.scss',
 })
@@ -134,6 +167,8 @@ export class MaskDemoComponent {
   extensionControl = new FormControl('');
   prefixSuffixControl = new FormControl('');
   clearIfNotMatchControl = new FormControl('');
+  specialCharsControl = new FormControl('');
+  keepSpecialCharsControl = new FormControl('');
 
   hexPattern: Record<string, IConfigPattern> = {
     X: { pattern: /[0-9A-Fa-f]/ },
