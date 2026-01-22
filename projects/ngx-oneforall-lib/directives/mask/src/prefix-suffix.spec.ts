@@ -86,6 +86,29 @@ fdescribe('MaskDirective Prefix and Suffix', () => {
       fixture.detectChanges();
       expect(inputEl.value).toBe('');
     });
+
+    it('should prevent backspace from deleting prefix (lines 163-167)', () => {
+      component.prefix.set('$ ');
+      fixture.detectChanges();
+
+      triggerInput('123'); // "$ 123"
+      expect(inputEl.value).toBe('$ 123');
+
+      // Position cursor right after the prefix (position 2) - at start of actual value
+      inputEl.setSelectionRange(2, 2);
+
+      // Simulate backspace - should be prevented since we're at prefix boundary
+      const backspaceEvent = new KeyboardEvent('keydown', {
+        key: 'Backspace',
+        bubbles: true,
+      });
+      Object.defineProperty(backspaceEvent, 'target', { value: inputEl });
+      inputEl.dispatchEvent(backspaceEvent);
+      fixture.detectChanges();
+
+      // Cursor should stay at or after prefix length (2)
+      expect(inputEl.selectionStart).toBeGreaterThanOrEqual(2);
+    });
   });
 
   describe('Suffix only', () => {

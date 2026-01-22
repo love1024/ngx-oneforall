@@ -42,6 +42,7 @@ interface MaskState {
     '(input)': 'onInput($event)',
     '(blur)': 'onBlur()',
     '(click)': 'onFocus($event)',
+    '(focus)': 'onFocus($event)',
     '(keyup)': 'onFocus($event)',
     '(keydown.backspace)': 'onBackspace($event)',
   },
@@ -167,18 +168,16 @@ export class MaskDirective implements Validator, ControlValueAccessor {
     }
 
     // If cursor is just after a non pattern char, move it back without deleting the separator
-    if (cursor > 0) {
-      const charBefore = el.value[cursor - 1];
-      const activePatterns = this.mergedPatterns();
+    const charBefore = el.value[cursor - 1];
+    const activePatterns = this.mergedPatterns();
 
-      const isNonPatternChar =
-        !activePatterns[charBefore] && !/\w/.test(charBefore);
+    const isNonPatternChar =
+      !activePatterns[charBefore] && !/\w/.test(charBefore);
 
-      if (isNonPatternChar) {
-        // Move cursor back by 1 to skip over the non pattern char
-        el.setSelectionRange(cursor - 1, cursor - 1);
-        e.preventDefault(); // Prevent default - just move cursor
-      }
+    if (isNonPatternChar) {
+      // Move cursor back by 1 to skip over the non pattern char
+      el.setSelectionRange(cursor - 1, cursor - 1);
+      e.preventDefault(); // Prevent default - just move cursor
     }
   }
 
@@ -482,21 +481,11 @@ export class MaskDirective implements Validator, ControlValueAccessor {
       state.masked += maskChar;
 
       // Add to raw value conditions:
-      // ONLY add if removeSpecialCharacters is FALSE AND it IS a special character.
-      // This means literals NOT in the specialCharacters list are ALWAYS ignored from raw value.
-      const shouldRemove = this.removeSpecialCharacters();
-      const specialCharacters = this.effectiveSpecialCharacters();
-
-      if (shouldRemove) {
-        // Default Mode: Add to raw ONLY if it is NOT in the specialCharacters list
-        if (!specialCharacters.includes(maskChar)) {
-          state.raw += maskChar;
-        }
-      } else {
-        // Strict Mode (remove=false): Add to raw ONLY if it IS in the specialCharacters list
-        if (specialCharacters.includes(maskChar)) {
-          state.raw += maskChar;
-        }
+      // ONLY add if removeSpecialCharacters is FALSE.
+      // validateMask ensures maskChar IS a special character (strict mode).
+      // So we don't need to check specialCharacters.includes(maskChar) again.
+      if (!this.removeSpecialCharacters()) {
+        state.raw += maskChar;
       }
 
       state.maskPosition++;

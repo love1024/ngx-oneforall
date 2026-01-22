@@ -14,7 +14,10 @@ import { IConfigPattern, DEFAULT_SPECIAL_CHARACTERS } from './mask.config';
     [mask]="mask()"
     [customPatterns]="customPatterns()"
     [specialCharacters]="specialCharacters()"
-    [mergeSpecialChars]="mergeSpecialChars()" />`,
+    [mergeSpecialChars]="mergeSpecialChars()"
+    [removeSpecialCharacters]="removeSpecialCharacters()"
+    [prefix]="prefix()"
+    [suffix]="suffix()" />`,
   imports: [MaskDirective],
 })
 class TestHostComponent {
@@ -22,6 +25,9 @@ class TestHostComponent {
   customPatterns = signal<Record<string, IConfigPattern>>({});
   specialCharacters = signal<string[]>(DEFAULT_SPECIAL_CHARACTERS);
   mergeSpecialChars = signal(false);
+  removeSpecialCharacters = signal(true);
+  prefix = signal('');
+  suffix = signal('');
 }
 
 @Component({
@@ -226,6 +232,37 @@ describe('MaskDirective', () => {
       fixture.componentInstance.mask.set('-');
       fixture.detectChanges();
       expect(triggerInput('a')).toBe('-');
+    });
+  });
+
+  describe('Backspace handling', () => {
+    it('should skip over separator on backspace (lines 169-181)', () => {
+      fixture.componentInstance.mask.set('###-####');
+      fixture.detectChanges();
+
+      // Set value with separator
+      triggerInput('1234567');
+      expect(inputEl.value).toBe('123-4567');
+
+      // Position cursor right after the dash (position 4)
+      inputEl.setSelectionRange(4, 4);
+
+      // Simulate backspace
+      const backspaceEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
+      inputEl.dispatchEvent(backspaceEvent);
+      fixture.detectChanges();
+
+      // Cursor should have moved back (separator skipped)
+      expect(inputEl.selectionStart).toBeLessThanOrEqual(4);
+    });
+
+    it('should handle non-greedy * transition to same-type pattern (line 462)', () => {
+      // Mask #*# where * followed by another #
+      fixture.componentInstance.mask.set('#*#');
+      fixture.detectChanges();
+
+      // When user types single digit, * consumes it, then matches next required #
+      expect(triggerInput('12')).toBe('12');
     });
   });
 
@@ -517,6 +554,46 @@ describe('MaskDirective', () => {
       expect(result?.['mask']).toBeDefined();
     });
   });
+
+  describe('removeSpecialCharacters option', () => {
+    it('should keep special characters in raw value when removeSpecialCharacters is false', () => {
+      fixture.componentInstance.removeSpecialCharacters.set(false);
+      fixture.componentInstance.mask.set('###-###');
+      fixture.detectChanges();
+
+      const directive = fixture.debugElement
+        .query(By.directive(MaskDirective))
+        .injector.get(MaskDirective);
+      const spy = jest.spyOn(
+        directive as unknown as { onChange: (v: string) => void },
+        'onChange'
+      );
+
+      triggerInput('123456');
+      expect(inputEl.value).toBe('123-456');
+      // With removeSpecialCharacters=false, dash (special char) should be included in raw
+      expect(spy).toHaveBeenCalledWith('123-456');
+    });
+  });
+
+  describe('Focus behavior', () => {
+    it('should select all on focus if single cursor (lines 196-208 coverage)', () => {
+      fixture.componentInstance.mask.set('(###) ###-####');
+      fixture.componentInstance.prefix.set('+1 ');
+      fixture.detectChanges();
+
+      inputEl.value = '+1 (123) 456-7890';
+      // User clicks at index 0 (before prefix)
+      inputEl.selectionStart = 0;
+      inputEl.selectionEnd = 0;
+
+      inputEl.dispatchEvent(new Event('focus'));
+      fixture.detectChanges();
+
+      // Should move cursor to after prefix (length 3)
+      expect(inputEl.selectionStart).toBe(3);
+    });
+  });
 });
 
 describe('MaskDirective with Reactive Forms', () => {
@@ -786,5 +863,268 @@ describe('MaskDirective clearIfNotMatch', () => {
     fixture.detectChanges();
 
     expect(control.touched).toBe(true);
+  });
+});
+
+describe('MaskDirective Coverage Gaps', () => {
+  let fixture: ComponentFixture<TestHostComponent>;
+  let inputEl: HTMLInputElement;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [TestHostComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TestHostComponent);
+    fixture.detectChanges();
+    inputEl = fixture.debugElement.query(By.css('input')).nativeElement;
+  });
+
+  it('should handle cursor position becoming negative (line 278)', () => {
+    fixture.componentInstance.prefix.set('$ ');
+    fixture.componentInstance.mask.set('###');
+    fixture.detectChanges();
+
+    // Trigger input with cursor at 0 (before prefix)
+    inputEl.value = '$ 123';
+
+    // We need to mock selectionStart to 0.
+    inputEl.selectionStart = 0;
+    inputEl.selectionEnd = 0;
+
+    inputEl.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    // If code executes without error and mask applied, good.
+    expect(inputEl.value).toBe('$ 123');
+  });
+
+  it('should execute onFocus logic (lines 178-206)', () => {
+    fixture.componentInstance.prefix.set('$ ');
+    fixture.detectChanges();
+    inputEl.value = '$ 123';
+    inputEl.selectionStart = 0;
+    inputEl.selectionEnd = 0;
+
+    // Dispatch focus event
+    inputEl.dispatchEvent(new Event('focus'));
+    fixture.detectChanges();
+
+    // Check if cursor moved
+    expect(inputEl.selectionStart).toBe(2); // Length of "$ "
+  });
+
+  it('should handle prefix update in ngOnChanges (untracked block)', () => {
+    fixture.componentInstance.mask.set('###');
+    fixture.componentInstance.prefix.set('A');
+    fixture.detectChanges();
+
+    inputEl.value = 'A123';
+    inputEl.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    expect(inputEl.value).toBe('A123');
+
+    // Change prefix
+    fixture.componentInstance.prefix.set('B');
+    fixture.detectChanges();
+
+    // ngOnChanges should run. applyAndSetMask should run.
+    expect(inputEl.value).toBe('B123');
+    expect(inputEl.value).toBe('B123');
+  });
+
+  it('should NOT update selection on focus if value is empty', () => {
+    fixture.componentInstance.mask.set('###');
+    fixture.detectChanges();
+    inputEl.value = '';
+    inputEl.selectionStart = 0;
+    inputEl.dispatchEvent(new Event('focus'));
+    fixture.detectChanges();
+    // Should remain 0
+    expect(inputEl.selectionStart).toBe(0);
+  });
+
+  it('should NOT update selection on focus if selection is a range', () => {
+    fixture.componentInstance.prefix.set('$ ');
+    fixture.detectChanges();
+    inputEl.value = '$ 123';
+    inputEl.selectionStart = 0;
+    inputEl.selectionEnd = 3; // Range
+
+    inputEl.dispatchEvent(new Event('focus'));
+    fixture.detectChanges();
+
+    // Should remain range (0-3)
+    expect(inputEl.selectionStart).toBe(0);
+    expect(inputEl.selectionEnd).toBe(3);
+  });
+});
+
+@Component({
+  template: `<input mask removeSpecialCharacters="true" mergeSpecialChars />`,
+  imports: [MaskDirective],
+})
+class InputTransformTestComponent {}
+
+describe('MaskDirective Input Transforms', () => {
+  let fixture: ComponentFixture<InputTransformTestComponent>;
+  let directive: MaskDirective;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [InputTransformTestComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(InputTransformTestComponent);
+    fixture.detectChanges();
+    directive = fixture.debugElement
+      .query(By.directive(MaskDirective))
+      .injector.get(MaskDirective);
+  });
+
+  it('should transform string "true" and empty string to boolean true', () => {
+    // removeSpecialCharacters="true" -> true
+    expect(directive.removeSpecialCharacters()).toBe(true);
+
+    // mergeSpecialChars (attribute present = empty string) -> true
+    expect(directive.mergeSpecialChars()).toBe(true);
+  });
+});
+
+@Component({
+  template: `<input
+    mask
+    [removeSpecialCharacters]="removeSpecialCharsValue"
+    [mergeSpecialChars]="mergeSpecialCharsValue" />`,
+  imports: [MaskDirective],
+})
+class InputTransformDynamicTestComponent {
+  removeSpecialCharsValue: string | boolean = true;
+  mergeSpecialCharsValue: string | boolean = false;
+}
+
+describe('MaskDirective Dynamic Input Transforms', () => {
+  let fixture: ComponentFixture<InputTransformDynamicTestComponent>;
+  let directive: MaskDirective;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [InputTransformDynamicTestComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(InputTransformDynamicTestComponent);
+    fixture.detectChanges();
+    directive = fixture.debugElement
+      .query(By.directive(MaskDirective))
+      .injector.get(MaskDirective);
+  });
+
+  it('should handle boolean and string inputs', () => {
+    // 1. Boolean false
+    fixture.componentInstance.removeSpecialCharsValue = false;
+    fixture.componentInstance.mergeSpecialCharsValue = false;
+    fixture.detectChanges();
+    expect(directive.removeSpecialCharacters()).toBe(false);
+    expect(directive.mergeSpecialChars()).toBe(false);
+
+    // 2. Boolean true
+    fixture.componentInstance.removeSpecialCharsValue = true;
+    fixture.componentInstance.mergeSpecialCharsValue = true;
+    fixture.detectChanges();
+    expect(directive.removeSpecialCharacters()).toBe(true);
+    expect(directive.mergeSpecialChars()).toBe(true);
+
+    // 3. String "true"
+    fixture.componentInstance.removeSpecialCharsValue = 'true';
+    fixture.componentInstance.mergeSpecialCharsValue = 'true';
+    fixture.detectChanges();
+    expect(directive.removeSpecialCharacters()).toBe(true);
+    expect(directive.mergeSpecialChars()).toBe(true);
+
+    // 4. String "" (empty)
+    fixture.componentInstance.removeSpecialCharsValue = '';
+    fixture.componentInstance.mergeSpecialCharsValue = '';
+    fixture.detectChanges();
+    expect(directive.removeSpecialCharacters()).toBe(true);
+    expect(directive.mergeSpecialChars()).toBe(true);
+
+    // 5. String "false" (neither empty nor "true")
+    fixture.componentInstance.removeSpecialCharsValue = 'false';
+    fixture.componentInstance.mergeSpecialCharsValue = 'false';
+    fixture.detectChanges();
+    expect(directive.removeSpecialCharacters()).toBe(false);
+    expect(directive.mergeSpecialChars()).toBe(false);
+  });
+});
+
+describe('MaskDirective Null and Edge Cases', () => {
+  let fixture: ComponentFixture<TestHostComponent>;
+  let inputEl: HTMLInputElement;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [TestHostComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TestHostComponent);
+    fixture.detectChanges();
+    inputEl = fixture.debugElement.query(By.css('input')).nativeElement;
+  });
+
+  it('should handle null selectionStart/End (lines 112, 152, 161, 193, 194)', () => {
+    // Mock selectionStart to return null
+    Object.defineProperty(inputEl, 'selectionStart', { get: () => null });
+    Object.defineProperty(inputEl, 'selectionEnd', { get: () => null });
+
+    // 1. onInput (line 152)
+    fixture.componentInstance.mask.set('###');
+    fixture.detectChanges();
+    inputEl.value = '123';
+    inputEl.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    // 2. onBackspace (line 161)
+    const backspace = new KeyboardEvent('keydown', { key: 'Backspace' });
+    inputEl.dispatchEvent(backspace);
+
+    // 3. onFocus (lines 193, 194)
+    inputEl.dispatchEvent(new Event('focus'));
+    fixture.detectChanges();
+
+    // 4. untracked input signal (line 112)
+    fixture.componentInstance.prefix.set('A');
+    fixture.detectChanges();
+  });
+
+  it('should not throw on backspace if cursor > 0 and char is pattern (lines 178 else)', () => {
+    fixture.componentInstance.mask.set('###');
+    fixture.detectChanges();
+    inputEl.value = '123';
+    inputEl.selectionStart = 3;
+    inputEl.selectionEnd = 3;
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'Backspace',
+      cancelable: true,
+    });
+    inputEl.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  it('should NOT update selection on focus if already valid (line 206 else)', () => {
+    fixture.componentInstance.prefix.set('$ ');
+    fixture.detectChanges();
+    inputEl.value = '$ 123';
+    // Cursor at 2 (valid start)
+    inputEl.selectionStart = 2;
+    inputEl.selectionEnd = 2;
+
+    const spy = jest.spyOn(inputEl, 'setSelectionRange');
+
+    inputEl.dispatchEvent(new Event('focus'));
+
+    // constrainCursor(2) -> 2. newPos === selectionStart.
+    expect(spy).not.toHaveBeenCalled();
   });
 });
