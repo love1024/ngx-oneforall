@@ -58,23 +58,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
       }
     </div>
 
-    <div class="demo-section">
-      <label for="time24">24-Hour Time (Custom)</label>
-      <input
-        id="time24"
-        type="text"
-        [formControl]="timeControl"
-        [mask]="'H#:M#'"
-        [customPatterns]="timePatterns"
-        placeholder="23:59" />
-      <div class="info-row">
-        <span class="hint">Custom: H=/[0-2]/, M=/[0-5]/</span>
-        <span class="model">Value: {{ timeControl.value }}</span>
-      </div>
-      @if (timeControl.errors?.['mask']; as error) {
-        <span class="error">Incomplete: {{ error.actualLength }}/{{ error.expectedLength }} characters</span>
-      }
-    </div>
+
 
     <div class="demo-section">
       <label for="extension">Phone with Optional Extension</label>
@@ -147,12 +131,12 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         id="keepSpecialChars"
         type="text"
         [formControl]="keepSpecialCharsControl"
-        [mask]="'##/##/####'"
-        [specialCharacters]="['/']"
+        [mask]="'AAA-###/###'"
+        [specialCharacters]="['-', '/']"
         [removeSpecialCharacters]="false"
-        placeholder="00/00/0000" />
+        placeholder="ABC-123/456" />
       <div class="info-row">
-        <span class="hint">Mask: ##/##/####, special: ['/'], remove: false</span>
+        <span class="hint">Mask: AAA-###/###, special: ['-', '/'], remove: false</span>
         <span class="model">Value: {{ keepSpecialCharsControl.value }}</span>
       </div>
     </div>
@@ -163,7 +147,6 @@ export class MaskDemoComponent {
   phoneControl = new FormControl('');
   postalControl = new FormControl('');
   hexControl = new FormControl('');
-  timeControl = new FormControl('');
   extensionControl = new FormControl('');
   prefixSuffixControl = new FormControl('');
   clearIfNotMatchControl = new FormControl('');
@@ -172,10 +155,5 @@ export class MaskDemoComponent {
 
   hexPattern: Record<string, IConfigPattern> = {
     X: { pattern: /[0-9A-Fa-f]/ },
-  };
-
-  timePatterns: Record<string, IConfigPattern> = {
-    H: { pattern: /[0-2]/ },
-    M: { pattern: /[0-5]/ },
   };
 }

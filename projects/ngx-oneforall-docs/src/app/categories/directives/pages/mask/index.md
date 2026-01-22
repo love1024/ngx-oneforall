@@ -27,9 +27,6 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
 <!-- Phone number -->
 <input [mask]="'(###) ###-####'" />
 
-<!-- Date -->
-<input [mask]="'##/##/####'" />
-
 <!-- Credit card -->
 <input [mask]="'#### #### #### ####'" />
 ```
@@ -102,8 +99,19 @@ By default, the directive treats common separators (like `-`, `/`, `(`) as speci
 <input [mask]="'A-A'" [specialCharacters]="['-']" /> 
 <!-- Valid because '-' is in specialCharacters -->
 
-<input [mask]="'A/A'" [specialCharacters]="['-']" /> 
-<!-- ERROR: '/' is not a pattern and not in specialCharacters -->
+<input [mask]="'A*A'" [specialCharacters]="['-']" /> 
+<!-- ERROR: '*' is not a pattern and not in specialCharacters -->
+```
+
+**Example: Keep Special Characters in Raw Value**
+
+```html
+<input 
+  [mask]="'AAA-###/###'" 
+  [specialCharacters]="['-', '/']"
+  [removeSpecialCharacters]="false" /> 
+<!-- Input: "ABC-123/456" -> Raw Value: "ABC-123/456" -->
+<!-- '-' and '/' are kept because they are in specialCharacters and removeSpecialCharacters is false. -->
 ```
 
 ### IConfigPattern Interface
@@ -127,13 +135,7 @@ Define your own pattern characters or override built-in ones:
   [mask]="'XX-XX-XX'" 
   [customPatterns]="{ X: { pattern: /[0-9A-Fa-f]/ } }" />
 
-<!-- Time input with hour validation (0-2 for first digit) -->
-<input 
-  [mask]="'H#:M#'" 
-  [customPatterns]="{
-    H: { pattern: /[0-2]/ },
-    M: { pattern: /[0-5]/ }
-  }" />
+
 
 <!-- Optional pattern via property -->
 <input 
