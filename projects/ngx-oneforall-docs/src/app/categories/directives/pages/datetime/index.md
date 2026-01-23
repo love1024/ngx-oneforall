@@ -1,4 +1,4 @@
-![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/directives/datetime-input&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
+![Bundle Size](https://deno.bundlejs.com/badge?q=ngx-oneforall/directives/datetime&treeshake=[*]&config={"esbuild":{"external":["rxjs","@angular/core","@angular/common","@angular/forms","@angular/router"]}})
 
 Apply date/time format masks to input fields, ensuring valid date and time values.
 
@@ -16,7 +16,7 @@ Apply date/time format masks to input fields, ensuring valid date and time value
 ## Installation
 
 ```typescript
-import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input';
+import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
 ```
 
 ---
@@ -25,16 +25,7 @@ import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input'
 
 ```html
 <!-- Date input -->
-<input [dateTimeInput]="'MM-DD-YYYY'" />
-
-<!-- Date with different format -->
-<input [dateTimeInput]="'YYYY/MM/DD'" />
-
-<!-- Time input -->
-<input [dateTimeInput]="'HH:mm'" />
-
-<!-- Full datetime -->
-<input [dateTimeInput]="'MM-DD-YYYY HH:mm'" />
+<input [dateTime]="'MM-DD-YYYY HH:mm'" />
 ```
 
 ---
@@ -62,7 +53,7 @@ import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input'
 
 | Input | Type | Description |
 |-------|------|-------------|
-| `dateTimeInput` | `string` | The format pattern (required) |
+| `dateTime` | `string` | The format pattern (required) |
 | `min` | `Date` | Minimum allowed date |
 | `max` | `Date` | Maximum allowed date |
 | `clearIfNotMatch` | `boolean` | Clear on blur if incomplete (default: `false`) |
@@ -80,7 +71,7 @@ The directive validates:
 ```typescript
 // Error object structure
 {
-  dateTimeInput: {
+  dateTime: {
     requiredFormat: 'MM-DD-YYYY',
     actualLength: 5,
     expectedLength: 10
@@ -89,7 +80,7 @@ The directive validates:
 
 // For invalid dates
 {
-  dateTimeInput: {
+  dateTime: {
     message: 'Invalid date: 2/30/2024 does not exist',
     invalidDate: true
   }
@@ -102,7 +93,7 @@ The directive validates:
 
 ```typescript
 @Component({
-  template: '<input [dateTimeInput]="format" [formControl]="dateControl" />'
+  template: '<input [dateTime]="format" [formControl]="dateControl" />'
 })
 export class MyComponent {
   format = 'MM-DD-YYYY';
@@ -114,4 +105,4 @@ export class MyComponent {
 
 ## Demo
 
-{{ NgDocActions.demoPane("DateTimeInputDemoComponent") }}
+{{ NgDocActions.demoPane("DateTimeDemoComponent") }}

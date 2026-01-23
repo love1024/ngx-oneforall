@@ -2,14 +2,14 @@ import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { DateTimeInputDirective } from './datetime-input.directive';
+import { DateTimeDirective } from './datetime.directive';
 
 @Component({
   template: `<input
-    [dateTimeInput]="format()"
+    [dateTime]="format()"
     [formControl]="control"
     [removeSpecialCharacters]="removeSpecialCharacters()" />`,
-  imports: [DateTimeInputDirective, ReactiveFormsModule],
+  imports: [DateTimeDirective, ReactiveFormsModule],
 })
 class TestHostComponent {
   format = signal('MM-DD-YYYY');
@@ -18,15 +18,15 @@ class TestHostComponent {
 }
 
 @Component({
-  template: `<input [dateTimeInput]="format()" [formControl]="control" />`,
-  imports: [DateTimeInputDirective, ReactiveFormsModule],
+  template: `<input [dateTime]="format()" [formControl]="control" />`,
+  imports: [DateTimeDirective, ReactiveFormsModule],
 })
 class InitialValueTestComponent {
   format = signal('MM-DD-YYYY');
   control = new FormControl('12252024');
 }
 
-describe('DateTimeInputDirective', () => {
+describe('DateTimeDirective', () => {
   describe('Standard behavior', () => {
     let fixture: ComponentFixture<TestHostComponent>;
     let inputEl: HTMLInputElement;
@@ -50,8 +50,8 @@ describe('DateTimeInputDirective', () => {
 
     it('should create an instance', () => {
       const directive = fixture.debugElement
-        .query(By.directive(DateTimeInputDirective))
-        .injector.get(DateTimeInputDirective);
+        .query(By.directive(DateTimeDirective))
+        .injector.get(DateTimeDirective);
       expect(directive).toBeTruthy();
     });
 
@@ -117,7 +117,7 @@ describe('DateTimeInputDirective', () => {
         fixture.detectChanges();
 
         expect(control.errors).toBeTruthy();
-        expect(control.errors?.['dateTimeInput']).toBeDefined();
+        expect(control.errors?.['dateTime']).toBeDefined();
       });
 
       it('should return null for complete valid input', () => {
@@ -134,7 +134,7 @@ describe('DateTimeInputDirective', () => {
         fixture.detectChanges();
 
         expect(control.errors).toBeTruthy();
-        expect(control.errors?.['dateTimeInput']?.invalidDate).toBe(true);
+        expect(control.errors?.['dateTime']?.invalidDate).toBe(true);
       });
     });
 

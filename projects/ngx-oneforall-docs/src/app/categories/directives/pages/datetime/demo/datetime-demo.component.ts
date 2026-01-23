@@ -1,24 +1,24 @@
 import { Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input';
+import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
 
 @Component({
-  selector: 'lib-datetime-input-demo',
-  imports: [DateTimeInputDirective, ReactiveFormsModule],
+  selector: 'lib-datetime-demo',
+  imports: [DateTimeDirective, ReactiveFormsModule],
   template: `
     <div class="demo-section">
       <label for="usDate">US Date (MM-DD-YYYY)</label>
       <input
         id="usDate"
         type="text"
-        [dateTimeInput]="'MM-DD-YYYY'"
+        [dateTime]="'MM-DD-YYYY'"
         [formControl]="usDateControl"
         placeholder="MM-DD-YYYY" />
       <div class="info-row">
         <span class="hint">Format: MM-DD-YYYY</span>
         <span class="model">Value: {{ usDateControl.value }}</span>
       </div>
-      @if (usDateControl.errors?.['dateTimeInput']; as error) {
+      @if (usDateControl.errors?.['dateTime']; as error) {
         <span class="error">{{ error.message || 'Incomplete date' }}</span>
       }
     </div>
@@ -28,14 +28,14 @@ import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input'
       <input
         id="isoDate"
         type="text"
-        [dateTimeInput]="'YYYY/MM/DD'"
+        [dateTime]="'YYYY/MM/DD'"
         [formControl]="isoDateControl"
         placeholder="YYYY/MM/DD" />
       <div class="info-row">
         <span class="hint">Format: YYYY/MM/DD</span>
         <span class="model">Value: {{ isoDateControl.value }}</span>
       </div>
-      @if (isoDateControl.errors?.['dateTimeInput']; as error) {
+      @if (isoDateControl.errors?.['dateTime']; as error) {
         <span class="error">{{ error.message || 'Incomplete date' }}</span>
       }
     </div>
@@ -45,7 +45,7 @@ import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input'
       <input
         id="minMaxDate"
         type="text"
-        [dateTimeInput]="'MM-DD-YYYY'"
+        [dateTime]="'MM-DD-YYYY'"
         [min]="minDate"
         [max]="maxDate"
         [formControl]="minMaxControl"
@@ -54,7 +54,7 @@ import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input'
         <span class="hint">Min: 01/01/2024, Max: 12/31/2024</span>
         <span class="model">Value: {{ minMaxControl.value }}</span>
       </div>
-      @if (minMaxControl.errors?.['dateTimeInput']; as error) {
+      @if (minMaxControl.errors?.['dateTime']; as error) {
         <span class="error">{{ error.message || 'Invalid date' }}</span>
       }
     </div>
@@ -64,7 +64,7 @@ import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input'
       <input
         id="keepSeparators"
         type="text"
-        [dateTimeInput]="'YYYY-MM-DD'"
+        [dateTime]="'YYYY-MM-DD'"
         [removeSpecialCharacters]="false"
         [formControl]="keepSeparatorsControl"
         placeholder="YYYY-MM-DD" />
@@ -75,7 +75,7 @@ import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input'
       <div class="info-row">
         <span class="hint">new Date(value): {{ parsedDate }}</span>
       </div>
-      @if (keepSeparatorsControl.errors?.['dateTimeInput']; as error) {
+      @if (keepSeparatorsControl.errors?.['dateTime']; as error) {
         <span class="error">{{ error.message || 'Incomplete date' }}</span>
       }
     </div>
@@ -85,14 +85,14 @@ import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input'
       <input
         id="time12"
         type="text"
-        [dateTimeInput]="'hh:mm'"
+        [dateTime]="'hh:mm'"
         [formControl]="time12Control"
         placeholder="hh:mm" />
       <div class="info-row">
         <span class="hint">Format: hh:mm (01-12)</span>
         <span class="model">Value: {{ time12Control.value }}</span>
       </div>
-      @if (time12Control.errors?.['dateTimeInput']; as error) {
+      @if (time12Control.errors?.['dateTime']; as error) {
         <span class="error">{{ error.message || 'Incomplete time' }}</span>
       }
     </div>
@@ -102,21 +102,21 @@ import { DateTimeInputDirective } from 'ngx-oneforall/directives/datetime-input'
       <input
         id="fullTime"
         type="text"
-        [dateTimeInput]="'HH:mm:ss'"
+        [dateTime]="'HH:mm:ss'"
         [formControl]="fullTimeControl"
         placeholder="HH:mm:ss" />
       <div class="info-row">
         <span class="hint">Format: HH:mm:ss</span>
         <span class="model">Value: {{ fullTimeControl.value }}</span>
       </div>
-      @if (fullTimeControl.errors?.['dateTimeInput']; as error) {
+      @if (fullTimeControl.errors?.['dateTime']; as error) {
         <span class="error">{{ error.message || 'Incomplete time' }}</span>
       }
     </div>
   `,
-  styleUrl: 'datetime-input-demo.component.scss',
+  styleUrl: 'datetime-demo.component.scss',
 })
-export class DateTimeInputDemoComponent {
+export class DateTimeDemoComponent {
   usDateControl = new FormControl('');
   isoDateControl = new FormControl('');
   minMaxControl = new FormControl('');

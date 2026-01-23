@@ -15,7 +15,7 @@ import {
   ValidationErrors,
   Validator,
 } from '@angular/forms';
-import { DEFAULT_DATE_SEPARATORS } from './datetime-input.config';
+import { DEFAULT_DATE_SEPARATORS } from './datetime.config';
 import {
   parseFormat,
   ParsedToken,
@@ -25,7 +25,7 @@ import {
   extractDatePart,
   extractDatePartFromRaw,
   isValidDay,
-} from './datetime-input.utils';
+} from './datetime.utils';
 
 /**
  * Internal state for processing input.
@@ -38,8 +38,8 @@ interface InputState {
 }
 
 @Directive({
-  selector: 'input[dateTimeInput]',
-  exportAs: 'dateTimeInput',
+  selector: 'input[dateTime]',
+  exportAs: 'dateTime',
   host: {
     '(input)': 'onInput($event)',
     '(blur)': 'onBlur()',
@@ -49,19 +49,19 @@ interface InputState {
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DateTimeInputDirective),
+      useExisting: forwardRef(() => DateTimeDirective),
       multi: true,
     },
     {
       provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => DateTimeInputDirective),
+      useExisting: forwardRef(() => DateTimeDirective),
       multi: true,
     },
   ],
 })
-export class DateTimeInputDirective implements ControlValueAccessor, Validator {
+export class DateTimeDirective implements ControlValueAccessor, Validator {
   /** The date/time format pattern (e.g., 'MM-DD-YYYY', 'HH:mm:ss') */
-  format = input.required<string>({ alias: 'dateTimeInput' });
+  format = input.required<string>({ alias: 'dateTime' });
 
   /** Minimum allowed date */
   min = input<Date>();
@@ -138,7 +138,7 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
     // Check if input is complete
     if (value.length < expectedLength) {
       return {
-        dateTimeInput: {
+        dateTime: {
           requiredFormat: format,
           actualLength: value.length,
           expectedLength,
@@ -155,7 +155,7 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
     if (year !== undefined && month !== undefined && day !== undefined) {
       if (!isValidDay(day, month, year)) {
         return {
-          dateTimeInput: {
+          dateTime: {
             message: `Invalid date: ${month}/${day}/${year} does not exist`,
             invalidDate: true,
           },
@@ -175,7 +175,7 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
       const inputDate = new Date(year, month - 1, day);
       if (min && inputDate < min) {
         return {
-          dateTimeInput: {
+          dateTime: {
             message: `Date must be on or after ${min.toLocaleDateString()}`,
             min: true,
           },
@@ -183,7 +183,7 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
       }
       if (max && inputDate > max) {
         return {
-          dateTimeInput: {
+          dateTime: {
             message: `Date must be on or before ${max.toLocaleDateString()}`,
             max: true,
           },

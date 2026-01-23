@@ -4,7 +4,7 @@ import {
   DEFAULT_DATE_SEPARATORS,
   PARTIAL_VALIDATORS,
   TOKEN_NAMES,
-} from './datetime-input.config';
+} from './datetime.config';
 
 /**
  * Parsed token from a format string.
