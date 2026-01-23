@@ -70,26 +70,20 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
   max = input<Date>();
 
   /** Whether to clear input on blur if incomplete */
-  clearIfNotMatch = input(false, {
-    transform: (value: boolean | string) =>
-      value === '' || value === 'true' || value === true,
-  });
+  clearIfNotMatch = input(false);
 
   /** Whether to remove separators from the form control value (default: true) */
-  removeSpecialCharacters = input(true, {
-    transform: (value: boolean | string) =>
-      value === '' || value === 'true' || value === true,
-  });
+  removeSpecialCharacters = input(true);
+
+  private parsedTokens: ParsedToken[] = [];
 
   private readonly el = inject(ElementRef<HTMLInputElement>);
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private onChange: (value: string) => void = () => {};
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private onTouched: () => void = () => {};
-  private parsedTokens: ParsedToken[] = [];
 
   constructor() {
-    // Parse format when it changes
     effect(() => {
       const format = this.format();
       untracked(() => {
@@ -98,7 +92,6 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
     });
   }
 
-  // ControlValueAccessor implementation
   writeValue(value: string): void {
     const input = this.el.nativeElement;
     if (!value) {
@@ -106,7 +99,15 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
       return;
     }
 
-    // Apply formatting to the incoming value
+    // Ensure tokens are parsed if not already (handling initial writeValue timing)
+    if (this.parsedTokens.length === 0) {
+      const fmt = this.format();
+      // This is synchronous
+      untracked(() => {
+        this.parsedTokens = parseFormat(fmt);
+      });
+    }
+
     const { formatted } = this.applyFormat(value);
     input.value = formatted;
   }
@@ -193,13 +194,12 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
     return null;
   }
 
-  // Event handlers
   onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const formattedCursorPos = input.selectionStart || 0;
 
     // Convert cursor position from formatted space to raw space
-    // by counting how many non-separator characters are before the cursor
+    // by counting how many non-pattern characters are before the cursor
     let rawCursorPos = 0;
     for (let i = 0; i < formattedCursorPos && i < input.value.length; i++) {
       if (!DEFAULT_DATE_SEPARATORS.includes(input.value[i])) {
@@ -207,7 +207,6 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
       }
     }
 
-    // Strip all non-essential characters and reapply format
     const rawInput = this.extractRawInput(input.value);
     const { formatted, raw, newCursorPosition } = this.applyFormat(
       rawInput,
@@ -215,12 +214,10 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
     );
 
     input.value = formatted;
-    // Emit processed raw (without separators) or formatted value based on setting
     const valueToEmit = this.removeSpecialCharacters() ? raw : formatted;
     this.onChange(valueToEmit);
 
-    // Restore cursor position
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       input.setSelectionRange(newCursorPosition, newCursorPosition);
     });
   }
@@ -355,7 +352,7 @@ export class DateTimeInputDirective implements ControlValueAccessor, Validator {
           state.tokenCharIndex++;
           inputIndex++;
 
-          // Check if token is complete
+          // Check if current token (eg. hh, dd, mm) is complete
           if (
             state.tokenCharIndex >= (token.config?.length || token.value.length)
           ) {
