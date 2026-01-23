@@ -353,9 +353,7 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
           inputIndex++;
 
           // Check if current token (eg. hh, dd, mm) is complete
-          if (
-            state.tokenCharIndex >= (token.config?.length || token.value.length)
-          ) {
+          if (state.tokenCharIndex >= token.config.length) {
             state.tokenIndex++;
             state.tokenCharIndex = 0;
 
@@ -403,18 +401,15 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
 
     for (let i = 0; i < upToTokenIndex && i < this.parsedTokens.length; i++) {
       const token = this.parsedTokens[i];
-      const length = token.isToken
-        ? token.config?.length || token.value.length
-        : 1;
+      const length = token.isToken ? token.config.length : 1;
       position += length;
     }
 
     // Get current token's value from formatted string
     const currentToken = this.parsedTokens[upToTokenIndex];
-    if (currentToken && currentToken.isToken) {
-      const length = currentToken.config?.length || currentToken.value.length;
-      result = formatted.slice(position, position + length);
-    }
+    const token = currentToken as Extract<ParsedToken, { isToken: true }>;
+    const length = token.config.length;
+    result = formatted.slice(position, position + length);
 
     return result;
   }

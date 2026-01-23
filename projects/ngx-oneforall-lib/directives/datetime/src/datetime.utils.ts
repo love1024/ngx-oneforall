@@ -9,14 +9,19 @@ import {
 /**
  * Parsed token from a format string.
  */
-export interface ParsedToken {
-  /** The token name (e.g., 'MM', 'DD') or separator character */
-  value: string;
-  /** Whether this is a pattern token or a literal separator */
-  isToken: boolean;
-  /** Token configuration (only for pattern tokens) */
-  config?: DateTimeToken;
-}
+// Discriminated union for strict typing
+export type ParsedToken =
+  | {
+      isToken: true;
+      value: string;
+      /** Token configuration */
+      config: DateTimeToken;
+    }
+  | {
+      isToken: false;
+      value: string;
+      config?: never;
+    };
 
 /**
  * Parse a format string into an array of tokens.
@@ -126,7 +131,7 @@ export function extractDatePart(
 
   for (const token of tokens) {
     if (token.isToken && partTokens[part].includes(token.value)) {
-      const length = token.config?.length || token.value.length;
+      const length = token.config.length;
       const extracted = value.slice(position, position + length);
       const num = parseInt(extracted, 10);
       if (!isNaN(num)) {
@@ -138,7 +143,7 @@ export function extractDatePart(
       }
       return undefined;
     }
-    position += token.isToken ? token.config?.length || token.value.length : 1;
+    position += token.isToken ? token.config.length : 1;
   }
 
   return undefined;
@@ -150,9 +155,7 @@ export function extractDatePart(
 export function getExpectedLength(format: string): number {
   const tokens = parseFormat(format);
   return tokens.reduce((sum, token) => {
-    return (
-      sum + (token.isToken ? token.config?.length || token.value.length : 1)
-    );
+    return sum + (token.isToken ? token.config.length : 1);
   }, 0);
 }
 
@@ -162,9 +165,7 @@ export function getExpectedLength(format: string): number {
 export function getRawExpectedLength(format: string): number {
   const tokens = parseFormat(format);
   return tokens.reduce((sum, token) => {
-    return (
-      sum + (token.isToken ? token.config?.length || token.value.length : 0)
-    );
+    return sum + (token.isToken ? token.config.length : 0);
   }, 0);
 }
 
@@ -193,7 +194,7 @@ export function extractDatePartFromRaw(
     if (!token.isToken) continue; // Skip separators
 
     if (partTokens[part].includes(token.value)) {
-      const length = token.config?.length || token.value.length;
+      const length = token.config.length;
       const extracted = value.slice(position, position + length);
       const num = parseInt(extracted, 10);
       if (!isNaN(num)) {
@@ -205,7 +206,7 @@ export function extractDatePartFromRaw(
       }
       return undefined;
     }
-    position += token.config?.length || token.value.length;
+    position += token.config.length;
   }
 
   return undefined;
