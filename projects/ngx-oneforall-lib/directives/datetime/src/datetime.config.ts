@@ -11,8 +11,6 @@ export interface DateTimeToken {
   min?: number;
   /** Maximum valid value (for numeric tokens) */
   max?: number;
-  /** For contextual validation (e.g., day depends on month) */
-  contextual?: boolean;
 }
 
 /**
@@ -34,14 +32,12 @@ export const DATE_TIME_TOKENS: Record<string, DateTimeToken> = {
     length: 2,
     min: 1,
     max: 31,
-    contextual: true,
   },
   D: {
     pattern: /^([12]\d|3[01]|[1-9])$/,
     length: 2,
     min: 1,
     max: 31,
-    contextual: true,
   },
 
   // 24-hour format
