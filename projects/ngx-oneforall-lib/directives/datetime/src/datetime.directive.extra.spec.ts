@@ -242,4 +242,12 @@ describe('DateTimeDirective Extra Coverage', () => {
       expect(inputEl.value).toBe('');
     });
   });
+
+  describe('Validation Edge Cases', () => {
+    it('should handle non-string input in validate', () => {
+      component.control.setValue(null);
+      const errors = directive.validate(component.control);
+      expect(errors).toBeNull();
+    });
+  });
 });

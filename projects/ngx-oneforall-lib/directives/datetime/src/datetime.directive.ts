@@ -6,6 +6,7 @@ import {
   input,
   effect,
   untracked,
+  output,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -26,6 +27,16 @@ import {
   extractDatePartFromRaw,
   isValidDay,
 } from './datetime.utils';
+
+export interface DateTimeParts {
+  day: string | null;
+  month: string | null;
+  year: string | null;
+  hour: string | null;
+  minute: string | null;
+  second: string | null;
+  dayPeriod: string | null;
+}
 
 /**
  * Internal state for processing input.
@@ -74,6 +85,9 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
 
   /** Whether to remove separators from the form control value (default: true) */
   removeSpecialCharacters = input(true);
+
+  /** Emits the parsed parts of the date/time whenever the value changes */
+  dateTimeChanged = output<DateTimeParts>();
 
   private parsedTokens: ParsedToken[] = [];
 
@@ -127,6 +141,13 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
   // Validator implementation
   validate(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
+
+    // Emit change event with parsed parts
+    if (typeof value === 'string') {
+      const isRaw = this.removeSpecialCharacters();
+      this.emitDateTimeChanged(value, isRaw);
+    }
+
     if (!value) return null;
 
     const format = this.format();
@@ -412,5 +433,50 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
     result = formatted.slice(position, position + length);
 
     return result;
+  }
+
+  private emitDateTimeChanged(value: string, isRaw: boolean): void {
+    const parts: DateTimeParts = {
+      day: this.getTokenValue(value, ['DD', 'D'], isRaw),
+      month: this.getTokenValue(value, ['MM', 'M'], isRaw),
+      year: this.getTokenValue(value, ['YYYY', 'YY'], isRaw),
+      hour: this.getTokenValue(value, ['HH', 'H', 'hh', 'h'], isRaw),
+      minute: this.getTokenValue(value, ['mm', 'm'], isRaw),
+      second: this.getTokenValue(value, ['ss', 's'], isRaw),
+      dayPeriod: this.getTokenValue(value, ['A', 'a'], isRaw),
+    };
+    this.dateTimeChanged.emit(parts);
+  }
+
+  private getTokenValue(
+    value: string,
+    tokenNames: string[],
+    isRaw: boolean
+  ): string | null {
+    let position = 0;
+
+    for (const token of this.parsedTokens) {
+      // If handling raw value, separators have 0 length (they don't exist in value)
+      // Otherwise, they have their string length (usually 1)
+      const length = token.isToken
+        ? token.config.length
+        : isRaw
+          ? 0
+          : token.value.length;
+
+      if (token.isToken && tokenNames.includes(token.value)) {
+        // Ensure we don't read past the value string length
+        if (position >= value.length) return null;
+
+        const extracted = value.slice(position, position + length);
+        // Only return if we have the full expected length for this token
+        // This avoids Partial values like "1" for "MM" being returned as "1" which is ambiguous (Jan or 10,11,12?)
+        // Requirement said "If value is available".
+        return extracted.length === length ? extracted : null;
+      }
+
+      position += length;
+    }
+    return null;
   }
 }

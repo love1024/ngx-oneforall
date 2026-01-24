@@ -58,6 +58,7 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
 | `max` | `Date` | Maximum allowed date |
 | `clearIfNotMatch` | `boolean` | Clear on blur if incomplete (default: `false`) |
 | `removeSpecialCharacters` | `boolean` | Remove separators from form value (default: `true`) |
+| `dateTimeChanged` | `output<DateTimeParts>` | Emits parsed date/time parts (day, month, year, etc.) |
 
 ---
 
@@ -98,6 +99,23 @@ The directive validates:
 export class MyComponent {
   format = 'MM-DD-YYYY';
   dateControl = new FormControl('');
+}
+```
+
+---
+
+## Output Event
+
+The `dateTimeChanged` output emits a object with decomposed date parts.
+
+```html
+<input [dateTime]="'MM-DD-YYYY hh:mm:ss A'" (dateTimeChanged)="onDateTimeChanged($event)" />
+```
+
+```typescript
+onDateTimeChanged(parts: DateTimeParts) {
+  console.log(parts);
+  // { day: "01", month: "12", year: "2024", hour: "12", minute: "30", second: "45", dayPeriod: "PM" }
 }
 ```
 
