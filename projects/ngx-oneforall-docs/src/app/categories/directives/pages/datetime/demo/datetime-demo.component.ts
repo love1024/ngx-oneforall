@@ -113,6 +113,23 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
         <span class="error">{{ error.message || 'Incomplete time' }}</span>
       }
     </div>
+
+    <div class="demo-section">
+      <label for="amPm">AM/PM Time (hh:mm A)</label>
+      <input
+        id="amPm"
+        type="text"
+        [dateTime]="'hh:mm A'"
+        [formControl]="amPmControl"
+        placeholder="hh:mm A" />
+      <div class="info-row">
+        <span class="hint">Format: hh:mm A</span>
+        <span class="model">Value: {{ amPmControl.value }}</span>
+      </div>
+      @if (amPmControl.errors?.['dateTime']; as error) {
+        <span class="error">{{ error.message || 'Incomplete time' }}</span>
+      }
+    </div>
   `,
   styleUrl: 'datetime-demo.component.scss',
 })
@@ -122,7 +139,9 @@ export class DateTimeDemoComponent {
   minMaxControl = new FormControl('');
   keepSeparatorsControl = new FormControl('');
   time12Control = new FormControl('');
+
   fullTimeControl = new FormControl('');
+  amPmControl = new FormControl('');
 
   // Min/Max dates for validation
   minDate = new Date(2024, 0, 1); // Jan 1, 2024

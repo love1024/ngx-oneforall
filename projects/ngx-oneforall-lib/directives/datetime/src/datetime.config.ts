@@ -18,15 +18,12 @@ export interface DateTimeToken {
  * Order matters - longer tokens should be checked first.
  */
 export const DATE_TIME_TOKENS: Record<string, DateTimeToken> = {
-  // Year
   YYYY: { pattern: /^\d{4}$/, length: 4, min: 1, max: 9999 },
   YY: { pattern: /^\d{2}$/, length: 2, min: 0, max: 99 },
 
-  // Month
   MM: { pattern: /^(0[1-9]|1[0-2])$/, length: 2, min: 1, max: 12 },
   M: { pattern: /^(1[0-2]|[1-9])$/, length: 2, min: 1, max: 12 },
 
-  // Day
   DD: {
     pattern: /^(0[1-9]|[12]\d|3[01])$/,
     length: 2,
@@ -48,11 +45,9 @@ export const DATE_TIME_TOKENS: Record<string, DateTimeToken> = {
   hh: { pattern: /^(0[1-9]|1[0-2])$/, length: 2, min: 1, max: 12 },
   h: { pattern: /^(1[0-2]|[1-9])$/, length: 2, min: 1, max: 12 },
 
-  // Minutes
   mm: { pattern: /^[0-5]\d$/, length: 2, min: 0, max: 59 },
   m: { pattern: /^[0-5]?\d$/, length: 2, min: 0, max: 59 },
 
-  // Seconds
   ss: { pattern: /^[0-5]\d$/, length: 2, min: 0, max: 59 },
   s: { pattern: /^[0-5]?\d$/, length: 2, min: 0, max: 59 },
 
