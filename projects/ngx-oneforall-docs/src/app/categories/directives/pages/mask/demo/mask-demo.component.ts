@@ -7,6 +7,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
   imports: [MaskDirective, ReactiveFormsModule],
   template: `
     <div class="demo-section">
+      <p class="description">Standard numeric mask with auto-inserted separators.</p>
       <label for="phone">Phone Number</label>
       <input
         id="phone"
@@ -24,6 +25,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
     </div>
 
     <div class="demo-section">
+      <p class="description">Mixed alphanumeric pattern requiring letters (@) and numbers (#).</p>
       <label for="postal">Canadian Postal Code</label>
       <input
         id="postal"
@@ -41,6 +43,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
     </div>
 
     <div class="demo-section">
+      <p class="description">Custom pattern definition (X) for hex colors (0-9, A-F).</p>
       <label for="hex">Hex Color (Custom Pattern)</label>
       <input
         id="hex"
@@ -61,6 +64,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
 
 
     <div class="demo-section">
+      <p class="description">Complex mask with optional characters (?) and merging special characters.</p>
       <label for="extension">Phone with Optional Extension</label>
       <input
         id="extension"
@@ -80,6 +84,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
     </div>
 
     <div class="demo-section">
+      <p class="description">Automatically appends uneditable prefix and suffix to the value.</p>
       <label for="prefixSuffix">Prefix & Suffix</label>
       <input
         id="prefixSuffix"
@@ -96,6 +101,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
     </div>
 
     <div class="demo-section">
+      <p class="description">Clears the input completely if the user leaves without finishing the mask.</p>
       <label for="clearIfNotMatch">Clear If Not Match</label>
       <input
         id="clearIfNotMatch"
@@ -111,6 +117,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
     </div>
 
     <div class="demo-section">
+      <p class="description">Custom separators. You must explicitly include <code>specialCharacters</code> if your mask uses literals not in the default set.</p>
       <label for="specialChars">Special Characters</label>
       <input
         id="specialChars"
@@ -120,12 +127,13 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         [specialCharacters]="['/']"
         placeholder="X/X/X" />
       <div class="info-row">
-        <span class="hint">Mask: A/A/A, specialCharacters: ['/'] (Removes '/')</span>
+        <span class="hint">Mask: A/A/A. '/' is allowed because it is in specialCharacters.</span>
         <span class="model">Value: {{ specialCharsControl.value }}</span>
       </div>
     </div>
 
     <div class="demo-section">
+      <p class="description">By default, special characters are removed from the model value. Set <code>removeSpecialCharacters</code> to false to keep them.</p>
       <label for="keepSpecialChars">Keep Specified Special Characters</label>
       <input
         id="keepSpecialChars"
@@ -136,7 +144,7 @@ import { IConfigPattern, MaskDirective } from 'ngx-oneforall/directives/mask';
         [removeSpecialCharacters]="false"
         placeholder="ABC-123/456" />
       <div class="info-row">
-        <span class="hint">Mask: AAA-###/###, special: ['-', '/'], remove: false</span>
+        <span class="hint">Mask: AAA-###/###. Model includes separators.</span>
         <span class="model">Value: {{ keepSpecialCharsControl.value }}</span>
       </div>
     </div>

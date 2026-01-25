@@ -88,6 +88,13 @@ The directive validates:
 }
 ```
 
+```html
+<input [dateTime]="'MM-DD-YYYY'" [formControl]="dateControl" />
+@if (dateControl.errors?.['dateTime']; as error) {
+  <span class="error">{{ '{' }}{{ '{' }} error.message || 'Incomplete: ' + error.actualLength + '/' + error.expectedLength {{ '}' }}{{ '}' }}</span>
+}
+```
+
 ---
 
 ## Reactive Forms Example

@@ -8,6 +8,7 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
   imports: [DateTimeDirective, ReactiveFormsModule, JsonPipe],
   template: `
     <div class="demo-section">
+      <p class="description">Standard US date format usage.</p>
       <label for="usDate">US Date (MM-DD-YYYY)</label>
       <input
         id="usDate"
@@ -25,6 +26,9 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
     </div>
 
     <div class="demo-section">
+      <p class="description">
+        International date format with different separators.
+      </p>
       <label for="isoDate">ISO Date (YYYY/MM/DD)</label>
       <input
         id="isoDate"
@@ -42,6 +46,9 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
     </div>
 
     <div class="demo-section">
+      <p class="description">
+        Date validation with minimum and maximum allowed dates.
+      </p>
       <label for="minMaxDate">Min/Max Date Validation</label>
       <input
         id="minMaxDate"
@@ -61,6 +68,10 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
     </div>
 
     <div class="demo-section">
+      <p class="description">
+        Configuration to keep separators in the model value, useful for direct
+        Date parsing.
+      </p>
       <label for="keepSeparators">Keep Separators (for parsing)</label>
       <input
         id="keepSeparators"
@@ -82,6 +93,7 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
     </div>
 
     <div class="demo-section">
+      <p class="description">Time format with 12-hour clock.</p>
       <label for="time12">12-Hour Time (hh:mm)</label>
       <input
         id="time12"
@@ -99,6 +111,7 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
     </div>
 
     <div class="demo-section">
+      <p class="description">24-hour clock with seconds.</p>
       <label for="fullTime">Full Time (HH:mm:ss)</label>
       <input
         id="fullTime"
@@ -116,6 +129,7 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
     </div>
 
     <div class="demo-section">
+      <p class="description">Time format with AM/PM marker.</p>
       <label for="amPm">AM/PM Time (hh:mm A)</label>
       <input
         id="amPm"
@@ -133,6 +147,9 @@ import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
     </div>
 
     <div class="demo-section">
+      <p class="description">
+        Using the dateTimeChanged output to get parsed date parts.
+      </p>
       <label for="outputEvent">Output Event (MM-DD-YYYY hh:mm:ss A)</label>
       <input
         id="outputEvent"
