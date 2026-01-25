@@ -83,13 +83,15 @@ import { MaskDirective } from 'ngx-oneforall/directives/mask';
 | `suffix` | `string` | Text to append to the masked value |
 | `customPatterns` | `Record<string, IConfigPattern>` | Custom patterns to extend or override built-in patterns |
 | `clearIfNotMatch` | `boolean` | If `true`, clears the input on blur when mask is incomplete (default: `false`) |
-| `specialCharacters` | `string[]` | List of characters to be excluded from the raw value (default: `['-', '/', '(', ')', '.', ':', ' ', '+', ',', '@', '[', ']', '"', "'"]`) |
+| `specialCharacters` | `string[]` | List of characters to be treated as separators/literals. These are the ONLY non-pattern characters allowed in the mask. By default, they are removed from the raw value. (default: `['-', '/', '(', ')', '.', ':', ' ', '+', ',', '@', '[', ']', '"', "'"]`) |
 | `mergeSpecialChars` | `boolean` | If `true`, merges your `specialCharacters` list with the default list. If `false` (default), uses ONLY your provided list. |
 | `removeSpecialCharacters` | `boolean` | If `true`, removes characters defined in `specialCharacters` from the raw value. If `false`, includes them. (default: `true`) |
 
 ### Special Characters Configuration
 
-By default, the directive treats common separators (like `-`, `/`, `(`) as special characters. You can configure this behavior using the inputs described above.
+By default, the directive defines common separators (like `-`, `/`, `(`) as special characters. These characters play two roles:
+1. They are **allowed** in your mask pattern as literals.
+2. They are **removed** from the model value (raw value) by default (unless `removeSpecialCharacters` is `false`).
 
 > **Warning** If your mask contains any literal characters (characters that are not patterns like `0` or `A`) that are NOT in the `specialCharacters` list (either the default list or your custom one), the directive will throw an error.
 
@@ -154,7 +156,8 @@ The directive implements Angular's `Validator` interface. When used with reactiv
 {
   mask: {
     requiredMask: '(###) ###-####',  // The mask pattern
-    actualValue: '(123'               // Current masked value
+    actualLength: 4,                 // Current length of the value
+    expectedLength: 10               // Expected length based on mask
   }
 }
 ```
@@ -163,7 +166,7 @@ The directive implements Angular's `Validator` interface. When used with reactiv
 <input [formControl]="phone" [mask]="'(###) ###-####'" />
 @if (phone.errors?.['mask']) {
   <span class="error">
-    Incomplete: {{ phone.errors['mask'].actualValue }}
+    Incomplete: {{ '{' }}{{ '{' }} phone.errors['mask'].actualLength }}/{{ '{' }}{{ '{' }} phone.errors['mask'].expectedLength }} characters
   </span>
 }
 ```
