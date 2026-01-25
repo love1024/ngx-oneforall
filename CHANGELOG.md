@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/love1024/ngx-oneforall/compare/ngx-oneforall-v1.1.0...ngx-oneforall-v1.1.1) (2026-01-25)
+
+
+### Bug Fixes
+
+* set character limit to prevent override issues ([cda4d39](https://github.com/love1024/ngx-oneforall/commit/cda4d3910d897e7b5167c64ce3eb5b054f6fe1d3))
+* set character limit to prevent override issues ([8e25bba](https://github.com/love1024/ngx-oneforall/commit/8e25bba5a3c454fb92f3381d5dad5bd47901dc7c))
+
 ## [1.1.0](https://github.com/love1024/ngx-oneforall/compare/ngx-oneforall-v1.0.2...ngx-oneforall-v1.1.0) (2026-01-05)
 
 
