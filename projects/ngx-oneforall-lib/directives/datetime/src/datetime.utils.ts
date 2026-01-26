@@ -7,6 +7,18 @@ import {
 } from './datetime.config';
 
 /**
+ * Mapping of date/time parts to their corresponding token names.
+ */
+const PART_TOKENS: Record<string, string[]> = {
+  year: ['YYYY', 'YY'],
+  month: ['MM', 'M'],
+  day: ['DD', 'D'],
+  hour: ['HH', 'H', 'hh', 'h'],
+  minute: ['mm', 'm'],
+  second: ['ss', 's'],
+};
+
+/**
  * Parsed token from a format string.
  */
 // Discriminated union for strict typing
@@ -109,91 +121,27 @@ export function isValidDay(day: number, month: number, year: number): boolean {
 }
 
 /**
- * Extract numeric value from a parsed date string.
+ * Internal function to extract numeric value from a date string.
  * Returns undefined if the part is not present or invalid.
  */
-export function extractDatePart(
+function extractDatePartInternal(
   value: string,
   format: string,
-  part: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'
+  part: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second',
+  isRaw: boolean
 ): number | undefined {
   const tokens = parseFormat(format);
   let position = 0;
 
-  const partTokens: Record<string, string[]> = {
-    year: ['YYYY', 'YY'],
-    month: ['MM', 'M'],
-    day: ['DD', 'D'],
-    hour: ['HH', 'H', 'hh', 'h'],
-    minute: ['mm', 'm'],
-    second: ['ss', 's'],
-  };
-
   for (const token of tokens) {
-    if (token.isToken && partTokens[part].includes(token.value)) {
-      const length = token.config.length;
-      const extracted = value.slice(position, position + length);
-      const num = parseInt(extracted, 10);
-      if (!isNaN(num)) {
-        // Handle 2-digit year
-        if (token.value === 'YY') {
-          return num >= 50 ? 1900 + num : 2000 + num;
-        }
-        return num;
-      }
-      return undefined;
+    if (!token.isToken) {
+      // For formatted values, separators take up 1 character
+      // For raw values, separators don't exist in the input
+      if (!isRaw) position += 1;
+      continue;
     }
-    position += token.isToken ? token.config.length : 1;
-  }
 
-  return undefined;
-}
-
-/**
- * Calculate the expected length of a fully formatted value.
- */
-export function getExpectedLength(format: string): number {
-  const tokens = parseFormat(format);
-  return tokens.reduce((sum, token) => {
-    return sum + (token.isToken ? token.config.length : 1);
-  }, 0);
-}
-
-/**
- * Calculate the expected length of a raw value (without separators).
- */
-export function getRawExpectedLength(format: string): number {
-  const tokens = parseFormat(format);
-  return tokens.reduce((sum, token) => {
-    return sum + (token.isToken ? token.config.length : 0);
-  }, 0);
-}
-
-/**
- * Extract numeric value from a raw (separator-free) date string.
- * Returns undefined if the part is not present or invalid.
- */
-export function extractDatePartFromRaw(
-  value: string,
-  format: string,
-  part: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'
-): number | undefined {
-  const tokens = parseFormat(format);
-  let position = 0;
-
-  const partTokens: Record<string, string[]> = {
-    year: ['YYYY', 'YY'],
-    month: ['MM', 'M'],
-    day: ['DD', 'D'],
-    hour: ['HH', 'H', 'hh', 'h'],
-    minute: ['mm', 'm'],
-    second: ['ss', 's'],
-  };
-
-  for (const token of tokens) {
-    if (!token.isToken) continue; // Skip separators
-
-    if (partTokens[part].includes(token.value)) {
+    if (PART_TOKENS[part].includes(token.value)) {
       const length = token.config.length;
       const extracted = value.slice(position, position + length);
       const num = parseInt(extracted, 10);
@@ -210,4 +158,53 @@ export function extractDatePartFromRaw(
   }
 
   return undefined;
+}
+
+/**
+ * Extract numeric value from a formatted date string (with separators).
+ * Returns undefined if the part is not present or invalid.
+ */
+export function extractDatePart(
+  value: string,
+  format: string,
+  part: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'
+): number | undefined {
+  return extractDatePartInternal(value, format, part, false);
+}
+
+/**
+ * Calculate the expected length based on format and whether it's raw.
+ */
+function calculateExpectedLength(format: string, isRaw: boolean): number {
+  const tokens = parseFormat(format);
+  return tokens.reduce((sum, token) => {
+    if (token.isToken) return sum + token.config.length;
+    return isRaw ? sum : sum + 1;
+  }, 0);
+}
+
+/**
+ * Calculate the expected length of a fully formatted value.
+ */
+export function getExpectedLength(format: string): number {
+  return calculateExpectedLength(format, false);
+}
+
+/**
+ * Calculate the expected length of a raw value (without separators).
+ */
+export function getRawExpectedLength(format: string): number {
+  return calculateExpectedLength(format, true);
+}
+
+/**
+ * Extract numeric value from a raw (separator-free) date string.
+ * Returns undefined if the part is not present or invalid.
+ */
+export function extractDatePartFromRaw(
+  value: string,
+  format: string,
+  part: 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'
+): number | undefined {
+  return extractDatePartInternal(value, format, part, true);
 }

@@ -152,9 +152,7 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
 
     const format = this.format();
     const isRaw = this.removeSpecialCharacters();
-    const expectedLength = isRaw
-      ? getRawExpectedLength(format)
-      : getExpectedLength(format);
+    const expectedLength = this.getExpectedLengthForMode(format, isRaw);
 
     // Check if input is complete
     if (value.length < expectedLength) {
@@ -168,10 +166,7 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
     }
 
     // Validate date parts are logical (e.g., day within month range)
-    const extractFn = isRaw ? extractDatePartFromRaw : extractDatePart;
-    const year = extractFn(value, format, 'year');
-    const month = extractFn(value, format, 'month');
-    const day = extractFn(value, format, 'day');
+    const { year, month, day } = this.extractAllParts(value, format, isRaw);
 
     if (year !== undefined && month !== undefined && day !== undefined) {
       if (!isValidDay(day, month, year)) {
@@ -218,15 +213,10 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
   onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const formattedCursorPos = input.selectionStart || 0;
-
-    // Convert cursor position from formatted space to raw space
-    // by counting how many non-pattern characters are before the cursor
-    let rawCursorPos = 0;
-    for (let i = 0; i < formattedCursorPos && i < input.value.length; i++) {
-      if (!DEFAULT_DATE_SEPARATORS.includes(input.value[i])) {
-        rawCursorPos++;
-      }
-    }
+    const rawCursorPos = this.convertFormattedPosToRaw(
+      input.value,
+      formattedCursorPos
+    );
 
     const rawInput = this.extractRawInput(input.value);
     const { formatted, raw, newCursorPosition } = this.applyFormat(
@@ -235,8 +225,7 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
     );
 
     input.value = formatted;
-    const valueToEmit = this.removeSpecialCharacters() ? raw : formatted;
-    this.onChange(valueToEmit);
+    this.emitValue(formatted, raw);
 
     setTimeout(() => {
       input.setSelectionRange(newCursorPosition, newCursorPosition);
@@ -273,8 +262,7 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
             rawInput.length
           );
           input.value = formatted;
-          const valueToEmit = this.removeSpecialCharacters() ? raw : formatted;
-          this.onChange(valueToEmit);
+          this.emitValue(formatted, raw);
           requestAnimationFrame(() => {
             input.setSelectionRange(formatted.length, formatted.length);
           });
@@ -453,30 +441,87 @@ export class DateTimeDirective implements ControlValueAccessor, Validator {
     tokenNames: string[],
     isRaw: boolean
   ): string | null {
-    let position = 0;
-
-    for (const token of this.parsedTokens) {
-      // If handling raw value, separators have 0 length (they don't exist in value)
-      // Otherwise, they have their string length (usually 1)
-      const length = token.isToken
-        ? token.config.length
-        : isRaw
-          ? 0
-          : token.value.length;
-
+    for (let i = 0; i < this.parsedTokens.length; i++) {
+      const token = this.parsedTokens[i];
       if (token.isToken && tokenNames.includes(token.value)) {
+        const position = this.calculateTokenPosition(i, isRaw);
+        const length = token.config.length;
+
         // Ensure we don't read past the value string length
         if (position >= value.length) return null;
 
         const extracted = value.slice(position, position + length);
         // Only return if we have the full expected length for this token
-        // This avoids Partial values like "1" for "MM" being returned as "1" which is ambiguous (Jan or 10,11,12?)
-        // Requirement said "If value is available".
         return extracted.length === length ? extracted : null;
       }
-
-      position += length;
     }
     return null;
+  }
+
+  /**
+   * Emit the value to the form control based on removeSpecialCharacters setting.
+   */
+  private emitValue(formatted: string, raw: string): void {
+    const valueToEmit = this.removeSpecialCharacters() ? raw : formatted;
+    this.onChange(valueToEmit);
+  }
+
+  /**
+   * Convert cursor position from formatted space to raw space.
+   */
+  private convertFormattedPosToRaw(
+    value: string,
+    formattedPos: number
+  ): number {
+    let rawPos = 0;
+    for (let i = 0; i < formattedPos && i < value.length; i++) {
+      if (!DEFAULT_DATE_SEPARATORS.includes(value[i])) {
+        rawPos++;
+      }
+    }
+    return rawPos;
+  }
+
+  /**
+   * Get the expected length based on format and whether special characters are removed.
+   */
+  private getExpectedLengthForMode(format: string, isRaw: boolean): number {
+    return isRaw ? getRawExpectedLength(format) : getExpectedLength(format);
+  }
+
+  /**
+   * Calculate the position of a token in the value string.
+   */
+  private calculateTokenPosition(
+    upToTokenIndex: number,
+    isRaw: boolean
+  ): number {
+    let position = 0;
+    for (let i = 0; i < upToTokenIndex && i < this.parsedTokens.length; i++) {
+      const token = this.parsedTokens[i];
+      const length = token.isToken
+        ? token.config.length
+        : isRaw
+          ? 0
+          : token.value.length;
+      position += length;
+    }
+    return position;
+  }
+
+  /**
+   * Extract all date/time parts from the value.
+   */
+  private extractAllParts(
+    value: string,
+    format: string,
+    isRaw: boolean
+  ): { year?: number; month?: number; day?: number } {
+    const extractFn = isRaw ? extractDatePartFromRaw : extractDatePart;
+    return {
+      year: extractFn(value, format, 'year'),
+      month: extractFn(value, format, 'month'),
+      day: extractFn(value, format, 'day'),
+    };
   }
 }
