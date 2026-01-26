@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { JsonPipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
+import {
+  DateTimeDirective,
+  DateTimeParts,
+} from 'ngx-oneforall/directives/datetime';
 
 @Component({
   selector: 'lib-datetime-demo',
@@ -186,9 +189,9 @@ export class DateTimeDemoComponent {
   amPmControl = new FormControl('');
   outputControl = new FormControl('');
 
-  lastEmittedParts: any = null;
+  lastEmittedParts: DateTimeParts | null = null;
 
-  onDateTimeChanged(parts: any): void {
+  onDateTimeChanged(parts: DateTimeParts): void {
     this.lastEmittedParts = parts;
   }
 
