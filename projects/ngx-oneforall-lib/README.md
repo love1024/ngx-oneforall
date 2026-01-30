@@ -94,7 +94,7 @@ export class UserService {
 |----------|-----------|
 | **Constants** | `breakpoints`, `device`, `file-extension`, `host-platforms`, `http`, `key`, `regex`, `sort-direction`, `time`, `types` |
 | **Decorators** | `cache`, `catch-error`, `debounce`, `log-execution-time`, `memoize`, `only-in-browser`, `throttle` |
-| **Directives** | `auto-focus`, `click-outside`, `click-throttle`, `hover-class`, `infinite-scroll`, `numbers-only`, `press-enter`, `repeat`, `resized`, `shortcut`, `typed-template`, `visibility-change` |
+| **Directives** | `auto-focus`, `click-outside`, `click-throttle`, `draggable`, `hover-class`, `infinite-scroll`, `numbers-only`, `press-enter`, `repeat`, `resized`, `shortcut`, `typed-template`, `visibility-change` |
 | **Guards** | `param`, `query-param`, `unsaved-changes` |
 | **Interceptors** | `base-url`, `cache`, `correlation-id`, `encryption`, `jwt`, `performance`, `timeout` |
 | **Pipes** | `bytes`, `call`, `first-error-key`, `highlight-search`, `initials`, `pluralize`, `range`, `safe-html`, `time-ago`, `truncate` |
