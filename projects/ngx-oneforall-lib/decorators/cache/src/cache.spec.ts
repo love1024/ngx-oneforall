@@ -13,7 +13,7 @@ jest.mock('ngx-oneforall/services/cache', () => ({
   getStorageEngine: () => mockStorage,
 }));
 
-import { Cache, DEFAULT_CACHE_KEY_SELECTOR } from './cache';
+import { Cache, DEFAULT_CACHE_KEY_SELECTOR, CachedMethod } from './cache';
 import { Observable, of, delay } from 'rxjs';
 
 describe('Cache Decorator (with mock component)', () => {
@@ -228,5 +228,37 @@ describe('Cache Decorator (with mock component)', () => {
     const params = [1, undefined, 'test'];
     const result = DEFAULT_CACHE_KEY_SELECTOR(params);
     expect(result).toEqual([1, undefined, 'test']);
+  });
+  it('should clear cache using imperative clearCache method', () => {
+    const comp = new MockComponent();
+    comp.getValue(1, 2).subscribe();
+
+    // Verify cache exists
+    const cache = mockStorage._store['CACHE_DECORATOR'];
+    expect(cache.data['MockComponent-getValue']).toBeDefined();
+
+    // Clear cache imperatively
+    (comp.getValue as unknown as CachedMethod).clearCache();
+
+    // Verify cache is gone
+    expect(cache.data['MockComponent-getValue']).toBeUndefined();
+    expect(mockStorage.set).toHaveBeenCalled();
+  });
+  it('should handle clearCache when storage is empty or key missing', () => {
+    const comp = new MockComponent();
+    // Do not call method to populate cache
+    // Mock storage return null to simulate empty storage
+    mockStorage._store['CACHE_DECORATOR'] = undefined;
+
+    // calling clearCache should not throw error
+    expect(() => {
+      (comp.getValue as unknown as CachedMethod).clearCache();
+    }).not.toThrow();
+
+    // Mock storage returns object but without our key
+    mockStorage._store['CACHE_DECORATOR'] = { data: {} };
+    expect(() => {
+      (comp.getValue as unknown as CachedMethod).clearCache();
+    }).not.toThrow();
   });
 });

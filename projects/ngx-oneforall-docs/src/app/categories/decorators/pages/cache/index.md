@@ -59,6 +59,21 @@ getConfig(): Observable<Config> {
 
 Changing `version` clears all cached data for this method.
 
+### Manual Cache Clearing
+
+You can manually clear the cache for a specific method by calling `clearCache()` on the decorated method.
+You will need to cast the method to `CachedMethod<T>`.
+
+```typescript
+import { CachedMethod } from 'ngx-oneforall/decorators/cache';
+
+// ...
+refreshData() {
+  (this.getData as unknown as CachedMethod).clearCache();
+  // Next call to this.getData() will hit the server
+}
+```
+
 ### Custom Cache Key
 
 ```typescript

@@ -54,6 +54,14 @@ const DEFAULT_CACHE_KEY_MATCHER = (
 
 export const DEFAULT_CACHE_KEY_SELECTOR = (parameters: unknown[]) => parameters;
 
+const CACHE_META = Symbol('__cache_meta__');
+
+interface CacheMetaType {
+  storage: CacheStorageType;
+  storageKey: string;
+  itemCacheKey: string;
+}
+
 /**
  * Decorator that caches Observable method results with configurable storage, TTL, and versioning.
  *
@@ -87,12 +95,16 @@ export const DEFAULT_CACHE_KEY_SELECTOR = (parameters: unknown[]) => parameters;
  * @param cacheConfig - Configuration options for caching behavior
  * @returns Method decorator
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type CachedMethod<T = any> = T & { clearCache: () => void };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
-  return function (
+  return (
     target: object,
     propertyKey: string,
     propertyDescriptor: PropertyDescriptor
-  ) {
+  ) => {
     const options = mergeWithDefaultConfig(cacheConfig);
     const cacheKey =
       options.itemCacheKey ||
@@ -105,7 +117,7 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
       return;
     }
 
-    propertyDescriptor.value = function (...parameters: unknown[]) {
+    const newMethod = function (this: unknown, ...parameters: unknown[]) {
       let cachedObject =
         (cacheService.get(
           storageKey,
@@ -211,6 +223,31 @@ export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
         return response$;
       }
     };
+
+    // Attach clearCache method
+    (newMethod as unknown as CachedMethod).clearCache = () => {
+      const cachedObject =
+        (cacheService.get(
+          storageKey,
+          StorageTransformers.JSON
+        ) as CachedObject) ?? {};
+      if (cachedObject.data && cachedObject.data[cacheKey]) {
+        delete cachedObject.data[cacheKey];
+        cacheService.set(storageKey, cachedObject, StorageTransformers.JSON);
+      }
+    };
+
+    propertyDescriptor.value = newMethod;
+
+    // Attach metadata
+    Object.defineProperty(propertyDescriptor.value, CACHE_META, {
+      value: {
+        storage: options.storage,
+        storageKey: options.storageKey,
+        itemCacheKey: cacheKey,
+      } satisfies CacheMetaType,
+      writable: false,
+    });
   };
 }
 
