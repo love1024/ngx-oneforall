@@ -1,0 +1,42 @@
+.list {
+  width: 400px;
+  max-height: 350px;
+  overflow-y: auto;
+  border: 2px solid #1976d2;
+  border-radius: 8px;
+  padding: 4px;
+  background: #e3f2fd;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin: 4px 0;
+  background: #fff;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: grab;
+  transition: box-shadow 0.2s, background 0.2s;
+  user-select: none;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+  }
+
+  &.dragging {
+    opacity: 0.4;
+  }
+
+  &.drag-over {
+    border-top: 2px solid #1976d2;
+    background: #bbdefb;
+  }
+}
+
+.handle {
+  color: #90a4ae;
+  font-size: 18px;
+  cursor: grab;
+}
