@@ -34,7 +34,7 @@ export interface DragEvent {
  *
  * @example
  * ```html
- * <!-- Basic usage - entire element is draggable -->
+ * <!-- Basic usage where entire element is draggable -->
  * <div makeDraggable (dragMove)="onDrag($event)">
  *   Drag me!
  * </div>
