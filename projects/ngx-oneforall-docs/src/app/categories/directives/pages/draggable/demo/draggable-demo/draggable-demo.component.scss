@@ -1,0 +1,129 @@
+h4 {
+  margin: 24px 0 12px;
+  color: #333;
+  font-size: 16px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.demo-wrapper {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  min-height: 120px;
+  background: #f9f9f9;
+  margin-bottom: 8px;
+}
+
+.draggable-box {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  cursor: grab;
+  position: relative;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  strong {
+    font-size: 18px;
+  }
+
+  span {
+    font-size: 12px;
+    font-family: monospace;
+    opacity: 0.9;
+  }
+}
+
+// Modal Example
+.modal-card {
+  display: inline-block;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+  min-width: 250px;
+}
+
+.modal-header {
+  padding: 12px 16px;
+  background: #1976d2;
+  color: white;
+  font-weight: 500;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.modal-body {
+  padding: 16px;
+
+  p {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #555;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Boundary Constrained Example
+.boundary-area {
+  min-height: 150px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border-color: #4caf50;
+}
+
+.constrained-box {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+  cursor: grab;
+  position: relative;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  strong {
+    font-size: 16px;
+  }
+
+  span {
+    font-size: 12px;
+    opacity: 0.9;
+  }
+}
+
+.info {
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 16px;
+
+  code {
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #d63384;
+  }
+}
