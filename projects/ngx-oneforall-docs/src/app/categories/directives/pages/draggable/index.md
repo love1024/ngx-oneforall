@@ -15,7 +15,7 @@ Makes any element draggable with mouse and touch support. Perfect for movable po
 ## Installation
 
 ```typescript
-import { DraggableDirective, DragEvent } from 'ngx-oneforall/directives/draggable';
+import { DraggableDirective, DraggableDragEvent } from 'ngx-oneforall/directives/draggable';
 ```
 
 ---
@@ -41,21 +41,22 @@ Make any element draggable:
 | `makeDraggableEnabled` | `boolean` | `true` | Enables/disables dragging |
 | `makeDraggableTarget` | `HTMLElement \| null` | `null` | Element to move (defaults to host element) |
 | `makeDraggableBoundary` | `'viewport' \| 'parent' \| HTMLElement \| null` | `null` | Constrains dragging within bounds |
+| `makeDraggableThreshold` | `number` | `5` | Minimum distance (px) before drag starts |
 
 ### Outputs
 
 | Output | Type | Description |
 |--------|------|-------------|
-| `dragStart` | `DragEvent` | Emits when dragging begins |
-| `dragMove` | `DragEvent` | Emits continuously while dragging |
-| `dragEnd` | `DragEvent` | Emits when dragging ends |
+| `dragStart` | `DraggableDragEvent` | Emits when dragging begins |
+| `dragMove` | `DraggableDragEvent` | Emits continuously while dragging |
+| `dragEnd` | `DraggableDragEvent` | Emits when dragging ends |
 
-### DragEvent Interface
+### DraggableDragEvent Interface
 
 ```typescript
-interface DragEvent {
-  x: number;         // Current X position
-  y: number;         // Current Y position
+interface DraggableDragEvent {
+  x: number;         // Current X position relative to viewport
+  y: number;         // Current Y position relative to viewport
   deltaX: number;    // Change in X since last event
   deltaY: number;    // Change in Y since last event
   originalEvent: MouseEvent | TouchEvent;
@@ -81,24 +82,6 @@ The most common use case — drag a modal by its header:
       </div>
     </div>
   `,
-  styles: [`
-    .modal {
-      position: fixed;
-      top: 100px;
-      left: 100px;
-      width: 400px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    }
-    .modal-header {
-      padding: 16px;
-      background: #1976d2;
-      color: white;
-      cursor: grab;
-      border-radius: 8px 8px 0 0;
-    }
-  `],
   imports: [DraggableDirective]
 })
 export class ModalComponent {}
@@ -160,15 +143,15 @@ export class TrackingComponent {
   position = { x: 0, y: 0 };
   isDragging = false;
 
-  onDragStart(event: DragEvent) {
+  onDragStart(event: DraggableDragEvent) {
     this.isDragging = true;
   }
 
-  onDragMove(event: DragEvent) {
+  onDragMove(event: DraggableDragEvent) {
     this.position = { x: event.x, y: event.y };
   }
 
-  onDragEnd(event: DragEvent) {
+  onDragEnd(event: DraggableDragEvent) {
     this.isDragging = false;
   }
 }
@@ -185,10 +168,9 @@ Each popup maintains its own position independently:
   template: `
     @for (popup of popups; track popup.id) {
       <div class="popup"
+           style="position: absolute;"
            makeDraggable
-           [makeDraggableBoundary]="'viewport'"
-           [style.left.px]="popup.x"
-           [style.top.px]="popup.y">
+           [makeDraggableBoundary]="'viewport'">
         <div class="popup-header">{{"{{ popup.title }}"}}</div>
         <div class="popup-content">{{"{{ popup.content }}"}}</div>
       </div>
@@ -198,8 +180,8 @@ Each popup maintains its own position independently:
 })
 export class MultiPopupComponent {
   popups = [
-    { id: 1, title: 'Popup 1', content: 'Content...', x: 50, y: 50 },
-    { id: 2, title: 'Popup 2', content: 'Content...', x: 200, y: 100 },
+    { id: 1, title: 'Popup 1', content: 'Content...' },
+    { id: 2, title: 'Popup 2', content: 'Content...' },
   ];
 }
 ```

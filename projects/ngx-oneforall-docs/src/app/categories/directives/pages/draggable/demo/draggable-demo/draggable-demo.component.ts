@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import {
   DraggableDirective,
-  DragEvent,
+  DraggableDragEvent,
 } from 'ngx-oneforall/directives/draggable';
 
 @Component({
@@ -57,7 +57,7 @@ import {
 export class DraggableDemoComponent {
   position = signal({ x: 0, y: 0 });
 
-  onDragMove(event: DragEvent) {
+  onDragMove(event: DraggableDragEvent) {
     this.position.set({ x: Math.round(event.x), y: Math.round(event.y) });
   }
 }

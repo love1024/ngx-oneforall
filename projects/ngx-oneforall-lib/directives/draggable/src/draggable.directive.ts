@@ -5,6 +5,7 @@ import {
   ElementRef,
   inject,
   input,
+  numberAttribute,
   NgZone,
   OnDestroy,
   output,
@@ -14,7 +15,7 @@ import {
 /**
  * Interface representing the drag event details.
  */
-export interface DragEvent {
+export interface DraggableDragEvent {
   /** Current X position relative to viewport */
   x: number;
   /** Current Y position relative to viewport */
@@ -91,14 +92,20 @@ export class DraggableDirective implements OnDestroy {
     null
   );
 
+  /**
+   * Minimum distance in pixels the user must move before dragging starts.
+   * Useful to prevent accidental drags when clicking.
+   */
+  makeDraggableThreshold = input(5, { transform: numberAttribute });
+
   /** Emits when dragging starts */
-  dragStart = output<DragEvent>();
+  dragStart = output<DraggableDragEvent>();
 
   /** Emits continuously while dragging */
-  dragMove = output<DragEvent>();
+  dragMove = output<DraggableDragEvent>();
 
   /** Emits when dragging ends */
-  dragEnd = output<DragEvent>();
+  dragEnd = output<DraggableDragEvent>();
 
   /** Whether the element is currently being dragged */
   isDragging = false;
@@ -107,6 +114,8 @@ export class DraggableDirective implements OnDestroy {
   private readonly ngZone = inject(NgZone);
   private readonly hostEl = inject(ElementRef<HTMLElement>);
 
+  private pointerDownX = 0;
+  private pointerDownY = 0;
   private startX = 0;
   private startY = 0;
   private initialLeft = 0;
@@ -170,48 +179,87 @@ export class DraggableDirective implements OnDestroy {
     if (!this.makeDraggableEnabled() || event.button !== 0) {
       return;
     }
-    event.preventDefault();
-    this.startDrag(event.clientX, event.clientY, event);
+    // Don't prevent default yet, wait until drag starts
+    this.initDrag(event.clientX, event.clientY);
   }
 
   private onTouchStart(event: TouchEvent): void {
     if (!this.makeDraggableEnabled() || event.touches.length !== 1) {
       return;
     }
-    event.preventDefault();
+    // Don't prevent default yet
+    // event.preventDefault();
     const touch = event.touches[0];
-    this.startDrag(touch.clientX, touch.clientY, event);
+    this.initDrag(touch.clientX, touch.clientY);
+  }
+
+  private initDrag(x: number, y: number): void {
+    this.pointerDownX = x;
+    this.pointerDownY = y;
+    this.isDragging = false;
+
+    this.ngZone.runOutsideAngular(() => {
+      this.addDragListeners();
+    });
   }
 
   private onMouseMove(event: MouseEvent): void {
-    if (!this.isDragging) {
-      return;
-    }
-    event.preventDefault();
-    this.moveDrag(event.clientX, event.clientY, event);
+    this.handleMove(event.clientX, event.clientY, event);
   }
 
   private onTouchMove(event: TouchEvent): void {
-    if (!this.isDragging || event.touches.length !== 1) {
+    if (event.touches.length !== 1) {
       return;
     }
-    event.preventDefault();
     const touch = event.touches[0];
-    this.moveDrag(touch.clientX, touch.clientY, event);
+    this.handleMove(touch.clientX, touch.clientY, event);
+  }
+
+  private handleMove(
+    x: number,
+    y: number,
+    originalEvent: MouseEvent | TouchEvent
+  ): void {
+    if (!this.isDragging) {
+      const deltaX = Math.abs(x - this.pointerDownX);
+      const deltaY = Math.abs(y - this.pointerDownY);
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+      if (distance >= this.makeDraggableThreshold()) {
+        if (originalEvent.cancelable) {
+          originalEvent.preventDefault();
+        }
+        this.startDrag(this.pointerDownX, this.pointerDownY, originalEvent);
+        // Immediately move to current position to avoid lag
+        this.moveDrag(x, y, originalEvent);
+      }
+    } else {
+      if (originalEvent.cancelable) {
+        originalEvent.preventDefault();
+      }
+      this.moveDrag(x, y, originalEvent);
+    }
   }
 
   private onMouseUp(event: MouseEvent): void {
-    if (!this.isDragging) {
-      return;
-    }
-    this.endDrag(event.clientX, event.clientY, event);
+    this.handleUp(event.clientX, event.clientY, event);
   }
 
   private onTouchEnd(event: TouchEvent): void {
-    if (!this.isDragging) {
-      return;
+    this.handleUp(this.lastX, this.lastY, event);
+  }
+
+  private handleUp(
+    x: number,
+    y: number,
+    originalEvent: MouseEvent | TouchEvent
+  ): void {
+    if (this.isDragging) {
+      this.endDrag(x, y, originalEvent);
+    } else {
+      // Clean up if drag never started (it was a click)
+      this.removeDragListeners();
     }
-    this.endDrag(this.lastX, this.lastY, event);
   }
 
   private startDrag(
@@ -235,13 +283,10 @@ export class DraggableDirective implements OnDestroy {
       target.style.position = 'relative';
     }
 
-    this.ngZone.runOutsideAngular(() => {
-      this.addDragListeners();
-    });
-
     this.hostEl.nativeElement.style.cursor = 'grabbing';
+    this.hostEl.nativeElement.style.userSelect = 'none';
 
-    const dragEvent = this.createDragEvent(x, y, 0, 0, originalEvent);
+    const dragEvent = this.createDraggableDragEvent(x, y, 0, 0, originalEvent);
     this.ngZone.run(() => this.dragStart.emit(dragEvent));
   }
 
@@ -266,7 +311,13 @@ export class DraggableDirective implements OnDestroy {
     target.style.left = `${newLeft}px`;
     target.style.top = `${newTop}px`;
 
-    const dragEvent = this.createDragEvent(x, y, deltaX, deltaY, originalEvent);
+    const dragEvent = this.createDraggableDragEvent(
+      x,
+      y,
+      deltaX,
+      deltaY,
+      originalEvent
+    );
     this.ngZone.run(() => this.dragMove.emit(dragEvent));
   }
 
@@ -280,7 +331,7 @@ export class DraggableDirective implements OnDestroy {
 
     this.hostEl.nativeElement.style.cursor = 'grab';
 
-    const dragEvent = this.createDragEvent(
+    const dragEvent = this.createDraggableDragEvent(
       x,
       y,
       x - this.lastX,
@@ -315,7 +366,13 @@ export class DraggableDirective implements OnDestroy {
     let boundaryRect: DOMRect;
 
     if (boundary === 'viewport') {
-      boundaryRect = new DOMRect(0, 0, window.innerWidth, window.innerHeight);
+      const view = this.document.defaultView;
+      boundaryRect = new DOMRect(
+        0,
+        0,
+        view?.innerWidth ?? 0,
+        view?.innerHeight ?? 0
+      );
     } else if (boundary === 'parent') {
       const parent = target.parentElement;
       if (!parent) {
@@ -340,13 +397,13 @@ export class DraggableDirective implements OnDestroy {
     };
   }
 
-  private createDragEvent(
+  private createDraggableDragEvent(
     x: number,
     y: number,
     deltaX: number,
     deltaY: number,
     originalEvent: MouseEvent | TouchEvent
-  ): DragEvent {
+  ): DraggableDragEvent {
     return { x, y, deltaX, deltaY, originalEvent };
   }
 }

@@ -33,4 +33,12 @@ module.exports = {
   // Make sure Jest only treats *.spec.ts as test files
   testMatch: ['**/?(*.)+(spec).[jt]s?(x)'],
   testEnvironment: 'jsdom',
+  coverageThreshold: {
+    global: {
+      branches: 100,
+      functions: 100,
+      lines: 100,
+      statements: 100,
+    },
+  },
 };
