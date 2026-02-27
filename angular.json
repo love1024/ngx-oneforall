@@ -73,6 +73,16 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               {
+                "glob": "llms.txt",
+                "input": "projects/ngx-oneforall-docs/public",
+                "output": ""
+              },
+              {
+                "glob": "llms-full.txt",
+                "input": "projects/ngx-oneforall-docs/public",
+                "output": ""
+              },
+              {
                 "glob": "404.html",
                 "input": "projects/ngx-oneforall-docs/public",
                 "output": ""

@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build ngx-oneforall-lib",
     "build:docs": "ng build ngx-oneforall-docs --base-href /ngx-oneforall/",
+    "generate:llms": "node scripts/generate-llms.mjs",
     "watch": "ng build ngx-oneforall-lib --watch --configuration development",
     "test": "jest --coverage",
     "serve:ssr:ngx-oneforall-docs": "node dist/ngx-oneforall-docs/server/server.mjs",
