@@ -6,6 +6,8 @@
     "start": "ng serve",
     "build": "ng build ngx-oneforall-lib",
     "build:docs": "ng build ngx-oneforall-docs --base-href /ngx-oneforall/",
+    "build:mcp": "cd projects/ngx-oneforall-mcp && npm run build",
+    "publish:mcp": "cd projects/ngx-oneforall-mcp && npm publish --access public",
     "generate:llms": "node scripts/generate-llms.mjs",
     "watch": "ng build ngx-oneforall-lib --watch --configuration development",
     "test": "jest --coverage",
