@@ -1,6 +1,6 @@
 {
   "name": "ngx-oneforall-mcp",
-  "version": "1.2.1",
+  "version": "1.0.0",
   "description": "MCP server for ngx-oneforall Angular utility library — gives AI tools native knowledge of all utilities",
   "type": "module",
   "bin": {
