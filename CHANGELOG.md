@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/love1024/ngx-oneforall/compare/v1.2.0...v1.3.0) (2026-02-28)
+
+
+### Features
+
+* introduce mcp project to provide ai tools with native knowledge utilities ([29191ab](https://github.com/love1024/ngx-oneforall/commit/29191ab))
+* add llm optimized documentation files ([04ff2cb](https://github.com/love1024/ngx-oneforall/commit/04ff2cb))
+* add draggable directive for movable popups/modals (#8) ([482201c](https://github.com/love1024/ngx-oneforall/commit/482201c))
+* add drag auto scroll directive ([8f58a18](https://github.com/love1024/ngx-oneforall/commit/8f58a18))
+* add lowercase and uppercase directive ([a9a9991](https://github.com/love1024/ngx-oneforall/commit/a9a9991))
+* added clear cache option for cache decorator ([8dd198c](https://github.com/love1024/ngx-oneforall/commit/8dd198c))
+
 ## [1.2.0](https://github.com/love1024/ngx-oneforall/compare/v1.1.0...v1.2.0) (2026-01-25)
 
 
