@@ -1,6 +1,8 @@
-Connect AI tools to ngx-oneforall documentation using the Model Context Protocol (MCP).
+# ngx-oneforall-mcp
 
-The MCP server gives AI assistants like Claude, Cursor, Windsurf, and VS Code Copilot **native knowledge** of all ngx-oneforall utilities — including correct import paths, API references, and usage examples.
+Connect AI tools to **ngx-oneforall** documentation using the Model Context Protocol (MCP).
+
+The MCP server gives AI assistants like Claude, Cursor, Windsurf, VS Code Copilot, and Antigravity **native knowledge** of all ngx-oneforall utilities — including correct import paths, API references, and usage examples.
 
 ---
 
