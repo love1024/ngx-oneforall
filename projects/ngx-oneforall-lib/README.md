@@ -15,7 +15,7 @@
   </a>
 </p>
 
-**ngx-oneforall** is a collection of 85+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
+**ngx-oneforall** is a collection of 120+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
 
 > **One For All** - A single library providing the essential blocks for modern Angular development.
 
@@ -92,16 +92,17 @@ export class UserService {
 
 | Category | Utilities |
 |----------|-----------|
-| **Constants** | `breakpoints`, `device`, `file-extension`, `host-platforms`, `http`, `key`, `regex`, `sort-direction`, `time`, `types` |
+| **Constants** | `breakpoints`, `device`, `file-extension`, `host-platforms`, `http`, `keys`, `regex`, `sort-direction`, `time`, `types` |
 | **Decorators** | `cache`, `catch-error`, `debounce`, `log-execution-time`, `memoize`, `only-in-browser`, `throttle` |
-| **Directives** | `auto-focus`, `click-outside`, `click-throttle`, `draggable`, `hover-class`, `infinite-scroll`, `numbers-only`, `press-enter`, `repeat`, `resized`, `shortcut`, `typed-template`, `visibility-change` |
+| **Directives** | `auto-focus`, `click-outside`, `click-throttle`, `datetime`, `drag-auto-scroll`, `draggable`, `hover-class`, `infinite-scroll`, `lowercase`, `mask`, `numbers-only`, `press-enter`, `repeat`, `resized`, `shortcut`, `typed-template`, `uppercase`, `visibility-change` |
 | **Guards** | `param`, `query-param`, `unsaved-changes` |
 | **Interceptors** | `base-url`, `cache`, `correlation-id`, `encryption`, `jwt`, `performance`, `timeout` |
 | **Pipes** | `bytes`, `call`, `first-error-key`, `highlight-search`, `initials`, `pluralize`, `range`, `safe-html`, `time-ago`, `truncate` |
 | **Rxjs** | `backoff-retry`, `catch-error-with-fallback`, `data-polling`, `debug`, `live-search`, `loading-status` |
 | **Services** | `cache`, `clipboard`, `cookie`, `device`, `event`, `history`, `idle`, `jwt`, `logger`, `network-status`, `shortcut`, `storage` |
 | **Signals** | `breakpoint-matcher`, `debounced-signal`, `deep-computed`, `event-signal`, `interval-signal`, `route-param-signal`, `route-query-param-signal`, `router-event-signal`, `state-signal`, `storage-signal`, `throttled-signal`, `websocket-signal` |
-| **Utils** | `base64`, `download-link`, `find-type`, `hash`, `host-platform`, `is-key-defined`, `is-number`, `is-present`, `is-record`, `normalize-key`, `safe-await`, `safe-serialize`, `unique-component-id` |
+| **Types** | `callable`, `deep-partial`, `is-arrow-function`, `keys-of-type`, `omit-by-value`, `partial-only`, `pick-by-value`, `required-only`, `simple-changes` |
+| **Utils** | `base64-url`, `download-link`, `file-base64`, `find-type`, `hash`, `host-platform`, `is-key-defined`, `is-number`, `is-present`, `is-record`, `normalize-key`, `safe-await`, `safe-serialize`, `unique-component-id` |
 | **Validators** | `credit-card`, `date`, `match-field`, `max-date`, `min-date`, `min-length-trimmed`, `not-blank`, `number`, `phone`, `range`, `range-length`, `url` |
 
 
