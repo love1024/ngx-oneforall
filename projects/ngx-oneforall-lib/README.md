@@ -31,6 +31,7 @@ Full API documentation and demos are available at: [https://love1024.github.io/n
 - **Zero Dependencies**: Keeps your dependency tree clean and secure.
 - **SSR Ready**: Built for modern hydration and server-side rendering.
 - **Modern Angular**: Designed for Signals and Standalone Components.
+- **AI Ready**: Includes an MCP server to easily integrate documentation and utilities directly into AI assistants.
 - **Fully Tested**: Comprehensive test suite with 100% coverage.
 
 ## Why Use It?
@@ -105,6 +106,11 @@ export class UserService {
 | **Utils** | `base64-url`, `download-link`, `file-base64`, `find-type`, `hash`, `host-platform`, `is-key-defined`, `is-number`, `is-present`, `is-record`, `normalize-key`, `safe-await`, `safe-serialize`, `unique-component-id` |
 | **Validators** | `credit-card`, `date`, `match-field`, `max-date`, `min-date`, `min-length-trimmed`, `not-blank`, `number`, `phone`, `range`, `range-length`, `url` |
 
+## MCP Server
+
+This project includes a Model Context Protocol (MCP) server. You can use the `ngx-oneforall` MCP server to integrate its Angular utilities directly into your AI assistants and tools (like Claude Desktop, Cursor, and Windsurf).
+
+For more information on setting up and using the MCP server, please refer to the [MCP Server Documentation](https://love1024.github.io/ngx-oneforall/docs/mcp-server).
 
 ## Issues & Feature Requests
 
