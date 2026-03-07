@@ -1,0 +1,52 @@
+.show-for-demo-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 32px auto;
+  text-align: center;
+}
+
+.banner {
+  padding: 20px 24px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.banner.expired {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.reset-btn {
+  align-self: center;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reset-btn:hover {
+  background: #4f46e5;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
