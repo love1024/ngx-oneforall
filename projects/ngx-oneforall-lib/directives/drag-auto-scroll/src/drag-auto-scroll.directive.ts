@@ -49,6 +49,13 @@ export class DragAutoScrollDirective implements OnDestroy {
   /** Disable the auto-scroll behavior */
   dragAutoScrollDisabled = input(false, { transform: booleanAttribute });
 
+  /**
+   * Optional explicit target to scroll.
+   * Can be an HTMLElement, the string 'window', or a Window object.
+   * If omitted, the directive auto-detects the nearest scrollable parent.
+   */
+  dragAutoScrollTarget = input<HTMLElement | Window | 'window'>();
+
   private readonly el = inject(ElementRef<HTMLElement>);
   private readonly ngZone = inject(NgZone);
   private readonly document = inject(DOCUMENT);
@@ -56,6 +63,7 @@ export class DragAutoScrollDirective implements OnDestroy {
   private animationFrameId: number | null = null;
   private currentSpeed = 0;
   private initialized = false;
+  private scrollTarget: HTMLElement | Window | null = null;
 
   constructor() {
     this.onDragOver = this.onDragOver.bind(this);
@@ -139,7 +147,19 @@ export class DragAutoScrollDirective implements OnDestroy {
   }
 
   private scroll(): void {
-    this.el.nativeElement.scrollTop += this.currentSpeed;
+    if (!this.scrollTarget) {
+      this.scrollTarget = this.resolveScrollTarget();
+    }
+
+    const isWindow =
+      this.scrollTarget === window ||
+      this.scrollTarget === this.document.defaultView;
+    if (isWindow) {
+      (this.scrollTarget as Window).scrollBy(0, this.currentSpeed);
+    } else {
+      (this.scrollTarget as HTMLElement).scrollTop += this.currentSpeed;
+    }
+
     this.animationFrameId = requestAnimationFrame(() => this.scroll());
   }
 
@@ -149,5 +169,39 @@ export class DragAutoScrollDirective implements OnDestroy {
       this.animationFrameId = null;
     }
     this.currentSpeed = 0;
+    this.scrollTarget = null;
+  }
+
+  private resolveScrollTarget(): HTMLElement | Window {
+    const explicitTarget = this.dragAutoScrollTarget();
+    const defaultView = this.document.defaultView || window;
+
+    if (explicitTarget === 'window') {
+      return defaultView;
+    } else if (explicitTarget) {
+      return explicitTarget as HTMLElement | Window;
+    }
+
+    let node: HTMLElement | null = this.el.nativeElement;
+
+    while (node) {
+      if (
+        node === this.document.body ||
+        node === this.document.documentElement
+      ) {
+        return defaultView;
+      }
+
+      const style = defaultView.getComputedStyle(node);
+      const overflowY = style.overflowY;
+
+      if (overflowY === 'auto' || overflowY === 'scroll') {
+        return node;
+      }
+
+      node = node.parentElement;
+    }
+
+    return defaultView;
   }
 }

@@ -5,12 +5,17 @@ Automatically scrolls a container when a dragged item approaches the top or bott
 ## Features
 
 - **CDK & Native Compatible** — Listens on `document` so it works with CDK drag-drop and native HTML5 drag
+- **Smart Target Auto-Detection** — Automatically finds the nearest scrollable parent element, with a graceful fallback to the `window`
+- **Explicit Scroll Target** — Optionally define exactly which element or window should scroll
 - **Proportional Speed** — Scrolls faster as the cursor gets closer to the edge
 - **Horizontal Bounds** — Only triggers when the cursor is horizontally over the container (with configurable tolerance)
 - **Configurable** — Customize margin zone, max speed, and horizontal tolerance
 - **Zone Optimized** — Runs outside Angular zone for better performance
 - **SSR Safe** — Only activates in the browser
 - **Toggleable** — Enable/disable via `dragAutoScrollDisabled` input
+
+> **Note**
+> By default, the directive is smart enough to find the scrollable container even if it's placed on a non-scrollable child element. If it fails to find an element with `overflow-y: auto` or `scroll`, it will scroll the `window`.
 
 ---
 
@@ -42,6 +47,11 @@ import { DragAutoScrollDirective } from 'ngx-oneforall/directives/drag-auto-scro
 | `dragAutoScrollSpeed` | `number` | `10` | Maximum scroll speed (px/frame) |
 | `dragAutoScrollTolerance` | `number` | `50` | Horizontal tolerance (px) outside container bounds above which scrolling does not trigger |
 | `dragAutoScrollDisabled` | `boolean` | `false` | Disables auto-scroll behavior |
+| `dragAutoScrollTarget` | `HTMLElement \| Window \| 'window'` | `undefined` | Optional explicit target to scroll instead of auto-detecting |
+
+### `dragAutoScrollTarget`
+
+By default, the directive auto-detects the nearest scrollable parent. Use this input if you want to override the auto-detection and explicitly define the scroll target. It accepts an `HTMLElement`, the global `Window` object, or the string literal `'window'`.
 
 ### `dragAutoScrollMargin`
 

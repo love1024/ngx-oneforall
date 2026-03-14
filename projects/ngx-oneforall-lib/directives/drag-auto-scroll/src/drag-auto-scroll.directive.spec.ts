@@ -414,3 +414,302 @@ describe('DragAutoScrollDirective (custom config)', () => {
     expect(window.requestAnimationFrame).not.toHaveBeenCalled();
   });
 });
+
+describe('DragAutoScrollDirective (scroll targets)', () => {
+  @Component({
+    imports: [DragAutoScrollDirective],
+    template: `
+      <div id="grandparent" style="overflow-y: scroll; height: 500px">
+        <div id="parent" style="height: 400px">
+          <div dragAutoScroll style="height: 200px"></div>
+        </div>
+      </div>
+    `,
+  })
+  class AutoDetectHostComponent {}
+
+  @Component({
+    imports: [DragAutoScrollDirective],
+    template: `
+      <div id="explicit-wrapper" style="overflow-y: auto; height: 300px">
+        <div
+          dragAutoScroll
+          [dragAutoScrollTarget]="target"
+          style="height: 200px"></div>
+      </div>
+    `,
+  })
+  class ExplicitTargetHostComponent {
+    target: HTMLElement | Window | 'window' | undefined;
+  }
+
+  let doc: Document;
+  let rafCallback: FrameRequestCallback | null = null;
+  const originalGetComputedStyle = window.getComputedStyle;
+
+  beforeEach(() => {
+    rafCallback = null;
+    jest
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((cb: FrameRequestCallback) => {
+        rafCallback = cb;
+        return 1;
+      });
+    jest.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {
+      rafCallback = null;
+    });
+
+    // Mock getComputedStyle to return what we put in the inline style for tests
+    window.getComputedStyle = jest.fn((element: Element) => {
+      const styleAttr = element.getAttribute('style') || '';
+      const overflowY = styleAttr.includes('overflow-y: auto')
+        ? 'auto'
+        : styleAttr.includes('overflow-y: scroll')
+          ? 'scroll'
+          : 'visible';
+      return { overflowY } as CSSStyleDeclaration;
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    window.getComputedStyle = originalGetComputedStyle;
+  });
+
+  it('should auto-detect nearest scrollable parent', () => {
+    TestBed.configureTestingModule({
+      imports: [AutoDetectHostComponent, DragAutoScrollDirective],
+    });
+    const fixture = TestBed.createComponent(AutoDetectHostComponent);
+    fixture.detectChanges();
+    doc = TestBed.inject(DOCUMENT);
+
+    const directiveEl = fixture.debugElement.query(
+      By.directive(DragAutoScrollDirective)
+    ).nativeElement;
+    jest.spyOn(directiveEl, 'getBoundingClientRect').mockReturnValue({
+      top: 0,
+      bottom: 200,
+      left: 0,
+      right: 300,
+      width: 300,
+      height: 200,
+      x: 0,
+      y: 0,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      toJSON: () => {},
+    });
+
+    const grandparent = fixture.debugElement.query(
+      By.css('#grandparent')
+    ).nativeElement;
+    grandparent.scrollTop = 0;
+
+    doc.dispatchEvent(createDragEvent('dragover', 150, 180));
+    expect(window.requestAnimationFrame).toHaveBeenCalled();
+
+    rafCallback!(0);
+    // It should scroll the grandparent, not the host
+    expect(grandparent.scrollTop).toBeGreaterThan(0);
+    expect(directiveEl.scrollTop).toBe(0);
+  });
+
+  it('should fall back to window when no scrollable parent is found', () => {
+    @Component({
+      imports: [DragAutoScrollDirective],
+      template: `<div dragAutoScroll style="height: 200px"></div>`, // No overflow styling
+    })
+    class NoScrollParentComponent {}
+
+    TestBed.configureTestingModule({
+      imports: [NoScrollParentComponent, DragAutoScrollDirective],
+    });
+    const fixture = TestBed.createComponent(NoScrollParentComponent);
+    fixture.detectChanges();
+    doc = TestBed.inject(DOCUMENT);
+
+    const directiveEl = fixture.debugElement.query(
+      By.directive(DragAutoScrollDirective)
+    ).nativeElement;
+    jest.spyOn(directiveEl, 'getBoundingClientRect').mockReturnValue({
+      top: 0,
+      bottom: 200,
+      left: 0,
+      right: 300,
+      width: 300,
+      height: 200,
+      x: 0,
+      y: 0,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      toJSON: () => {},
+    });
+
+    const scrollBySpy = jest
+      .spyOn(window, 'scrollBy')
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .mockImplementation(() => {});
+
+    doc.dispatchEvent(createDragEvent('dragover', 150, 180));
+    expect(window.requestAnimationFrame).toHaveBeenCalled();
+
+    rafCallback!(0);
+    // Should have used window.scrollBy
+    expect(scrollBySpy).toHaveBeenCalledWith(0, expect.any(Number));
+    expect(scrollBySpy.mock.calls[0][1]).toBeGreaterThan(0);
+  });
+
+  it('should explicitly use window string as target', () => {
+    TestBed.configureTestingModule({
+      imports: [ExplicitTargetHostComponent, DragAutoScrollDirective],
+    });
+    const fixture = TestBed.createComponent(ExplicitTargetHostComponent);
+    fixture.componentInstance.target = 'window';
+    fixture.detectChanges();
+    doc = TestBed.inject(DOCUMENT);
+
+    const directiveEl = fixture.debugElement.query(
+      By.directive(DragAutoScrollDirective)
+    ).nativeElement;
+    jest.spyOn(directiveEl, 'getBoundingClientRect').mockReturnValue({
+      top: 0,
+      bottom: 200,
+      left: 0,
+      right: 300,
+      width: 300,
+      height: 200,
+      x: 0,
+      y: 0,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      toJSON: () => {},
+    });
+
+    const scrollBySpy = jest
+      .spyOn(window, 'scrollBy')
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .mockImplementation(() => {});
+
+    doc.dispatchEvent(createDragEvent('dragover', 150, 180));
+    rafCallback!(0);
+
+    expect(scrollBySpy).toHaveBeenCalled();
+  });
+
+  it('should explicitly use Window object as target', () => {
+    TestBed.configureTestingModule({
+      imports: [ExplicitTargetHostComponent, DragAutoScrollDirective],
+    });
+    const fixture = TestBed.createComponent(ExplicitTargetHostComponent);
+    fixture.componentInstance.target = window;
+    fixture.detectChanges();
+    doc = TestBed.inject(DOCUMENT);
+
+    const directiveEl = fixture.debugElement.query(
+      By.directive(DragAutoScrollDirective)
+    ).nativeElement;
+    jest.spyOn(directiveEl, 'getBoundingClientRect').mockReturnValue({
+      top: 0,
+      bottom: 200,
+      left: 0,
+      right: 300,
+      width: 300,
+      height: 200,
+      x: 0,
+      y: 0,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      toJSON: () => {},
+    });
+
+    const scrollBySpy = jest
+      .spyOn(window, 'scrollBy')
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .mockImplementation(() => {});
+
+    doc.dispatchEvent(createDragEvent('dragover', 150, 180));
+    rafCallback!(0);
+
+    expect(scrollBySpy).toHaveBeenCalled();
+  });
+
+  it('should explicitly use HTMLElement as target', () => {
+    TestBed.configureTestingModule({
+      imports: [ExplicitTargetHostComponent, DragAutoScrollDirective],
+    });
+    const fixture = TestBed.createComponent(ExplicitTargetHostComponent);
+
+    const wrapper = fixture.debugElement.query(
+      By.css('#explicit-wrapper')
+    ).nativeElement;
+    fixture.componentInstance.target = wrapper;
+    fixture.detectChanges();
+    doc = TestBed.inject(DOCUMENT);
+
+    const directiveEl = fixture.debugElement.query(
+      By.directive(DragAutoScrollDirective)
+    ).nativeElement;
+    jest.spyOn(directiveEl, 'getBoundingClientRect').mockReturnValue({
+      top: 0,
+      bottom: 200,
+      left: 0,
+      right: 300,
+      width: 300,
+      height: 200,
+      x: 0,
+      y: 0,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      toJSON: () => {},
+    });
+
+    wrapper.scrollTop = 0;
+
+    doc.dispatchEvent(createDragEvent('dragover', 150, 180));
+    rafCallback!(0);
+
+    expect(wrapper.scrollTop).toBeGreaterThan(0);
+  });
+
+  it('should fall back to window when host element parent is null and not body/documentElement', () => {
+    TestBed.configureTestingModule({
+      imports: [AutoDetectHostComponent, DragAutoScrollDirective],
+    });
+    const fixture = TestBed.createComponent(AutoDetectHostComponent);
+    fixture.detectChanges();
+    doc = TestBed.inject(DOCUMENT);
+
+    const directiveEl = fixture.debugElement.query(
+      By.directive(DragAutoScrollDirective)
+    ).nativeElement;
+
+    // Disconnect the element from the DOM temporarily so its parentElement is null
+    // but it is not body or documentElement
+    Object.defineProperty(directiveEl, 'parentElement', {
+      value: null,
+      configurable: true,
+    });
+
+    jest.spyOn(directiveEl, 'getBoundingClientRect').mockReturnValue({
+      top: 0,
+      bottom: 200,
+      left: 0,
+      right: 300,
+      width: 300,
+      height: 200,
+      x: 0,
+      y: 0,
+      toJSON() {
+        return this;
+      },
+    });
+
+    const scrollBySpy = jest
+      .spyOn(window, 'scrollBy')
+      .mockImplementation(() => {
+        // noop
+      });
+
+    doc.dispatchEvent(createDragEvent('dragover', 150, 180));
+    rafCallback!(0);
+
+    // Should have hit the final `return defaultView` via line 205
+    expect(scrollBySpy).toHaveBeenCalled();
+  });
+});
