@@ -64,6 +64,18 @@ import { NumbersOnlyDirective } from 'ngx-oneforall/directives/numbers-only';
         <h3>With Angular Forms</h3>
         <input numbersOnly type="text" [(ngModel)]="value" class="demo-input" />
       </div>
+
+      <div class="demo-block">
+        <h3>Thousand Separators</h3>
+        <input
+          numbersOnly
+          type="text"
+          [enableThousandSeparator]="true"
+          [decimals]="2"
+          [negative]="true"
+          class="demo-input"
+          value="1,000,000" />
+      </div>
     </div>
   `,
   styleUrl: 'numbers-only-demo.component.scss',

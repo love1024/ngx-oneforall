@@ -8,6 +8,7 @@ Restricts user input to valid numeric values with configurable decimal places an
 - **Decimal Control** — Configure allowed decimal places
 - **Negative Support** — Optionally allow negative numbers
 - **Custom Separator** — Use any decimal separator (`.`, `,`, etc.)
+- **Auto-Formatting** — *NEW* Format as you type with thousand separators while preserving cursor position
 - **Forms Compatible** — Works with both native inputs and Angular forms
 
 ---
@@ -27,6 +28,8 @@ import { NumbersOnlyDirective } from 'ngx-oneforall/directives/numbers-only';
 | `decimals` | `number` | `0` | Decimal places allowed (0 = integers only) |
 | `negative` | `boolean` | `false` | Allow negative numbers |
 | `separator` | `string` | `'.'` | Decimal separator character |
+| `enableThousandSeparator` | `boolean` | `false` | Enable thousand separator auto-formatting |
+| `thousandSeparator` | `string` | `','` | Thousand separator character |
 
 ---
 
@@ -44,6 +47,9 @@ import { NumbersOnlyDirective } from 'ngx-oneforall/directives/numbers-only';
 
 <!-- Custom separator (comma) -->
 <input numbersOnly [decimals]="2" [separator]="','" />
+
+<!-- Auto-format with thousand separators -->
+<input numbersOnly [enableThousandSeparator]="true" />
 ```
 
 ---

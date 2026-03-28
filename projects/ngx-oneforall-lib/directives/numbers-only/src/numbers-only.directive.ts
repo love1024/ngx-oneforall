@@ -27,6 +27,10 @@ export class NumbersOnlyDirective implements OnInit {
   negative = input<boolean>(false);
   /** Decimal separator character */
   separator = input<string>('.');
+  /** Enable thousand separators */
+  enableThousandSeparator = input<boolean>(false);
+  /** Thousand separator character */
+  thousandSeparator = input<string>(',');
 
   private oldValue = signal('');
   private readonly hostEl = inject(ElementRef);
@@ -46,25 +50,121 @@ export class NumbersOnlyDirective implements OnInit {
   }
 
   onInputChanges() {
-    const newValue = this.hostEl.nativeElement.value;
-    this.sanitizeAndUpdate(this.oldValue(), newValue);
+    const el = this.hostEl.nativeElement;
+    const selectionStart = el.selectionStart;
+    const newValue = el.value;
+    this.sanitizeAndUpdate(this.oldValue(), newValue, selectionStart);
   }
 
-  private sanitizeAndUpdate(oldValue: string, newValue: string) {
+  private sanitizeAndUpdate(
+    oldValue: string,
+    newValue: string,
+    selectionStart?: number | null
+  ) {
     if (!newValue || (newValue === '-' && this.negative())) {
       this.oldValue.set(newValue);
       return;
     }
+
+    const tSep = this.thousandSeparator();
+    const unformattedNewValue = this.enableThousandSeparator()
+      ? newValue.split(tSep).join('')
+      : newValue;
+
     const isValid =
       this.decimals() <= 0
-        ? this.isValidInteger(newValue, this.negative())
-        : this.isValidNumber(newValue, this.negative());
+        ? this.isValidInteger(unformattedNewValue, this.negative())
+        : this.isValidNumber(unformattedNewValue, this.negative());
+
     if (!isValid) {
       // Replace new value with old, as it is not valid
-      this.hostEl.nativeElement.value = oldValue;
+      const expectedCursor =
+        selectionStart !== undefined && selectionStart !== null
+          ? Math.max(0, selectionStart - 1)
+          : selectionStart;
+      this.updateHostValueAndCursor(oldValue, expectedCursor);
     } else {
-      this.oldValue.set(newValue);
+      let finalValue = newValue;
+      if (this.enableThousandSeparator()) {
+        finalValue = this.formatWithThousandSeparator(unformattedNewValue);
+        if (newValue !== finalValue) {
+          const newCursorPos = this.calculateCursorPosition(
+            selectionStart,
+            newValue,
+            finalValue,
+            tSep
+          );
+          this.updateHostValueAndCursor(finalValue, newCursorPos);
+          this.syncNgControl(finalValue);
+        }
+      }
+      this.oldValue.set(finalValue);
     }
+  }
+
+  private calculateCursorPosition(
+    selectionStart: number | null | undefined,
+    newValue: string,
+    finalValue: string,
+    tSep: string
+  ): number | null | undefined {
+    if (selectionStart === undefined || selectionStart === null) {
+      return selectionStart;
+    }
+    const valueBeforeCursor = newValue.substring(0, selectionStart);
+    const nonSepCount = valueBeforeCursor.split(tSep).join('').length;
+
+    if (nonSepCount === 0) return 0;
+
+    let count = 0;
+    for (let i = 0; i < finalValue.length; i++) {
+      if (finalValue[i] !== tSep) {
+        count++;
+      }
+      if (count === nonSepCount) {
+        return i + 1;
+      }
+    }
+    return selectionStart;
+  }
+
+  private updateHostValueAndCursor(
+    value: string,
+    cursorPos: number | null | undefined
+  ): void {
+    this.hostEl.nativeElement.value = value;
+    if (cursorPos !== undefined && cursorPos !== null) {
+      this.hostEl.nativeElement.setSelectionRange(cursorPos, cursorPos);
+    }
+  }
+
+  private syncNgControl(value: string): void {
+    if (this.ngControl?.control && this.ngControl.control.value !== value) {
+      this.ngControl.control.setValue(value, { emitEvent: false });
+    }
+  }
+
+  private formatWithThousandSeparator(value: string): string {
+    const dSep = this.separator();
+    const tSep = this.thousandSeparator();
+    const parts = value.split(dSep);
+    let integerPart = parts[0];
+    const decimalPart = parts[1];
+
+    let prefix = '';
+    if (integerPart.startsWith('-')) {
+      prefix = '-';
+      integerPart = integerPart.substring(1);
+    }
+
+    // Add thousand separators
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, tSep);
+
+    let result = prefix + integerPart;
+    if (decimalPart !== undefined) {
+      result += dSep + decimalPart;
+    }
+    return result;
   }
 
   private isValidInteger(value: string, isNegative: boolean) {
