@@ -1,8 +1,0 @@
-{
-  "packages": {
-    ".": {
-      "release-type": "node",
-      "package-name": "ngx-oneforall"
-    }
-  }
-}

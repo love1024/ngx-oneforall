@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/love1024/ngx-oneforall/compare/v1.3.0...v1.4.0) (2026-03-31)
+
+### Features
+
+* add thousand separator in number only directive ([89c2229](https://github.com/love1024/ngx-oneforall/commit/89c2229))
+* detect auto scroll container in auto drag directive ([5794bc3](https://github.com/love1024/ngx-oneforall/commit/5794bc3))
+* introduce show for directive ([d745361](https://github.com/love1024/ngx-oneforall/commit/d745361))
+
 ## [1.3.0](https://github.com/love1024/ngx-oneforall/compare/v1.2.0...v1.3.0) (2026-02-28)
 
 
