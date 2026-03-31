@@ -14,6 +14,7 @@
 - [Installation](https://love1024.github.io/ngx-oneforall/getting-started/installation): Install the library via npm or yarn:
 - [Introduction](https://love1024.github.io/ngx-oneforall/getting-started/introduction): Every utility is written from scratch and optimized specifically for Angular. We prioritize memory efficiency and runtime performance rather than just wrapping existing heavy libraries. Maximum size of a utility is 3kb gzipped.
 - [LLMs.txt](https://love1024.github.io/ngx-oneforall/getting-started/llms): LLM-optimized documentation endpoints for ngx-oneforall utilities.
+- [MCP Server](https://love1024.github.io/ngx-oneforall/getting-started/mcp-server): Connect AI tools to ngx-oneforall documentation using the Model Context Protocol (MCP).
 
 ## Constants
 
@@ -43,15 +44,21 @@
 - [Auto Focus](https://love1024.github.io/ngx-oneforall/directives/auto-focus): Automatically focuses an element when rendered, with reactive two-way binding support.
 - [Click Outside](https://love1024.github.io/ngx-oneforall/directives/click-outside): Detects clicks outside an element, useful for closing dropdowns, modals, and popovers.
 - [Click Throttle](https://love1024.github.io/ngx-oneforall/directives/click-throttle): Throttles click events to prevent accidental double-clicks and rapid repeated interactions.
+- [Date Time](https://love1024.github.io/ngx-oneforall/directives/datetime): Apply date/time format masks to input fields, ensuring valid date and time values.
+- [Drag Auto Scroll](https://love1024.github.io/ngx-oneforall/directives/drag-auto-scroll): Automatically scrolls a container when a dragged item approaches the top or bottom edge. Apply to any scrollable element used with drag-and-drop.
 - [Draggable](https://love1024.github.io/ngx-oneforall/directives/draggable): Makes any element draggable with mouse and touch support. Perfect for movable popups, modals, and floating panels.
 - [Hover Class](https://love1024.github.io/ngx-oneforall/directives/hover-class): Dynamically applies CSS classes on hover with reactive updates and toggle support.
 - [Infinite Scroll](https://love1024.github.io/ngx-oneforall/directives/infinite-scroll): Implements infinite scroll behavior using IntersectionObserver for efficient detection.
+- [Lowercase](https://love1024.github.io/ngx-oneforall/directives/lowercase): The lowercase directive automatically transforms the input value to lowercase as the user types.
+- [Mask](https://love1024.github.io/ngx-oneforall/directives/mask): Apply input masks to format user input as they type.
 - [Numbers Only](https://love1024.github.io/ngx-oneforall/directives/numbers-only): Restricts user input to valid numeric values with configurable decimal places and negative number support.
 - [Press Enter](https://love1024.github.io/ngx-oneforall/directives/press-enter): Emits an event when the Enter key is pressed on any element.
 - [Repeat](https://love1024.github.io/ngx-oneforall/directives/repeat): A structural directive that repeats a template a specified number of times.
 - [Resized](https://love1024.github.io/ngx-oneforall/directives/resized): Detects element resize events using ResizeObserver and emits current/previous dimensions.
 - [Shortcut](https://love1024.github.io/ngx-oneforall/directives/shortcut): Binds keyboard shortcuts to trigger actions with support for modifiers and global/scoped listening.
+- [Show For](https://love1024.github.io/ngx-oneforall/directives/show-for): A structural directive that shows an element for a specified duration, then removes it from the DOM.
 - [Typed Template](https://love1024.github.io/ngx-oneforall/directives/typed-template): The TypedTemplateDirective provides a way to strictly type the context of your ng-template definitions. By default, Angular templates are weakly typed (any or Object), which can lead to runtime errors when accessing properties that don't exist. This directive bridges that gap, leveraging TypeScript's power directly within your templates.
+- [Uppercase](https://love1024.github.io/ngx-oneforall/directives/uppercase): The uppercase directive automatically transforms the input value to uppercase as the user types.
 - [Visibility Change](https://love1024.github.io/ngx-oneforall/directives/visibility-change): Detects when an element enters or leaves the viewport using IntersectionObserver.
 
 ## Guards
