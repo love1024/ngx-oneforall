@@ -74,7 +74,7 @@ If you run into issues:
 **URL**: https://love1024.github.io/ngx-oneforall/getting-started/introduction
 **Import**: `ngx-oneforall/getting-started/introduction`
 
-**ngx-oneforall** is a collection of 80+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
+**ngx-oneforall** is a collection of 100+ high-quality Angular utilities designed to solve common development challenges. Instead of reinventing the wheel or managing dozens of small dependencies, you get a unified toolkit that just works.
 
 ![Project Image](/ngx-oneforall/assets/brand.png)
 
@@ -122,7 +122,7 @@ Fully typed APIs and consistent behavior make these utilities predictable and ea
 |----------|-----------|
 | **Constants** | `breakpoints`, `device`, `file-extension`, `host-platforms`, `http`, `key`, `regex`, `sort-direction`, `time`, `types` |
 | **Decorators** | `cache`, `catch-error`, `debounce`, `log-execution-time`, `memoize`, `only-in-browser`, `throttle` |
-| **Directives** | `auto-focus`, `click-outside`, `click-throttle`, `hover-class`, `infinite-scroll`, `numbers-only`, `press-enter`, `repeat`, `resized`, `shortcut`, `typed-template`, `visibility-change` |
+| **Directives** | `auto-focus`, `click-outside`, `click-throttle`, `hover-class`, `infinite-scroll`, `numbers-only`, `press-enter`, `repeat`, `resized`, `shortcut`, `show-for`, `typed-template`, `visibility-change` |
 | **Guards** | `param`, `query-param`, `unsaved-changes` |
 | **Interceptors** | `base-url`, `cache`, `correlation-id`, `encryption`, `jwt`, `performance`, `timeout` |
 | **Pipes** | `bytes`, `call`, `first-error-key`, `highlight-search`, `initials`, `pluralize`, `range`, `safe-html`, `time-ago`, `truncate` |
@@ -177,6 +177,163 @@ npm run generate:llms
 ```
 
 This reads all `ng-doc.page.ts` and `index.md` files and produces both `llms.txt` and `llms-full.txt` in the `public/` directory.
+
+## MCP Server
+
+**URL**: https://love1024.github.io/ngx-oneforall/getting-started/mcp-server
+**Import**: `ngx-oneforall/getting-started/mcp-server`
+
+Connect AI tools to ngx-oneforall documentation using the Model Context Protocol (MCP).
+
+The MCP server gives AI assistants like Claude, Cursor, Windsurf, and VS Code Copilot **native knowledge** of all ngx-oneforall utilities — including correct import paths, API references, and usage examples.
+
+---
+
+## What is MCP?
+
+MCP (Model Context Protocol) is a standard that lets AI tools connect to external knowledge sources. Instead of the AI guessing about your library, it can **look up real documentation** in real-time.
+
+Without MCP, an AI might hallucinate:
+```typescript
+// ❌ Wrong import path
+import { Draggable } from 'ngx-oneforall';
+```
+
+With MCP, the AI looks up the correct import:
+```typescript
+// ✅ Correct import path
+import { DraggableDirective } from 'ngx-oneforall/directives/draggable';
+```
+
+---
+
+## Installation
+
+Install the MCP server globally or use it via `npx`:
+
+```bash
+npx ngx-oneforall-mcp
+```
+
+No additional dependencies are required in your Angular project.
+
+---
+
+## Setup by AI Tool
+
+### Claude Desktop
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+```json
+{
+  "mcpServers": {
+    "ngx-oneforall": {
+      "command": "npx",
+      "args": ["-y", "ngx-oneforall-mcp"]
+    }
+  }
+}
+```
+
+Restart Claude Desktop after saving.
+
+### Cursor
+
+Edit `.cursor/mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "ngx-oneforall": {
+      "command": "npx",
+      "args": ["-y", "ngx-oneforall-mcp"]
+    }
+  }
+}
+```
+
+### Windsurf
+
+Edit `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "ngx-oneforall": {
+      "command": "npx",
+      "args": ["-y", "ngx-oneforall-mcp"]
+    }
+  }
+}
+```
+
+### VS Code (GitHub Copilot)
+
+Edit `.vscode/mcp.json` in your project root:
+
+```json
+{
+  "servers": {
+    "ngx-oneforall": {
+      "command": "npx",
+      "args": ["-y", "ngx-oneforall-mcp"]
+    }
+  }
+}
+```
+
+### Antigravity
+
+Configure your Antigravity agent settings:
+
+```json
+{
+  "mcpServers": {
+    "ngx-oneforall": {
+      "command": "npx",
+      "args": ["-y", "ngx-oneforall-mcp"]
+    }
+  }
+}
+```
+
+---
+
+## Available Tools
+
+Once configured, your AI assistant can use these tools automatically:
+
+| Tool | What it does |
+|------|-------------|
+| `get_utility_docs` | Returns full documentation for any utility by name |
+| `search_utilities` | Searches utilities by keyword across names, descriptions, and docs |
+| `list_utilities` | Lists all utilities, optionally filtered by category |
+| `get_import_path` | Returns the exact TypeScript import statement for a utility |
+
+---
+
+## Example Usage
+
+After setup, just ask your AI assistant naturally:
+
+- *"How do I use the draggable directive from ngx-oneforall?"*
+- *"What validators does ngx-oneforall provide?"*
+- *"Show me the import path for the time-ago pipe"*
+- *"What signals are available for reactive routing?"*
+
+The AI will automatically call the MCP server to look up accurate documentation and provide correct answers.
+
+---
+
+## Resources
+
+The MCP server also exposes resources that AI tools can read directly:
+
+| Resource | URI |
+|----------|-----|
+| Structured index | `ngx-oneforall://llms.txt` |
+| Per-utility docs | `ngx-oneforall://docs/{category}/{utility}` |
 
 ---
 
@@ -772,6 +929,21 @@ getConfig(): Observable<Config> {
 ```
 
 Changing `version` clears all cached data for this method.
+
+### Manual Cache Clearing
+
+You can manually clear the cache for a specific method by calling `clearCache()` on the decorated method.
+You will need to cast the method to `CachedMethod<T>`.
+
+```typescript
+import { CachedMethod } from 'ngx-oneforall/decorators/cache';
+
+// ...
+refreshData() {
+  (this.getData as unknown as CachedMethod).clearCache();
+  // Next call to this.getData() will hit the server
+}
+```
 
 ### Custom Cache Key
 
@@ -1428,6 +1600,246 @@ export class ListComponent {
 
 ## Live Demo
 
+## Date Time
+
+**URL**: https://love1024.github.io/ngx-oneforall/directives/datetime
+**Import**: `ngx-oneforall/directives/datetime`
+
+Apply date/time format masks to input fields, ensuring valid date and time values.
+
+## Features
+
+- **Format patterns** — Use familiar patterns like `MM-DD-YYYY`, `HH:mm:ss`
+- **Smart validation** — Validates as you type (e.g., rejects 13 for month)
+- **Date validation** — Validates complete dates (e.g., rejects Feb 30)
+- **Auto-insert separators** — Automatically adds separators like `-`, `/`, `:`
+- **Form validation** — Implements Angular's `Validator` interface
+- **Min/Max dates** — Optional date range constraints
+
+---
+
+## Installation
+
+```typescript
+import { DateTimeDirective } from 'ngx-oneforall/directives/datetime';
+```
+
+---
+
+## Basic Usage
+
+```html
+<!-- Date input -->
+<input [dateTime]="'MM-DD-YYYY HH:mm'" />
+```
+
+---
+
+## Format Patterns
+
+| Pattern | Description | Valid Range |
+|---------|-------------|-------------|
+| `YYYY` | 4-digit year | 0001-9999 |
+| `YY` | 2-digit year | 00-99 |
+| `MM` | 2-digit month | 01-12 |
+| `M` | 1-2 digit month | 1-12 |
+| `DD` | 2-digit day | 01-31 |
+| `D` | 1-2 digit day | 1-31 |
+| `HH` | 24-hour format | 00-23 |
+| `hh` | 12-hour format | 01-12 |
+| `mm` | Minutes | 00-59 |
+| `ss` | Seconds | 00-59 |
+| `A` | AM/PM (uppercase) | AM, PM |
+| `a` | am/pm (lowercase) | am, pm |
+
+---
+
+## API Reference
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `dateTime` | `string` | The format pattern (required) |
+| `min` | `Date` | Minimum allowed date |
+| `max` | `Date` | Maximum allowed date |
+| `clearIfNotMatch` | `boolean` | Clear on blur if incomplete (default: `false`) |
+| `removeSpecialCharacters` | `boolean` | Remove separators from form value (default: `true`) |
+| `dateTimeChanged` | `output<DateTimeParts>` | Emits parsed date/time parts (day, month, year, etc.) |
+
+---
+
+## Validation
+
+The directive validates:
+1. **Format compliance** — Input matches the specified pattern
+2. **Date validity** — The date actually exists (e.g., Feb 30 is rejected)
+3. **Range constraints** — Date is within min/max if specified
+
+```typescript
+// Error object structure
+{
+  dateTime: {
+    requiredFormat: 'MM-DD-YYYY',
+    actualLength: 5,
+    expectedLength: 10
+  }
+}
+
+// For invalid dates
+{
+  dateTime: {
+    message: 'Invalid date: 2/30/2024 does not exist',
+    invalidDate: true
+  }
+}
+```
+
+```html
+<input [dateTime]="'MM-DD-YYYY'" [formControl]="dateControl" />
+@if (dateControl.errors?.['dateTime']; as error) {
+  <span class="error"> error.message || 'Incomplete: ' + error.actualLength + '/' + error.expectedLength {{ '}' }}{{ '}' }}</span>
+}
+```
+
+---
+
+## Reactive Forms Example
+
+```typescript
+@Component({
+  template: '<input [dateTime]="format" [formControl]="dateControl" />'
+})
+export class MyComponent {
+  format = 'MM-DD-YYYY';
+  dateControl = new FormControl('');
+}
+```
+
+---
+
+## Output Event
+
+The `dateTimeChanged` output emits a object with decomposed date parts.
+
+```html
+<input [dateTime]="'MM-DD-YYYY hh:mm:ss A'" (dateTimeChanged)="onDateTimeChanged($event)" />
+```
+
+```typescript
+onDateTimeChanged(parts: DateTimeParts) {
+  console.log(parts);
+  // { day: "01", month: "12", year: "2024", hour: "12", minute: "30", second: "45", dayPeriod: "PM" }
+}
+```
+
+---
+
+## Demo
+
+## Drag Auto Scroll
+
+**URL**: https://love1024.github.io/ngx-oneforall/directives/drag-auto-scroll
+**Import**: `ngx-oneforall/directives/drag-auto-scroll`
+
+Automatically scrolls a container when a dragged item approaches the top or bottom edge. Apply to any scrollable element used with drag-and-drop.
+
+## Features
+
+- **CDK & Native Compatible** — Listens on `document` so it works with CDK drag-drop and native HTML5 drag
+- **Smart Target Auto-Detection** — Automatically finds the nearest scrollable parent element, with a graceful fallback to the `window`
+- **Explicit Scroll Target** — Optionally define exactly which element or window should scroll
+- **Proportional Speed** — Scrolls faster as the cursor gets closer to the edge
+- **Horizontal Bounds** — Only triggers when the cursor is horizontally over the container (with configurable tolerance)
+- **Configurable** — Customize margin zone, max speed, and horizontal tolerance
+- **Zone Optimized** — Runs outside Angular zone for better performance
+- **SSR Safe** — Only activates in the browser
+- **Toggleable** — Enable/disable via `dragAutoScrollDisabled` input
+
+> **Note**
+> By default, the directive is smart enough to find the scrollable container even if it's placed on a non-scrollable child element. If it fails to find an element with `overflow-y: auto` or `scroll`, it will scroll the `window`.
+
+---
+
+## Installation
+
+```typescript
+import { DragAutoScrollDirective } from 'ngx-oneforall/directives/drag-auto-scroll';
+```
+
+---
+
+## Basic Usage
+
+```html
+<ul dragAutoScroll style="overflow-y: auto; height: 400px">
+  @for (item of items; track $index) {
+    <li draggable="true"></li>
+  }
+</ul>
+```
+
+---
+
+## API Reference
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `dragAutoScrollMargin` | `number` | `50` | Edge zone height (px) that triggers scrolling |
+| `dragAutoScrollSpeed` | `number` | `10` | Maximum scroll speed (px/frame) |
+| `dragAutoScrollTolerance` | `number` | `50` | Horizontal tolerance (px) outside container bounds above which scrolling does not trigger |
+| `dragAutoScrollDisabled` | `boolean` | `false` | Disables auto-scroll behavior |
+| `dragAutoScrollTarget` | `HTMLElement \| Window \| 'window'` | `undefined` | Optional explicit target to scroll instead of auto-detecting |
+
+### `dragAutoScrollTarget`
+
+By default, the directive auto-detects the nearest scrollable parent. Use this input if you want to override the auto-detection and explicitly define the scroll target. It accepts an `HTMLElement`, the global `Window` object, or the string literal `'window'`.
+
+### `dragAutoScrollMargin`
+
+Defines the height (in pixels) of the invisible zone at the top and bottom edges of the container. When the cursor enters this zone during a drag, scrolling begins. Larger values make it easier to trigger scrolling, smaller values require the cursor to be closer to the edge.
+
+### `dragAutoScrollSpeed`
+
+The maximum scroll speed in pixels per animation frame. The actual speed scales proportionally — when the cursor is at the very edge, it scrolls at full speed; at the outer boundary of the margin zone, it scrolls slowly. Increase for long lists where users need to scroll quickly.
+
+### `dragAutoScrollTolerance`
+
+How far (in pixels) the cursor can be **horizontally** outside the container's left/right edges before scrolling stops. This prevents accidental scrolling when the cursor drifts sideways during a drag. Set to `0` to require the cursor to be strictly inside the container horizontally.
+
+### `dragAutoScrollDisabled`
+
+When `true`, the directive stops responding to drag events entirely. Useful for conditionally disabling auto-scroll based on application state.
+
+---
+
+## Custom Configuration
+
+Increase the edge zone and scroll speed for large lists:
+
+```html
+<div
+  dragAutoScroll
+  [dragAutoScrollMargin]="80"
+  [dragAutoScrollSpeed]="15"
+  style="overflow-y: auto; max-height: 600px"
+>
+  <!-- draggable content -->
+</div>
+```
+
+---
+
+## How It Works
+
+1. The directive listens for `dragover` events on `document` (works even when a drag preview covers the container)
+2. It checks the cursor is horizontally within the container bounds (± tolerance)
+3. When the cursor enters the top or bottom margin zone, scrolling starts via `requestAnimationFrame`
+4. Scroll speed scales linearly — the closer to the edge, the faster it scrolls
+5. Scrolling stops on `drop`, `dragend`, or when the cursor moves to the center or outside bounds
+
+---
+
+## Live Demo
+
 ## Draggable
 
 **URL**: https://love1024.github.io/ngx-oneforall/directives/draggable
@@ -1831,6 +2243,222 @@ export class ListComponent {
 
 ## Live Demo
 
+## Lowercase
+
+**URL**: https://love1024.github.io/ngx-oneforall/directives/lowercase
+**Import**: `ngx-oneforall/directives/lowercase`
+
+The `lowercase` directive automatically transforms the input value to lowercase as the user types.
+
+### Import
+
+```typescript
+import { LowercaseDirective } from 'ngx-oneforall/directives/lowercase';
+```
+
+### Usage
+
+Add the `lowercase` attribute to any `input` or `textarea` element.
+
+```html
+<input type="text" lowercase />
+```
+
+### Features
+
+- **Auto-transform**: Converts text to lowercase on input and blur events.
+- **Model Update**: Updates the underlying `FormControl` or `ngModel` value if attached.
+- **Paste Support**: Handles pasted content correctly.
+- **Visual-Only Mode**: Use `[updateOutput]="false"` to transform visually via CSS but keep the original model value.
+
+### Configuration
+
+| Input | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `updateOutput` | `boolean` | `true` | If `true` (default), transforms the value and updates the model. If `false`, applies CSS `text-transform: lowercase` only. |
+
+### Live Demonstration
+
+## Mask
+
+**URL**: https://love1024.github.io/ngx-oneforall/directives/mask
+**Import**: `ngx-oneforall/directives/mask`
+
+Apply input masks to format user input as they type.
+
+## Features
+
+- **Pattern-based masking** — Define mask patterns using simple characters
+- **Quantifiers** — Use `?` (optional) and `*` (zero or more) for flexible patterns
+- **Auto-insert separators** — Automatically adds separators like `-`, `/`, `(`, `)`
+- **Prefix & Suffix** — Add unmodifiable prefix and suffix strings
+- **Form validation** — Implements Angular's `Validator` interface for reactive forms
+- **SSR Safe** — Only runs in the browser
+
+---
+
+## Installation
+
+```typescript
+import { MaskDirective } from 'ngx-oneforall/directives/mask';
+```
+
+---
+
+## Basic Usage
+
+```html
+<!-- Phone number -->
+<input [mask]="'(###) ###-####'" />
+
+<!-- Credit card -->
+<input [mask]="'#### #### #### ####'" />
+```
+
+---
+
+## Pattern Characters
+
+| Pattern | Description | Example |
+|---------|-------------|---------|
+| `#` | Required digit (0-9) | `###` → "123" |
+| `A` | Required alphanumeric | `AAA` → "A1B" |
+| `@` | Required letter (a-z, A-Z) | `@@@` → "ABC" |
+| `U` | Required uppercase letter | `UUU` → "ABC" |
+| `L` | Required lowercase letter | `LLL` → "abc" |
+
+---
+
+## Quantifiers
+
+| Quantifier | Description |
+|------------|-------------|
+| `?` | Makes the preceding pattern optional (0 or 1 match) |
+| `*` | Matches zero or more of the preceding pattern |
+
+### Practical Examples
+
+**Optional (`?`):**
+```html
+<!-- IP address (1-3 digits per octet) -->
+<input [mask]="'#?#?#.#?#?#.#?#?#.#?#?#'" />
+
+<!-- License plate: "ABC-1234" or "AB-1234" -->
+<input [mask]="'@@?@?-####'" />
+```
+
+**Zero or more (`*`):**
+```html
+<!-- Email: "user@domain.com" -->
+<input [mask]="'A*\@A*.A*'" />
+
+<!-- Hashtag: "#a", "#hello", "#Angular" -->
+<input [mask]="'\#@*'" />
+```
+
+---
+
+## API Reference
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `mask` | `string` | The mask pattern to apply |
+| `prefix` | `string` | Text to prepend to the masked value |
+| `suffix` | `string` | Text to append to the masked value |
+| `customPatterns` | `Record<string, IConfigPattern>` | Custom patterns to extend or override built-in patterns |
+| `clearIfNotMatch` | `boolean` | If `true`, clears the input on blur when mask is incomplete (default: `false`) |
+| `specialCharacters` | `string[]` | List of characters to be treated as separators/literals. These are the ONLY non-pattern characters allowed in the mask. By default, they are removed from the raw value. (default: `['-', '/', '(', ')', '.', ':', ' ', '+', ',', '@', '[', ']', '"', "'"]`) |
+| `mergeSpecialChars` | `boolean` | If `true`, merges your `specialCharacters` list with the default list. If `false` (default), uses ONLY your provided list. |
+| `removeSpecialCharacters` | `boolean` | If `true`, removes characters defined in `specialCharacters` from the raw value. If `false`, includes them. (default: `true`) |
+
+### Special Characters Configuration
+
+By default, the directive defines common separators (like `-`, `/`, `(`) as special characters. These characters play two roles:
+1. They are **allowed** in your mask pattern as literals.
+2. They are **removed** from the model value (raw value) by default (unless `removeSpecialCharacters` is `false`).
+
+> **Warning** If your mask contains any literal characters (characters that are not patterns like `0` or `A`) that are NOT in the `specialCharacters` list (either the default list or your custom one), the directive will throw an error.
+
+**Example: Custom Special Characters**
+
+```html
+<input [mask]="'A-A'" [specialCharacters]="['-']" /> 
+<!-- Valid because '-' is in specialCharacters -->
+
+<input [mask]="'A*A'" [specialCharacters]="['-']" /> 
+<!-- ERROR: '*' is not a pattern and not in specialCharacters -->
+```
+
+**Example: Keep Special Characters in Raw Value**
+
+```html
+<input 
+  [mask]="'AAA-###/###'" 
+  [specialCharacters]="['-', '/']"
+  [removeSpecialCharacters]="false" /> 
+<!-- Input: "ABC-123/456" -> Raw Value: "ABC-123/456" -->
+<!-- '-' and '/' are kept because they are in specialCharacters and removeSpecialCharacters is false. -->
+```
+
+### IConfigPattern Interface
+
+```typescript
+interface IConfigPattern {
+  pattern: RegExp;     // The regex pattern to match
+  optional?: boolean;  // If true, equivalent to ? quantifier
+}
+```
+
+---
+
+## Custom Patterns
+
+Define your own pattern characters or override built-in ones:
+
+```html
+<!-- Custom hex digit pattern -->
+<input 
+  [mask]="'XX-XX-XX'" 
+  [customPatterns]="{ X: { pattern: /[0-9A-Fa-f]/ } }" />
+
+
+
+<!-- Optional pattern via property -->
+<input 
+  [mask]="'O##'" 
+  [customPatterns]="{ O: { pattern: /\\d/, optional: true } }" />
+```
+
+---
+
+## Validation
+
+The directive implements Angular's `Validator` interface. When used with reactive forms, it returns a `mask` error if the input is incomplete:
+
+```typescript
+// Error object when input is incomplete
+{
+  mask: {
+    requiredMask: '(###) ###-####',  // The mask pattern
+    actualLength: 4,                 // Current length of the value
+    expectedLength: 10               // Expected length based on mask
+  }
+}
+```
+
+```html
+<input [formControl]="phone" [mask]="'(###) ###-####'" />
+@if (phone.errors?.['mask']) {
+  <span class="error">
+    Incomplete:  phone.errors['mask'].actualLength }}/ phone.errors['mask'].expectedLength }} characters
+  </span>
+}
+```
+
+---
+
+## Demo
+
 ## Numbers Only
 
 **URL**: https://love1024.github.io/ngx-oneforall/directives/numbers-only
@@ -1844,6 +2472,7 @@ Restricts user input to valid numeric values with configurable decimal places an
 - **Decimal Control** — Configure allowed decimal places
 - **Negative Support** — Optionally allow negative numbers
 - **Custom Separator** — Use any decimal separator (`.`, `,`, etc.)
+- **Auto-Formatting** — *NEW* Format as you type with thousand separators while preserving cursor position
 - **Forms Compatible** — Works with both native inputs and Angular forms
 
 ---
@@ -1863,6 +2492,8 @@ import { NumbersOnlyDirective } from 'ngx-oneforall/directives/numbers-only';
 | `decimals` | `number` | `0` | Decimal places allowed (0 = integers only) |
 | `negative` | `boolean` | `false` | Allow negative numbers |
 | `separator` | `string` | `'.'` | Decimal separator character |
+| `enableThousandSeparator` | `boolean` | `false` | Enable thousand separator auto-formatting |
+| `thousandSeparator` | `string` | `','` | Thousand separator character |
 
 ---
 
@@ -1880,6 +2511,9 @@ import { NumbersOnlyDirective } from 'ngx-oneforall/directives/numbers-only';
 
 <!-- Custom separator (comma) -->
 <input numbersOnly [decimals]="2" [separator]="','" />
+
+<!-- Auto-format with thousand separators -->
+<input numbersOnly [enableThousandSeparator]="true" />
 ```
 
 ---
@@ -2308,6 +2942,115 @@ export class AppComponent {
 
 ## Live Demo
 
+## Show For
+
+**URL**: https://love1024.github.io/ngx-oneforall/directives/show-for
+**Import**: `ngx-oneforall/directives/show-for`
+
+A structural directive that shows an element for a specified duration, then removes it from the DOM.
+
+## Features
+
+- **Timer-based** — Shows element for a given duration, then removes it
+- **Then template** — Optionally swap to a different template after expiry
+- **Reactive** — Resets timer when duration input changes
+- **Clean** — Automatically clears timer on destroy
+
+---
+
+## Installation
+
+```typescript
+import { ShowForDirective } from 'ngx-oneforall/directives/show-for';
+```
+
+---
+
+## API Reference
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `showFor` | `number` | — | Duration in ms to show the element |
+| `showForThen` | `TemplateRef` | `undefined` | Template to render after expiry |
+
+| Output | Type | Description |
+|--------|------|-------------|
+| `showForOnExpired` | `void` | Emits when the timer expires |
+
+---
+
+## Basic Usage
+
+```html
+<div *showFor="5000">
+  This disappears after 5 seconds
+</div>
+```
+
+---
+
+## Swap Template on Expiry
+
+```html
+<div *showFor="3000; then expiredTpl">
+  🔥 Limited time offer!
+</div>
+
+<ng-template #expiredTpl>
+  <div>Offer expired. Come back tomorrow!</div>
+</ng-template>
+```
+
+---
+
+## Listen for Expiry
+
+```html
+<ng-template [showFor]="2000" (showForOnExpired)="onBannerExpired()">
+  <div>Welcome to our site!</div>
+</ng-template>
+```
+
+```typescript
+onBannerExpired() {
+  console.log('Banner dismissed');
+}
+```
+
+---
+
+## Common Use Cases
+
+### Flash Message
+
+```html
+<div *showFor="4000" class="flash-success">
+  ✅ Saved successfully!
+</div>
+```
+
+### Intro Banner with CTA Swap
+
+```html
+<div *showFor="5000; then ctaTpl" class="intro-banner">
+  👋 Welcome! Here's a quick tip...
+</div>
+
+<ng-template #ctaTpl>
+  <button>Get Started</button>
+</ng-template>
+```
+
+### Temporary Discount Badge
+
+```html
+<span *showFor="10000" class="badge">NEW</span>
+```
+
+---
+
+## Live Demo
+
 ## Typed Template
 
 **URL**: https://love1024.github.io/ngx-oneforall/directives/typed-template
@@ -2377,6 +3120,42 @@ Finally, bind `[typedTemplate]` to your type helper on the `ng-template`.
 ---
 
 ### Live Demo
+
+## Uppercase
+
+**URL**: https://love1024.github.io/ngx-oneforall/directives/uppercase
+**Import**: `ngx-oneforall/directives/uppercase`
+
+The `uppercase` directive automatically transforms the input value to uppercase as the user types.
+
+### Import
+
+```typescript
+import { UppercaseDirective } from 'ngx-oneforall/directives/uppercase';
+```
+
+### Usage
+
+Add the `uppercase` attribute to any `input` or `textarea` element.
+
+```html
+<input type="text" uppercase />
+```
+
+### Features
+
+- **Auto-transform**: Converts text to uppercase on input and blur events.
+- **Model Update**: Updates the underlying `FormControl` or `ngModel` value if attached.
+- **Paste Support**: Handles pasted content correctly.
+- **Visual-Only Mode**: Use `[updateOutput]="false"` to transform visually via CSS but keep the original model value.
+
+### Configuration
+
+| Input | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `updateOutput` | `boolean` | `true` | If `true` (default), transforms the value and updates the model. If `false`, applies CSS `text-transform: uppercase` only. |
+
+### Live Demonstration
 
 ## Visibility Change
 
