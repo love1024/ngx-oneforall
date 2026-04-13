@@ -1,0 +1,62 @@
+.demo-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.demo-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ng-doc-border-color);
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--ng-doc-primary-color);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ng-doc-text-color-secondary);
+  }
+
+  code {
+    background-color: var(--ng-doc-code-bg);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-family: var(--ng-doc-code-font);
+  }
+}
+
+.demo-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--ng-doc-border-color);
+  border-radius: 8px;
+  background-color: var(--ng-doc-bg-color);
+  color: var(--ng-doc-text-color);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: var(--ng-doc-primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--ng-doc-primary-rgb), 0.15);
+  }
+
+  &::placeholder {
+    color: var(--ng-doc-text-color-secondary);
+    opacity: 0.6;
+  }
+}
+
+.error-message {
+  color: #ef4444;
+  margin-top: 2px;
+  font-size: 14px;
+}
