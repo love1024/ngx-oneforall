@@ -1,0 +1,25 @@
+<!-- snippet: basic-usage -->
+<p>{{ '1234567890' | mask: '(###) ###-####' }}</p>
+<!-- (123) 456-7890 -->
+<p>{{ '25122024' | mask: '##/##/####' }}</p>
+<!-- 25/12/2024 -->
+<p>{{ '123456789' | mask: '###-##-####' }}</p>
+<!-- 123-45-6789 -->
+
+<!-- snippet: prefix-suffix -->
+<p>{{ '1234567890' | mask: '(###) ###-####' : { prefix: '+1 ' } }}</p>
+<!-- +1 (123) 456-7890 -->
+<p>{{ '100' | mask: '###' : { suffix: '%' } }}</p>
+<!-- 100% -->
+
+<!-- snippet: custom-patterns -->
+<p>{{ 'ff00ab' | mask: 'XX XX XX' : { customPatterns: { X: { pattern: hexPattern } } } }}</p>
+<!-- ff 00 ab -->
+<p>{{ 'abc123' | mask: 'YYY-###' : { customPatterns: { Y: { pattern: lowerPattern } } } }}</p>
+<!-- abc-123 -->
+
+<!-- snippet: optional -->
+<p>{{ '1234' | mask: '###-#?#?' }}</p>
+<!-- 123-4 -->
+<p>{{ '12345' | mask: '###-#?#?' }}</p>
+<!-- 123-45 -->
