@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/love1024/ngx-oneforall/compare/v1.4.0...v1.5.0) (2026-05-02)
+
+### Features
+
+* append session-unique prefix to generated IDs to prevent collisions across page reloads ([0b6af78](https://github.com/love1024/ngx-oneforall/commit/0b6af78))
+* implement core masking engine and add support for mask pipes ([17fdc0b](https://github.com/love1024/ngx-oneforall/commit/17fdc0b))
+* add number input directive based on intl number format (#24) ([9afc1b0](https://github.com/love1024/ngx-oneforall/commit/9afc1b0))
+
 ## [1.4.0](https://github.com/love1024/ngx-oneforall/compare/v1.3.0...v1.4.0) (2026-03-31)
 
 ### Features
