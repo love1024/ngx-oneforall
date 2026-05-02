@@ -16,18 +16,19 @@ import { uniqueComponentId } from 'ngx-oneforall/utils/unique-component-id';
 |-----------|------|---------|-------------|
 | `prefix` | `string` | `'id'` | Prefix for the generated ID |
 
-Returns a unique string in the format `{prefix}{counter}`.
+Returns a unique string in the format `{prefix}-{sessionPrefix}-{counter}`. The session prefix ensures IDs do not conflict across page reloads.
 
 ```typescript
-uniqueComponentId();        // 'id1'
-uniqueComponentId();        // 'id2'
-uniqueComponentId('btn');   // 'btn1'  (independent counter)
-uniqueComponentId('input'); // 'input1' (independent counter)
-uniqueComponentId('btn');   // 'btn2'
+// Assuming session prefix 'lxw9a3zb'
+uniqueComponentId();        // 'id-lxw9a3zb-1'
+uniqueComponentId();        // 'id-lxw9a3zb-2'
+uniqueComponentId('btn');   // 'btn-lxw9a3zb-1'  (independent counter)
+uniqueComponentId('input'); // 'input-lxw9a3zb-1' (independent counter)
+uniqueComponentId('btn');   // 'btn-lxw9a3zb-2'
 ```
 
 > **Note**
-> Each prefix has its own independent counter. `btn1, btn2, input1, input2` instead of a shared global counter.
+> Each prefix has its own independent counter. `btn-lxw9a3zb-1, btn-lxw9a3zb-2, input-lxw9a3zb-1, input-lxw9a3zb-2` instead of a shared global counter.
 
 ## Example: Form Label Association
 

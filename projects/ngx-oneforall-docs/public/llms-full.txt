@@ -2459,6 +2459,159 @@ The directive implements Angular's `Validator` interface. When used with reactiv
 
 ## Demo
 
+## Number Input
+
+**URL**: https://love1024.github.io/ngx-oneforall/directives/number-input
+**Import**: `ngx-oneforall/directives/number-input`
+
+Formats numerical input using the browser's native `Intl.NumberFormat` with full local support. 
+
+## Features
+
+- **Native Formatting** — Leverages the browser's high-performance `Intl.NumberFormat` engine
+- **UX Focused** — Displays localized, formatted strings on `blur` and reveals raw numbers on `focus` for seamless editing
+- **Multi-purpose** — Built-in support for Currency, Percentages, Units, and standard Decimals
+- **Locale-aware Parsing** — Automatically normalizes local decimal separators (e.g. converting `12,34` in German locales to `12.34` internally)
+- **Forms Compatible** — Native support for Reactive and Template-driven Angular forms
+
+---
+
+## Installation
+
+```typescript
+import { NumberInputDirective } from 'ngx-oneforall/directives/number-input';
+```
+
+---
+
+## API Reference
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `locale` | `string` | `navigator.language` | BCP 47 language tag (e.g. `en-US`, `de-DE`, `pt-PT`) |
+| `options`    | `Intl.NumberFormatOptions` | `undefined`          | Options passed directly to the `Intl.NumberFormat` constructor. For a full list of options, see the [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat). |
+| `min`        | `number`                   | `undefined`          | Minimum allowed numerical value. If `>= 0`, restricts the user from typing a `-` sign. |
+| `max`        | `number`                   | `undefined`          | Maximum allowed numerical value. |
+
+### Common Options
+
+The `options` input accepts all `Intl.NumberFormatOptions`. Here are some of the most common configuration blocks:
+
+- **`style`**: The formatting style to use (`decimal`, `currency`, `percent`, or `unit`).
+- **`currency`**: The currency to use in currency formatting (e.g., `USD`, `EUR`, `JPY`).
+- **`useGrouping`**: Whether to use grouping separators, such as thousands separators (`true` by default).
+- **`minimumFractionDigits`**: The minimum number of fraction digits to use (range: `0-20`).
+- **`maximumFractionDigits`**: The maximum number of fraction digits to use (range: `0-20`).
+- **`notation`**: The formatting that should be used for the number (`standard`, `scientific`, `engineering`, or `compact`).
+
+---
+
+## Range Constraints
+
+You can use `min` and `max` to enforce numerical ranges. When `min` is set to `0` or higher, the directive will automatically prevent the user from typing or pasting negative signs.
+
+### Positive Numbers Only
+```html
+<input 
+  numberInput 
+  min="0" 
+  [options]="{ minimumFractionDigits: 2 }" />
+```
+
+### Age Range (0-120)
+```html
+<input 
+  numberInput 
+  min="0" 
+  max="120" />
+```
+
+
+---
+
+## Validation Errors
+
+The directive implements the `Validator` interface and returns the following error keys:
+
+| Error Key | Description | Returned Object |
+|-----------|-------------|-----------------|
+| `invalidNumber` | The input cannot be parsed into a valid number. | `{ invalidNumber: true }` |
+| `min` | The value is less than the `min` input. | `{ min: { min: number, actual: number } }` |
+| `max` | The value is greater than the `max` input. | `{ max: { max: number, actual: number } }` |
+
+Example usage in templates:
+{% raw %}
+```html
+@if (model.hasError('min')) {
+  <div>Value must be at least !</div>
+}
+```
+{% endraw %}
+
+---
+
+## Basic Usage
+
+The directive is standalone and can be applied directly to a text input.
+
+### Currency Formatting
+Displays formatted currency on blur (e.g., "$1,234.56").
+
+```html
+<input 
+  numberInput 
+  locale="en-US" 
+  [options]="{ style: 'currency', currency: 'USD' }" />
+```
+
+### Percentage Formatting
+Displays percentage values (e.g., "85.6%").
+
+```html
+<input 
+  numberInput 
+  [options]="{ style: 'percent', maximumFractionDigits: 1 }" />
+```
+
+### Unit Formatting
+Displays units supported by `Intl` (e.g., "120 km/h").
+
+```html
+<input 
+  numberInput 
+  locale="pt-PT" 
+  [options]="{ style: 'unit', unit: 'kilometer-per-hour', unitDisplay: 'long' }" />
+```
+
+### Standard Decimal Formatting
+Useful for high-precision or grouped numbers.
+
+```html
+<input 
+  numberInput 
+  [options]="{ minimumFractionDigits: 2, useGrouping: true }" />
+```
+
+---
+
+## Forms Integration
+
+The directive keeps your Angular model as a clean `number | null`, regardless of what formatting is displayed visually in the input.
+
+```typescript
+@Component({
+  template: `<input numberInput [options]="{ style: 'currency', currency: 'USD' }" [formControl]="amount" />`,
+  imports: [NumberInputDirective, ReactiveFormsModule]
+})
+export class PaymentFormComponent {
+  amount = new FormControl(1234.56);
+}
+```
+
+---
+
+## Live Demo
+
 ## Numbers Only
 
 **URL**: https://love1024.github.io/ngx-oneforall/directives/numbers-only
@@ -4879,6 +5032,86 @@ import { InitialsPipe } from 'ngx-oneforall/pipes/initials';
 | `count` | `number` | `2` | The maximum number of initials to return |
 
 ### Live Demo
+
+## Mask Pipe
+
+**URL**: https://love1024.github.io/ngx-oneforall/pipes/mask
+**Import**: `ngx-oneforall/pipes/mask`
+
+The `MaskPipe` formats a raw string or number by applying a mask pattern. It uses the same masking engine as the `MaskDirective`, making it ideal for displaying pre-formatted values in templates without needing an input element.
+
+> **Note** For interactive input masking (with cursor management, validation, and form integration), use the `MaskDirective` instead.
+
+---
+
+## Installation
+
+```typescript
+import { MaskPipe } from 'ngx-oneforall/pipes/mask';
+```
+
+---
+
+## Usage
+
+```html file="./snippets.html"#L2-L5
+```
+
+---
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `value` | `string \| number \| null \| undefined` | — | The raw value to mask |
+| `mask` | `string` | — | The mask pattern to apply |
+| `config` | `MaskConfig` | `{}` | Optional configuration object |
+
+### MaskConfig
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `prefix` | `string` | `''` | Text to prepend to the masked output |
+| `suffix` | `string` | `''` | Text to append to the masked output |
+| `customPatterns` | `Record<string, IConfigPattern>` | `{}` | Custom patterns to extend or override built-ins |
+| `specialCharacters` | `string[]` | `['-', '/', '(', ')', '.', ':', ' ', '+', ',', '@', '[', ']', '"', "'"]` | Characters treated as separators in the mask |
+| `mergeSpecialChars` | `boolean` | `false` | Merge custom special characters with defaults |
+| `removeSpecialCharacters` | `boolean` | `true` | Remove special characters from the raw output |
+
+---
+
+## Pattern Characters
+
+| Pattern | Description | Example |
+|---------|-------------|---------|
+| `#` | Required digit (0-9) | `###` → "123" |
+| `A` | Required alphanumeric | `AAA` → "A1B" |
+| `@` | Required letter (a-z, A-Z) | `@@@` → "ABC" |
+| `U` | Required uppercase letter | `UUU` → "ABC" |
+| `L` | Required lowercase letter | `LLL` → "abc" |
+
+---
+
+## Examples
+
+### Prefix & Suffix
+
+```html file="./snippets.html"#L8-L11
+```
+
+### Custom Patterns
+
+```html file="./snippets.html"#L14-L17
+```
+
+### Optional Quantifier
+
+```html file="./snippets.html"#L20-L23
+```
+
+---
+
+## Demo
 
 ## Pluralize Pipe
 
@@ -9666,18 +9899,19 @@ import { uniqueComponentId } from 'ngx-oneforall/utils/unique-component-id';
 |-----------|------|---------|-------------|
 | `prefix` | `string` | `'id'` | Prefix for the generated ID |
 
-Returns a unique string in the format `{prefix}{counter}`.
+Returns a unique string in the format `{prefix}-{sessionPrefix}-{counter}`. The session prefix ensures IDs do not conflict across page reloads.
 
 ```typescript
-uniqueComponentId();        // 'id1'
-uniqueComponentId();        // 'id2'
-uniqueComponentId('btn');   // 'btn1'  (independent counter)
-uniqueComponentId('input'); // 'input1' (independent counter)
-uniqueComponentId('btn');   // 'btn2'
+// Assuming session prefix 'lxw9a3zb'
+uniqueComponentId();        // 'id-lxw9a3zb-1'
+uniqueComponentId();        // 'id-lxw9a3zb-2'
+uniqueComponentId('btn');   // 'btn-lxw9a3zb-1'  (independent counter)
+uniqueComponentId('input'); // 'input-lxw9a3zb-1' (independent counter)
+uniqueComponentId('btn');   // 'btn-lxw9a3zb-2'
 ```
 
 > **Note**
-> Each prefix has its own independent counter. `btn1, btn2, input1, input2` instead of a shared global counter.
+> Each prefix has its own independent counter. `btn-lxw9a3zb-1, btn-lxw9a3zb-2, input-lxw9a3zb-1, input-lxw9a3zb-2` instead of a shared global counter.
 
 ## Example: Form Label Association
 
