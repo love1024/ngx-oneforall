@@ -51,6 +51,7 @@
 - [Infinite Scroll](https://love1024.github.io/ngx-oneforall/directives/infinite-scroll): Implements infinite scroll behavior using IntersectionObserver for efficient detection.
 - [Lowercase](https://love1024.github.io/ngx-oneforall/directives/lowercase): The lowercase directive automatically transforms the input value to lowercase as the user types.
 - [Mask](https://love1024.github.io/ngx-oneforall/directives/mask): Apply input masks to format user input as they type.
+- [Number Input](https://love1024.github.io/ngx-oneforall/directives/number-input): Formats numerical input using the browser's native Intl.NumberFormat with full local support.
 - [Numbers Only](https://love1024.github.io/ngx-oneforall/directives/numbers-only): Restricts user input to valid numeric values with configurable decimal places and negative number support.
 - [Press Enter](https://love1024.github.io/ngx-oneforall/directives/press-enter): Emits an event when the Enter key is pressed on any element.
 - [Repeat](https://love1024.github.io/ngx-oneforall/directives/repeat): A structural directive that repeats a template a specified number of times.
@@ -84,6 +85,7 @@
 - [First Error Key](https://love1024.github.io/ngx-oneforall/pipes/first-error-key): The FirstErrorKeyPipe extracts the first validation error key from a form control's errors. It supports optional priority ordering to control which error displays first.
 - [Highlight Search](https://love1024.github.io/ngx-oneforall/pipes/highlight-search): The HighlightSearchPipe highlights search matches by wrapping them in customizable HTML tags. Supports optional CSS classes for styling.
 - [Initials](https://love1024.github.io/ngx-oneforall/pipes/initials): The initials pipe transforms a name or string into its initials. It handles single or multiple words and allows customizing the number of initials returned.
+- [Mask Pipe](https://love1024.github.io/ngx-oneforall/pipes/mask): The MaskPipe formats a raw string or number by applying a mask pattern. It uses the same masking engine as the MaskDirective, making it ideal for displaying pre-formatted values in templates without needing an input element.
 - [Pluralize Pipe](https://love1024.github.io/ngx-oneforall/pipes/pluralize): The PluralizePipe handles word pluralization with automatic English rules and custom plural support.
 - [Range Pipe](https://love1024.github.io/ngx-oneforall/pipes/range): The RangePipe generates an array of numbers in a range. Follows Python's range() convention.
 - [Safe Html Pipe](https://love1024.github.io/ngx-oneforall/pipes/safe-html): The SafeHtmlPipe bypasses Angular's HTML sanitization to render trusted HTML content.
