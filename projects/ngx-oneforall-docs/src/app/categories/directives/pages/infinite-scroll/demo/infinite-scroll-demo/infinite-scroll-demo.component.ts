@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { InfiniteScrollDirective } from 'ngx-oneforall/directives/infinite-scroll';
 
 @Component({
-  selector: 'infinite-scroll-demo',
+  selector: 'lib-infinite-scroll-demo',
   template: `
     <div class="demo-container">
       <h3>Infinite Scroll List</h3>
@@ -34,6 +34,7 @@ export class InfiniteScrollDemoComponent {
   private itemCount = 20;
 
   onScroll() {
+    console.log('LOAD MORE');
     if (this.loading()) return;
 
     this.loading.set(true);

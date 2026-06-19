@@ -171,7 +171,7 @@ describe('InfiniteScrollDirective', () => {
     expect(component.scrolledCount).toBe(0);
   }));
 
-  it('should ignore intersection if checkOnInit is false and time is < 1000ms', fakeAsync(() => {
+  it('should ignore initial intersection if checkOnInit is false', fakeAsync(() => {
     component.checkOnInit = false;
     fixture.detectChanges();
 
@@ -186,16 +186,27 @@ describe('InfiniteScrollDirective', () => {
     expect(component.scrolledCount).toBe(0);
   }));
 
-  it('should emit if checkOnInit is false but time is > 1000ms', fakeAsync(() => {
+  it('should emit on subsequent intersections if checkOnInit is false', fakeAsync(() => {
     component.checkOnInit = false;
     fixture.detectChanges();
 
-    const entry = {
+    const initialEntry = {
+      isIntersecting: true,
+      time: 500,
+    };
+
+    // First callback is ignored
+    intersectionObserverMock.callback!([initialEntry]);
+    tick();
+    expect(component.scrolledCount).toBe(0);
+
+    const subsequentEntry = {
       isIntersecting: true,
       time: 1500,
     };
 
-    intersectionObserverMock.callback!([entry]);
+    // Second callback is respected
+    intersectionObserverMock.callback!([subsequentEntry]);
     tick();
 
     expect(component.scrolledCount).toBe(1);

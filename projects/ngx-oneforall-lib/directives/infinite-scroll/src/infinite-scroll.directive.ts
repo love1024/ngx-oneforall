@@ -29,9 +29,6 @@ export class InfiniteScrollDirective implements OnDestroy {
   checkOnInit = input<boolean>(true);
   /** CSS selector for custom scroll container */
   scrollContainer = input<string | null>(null);
-  /** Delay (ms) to ignore initial intersections when checkOnInit is false */
-  initDelay = input<number>(1000);
-
   scrolled = output<void>();
 
   /** Root element for IntersectionObserver (null = viewport/window) */
@@ -102,15 +99,18 @@ export class InfiniteScrollDirective implements OnDestroy {
         threshold: 0,
       };
 
-      const initDelay = this.initDelay();
+      let isInitialCallback = true;
+
       this.observer.set(
         new IntersectionObserver(entries => {
+          const wasInitial = isInitialCallback;
+          isInitialCallback = false;
+
           entries.forEach(entry => {
             if (this.disabled()) return;
 
-            // If checkOnInit is false, ignore intersections within initDelay
-            // (e.g. due to scroll restoration after page refresh)
-            if (entry.time < initDelay && !this.checkOnInit()) {
+            // If checkOnInit is false, ignore the automatic first callback
+            if (wasInitial && !this.checkOnInit()) {
               return;
             }
 
