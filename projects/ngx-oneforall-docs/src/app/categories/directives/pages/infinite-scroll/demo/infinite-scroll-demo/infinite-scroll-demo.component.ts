@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { InfiniteScrollDirective } from 'ngx-oneforall/directives/infinite-scroll';
 
 @Component({
-  selector: 'infinite-scroll-demo',
+  selector: 'lib-infinite-scroll-demo',
   template: `
     <div class="demo-container">
       <h3>Infinite Scroll List</h3>
