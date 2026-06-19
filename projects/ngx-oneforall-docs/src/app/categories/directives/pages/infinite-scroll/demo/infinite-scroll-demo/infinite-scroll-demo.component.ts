@@ -34,7 +34,6 @@ export class InfiniteScrollDemoComponent {
   private itemCount = 20;
 
   onScroll() {
-    console.log('LOAD MORE');
     if (this.loading()) return;
 
     this.loading.set(true);
