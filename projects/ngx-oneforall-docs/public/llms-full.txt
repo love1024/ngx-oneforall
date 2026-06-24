@@ -2181,7 +2181,6 @@ import { InfiniteScrollDirective } from 'ngx-oneforall/directives/infinite-scrol
 | `scrollContainer` | `string` | `null` | CSS selector for custom container |
 | `disabled` | `boolean` | `false` | Disable scroll detection |
 | `checkOnInit` | `boolean` | `true` | Emit on initial render if visible |
-| `initDelay` | `number` | `1000` | Delay (ms) to ignore initial intersections |
 
 | Output | Type | Description |
 |--------|------|-------------|
