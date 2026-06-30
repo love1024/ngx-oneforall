@@ -1,24 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @angular-eslint/prefer-inject */
-import {
-  Component,
-  ElementRef,
-  Signal,
-  signal,
-  WritableSignal,
-  PLATFORM_ID,
-} from '@angular/core';
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { eventSignal } from './event-signal';
 
-@Component({
-  template: ``,
-  standalone: true,
-})
-class TestComponent {
-  constructor(public elementRef: ElementRef) {}
-}
+/* eslint-disable @angular-eslint/prefer-inject */
+import { Component, ElementRef, Signal, PLATFORM_ID } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { eventSignal } from './event-signal';
 
 describe('eventSignal', () => {
   it('should create a signal with initial value null', () => {

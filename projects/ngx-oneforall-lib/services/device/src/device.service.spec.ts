@@ -28,8 +28,12 @@ describe('DeviceService', () => {
         writable: true,
         value: 900,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).ontouchstart = true;
+
+      Object.defineProperty(window, 'ontouchstart', {
+        value: true,
+        configurable: true,
+        writable: true,
+      });
       // Start with an empty userAgent and no userAgentData; tests will set
       // specific UA values when needed.
       Object.defineProperty(navigator, 'userAgent', {
@@ -62,8 +66,12 @@ describe('DeviceService', () => {
         writable: true,
         value: 900,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).ontouchstart = true;
+
+      Object.defineProperty(window, 'ontouchstart', {
+        value: true,
+        configurable: true,
+        writable: true,
+      });
       window.dispatchEvent(new Event('resize'));
 
       // Process the event
@@ -186,10 +194,10 @@ describe('DeviceService', () => {
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
         configurable: true,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (window as any).ontouchstart;
 
       service = TestBed.inject(DeviceService);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      jest.spyOn(service as any, 'isTouchDevice').mockReturnValue(false);
       window.dispatchEvent(new Event('resize'));
       tick();
 
@@ -281,8 +289,12 @@ describe('DeviceService', () => {
         writable: true,
         value: 900,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).ontouchstart = true;
+
+      Object.defineProperty(window, 'ontouchstart', {
+        value: true,
+        configurable: true,
+        writable: true,
+      });
       window.dispatchEvent(new Event('resize'));
 
       tick();
@@ -310,8 +322,12 @@ describe('DeviceService', () => {
         writable: true,
         value: 900,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).ontouchstart = false;
+
+      Object.defineProperty(window, 'ontouchstart', {
+        value: false,
+        configurable: true,
+        writable: true,
+      });
       Object.defineProperty(navigator, 'userAgentData', {
         value: { mobile: true },
         configurable: true,
@@ -413,10 +429,12 @@ describe('DeviceService', () => {
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
         configurable: true,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (window as any).ontouchstart;
 
       service = TestBed.inject(DeviceService);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      jest.spyOn(service as any, 'isTouchDevice').mockReturnValue(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      jest.spyOn(service as any, 'isTouchDevice').mockReturnValue(false);
       window.dispatchEvent(new Event('resize'));
       tick();
 

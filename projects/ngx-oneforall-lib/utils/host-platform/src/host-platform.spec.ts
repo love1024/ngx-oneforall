@@ -126,8 +126,8 @@ describe('getHostPlatform', () => {
       });
 
       // Mock document with touch support
-      Object.defineProperty(document, 'ontouchend', {
-        value: null,
+      Object.defineProperty(global.navigator, 'maxTouchPoints', {
+        value: 5,
         writable: true,
         configurable: true,
       });
@@ -135,7 +135,7 @@ describe('getHostPlatform', () => {
       expect(getHostPlatform()).toBe(HostPlatform.IOS);
 
       // Cleanup
-      delete (document as any).ontouchend;
+      delete (global.navigator as any).maxTouchPoints;
     });
   });
 

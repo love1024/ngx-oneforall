@@ -37,8 +37,8 @@ export function getHostPlatform(): HostPlatform {
   if (
     /iPad|iPhone|iPod/.test(ua) ||
     (/Macintosh/.test(ua) &&
-      typeof document !== 'undefined' &&
-      'ontouchend' in document)
+      navigator !== undefined &&
+      navigator.maxTouchPoints > 1)
   )
     return HostPlatform.IOS;
   if (/mac/i.test(ua)) return HostPlatform.MAC;

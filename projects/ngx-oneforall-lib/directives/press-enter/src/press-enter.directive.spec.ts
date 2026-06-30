@@ -3,15 +3,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { PressEnterDirective } from './press-enter.directive';
 
+import { signal } from '@angular/core';
+
 @Component({
   template: `<input
     pressEnter
-    [preventDefault]="prevent"
+    [preventDefault]="prevent()"
     (pressEnter)="onEnter()" />`,
   imports: [PressEnterDirective],
 })
 class TestComponent {
-  prevent = true;
+  prevent = signal(true);
   enterPressed = false;
 
   onEnter() {
@@ -62,8 +64,9 @@ describe('PressEnterDirective', () => {
   });
 
   it('should not call preventDefault when preventDefault input is false', () => {
-    component.prevent = false;
+    component.prevent.set(false);
     fixture.detectChanges();
+    TestBed.tick();
 
     const event = new KeyboardEvent('keydown', { key: 'Enter' });
     jest.spyOn(event, 'preventDefault');
