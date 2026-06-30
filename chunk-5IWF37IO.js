@@ -1,0 +1,1 @@
+function i(){if(typeof navigator>"u")return"UNKNOWN";let t=navigator.userAgent||navigator.vendor;return/windows phone/i.test(t)?"WINDOWS_PHONE":/win/i.test(t)?"WINDOWS":/android/i.test(t)?"ANDROID":/iPad|iPhone|iPod/.test(t)||/Macintosh/.test(t)&&navigator!==void 0&&navigator.maxTouchPoints>1?"IOS":/mac/i.test(t)?"MAC":/linux/i.test(t)?"LINUX":"UNKNOWN"}export{i as a};
