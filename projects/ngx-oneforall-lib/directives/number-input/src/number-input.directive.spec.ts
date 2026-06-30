@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import {
   ComponentFixture,
   TestBed,
@@ -11,19 +11,19 @@ import { NumberInputDirective } from './number-input.directive';
 @Component({
   template: `<input
     numberInput
-    [locale]="locale"
-    [options]="options"
-    [min]="min"
-    [max]="max"
+    [locale]="locale()"
+    [options]="options()"
+    [min]="min()"
+    [max]="max()"
     [formControl]="ctrl" />`,
   standalone: true,
   imports: [NumberInputDirective, ReactiveFormsModule],
 })
 class TestHostComponent {
-  locale = 'en-US';
-  options: Intl.NumberFormatOptions = {};
-  min?: number;
-  max?: number;
+  locale = signal('en-US');
+  options = signal<Intl.NumberFormatOptions>({});
+  min = signal<number | undefined>(undefined);
+  max = signal<number | undefined>(undefined);
   ctrl = new FormControl<number | null>(null);
 }
 
@@ -115,8 +115,8 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
   });
 
   it('should respect custom Intl.NumberFormat options', fakeAsync(() => {
-    component.options = { style: 'currency', currency: 'EUR' };
-    component.locale = 'de-DE';
+    component.options.set({ style: 'currency', currency: 'EUR' });
+    component.locale.set('de-DE');
     fixture.detectChanges();
 
     component.ctrl.setValue(1234.56);
@@ -144,7 +144,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
 
   it('should map local decimal separators to dot during typing', () => {
     // de-DE locale uses comma as decimal separator natively
-    component.locale = 'de-DE';
+    component.locale.set('de-DE');
     fixture.detectChanges();
 
     input.dispatchEvent(new Event('focus'));
@@ -214,7 +214,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
     expect(input.value).toBe('1,234.56');
 
     // Change to German
-    component.locale = 'de-DE';
+    component.locale.set('de-DE');
     fixture.detectChanges();
     fixture.detectChanges(); // Second detectChanges might be needed for effect
     tick();
@@ -223,8 +223,9 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
 
   it('should fallback to en-US on invalid Intl configuration', () => {
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
-    component.options = { style: 'currency' };
+    component.options.set({ style: 'currency' });
     fixture.detectChanges();
+    TestBed.tick();
 
     expect(warnSpy).toHaveBeenCalled();
     warnSpy.mockRestore();
@@ -247,7 +248,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
 
   it('should handle options with no decimal part in formatToParts', fakeAsync(() => {
     // maximumFractionDigits: 0 means formatToParts(10000.1) produces no decimal part
-    component.options = { maximumFractionDigits: 0 };
+    component.options.set({ maximumFractionDigits: 0 });
     fixture.detectChanges();
     tick();
 
@@ -261,7 +262,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
 
   it('should handle options with no group part in formatToParts', fakeAsync(() => {
     // useGrouping: false means formatToParts(10000.1) produces no group part
-    component.options = { useGrouping: false };
+    component.options.set({ useGrouping: false });
     fixture.detectChanges();
     tick();
 
@@ -300,7 +301,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
 
     // Now change locale while focused
     input.value = '999';
-    component.locale = 'de-DE';
+    component.locale.set('de-DE');
     fixture.detectChanges();
     tick();
 
@@ -330,7 +331,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
 
   describe('Range Validation (min/max)', () => {
     it('should validate min constraint', () => {
-      component.min = 10;
+      component.min.set(10);
       fixture.detectChanges();
 
       component.ctrl.setValue(5);
@@ -341,7 +342,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
     });
 
     it('should validate max constraint', () => {
-      component.max = 100;
+      component.max.set(100);
       fixture.detectChanges();
 
       component.ctrl.setValue(150);
@@ -352,7 +353,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
     });
 
     it('should restrict negative sign if min >= 0 on keydown', () => {
-      component.min = 0;
+      component.min.set(0);
       fixture.detectChanges();
 
       const event = new KeyboardEvent('keydown', { key: '-' });
@@ -363,7 +364,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
     });
 
     it('should NOT restrict negative sign if min < 0 on keydown', () => {
-      component.min = -10;
+      component.min.set(-10);
       fixture.detectChanges();
 
       const event = new KeyboardEvent('keydown', { key: '-' });
@@ -374,7 +375,7 @@ describe('NumberInputDirective (Intl.NumberFormat)', () => {
     });
 
     it('should sanitize negative sign on input if min >= 0 (e.g. on paste)', () => {
-      component.min = 0;
+      component.min.set(0);
       fixture.detectChanges();
 
       input.dispatchEvent(new Event('focus'));
@@ -537,13 +538,13 @@ describe('NumberInputDirective - Edge Cases', () => {
     expect(input.value).toBe('1,234.56');
 
     // Switch to German
-    component.locale = 'de-DE';
+    component.locale.set('de-DE');
     fixture.detectChanges();
     tick();
     expect(input.value).toContain('1.234,56');
 
     // Switch back to English
-    component.locale = 'en-US';
+    component.locale.set('en-US');
     fixture.detectChanges();
     tick();
     expect(input.value).toBe('1,234.56');

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { NumbersOnlyDirective } from './numbers-only.directive';
@@ -6,21 +6,21 @@ import { NumbersOnlyDirective } from './numbers-only.directive';
 @Component({
   template: `<input
     numbersOnly
-    [decimals]="decimals"
-    [negative]="negative"
-    [separator]="separator"
-    [enableThousandSeparator]="enableThousandSeparator"
-    [thousandSeparator]="thousandSeparator"
+    [decimals]="decimals()"
+    [negative]="negative()"
+    [separator]="separator()"
+    [enableThousandSeparator]="enableThousandSeparator()"
+    [thousandSeparator]="thousandSeparator()"
     [formControl]="ctrl" />`,
   standalone: true,
   imports: [NumbersOnlyDirective, ReactiveFormsModule],
 })
 class TestHostComponent {
-  decimals = 0;
-  negative = false;
-  separator = '.';
-  enableThousandSeparator = false;
-  thousandSeparator = ',';
+  decimals = signal(0);
+  negative = signal(false);
+  separator = signal('.');
+  enableThousandSeparator = signal(false);
+  thousandSeparator = signal(',');
   ctrl = new FormControl('');
 }
 
@@ -43,6 +43,7 @@ describe('NumbersOnlyDirective', () => {
     });
     fixture = TestBed.createComponent(TestHostComponent);
     fixture.detectChanges();
+    TestBed.tick();
     component = fixture.componentInstance;
     input = fixture.nativeElement.querySelector('input');
     directive =
@@ -68,8 +69,9 @@ describe('NumbersOnlyDirective', () => {
   });
 
   it('should allow negative numbers if negative=true', () => {
-    component.negative = true;
+    component.negative.set(true);
     fixture.detectChanges();
+    TestBed.tick();
 
     input.value = '-123';
     input.dispatchEvent(new Event('input'));
@@ -77,9 +79,10 @@ describe('NumbersOnlyDirective', () => {
   });
 
   it('should allow negative decimals numbers if negative=true', () => {
-    component.negative = true;
-    component.decimals = 2;
+    component.negative.set(true);
+    component.decimals.set(2);
     fixture.detectChanges();
+    TestBed.tick();
 
     input.value = '-123';
     input.dispatchEvent(new Event('input'));
@@ -87,9 +90,10 @@ describe('NumbersOnlyDirective', () => {
   });
 
   it('should not allow negative numbers if negative=false', () => {
-    component.negative = false;
+    component.negative.set(false);
 
     fixture.detectChanges();
+    TestBed.tick();
 
     input.value = '-123';
     input.dispatchEvent(new Event('input'));
@@ -97,8 +101,9 @@ describe('NumbersOnlyDirective', () => {
   });
 
   it('should allow decimals if decimals > 0', () => {
-    component.decimals = 2;
+    component.decimals.set(2);
     fixture.detectChanges();
+    TestBed.tick();
 
     input.value = '12.34';
     input.dispatchEvent(new Event('input'));
@@ -106,8 +111,9 @@ describe('NumbersOnlyDirective', () => {
   });
 
   it('should not allow more decimals than specified', () => {
-    component.decimals = 2;
+    component.decimals.set(2);
     fixture.detectChanges();
+    TestBed.tick();
 
     input.value = '12.345';
     input.dispatchEvent(new Event('input'));
@@ -115,9 +121,10 @@ describe('NumbersOnlyDirective', () => {
   });
 
   it('should allow custom separator', () => {
-    component.decimals = 2;
-    component.separator = ',';
+    component.decimals.set(2);
+    component.separator.set(',');
     fixture.detectChanges();
+    TestBed.tick();
 
     input.value = '12,34';
     input.dispatchEvent(new Event('input'));
@@ -125,8 +132,9 @@ describe('NumbersOnlyDirective', () => {
   });
 
   it('should allow just "-" if negative is true', () => {
-    component.negative = true;
+    component.negative.set(true);
     fixture.detectChanges();
+    TestBed.tick();
 
     input.value = '-';
     input.dispatchEvent(new Event('input'));
@@ -146,12 +154,14 @@ describe('NumbersOnlyDirective', () => {
   it('should update value when form control changes', () => {
     component.ctrl.setValue('456');
     fixture.detectChanges();
+    TestBed.tick();
     expect(input.value).toBe('456');
   });
 
   it('should not allow just "-" if negative is false', () => {
-    component.negative = false;
+    component.negative.set(false);
     fixture.detectChanges();
+    TestBed.tick();
 
     input.value = '-';
     input.dispatchEvent(new Event('input'));
@@ -160,8 +170,9 @@ describe('NumbersOnlyDirective', () => {
 
   describe('Thousand Separators', () => {
     beforeEach(() => {
-      component.enableThousandSeparator = true;
+      component.enableThousandSeparator.set(true);
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should format integer with thousand separators', () => {
@@ -171,8 +182,9 @@ describe('NumbersOnlyDirective', () => {
     });
 
     it('should format decimal with thousand separators', () => {
-      component.decimals = 2;
+      component.decimals.set(2);
       fixture.detectChanges();
+      TestBed.tick();
 
       input.value = '1234.56';
       input.dispatchEvent(new Event('input'));
@@ -180,8 +192,9 @@ describe('NumbersOnlyDirective', () => {
     });
 
     it('should handle custom thousand separator', () => {
-      component.thousandSeparator = ' ';
+      component.thousandSeparator.set(' ');
       fixture.detectChanges();
+      TestBed.tick();
 
       input.value = '1000000';
       input.dispatchEvent(new Event('input'));
@@ -189,8 +202,9 @@ describe('NumbersOnlyDirective', () => {
     });
 
     it('should handle negative numbers with thousand separators', () => {
-      component.negative = true;
+      component.negative.set(true);
       fixture.detectChanges();
+      TestBed.tick();
 
       input.value = '-1000';
       input.dispatchEvent(new Event('input'));
@@ -221,12 +235,14 @@ describe('NumbersOnlyDirective', () => {
     it('should handle invalid value from form control (branch 82)', () => {
       component.ctrl.setValue('abc');
       fixture.detectChanges();
+      TestBed.tick();
       expect(input.value).toBe('');
     });
 
     it('should handle formatting from form control without cursor selection (branches 95, 114)', () => {
       component.ctrl.setValue('1000000');
       fixture.detectChanges();
+      TestBed.tick();
       expect(input.value).toBe('1,000,000');
     });
 

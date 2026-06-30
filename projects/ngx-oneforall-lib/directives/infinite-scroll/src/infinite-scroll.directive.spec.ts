@@ -1,4 +1,4 @@
-import { Component, DebugElement } from '@angular/core';
+import { Component, DebugElement, signal } from '@angular/core';
 import {
   ComponentFixture,
   TestBed,
@@ -14,11 +14,11 @@ import { InfiniteScrollDirective } from './infinite-scroll.directive';
       <div class="content" style="height: 1000px;">
         <div
           infiniteScroll
-          [bottomMargin]="bottomMargin"
-          [useWindow]="useWindow"
-          [disabled]="disabled"
-          [checkOnInit]="checkOnInit"
-          [scrollContainer]="scrollContainer"
+          [bottomMargin]="bottomMargin()"
+          [useWindow]="useWindow()"
+          [disabled]="disabled()"
+          [checkOnInit]="checkOnInit()"
+          [scrollContainer]="scrollContainer()"
           (scrolled)="onScroll()"></div>
       </div>
     </div>
@@ -26,11 +26,11 @@ import { InfiniteScrollDirective } from './infinite-scroll.directive';
   imports: [InfiniteScrollDirective],
 })
 class TestComponent {
-  bottomMargin = 20;
-  useWindow = true;
-  disabled = false;
-  checkOnInit = true;
-  scrollContainer: string | null = null;
+  bottomMargin = signal(20);
+  useWindow = signal(true);
+  disabled = signal(false);
+  checkOnInit = signal(true);
+  scrollContainer = signal<string | null>(null);
   scrolledCount = 0;
 
   onScroll() {
@@ -113,6 +113,7 @@ describe('InfiniteScrollDirective', () => {
     // The directive uses afterNextRender which is inherently SSR-safe
     // This test verifies the directive initializes correctly in browser
     fixture.detectChanges();
+    TestBed.tick();
     expect(
       (window as unknown as { IntersectionObserver: jest.Mock })
         .IntersectionObserver
@@ -121,6 +122,7 @@ describe('InfiniteScrollDirective', () => {
 
   it('should initialize and setup observer on view init', () => {
     fixture.detectChanges();
+    TestBed.tick();
     expect(
       (window as unknown as { IntersectionObserver: jest.Mock })
         .IntersectionObserver
@@ -130,13 +132,15 @@ describe('InfiniteScrollDirective', () => {
 
   it('should disconnect observer on destroy', () => {
     fixture.detectChanges();
+    TestBed.tick();
     fixture.destroy();
     expect(intersectionObserverMock.disconnect).toHaveBeenCalled();
   });
 
   it('should not initialize if disabled', () => {
-    component.disabled = true;
+    component.disabled.set(true);
     fixture.detectChanges();
+    TestBed.tick();
     expect(
       (window as unknown as { IntersectionObserver: jest.Mock })
         .IntersectionObserver
@@ -145,6 +149,7 @@ describe('InfiniteScrollDirective', () => {
 
   it('should emit scrolled event when intersecting', fakeAsync(() => {
     fixture.detectChanges();
+    TestBed.tick();
 
     const entry = {
       isIntersecting: true,
@@ -159,6 +164,7 @@ describe('InfiniteScrollDirective', () => {
 
   it('should not emit scrolled event when not intersecting', fakeAsync(() => {
     fixture.detectChanges();
+    TestBed.tick();
 
     const entry = {
       isIntersecting: false,
@@ -172,8 +178,9 @@ describe('InfiniteScrollDirective', () => {
   }));
 
   it('should ignore initial intersection if checkOnInit is false', fakeAsync(() => {
-    component.checkOnInit = false;
+    component.checkOnInit.set(false);
     fixture.detectChanges();
+    TestBed.tick();
 
     const entry = {
       isIntersecting: true,
@@ -187,8 +194,9 @@ describe('InfiniteScrollDirective', () => {
   }));
 
   it('should emit on subsequent intersections if checkOnInit is false', fakeAsync(() => {
-    component.checkOnInit = false;
+    component.checkOnInit.set(false);
     fixture.detectChanges();
+    TestBed.tick();
 
     const initialEntry = {
       isIntersecting: true,
@@ -213,24 +221,27 @@ describe('InfiniteScrollDirective', () => {
   }));
 
   it('should use window as root when useWindow is true', () => {
-    component.useWindow = true;
+    component.useWindow.set(true);
     fixture.detectChanges();
+    TestBed.tick();
     expect(intersectionObserverMock.options?.root).toBeNull();
   });
 
   it('should use specific container when scrollContainer is provided', () => {
-    component.useWindow = false;
-    component.scrollContainer = '.scroll-container';
+    component.useWindow.set(false);
+    component.scrollContainer.set('.scroll-container');
     fixture.detectChanges();
+    TestBed.tick();
 
     const container = fixture.nativeElement.querySelector('.scroll-container');
     expect(intersectionObserverMock.options?.root === container).toBe(true);
   });
 
   it('should throw error if scrollContainer element is not found', () => {
-    component.useWindow = false;
-    component.scrollContainer = '.non-existent-container';
+    component.useWindow.set(false);
+    component.scrollContainer.set('.non-existent-container');
     fixture.detectChanges();
+    TestBed.tick();
 
     // Since afterNextRender defers execution, we call setScrollParent directly
     expect(() => {
@@ -239,9 +250,10 @@ describe('InfiniteScrollDirective', () => {
   });
 
   it('should auto-detect scroll parent if useWindow is false and no container provided', () => {
-    component.useWindow = false;
-    component.scrollContainer = null;
+    component.useWindow.set(false);
+    component.scrollContainer.set(null);
     fixture.detectChanges();
+    TestBed.tick();
 
     // The directive should find the closest scrollable parent
     fixture.nativeElement.querySelector('.scroll-container');
@@ -259,8 +271,9 @@ describe('InfiniteScrollDirective', () => {
   });
 
   it('should find scrollable parent correctly', () => {
-    component.useWindow = false;
+    component.useWindow.set(false);
     fixture.detectChanges();
+    TestBed.tick();
 
     // Mock getComputedStyle for the container
     const container = fixture.nativeElement.querySelector('.scroll-container');
@@ -290,8 +303,9 @@ describe('InfiniteScrollDirective', () => {
   });
 
   it('should fallback to host element if no scrollable parent found', () => {
-    component.useWindow = false;
+    component.useWindow.set(false);
     fixture.detectChanges();
+    TestBed.tick();
 
     jest
       .spyOn(window, 'getComputedStyle')
@@ -328,10 +342,12 @@ describe('InfiniteScrollDirective', () => {
 
   it('should not emit scrolled event when disabled is set to true during intersection', fakeAsync(() => {
     fixture.detectChanges();
+    TestBed.tick();
 
     // Set disabled to true after initialization
-    component.disabled = true;
+    component.disabled.set(true);
     fixture.detectChanges();
+    TestBed.tick();
 
     const entry = {
       isIntersecting: true,
@@ -345,8 +361,9 @@ describe('InfiniteScrollDirective', () => {
   }));
 
   it('should set root to null when useWindow is true (line 58)', () => {
-    component.useWindow = true;
+    component.useWindow.set(true);
     fixture.detectChanges();
+    TestBed.tick();
 
     // Verify that observerRoot is null (Window case)
     expect(directiveInstance['observerRoot']()).toBeNull();
@@ -366,9 +383,10 @@ describe('InfiniteScrollDirective', () => {
   });
 
   it('should set root to HTMLElement when observerRoot is an element (line 58 else branch)', () => {
-    component.useWindow = false;
-    component.scrollContainer = '.scroll-container';
+    component.useWindow.set(false);
+    component.scrollContainer.set('.scroll-container');
     fixture.detectChanges();
+    TestBed.tick();
 
     const container = fixture.nativeElement.querySelector('.scroll-container');
 

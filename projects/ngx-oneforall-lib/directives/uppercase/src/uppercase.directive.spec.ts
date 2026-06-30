@@ -1,4 +1,4 @@
-import { Component, DebugElement } from '@angular/core';
+import { Component, DebugElement, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -7,18 +7,18 @@ import { UppercaseDirective } from './uppercase.directive';
 @Component({
   imports: [UppercaseDirective, ReactiveFormsModule],
   template: `
-    <input class="bare" type="text" uppercase [updateOutput]="updateOutput" />
+    <input class="bare" type="text" uppercase [updateOutput]="updateOutput()" />
     <input
       class="control"
       type="text"
       [formControl]="control"
       uppercase
-      [updateOutput]="updateOutput" />
+      [updateOutput]="updateOutput()" />
   `,
 })
 class TestComponent {
   control = new FormControl('');
-  updateOutput = true;
+  updateOutput = signal(true);
 }
 
 describe('UppercaseDirective', () => {
@@ -75,13 +75,16 @@ describe('UppercaseDirective', () => {
 
   it('should ONLY apply visual transformation when updateOutput is false', () => {
     // Set updateOutput to false
-    component.updateOutput = false;
+    component.updateOutput.set(false);
+    TestBed.tick();
     fixture.detectChanges();
+    TestBed.tick();
 
     const inputEl = bareInput.nativeElement as HTMLInputElement;
     inputEl.value = 'visual only';
     inputEl.dispatchEvent(new Event('input'));
     fixture.detectChanges();
+    TestBed.tick();
 
     // Value should remain lowercase
     expect(inputEl.value).toBe('visual only');
@@ -99,7 +102,8 @@ describe('UppercaseDirective', () => {
   });
 
   it('should not transform value on valueChanges if updateOutput is false', () => {
-    component.updateOutput = false;
+    component.updateOutput.set(false);
+    TestBed.tick();
     fixture.detectChanges();
 
     component.control.setValue('test');

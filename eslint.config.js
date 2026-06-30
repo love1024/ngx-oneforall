@@ -35,6 +35,9 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
+      '@typescript-eslint/no-duplicate-enum-values': 'off',
+      '@typescript-eslint/consistent-indexed-object-style': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
   {

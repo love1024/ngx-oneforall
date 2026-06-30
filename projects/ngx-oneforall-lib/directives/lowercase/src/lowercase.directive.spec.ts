@@ -1,4 +1,4 @@
-import { Component, DebugElement } from '@angular/core';
+import { Component, DebugElement, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -7,18 +7,18 @@ import { LowercaseDirective } from './lowercase.directive';
 @Component({
   imports: [LowercaseDirective, ReactiveFormsModule],
   template: `
-    <input class="bare" type="text" lowercase [updateOutput]="updateOutput" />
+    <input class="bare" type="text" lowercase [updateOutput]="updateOutput()" />
     <input
       class="control"
       type="text"
       [formControl]="control"
       lowercase
-      [updateOutput]="updateOutput" />
+      [updateOutput]="updateOutput()" />
   `,
 })
 class TestComponent {
   control = new FormControl('');
-  updateOutput = true;
+  updateOutput = signal(true);
 }
 
 describe('LowercaseDirective', () => {
@@ -73,13 +73,15 @@ describe('LowercaseDirective', () => {
 
   it('should ONLY apply visual transformation when updateOutput is false', () => {
     // Set updateOutput to false
-    component.updateOutput = false;
+    component.updateOutput.set(false);
     fixture.detectChanges();
+    TestBed.tick();
 
     const inputEl = bareInput.nativeElement as HTMLInputElement;
     inputEl.value = 'VISUAL ONLY';
     inputEl.dispatchEvent(new Event('input'));
     fixture.detectChanges();
+    TestBed.tick();
 
     // Value should remain uppercase
     expect(inputEl.value).toBe('VISUAL ONLY');
@@ -97,11 +99,13 @@ describe('LowercaseDirective', () => {
   });
 
   it('should not transform value on valueChanges if updateOutput is false', () => {
-    component.updateOutput = false;
+    component.updateOutput.set(false);
     fixture.detectChanges();
+    TestBed.tick();
 
     component.control.setValue('TEST');
     fixture.detectChanges();
+    TestBed.tick();
     const inputEl = controlInput.nativeElement as HTMLInputElement;
 
     expect(inputEl.value).toBe('TEST');

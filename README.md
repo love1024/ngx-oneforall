@@ -42,8 +42,10 @@ Full API documentation and demos are available at: [https://love1024.github.io/n
 
 ## Requirements
 
-- **Angular**: 17.1+ / 18.x / 19.x / 20.x / 21.x
+- **Angular**: 17.1+ / 18.x / 19.x / 20.x / 21.x / 22.x
 - **RxJS**: 7.x or 8.x
+
+> **Note**: For Angular 22 and above, use version `2.0.0` or greater. For Angular versions `< 22`, use versions `< 2.0.0`.
 
 ## Installation
 

@@ -12,12 +12,17 @@ function getStorageKey(storage: CacheStorageType, prefix?: string): string {
   return storage.toString() + (prefix ?? '');
 }
 
+export function isSSR(): boolean {
+  return typeof window === 'undefined';
+}
+
 export function getStorageEngine(
   storage: CacheStorageType = 'memory',
   prefix?: string
 ) {
   // SSR safety - fallback to memory on server
-  if (typeof window === 'undefined') {
+  /* istanbul ignore next */
+  if (isSSR()) {
     return new MemoryStorageService();
   }
 

@@ -994,13 +994,13 @@ describe('MaskDirective Input Transforms', () => {
 @Component({
   template: `<input
     mask
-    [removeSpecialCharacters]="removeSpecialCharsValue"
-    [mergeSpecialChars]="mergeSpecialCharsValue" />`,
+    [removeSpecialCharacters]="removeSpecialCharsValue()"
+    [mergeSpecialChars]="mergeSpecialCharsValue()" />`,
   imports: [MaskDirective],
 })
 class InputTransformDynamicTestComponent {
-  removeSpecialCharsValue: string | boolean = true;
-  mergeSpecialCharsValue: string | boolean = false;
+  removeSpecialCharsValue = signal<string | boolean>(true);
+  mergeSpecialCharsValue = signal<string | boolean>(false);
 }
 
 describe('MaskDirective Dynamic Input Transforms', () => {
@@ -1021,36 +1021,36 @@ describe('MaskDirective Dynamic Input Transforms', () => {
 
   it('should handle boolean and string inputs', () => {
     // 1. Boolean false
-    fixture.componentInstance.removeSpecialCharsValue = false;
-    fixture.componentInstance.mergeSpecialCharsValue = false;
+    fixture.componentInstance.removeSpecialCharsValue.set(false);
+    fixture.componentInstance.mergeSpecialCharsValue.set(false);
     fixture.detectChanges();
     expect(directive.removeSpecialCharacters()).toBe(false);
     expect(directive.mergeSpecialChars()).toBe(false);
 
     // 2. Boolean true
-    fixture.componentInstance.removeSpecialCharsValue = true;
-    fixture.componentInstance.mergeSpecialCharsValue = true;
+    fixture.componentInstance.removeSpecialCharsValue.set(true);
+    fixture.componentInstance.mergeSpecialCharsValue.set(true);
     fixture.detectChanges();
     expect(directive.removeSpecialCharacters()).toBe(true);
     expect(directive.mergeSpecialChars()).toBe(true);
 
     // 3. String "true"
-    fixture.componentInstance.removeSpecialCharsValue = 'true';
-    fixture.componentInstance.mergeSpecialCharsValue = 'true';
+    fixture.componentInstance.removeSpecialCharsValue.set('true');
+    fixture.componentInstance.mergeSpecialCharsValue.set('true');
     fixture.detectChanges();
     expect(directive.removeSpecialCharacters()).toBe(true);
     expect(directive.mergeSpecialChars()).toBe(true);
 
     // 4. String "" (empty)
-    fixture.componentInstance.removeSpecialCharsValue = '';
-    fixture.componentInstance.mergeSpecialCharsValue = '';
+    fixture.componentInstance.removeSpecialCharsValue.set('');
+    fixture.componentInstance.mergeSpecialCharsValue.set('');
     fixture.detectChanges();
     expect(directive.removeSpecialCharacters()).toBe(true);
     expect(directive.mergeSpecialChars()).toBe(true);
 
     // 5. String "false" (neither empty nor "true")
-    fixture.componentInstance.removeSpecialCharsValue = 'false';
-    fixture.componentInstance.mergeSpecialCharsValue = 'false';
+    fixture.componentInstance.removeSpecialCharsValue.set('false');
+    fixture.componentInstance.mergeSpecialCharsValue.set('false');
     fixture.detectChanges();
     expect(directive.removeSpecialCharacters()).toBe(false);
     expect(directive.mergeSpecialChars()).toBe(false);

@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DraggableDirective, DraggableDragEvent } from './draggable.directive';
 import { DOCUMENT } from '@angular/common';
@@ -50,6 +50,7 @@ describe('DraggableDirective', () => {
       document = TestBed.inject(DOCUMENT);
       ngZone = TestBed.inject(NgZone);
       fixture.detectChanges();
+      TestBed.tick();
       hostEl = fixture.nativeElement.querySelector('div');
     });
 
@@ -309,6 +310,7 @@ describe('DraggableDirective', () => {
       component = fixture.componentInstance;
       ngZone = TestBed.inject(NgZone);
       fixture.detectChanges();
+      TestBed.tick();
       hostEl = fixture.nativeElement.querySelector('div');
     });
 
@@ -338,7 +340,7 @@ describe('DraggableDirective', () => {
       template: `<div
         makeDraggable
         style="position: absolute; left: 0px; top: 0px;"
-        [makeDraggableEnabled]="enabled"
+        [makeDraggableEnabled]="enabled()"
         (dragStart)="onDragStart($event)"
         (dragMove)="onDragMove($event)"
         (dragEnd)="onDragEnd($event)">
@@ -346,7 +348,7 @@ describe('DraggableDirective', () => {
       </div>`,
     })
     class TestHostComponent {
-      enabled = true;
+      enabled = signal(true);
       dragStartEvent: DraggableDragEvent | null = null;
       dragMoveEvent: DraggableDragEvent | null = null;
       dragEndEvent: DraggableDragEvent | null = null;
@@ -379,6 +381,7 @@ describe('DraggableDirective', () => {
       document = TestBed.inject(DOCUMENT);
       ngZone = TestBed.inject(NgZone);
       fixture.detectChanges();
+      TestBed.tick();
       hostEl = fixture.nativeElement.querySelector('div');
     });
 
@@ -547,8 +550,9 @@ describe('DraggableDirective', () => {
     });
 
     it('should not start drag if disabled (touch)', () => {
-      component.enabled = false;
+      component.enabled.set(false);
       fixture.detectChanges();
+      TestBed.tick();
 
       const touchStart = new TouchEvent('touchstart', {
         touches: [{ clientX: 50, clientY: 50 } as Touch],
@@ -663,6 +667,7 @@ describe('DraggableDirective', () => {
       document = TestBed.inject(DOCUMENT);
       ngZone = TestBed.inject(NgZone);
       fixture.detectChanges();
+      TestBed.tick();
       headerEl = fixture.nativeElement.querySelector('.header');
       modalEl = fixture.nativeElement.querySelector('.modal');
     });
@@ -714,6 +719,7 @@ describe('DraggableDirective', () => {
       fixture = TestBed.createComponent(TestHostComponent);
       ngZone = TestBed.inject(NgZone);
       fixture.detectChanges();
+      TestBed.tick();
       hostEl = fixture.nativeElement.querySelector('div');
     });
 
@@ -752,7 +758,7 @@ describe('DraggableDirective', () => {
           style="position: relative; width: 500px; height: 500px;">
           <div
             makeDraggable
-            [makeDraggableBoundary]="boundary"
+            [makeDraggableBoundary]="boundary()"
             style="position: absolute; left: 0px; top: 0px; width: 100px; height: 100px;">
             Draggable
           </div>
@@ -763,7 +769,7 @@ describe('DraggableDirective', () => {
       `,
     })
     class TestBoundaryComponent {
-      boundary: 'viewport' | 'parent' | HTMLElement | null = null;
+      boundary = signal<'viewport' | 'parent' | HTMLElement | null>(null);
     }
 
     let fixture: ComponentFixture<TestBoundaryComponent>;
@@ -811,6 +817,7 @@ describe('DraggableDirective', () => {
       document = TestBed.inject(DOCUMENT);
       ngZone = TestBed.inject(NgZone);
       fixture.detectChanges();
+      TestBed.tick();
       hostEl = fixture.nativeElement.querySelector('[makeDraggable]');
 
       // Mock getBoundingClientRect globally for this suite using prototype
@@ -873,8 +880,9 @@ describe('DraggableDirective', () => {
     });
 
     it('should constrain to parent', () => {
-      component.boundary = 'parent';
+      component.boundary.set('parent');
       fixture.detectChanges();
+      TestBed.tick();
 
       const mousedownEvent = new MouseEvent('mousedown', {
         clientX: 50,
@@ -907,8 +915,9 @@ describe('DraggableDirective', () => {
     it('should constrain to custom element', () => {
       const customBoundary =
         fixture.nativeElement.querySelector('.custom-boundary');
-      component.boundary = customBoundary;
+      component.boundary.set(customBoundary);
       fixture.detectChanges();
+      TestBed.tick();
 
       const mousedownEvent = new MouseEvent('mousedown', {
         clientX: 50,
@@ -937,8 +946,9 @@ describe('DraggableDirective', () => {
     });
 
     it('should constrain to viewport', () => {
-      component.boundary = 'viewport';
+      component.boundary.set('viewport');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Mock window dimensions
       const mockWindow = {
@@ -986,8 +996,9 @@ describe('DraggableDirective', () => {
     });
 
     it('should handle missing parent', () => {
-      component.boundary = 'parent';
+      component.boundary.set('parent');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Remove from DOM to simulate missing parent
       // Note: this is tricky because getBoundingClientRect might fail or return 0s
@@ -1028,14 +1039,14 @@ describe('DraggableDirective', () => {
       template: `
         <div
           makeDraggable
-          [makeDraggableEnabled]="enabled"
+          [makeDraggableEnabled]="enabled()"
           (dragStart)="onDragStart($event)">
           Dynamic Drag
         </div>
       `,
     })
     class TestDynamicComponent {
-      enabled = true;
+      enabled = signal(true);
       dragStartEvent: DraggableDragEvent | null = null;
 
       onDragStart(event: DraggableDragEvent) {
@@ -1058,6 +1069,7 @@ describe('DraggableDirective', () => {
       ngZone = TestBed.inject(NgZone);
       document = TestBed.inject(DOCUMENT);
       fixture.detectChanges();
+      TestBed.tick();
       hostEl = fixture.nativeElement.querySelector('div');
     });
 
@@ -1066,8 +1078,9 @@ describe('DraggableDirective', () => {
       expect(hostEl.style.cursor).toBe('grab');
 
       // Disable
-      component.enabled = false;
+      component.enabled.set(false);
       fixture.detectChanges();
+      TestBed.tick();
       expect(hostEl.style.cursor).not.toBe('grab');
 
       // Try drag
@@ -1096,13 +1109,15 @@ describe('DraggableDirective', () => {
     });
 
     it('should enable dragging when input changes to true', () => {
-      component.enabled = false;
+      component.enabled.set(false);
       fixture.detectChanges();
+      TestBed.tick();
       expect(hostEl.style.cursor).not.toBe('grab');
 
       // Enable
-      component.enabled = true;
+      component.enabled.set(true);
       fixture.detectChanges();
+      TestBed.tick();
       expect(hostEl.style.cursor).toBe('grab');
 
       // Try drag
@@ -1136,13 +1151,13 @@ describe('DraggableDirective', () => {
       imports: [DraggableDirective],
       template: `<div
         makeDraggable
-        [makeDraggableBoundary]="boundary"
+        [makeDraggableBoundary]="boundary()"
         style="position: absolute;">
         Test
       </div>`,
     })
     class TestHostComponent {
-      boundary: string | null = null;
+      boundary = signal<string | null>(null);
     }
 
     let fixture: ComponentFixture<TestHostComponent>;
@@ -1160,6 +1175,7 @@ describe('DraggableDirective', () => {
       document = TestBed.inject(DOCUMENT);
       component = fixture.componentInstance;
       fixture.detectChanges();
+      TestBed.tick();
       hostEl = fixture.nativeElement.querySelector('div');
 
       // Add boundary support mock
@@ -1226,8 +1242,9 @@ describe('DraggableDirective', () => {
       });
 
       // Enable boundary to force calculation
-      component.boundary = 'parent';
+      component.boundary.set('parent');
       fixture.detectChanges();
+      TestBed.tick();
 
       const mousedownEvent = new MouseEvent('mousedown', {
         clientX: 0,
@@ -1281,8 +1298,9 @@ describe('DraggableDirective', () => {
         value: undefined,
       });
 
-      component.boundary = 'viewport';
+      component.boundary.set('viewport');
       fixture.detectChanges();
+      TestBed.tick();
 
       const mousedownEvent = new MouseEvent('mousedown', {
         clientX: 0,
@@ -1329,14 +1347,14 @@ describe('DraggableDirective', () => {
       template: `
         <div
           makeDraggable
-          [makeDraggableEnabled]="enabled"
+          [makeDraggableEnabled]="enabled()"
           (dragStart)="onDragStart($event)">
           Dynamic Drag
         </div>
       `,
     })
     class TestDynamicComponent {
-      enabled = true;
+      enabled = signal(true);
       dragStartEvent: DraggableDragEvent | null = null;
 
       onDragStart(event: DraggableDragEvent) {
@@ -1359,6 +1377,7 @@ describe('DraggableDirective', () => {
       ngZone = TestBed.inject(NgZone);
       document = TestBed.inject(DOCUMENT);
       fixture.detectChanges();
+      TestBed.tick();
       hostEl = fixture.nativeElement.querySelector('div');
     });
 
@@ -1367,8 +1386,9 @@ describe('DraggableDirective', () => {
       expect(hostEl.style.cursor).toBe('grab');
 
       // Disable
-      component.enabled = false;
+      component.enabled.set(false);
       fixture.detectChanges();
+      TestBed.tick();
       expect(hostEl.style.cursor).not.toBe('grab');
 
       // Try drag
@@ -1397,13 +1417,15 @@ describe('DraggableDirective', () => {
     });
 
     it('should enable dragging when input changes to true', () => {
-      component.enabled = false;
+      component.enabled.set(false);
       fixture.detectChanges();
+      TestBed.tick();
       expect(hostEl.style.cursor).not.toBe('grab');
 
       // Enable
-      component.enabled = true;
+      component.enabled.set(true);
       fixture.detectChanges();
+      TestBed.tick();
       expect(hostEl.style.cursor).toBe('grab');
 
       // Try drag
@@ -1448,6 +1470,7 @@ describe('DraggableDirective', () => {
       });
       fixture = TestBed.createComponent(TestHostComponent);
       fixture.detectChanges();
+      TestBed.tick();
       hostEl = fixture.nativeElement.querySelector('div');
     });
 

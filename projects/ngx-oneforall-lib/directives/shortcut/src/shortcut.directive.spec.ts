@@ -1,19 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ShortcutDirective } from './shortcut.directive';
 
 @Component({
   template: `
-    <div [shortcut]="shortcut" [isGlobal]="isGlobal" (action)="onAction()">
+    <div [shortcut]="shortcut()" [isGlobal]="isGlobal()" (action)="onAction()">
       <input #testInput />
     </div>
   `,
   imports: [ShortcutDirective],
 })
 class TestComponent {
-  shortcut = 'enter';
-  isGlobal = false;
+  shortcut = signal('enter');
+  isGlobal = signal(false);
   actionTriggered = false;
 
   onAction() {
@@ -41,6 +41,7 @@ describe('ShortcutDirective', () => {
     divElement = fixture.debugElement.query(By.css('div')).nativeElement;
     inputElement = fixture.debugElement.query(By.css('input')).nativeElement;
     fixture.detectChanges();
+    TestBed.tick();
   });
 
   afterEach(() => {
@@ -56,8 +57,9 @@ describe('ShortcutDirective', () => {
 
   describe('Element-scoped shortcuts (default)', () => {
     beforeEach(() => {
-      component.isGlobal = false;
+      component.isGlobal.set(false);
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should trigger action when element is focused and shortcut matches', () => {
@@ -72,6 +74,7 @@ describe('ShortcutDirective', () => {
 
       inputElement.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
@@ -89,13 +92,15 @@ describe('ShortcutDirective', () => {
 
       divElement.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(false);
     });
 
     it('should trigger with modifier keys (ctrl.s)', () => {
-      component.shortcut = 'ctrl.s';
+      component.shortcut.set('ctrl.s');
       fixture.detectChanges();
+      TestBed.tick();
       inputElement.focus();
 
       const event = new KeyboardEvent('keydown', {
@@ -107,14 +112,16 @@ describe('ShortcutDirective', () => {
 
       inputElement.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
     });
 
     it('should trigger with multiple modifiers (ctrl.shift.s)', () => {
-      component.shortcut = 'ctrl.shift.s';
+      component.shortcut.set('ctrl.shift.s');
       fixture.detectChanges();
+      TestBed.tick();
       inputElement.focus();
 
       const event = new KeyboardEvent('keydown', {
@@ -127,6 +134,7 @@ describe('ShortcutDirective', () => {
 
       inputElement.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
@@ -135,8 +143,9 @@ describe('ShortcutDirective', () => {
 
   describe('Global shortcuts', () => {
     beforeEach(() => {
-      component.isGlobal = true;
+      component.isGlobal.set(true);
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should trigger action on window keydown regardless of focus', () => {
@@ -145,20 +154,23 @@ describe('ShortcutDirective', () => {
 
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
     });
 
     it('should trigger with modifier (ctrl.s)', () => {
-      component.shortcut = 'ctrl.s';
+      component.shortcut.set('ctrl.s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: 's', ctrlKey: true });
       jest.spyOn(event, 'preventDefault');
 
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
@@ -168,17 +180,20 @@ describe('ShortcutDirective', () => {
       const event = new KeyboardEvent('keydown', { key: 'Space' });
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(false);
     });
 
     it('should not trigger if modifier is missing', () => {
-      component.shortcut = 'ctrl.s';
+      component.shortcut.set('ctrl.s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: 's', ctrlKey: false });
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(false);
     });
@@ -186,13 +201,15 @@ describe('ShortcutDirective', () => {
 
   describe('Multiple shortcuts', () => {
     beforeEach(() => {
-      component.isGlobal = true;
+      component.isGlobal.set(true);
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should trigger on second shortcut in comma-separated list', () => {
-      component.shortcut = 'ctrl.s, ctrl.shift.s';
+      component.shortcut.set('ctrl.s, ctrl.shift.s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', {
         key: 's',
@@ -203,20 +220,23 @@ describe('ShortcutDirective', () => {
 
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
     });
 
     it('should trigger on first shortcut in comma-separated list', () => {
-      component.shortcut = 'ctrl.s, meta.s';
+      component.shortcut.set('ctrl.s, meta.s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: 's', ctrlKey: true });
       jest.spyOn(event, 'preventDefault');
 
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
@@ -225,9 +245,10 @@ describe('ShortcutDirective', () => {
 
   describe('Strict matching', () => {
     beforeEach(() => {
-      component.isGlobal = true;
-      component.shortcut = 'shift.enter';
+      component.isGlobal.set(true);
+      component.shortcut.set('shift.enter');
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should trigger even if extra non-modifier keys are pressed', () => {
@@ -251,6 +272,7 @@ describe('ShortcutDirective', () => {
 
       window.dispatchEvent(enterEvent);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(enterEvent.preventDefault).toHaveBeenCalled();
@@ -273,6 +295,7 @@ describe('ShortcutDirective', () => {
 
       window.dispatchEvent(enterEvent);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(enterEvent.preventDefault).toHaveBeenCalled();
@@ -281,13 +304,15 @@ describe('ShortcutDirective', () => {
 
   describe('Expanded modifiers', () => {
     beforeEach(() => {
-      component.isGlobal = true;
+      component.isGlobal.set(true);
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should trigger with space as modifier (space.enter)', () => {
-      component.shortcut = 'space.enter';
+      component.shortcut.set('space.enter');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Press Space - use 'Space' as the key value (what browsers actually send)
       const spaceEvent = new KeyboardEvent('keydown', {
@@ -306,8 +331,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should trigger with arrow keys as modifiers (up.down)', () => {
-      component.shortcut = 'up.down';
+      component.shortcut.set('up.down');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Press Up
       const upEvent = new KeyboardEvent('keydown', { key: 'ArrowUp' });
@@ -323,8 +349,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should trigger with left/right arrows (left.right)', () => {
-      component.shortcut = 'left.right';
+      component.shortcut.set('left.right');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Press Left
       const leftEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
@@ -340,8 +367,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should trigger with escape as modifier (esc.enter)', () => {
-      component.shortcut = 'esc.enter';
+      component.shortcut.set('esc.enter');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Press Escape
       const escEvent = new KeyboardEvent('keydown', { key: 'Escape' });
@@ -357,8 +385,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should NOT trigger if non-standard modifier is missing (space.enter)', () => {
-      component.shortcut = 'space.enter';
+      component.shortcut.set('space.enter');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Press Enter WITHOUT pressing Space first
       const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
@@ -372,9 +401,10 @@ describe('ShortcutDirective', () => {
 
   describe('Key tracking and cleanup', () => {
     beforeEach(() => {
-      component.isGlobal = true;
-      component.shortcut = 'ctrl.shift.s';
+      component.isGlobal.set(true);
+      component.shortcut.set('ctrl.shift.s');
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should track and remove keys on keyup (global mode)', () => {
@@ -426,8 +456,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should track and remove keys on keyup (element mode)', () => {
-      component.isGlobal = false;
+      component.isGlobal.set(false);
       fixture.detectChanges();
+      TestBed.tick();
       inputElement.focus();
 
       // Press Ctrl
@@ -523,72 +554,85 @@ describe('ShortcutDirective', () => {
 
   describe('Modifier key validation', () => {
     beforeEach(() => {
-      component.isGlobal = true;
+      component.isGlobal.set(true);
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should not trigger if shift is expected but not pressed (line 97)', () => {
-      component.shortcut = 'shift.s';
+      component.shortcut.set('shift.s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: 's', shiftKey: false });
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(false);
     });
 
     it('should not trigger if alt is expected but not pressed (line 98)', () => {
-      component.shortcut = 'alt.s';
+      component.shortcut.set('alt.s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: 's', altKey: false });
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(false);
     });
 
     it('should not trigger if meta is expected but not pressed (line 99)', () => {
-      component.shortcut = 'meta.s';
+      component.shortcut.set('meta.s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: 's', metaKey: false });
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(false);
     });
 
     it('should not trigger if shift is pressed but not expected', () => {
-      component.shortcut = 's';
+      component.shortcut.set('s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: 's', shiftKey: true });
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(false);
     });
 
     it('should not trigger if alt is pressed but not expected', () => {
-      component.shortcut = 's';
+      component.shortcut.set('s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: 's', altKey: true });
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(false);
     });
 
     it('should not trigger if meta is pressed but not expected', () => {
-      component.shortcut = 's';
+      component.shortcut.set('s');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: 's', metaKey: true });
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(false);
     });
@@ -596,13 +640,15 @@ describe('ShortcutDirective', () => {
 
   describe('macOS Option key behavior', () => {
     beforeEach(() => {
-      component.isGlobal = true;
+      component.isGlobal.set(true);
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should handle macOS Option key producing special characters (alt.s)', () => {
-      component.shortcut = 'alt.s';
+      component.shortcut.set('alt.s');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Simulate macOS Option+s which produces 'ß'
       const event = new KeyboardEvent('keydown', {
@@ -614,14 +660,16 @@ describe('ShortcutDirective', () => {
 
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
     });
 
     it('should handle macOS Option key with different letters (alt.a)', () => {
-      component.shortcut = 'alt.a';
+      component.shortcut.set('alt.a');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Simulate macOS Option+a which produces 'å'
       const event = new KeyboardEvent('keydown', {
@@ -633,14 +681,16 @@ describe('ShortcutDirective', () => {
 
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
     });
 
     it('should handle Shift+number producing special characters (shift.1)', () => {
-      component.shortcut = 'shift.1';
+      component.shortcut.set('shift.1');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Simulate Shift+1 which produces '!'
       const event = new KeyboardEvent('keydown', {
@@ -652,6 +702,7 @@ describe('ShortcutDirective', () => {
 
       window.dispatchEvent(event);
       fixture.detectChanges();
+      TestBed.tick();
 
       expect(component.actionTriggered).toBe(true);
       expect(event.preventDefault).toHaveBeenCalled();
@@ -660,13 +711,15 @@ describe('ShortcutDirective', () => {
 
   describe('normalizeCode coverage', () => {
     beforeEach(() => {
-      component.isGlobal = true;
+      component.isGlobal.set(true);
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should handle Numpad keys', () => {
-      component.shortcut = '0';
+      component.shortcut.set('0');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: '0', code: 'Numpad0' });
       jest.spyOn(event, 'preventDefault');
@@ -676,8 +729,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle Numpad extended keys (numpadadd)', () => {
-      component.shortcut = 'numpadadd';
+      component.shortcut.set('numpadadd');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', {
         key: '+',
@@ -690,8 +744,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle International keys (IntlBackslash)', () => {
-      component.shortcut = 'backslash';
+      component.shortcut.set('backslash');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', {
         key: '\\',
@@ -704,8 +759,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle International keys (IntlRo)', () => {
-      component.shortcut = 'slash';
+      component.shortcut.set('slash');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', { key: '/', code: 'IntlRo' });
       jest.spyOn(event, 'preventDefault');
@@ -715,8 +771,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle International keys (IntlYen)', () => {
-      component.shortcut = 'backslash';
+      component.shortcut.set('backslash');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', {
         key: '\\',
@@ -729,8 +786,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle direct named keys (BracketLeft)', () => {
-      component.shortcut = 'bracketleft';
+      component.shortcut.set('bracketleft');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', {
         key: '[',
@@ -743,8 +801,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle modifiers from code (ShiftLeft)', () => {
-      component.shortcut = 'shift.enter';
+      component.shortcut.set('shift.enter');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Press Shift (code: ShiftLeft -> normalized to 'shift')
       const shiftEvent = new KeyboardEvent('keydown', {
@@ -768,8 +827,9 @@ describe('ShortcutDirective', () => {
     it('should return null for empty code', () => {
       // This is harder to test via public API as event.code is usually present,
       // but we can simulate an event with empty code matching a main key
-      component.shortcut = 'a';
+      component.shortcut.set('a');
       fixture.detectChanges();
+      TestBed.tick();
 
       // If code is empty, it returns null, so it falls back to key matching
       const event = new KeyboardEvent('keydown', { key: 'a', code: '' });
@@ -780,8 +840,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle undefined code', () => {
-      component.shortcut = 'a';
+      component.shortcut.set('a');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Simulate event with undefined code
       const event = new KeyboardEvent('keydown', { key: 'a' });
@@ -795,8 +856,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle Control code', () => {
-      component.shortcut = 'ctrl.enter';
+      component.shortcut.set('ctrl.enter');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', {
         key: 'Enter',
@@ -810,8 +872,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle Alt code', () => {
-      component.shortcut = 'alt.enter';
+      component.shortcut.set('alt.enter');
       fixture.detectChanges();
+      TestBed.tick();
 
       const event = new KeyboardEvent('keydown', {
         key: 'Enter',
@@ -825,8 +888,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should handle Meta code', () => {
-      component.shortcut = 'meta';
+      component.shortcut.set('meta');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Press Meta
       // key='Meta' -> normalized to 'meta'
@@ -846,9 +910,10 @@ describe('ShortcutDirective', () => {
 
   describe('Ignored keys', () => {
     beforeEach(() => {
-      component.isGlobal = true;
-      component.shortcut = 'enter';
+      component.isGlobal.set(true);
+      component.shortcut.set('enter');
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should ignore Dead keys', () => {
@@ -873,8 +938,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should ignore Dead keys on keyup (element scope)', () => {
-      component.isGlobal = false;
+      component.isGlobal.set(false);
       fixture.detectChanges();
+      TestBed.tick();
       inputElement.focus();
 
       // Simulate Dead key up
@@ -890,8 +956,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should ignore Dead keys on keyup (global scope)', () => {
-      component.isGlobal = true;
+      component.isGlobal.set(true);
       fixture.detectChanges();
+      TestBed.tick();
 
       // Simulate Dead key up
       const event = new KeyboardEvent('keyup', { key: 'Dead' });
@@ -904,9 +971,10 @@ describe('ShortcutDirective', () => {
 
   describe('Visibility Change', () => {
     beforeEach(() => {
-      component.isGlobal = true;
-      component.shortcut = 'ctrl.s';
+      component.isGlobal.set(true);
+      component.shortcut.set('ctrl.s');
       fixture.detectChanges();
+      TestBed.tick();
     });
 
     it('should clear pressed keys when document becomes hidden', () => {
@@ -933,8 +1001,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should clear pressed keys for non-standard modifiers on visibility change', () => {
-      component.shortcut = 'space.enter';
+      component.shortcut.set('space.enter');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Press Space
       const spaceEvent = new KeyboardEvent('keydown', {
@@ -964,8 +1033,9 @@ describe('ShortcutDirective', () => {
     });
 
     it('should NOT clear pressed keys when document is visible (else branch line 95)', () => {
-      component.shortcut = 'space.enter';
+      component.shortcut.set('space.enter');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Press Space
       const spaceEvent = new KeyboardEvent('keydown', {
@@ -992,9 +1062,10 @@ describe('ShortcutDirective', () => {
 
   describe('Global vs Element scope handlers', () => {
     it('should NOT handle element keydown when isGlobal is true (else branch lines 58-60)', () => {
-      component.isGlobal = true;
-      component.shortcut = 'enter';
+      component.isGlobal.set(true);
+      component.shortcut.set('enter');
       fixture.detectChanges();
+      TestBed.tick();
 
       // Dispatch to element - should NOT trigger in global mode
       const event = new KeyboardEvent('keydown', {

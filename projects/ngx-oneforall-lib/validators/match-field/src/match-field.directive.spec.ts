@@ -1,16 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatchFieldsValidator } from './match-field.directive';
 
 @Component({
   template: `
-    <form #form="ngForm" [matchFields]="['password', 'confirmPassword']">
+    <form #form="ngForm" [matchFields]="matchFieldsArr">
       <input type="password" name="password" [(ngModel)]="password" />
       <input
         type="password"
@@ -24,41 +19,43 @@ class TestComponent {
   @ViewChild('form') form!: NgForm;
   password = '';
   confirmPassword = '';
+  matchFieldsArr: [string, string] = ['password', 'confirmPassword'];
 }
 
 describe('MatchFieldsValidator Directive (Group-Level)', () => {
   let fixture: ComponentFixture<TestComponent>;
   let component: TestComponent;
 
-  beforeEach(fakeAsync(() => {
+  beforeEach(async () => {
     fixture = TestBed.configureTestingModule({
       imports: [TestComponent],
     }).createComponent(TestComponent);
 
     component = fixture.componentInstance;
     fixture.detectChanges();
-    tick();
-    fixture.detectChanges();
-  }));
+    await fixture.whenStable();
+  });
 
-  it('should return null when values match', fakeAsync(() => {
-    component.password = 'test123';
-    component.confirmPassword = 'test123';
-    fixture.detectChanges();
-    tick();
-    fixture.detectChanges();
+  it('should return null when values match', () => {
+    const form = component.form.form;
+    form.controls['password'].setValue('test123');
+    form.controls['confirmPassword'].setValue('test123');
 
-    expect(component.form.errors).toBeNull();
-  }));
+    // Trigger validation
+    form.updateValueAndValidity();
 
-  it('should return error when values do not match', fakeAsync(() => {
-    component.password = 'test123';
-    component.confirmPassword = 'different';
-    fixture.detectChanges();
-    tick();
-    fixture.detectChanges();
+    expect(form.errors).toBeNull();
+  });
 
-    expect(component.form.errors).toEqual({
+  it('should return error when values do not match', () => {
+    const form = component.form.form;
+    form.controls['password'].setValue('test123');
+    form.controls['confirmPassword'].setValue('different');
+
+    // Trigger validation
+    form.updateValueAndValidity();
+
+    expect(form.errors).toEqual({
       matchFields: {
         field1: 'password',
         field1Value: 'test123',
@@ -66,23 +63,20 @@ describe('MatchFieldsValidator Directive (Group-Level)', () => {
         field2Value: 'different',
       },
     });
-  }));
+  });
 
-  it('should detect error when password changes after matching', fakeAsync(() => {
-    component.password = 'test123';
-    component.confirmPassword = 'test123';
-    fixture.detectChanges();
-    tick();
-    fixture.detectChanges();
+  it('should detect error when password changes after matching', () => {
+    const form = component.form.form;
+    form.controls['password'].setValue('test123');
+    form.controls['confirmPassword'].setValue('test123');
 
-    expect(component.form.errors).toBeNull();
+    form.updateValueAndValidity();
+    expect(form.errors).toBeNull();
 
-    component.password = 'changed';
-    fixture.detectChanges();
-    tick();
-    fixture.detectChanges();
+    form.controls['password'].setValue('changed');
+    form.updateValueAndValidity();
 
-    expect(component.form.errors).toEqual({
+    expect(form.errors).toEqual({
       matchFields: {
         field1: 'password',
         field1Value: 'changed',
@@ -90,5 +84,5 @@ describe('MatchFieldsValidator Directive (Group-Level)', () => {
         field2Value: 'test123',
       },
     });
-  }));
+  });
 });

@@ -80,7 +80,7 @@ export class DeviceService {
   }
 
   private isTouchDevice(): boolean {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    return navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
   }
 
   private detectDeviceType(): DeviceType {
