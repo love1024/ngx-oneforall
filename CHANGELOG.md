@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/love1024/ngx-oneforall/compare/v1.5.0...v2.0.0) (2026-07-01)
+
+### Features
+
+* update to Angular 22 (#28) ([3f5b6bb](https://github.com/love1024/ngx-oneforall/commit/3f5b6bb))
+
+### Bug Fixes
+
+* remove deprecated init delay property from intersection observer documentation ([9f7b08f](https://github.com/love1024/ngx-oneforall/commit/9f7b08f))
+* infinite scroll init fix (#27) ([2228b01](https://github.com/love1024/ngx-oneforall/commit/2228b01))
+
 ## [1.5.0](https://github.com/love1024/ngx-oneforall/compare/v1.4.0...v1.5.0) (2026-05-02)
 
 ### Features
