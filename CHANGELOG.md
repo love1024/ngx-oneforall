@@ -1,10 +1,12 @@
 # Changelog
 
-## [2.0.0](https://github.com/love1024/ngx-oneforall/compare/v1.5.0...v2.0.0) (2026-07-01)
+## [2.0.0](https://github.com/love1024/ngx-oneforall/compare/v1.5.1...v2.0.0) (2026-07-01)
 
 ### Features
 
 * update to Angular 22 (#28) ([3f5b6bb](https://github.com/love1024/ngx-oneforall/commit/3f5b6bb))
+
+## [1.5.1](https://github.com/love1024/ngx-oneforall/compare/v1.5.0...v1.5.1) (2026-06-24)
 
 ### Bug Fixes
 
