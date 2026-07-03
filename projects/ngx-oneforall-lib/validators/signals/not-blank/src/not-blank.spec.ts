@@ -41,7 +41,7 @@ describe('notBlank signal validator', () => {
     fixture.detectChanges();
     expect(component.testForm.val().valid()).toBe(false);
     expect(component.testForm.val().errors()).toMatchObject([
-      { kind: 'notBlank', message: 'Field cannot be blank' },
+      { kind: 'notBlank', message: 'notBlank' },
     ]);
   });
 
@@ -50,18 +50,18 @@ describe('notBlank signal validator', () => {
     fixture.detectChanges();
     expect(component.testForm.val().valid()).toBe(false);
     expect(component.testForm.val().errors()).toMatchObject([
-      { kind: 'notBlank', message: 'Field cannot be blank' },
+      { kind: 'notBlank', message: 'notBlank' },
     ]);
   });
 
   it('should allow custom message', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const customForm = form(signal({ val: '   ' }), path => {
-      notBlank(path.val, { message: 'Custom blank error' });
-    });
     TestBed.runInInjectionContext(() => {
-      // Just check the errors array, which might not throw if we don't check valid() first
-      // Actually, let's just use a separate component for this, or re-initialize
+      const customForm = form(signal({ val: '   ' }), path => {
+        notBlank(path.val, { message: 'Custom blank error' });
+      });
+      expect(customForm.val().errors()).toMatchObject([
+        { kind: 'notBlank', message: 'Custom blank error' },
+      ]);
     });
   });
 });

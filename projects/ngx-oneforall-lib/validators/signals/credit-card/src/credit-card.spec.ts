@@ -97,4 +97,31 @@ describe('creditCard signal validator', () => {
     expect(component.testForm.val().valid()).toBe(true);
     expect(component.testForm.val().errors()).toEqual([]);
   });
+
+  it('should allow custom message as a string', () => {
+    TestBed.runInInjectionContext(() => {
+      // 14 digits triggers 'invalid_length'
+      const customForm = form(signal({ val: '4111 1111 1111 11' }), path => {
+        creditCard(path.val, { message: 'Custom global CC error' });
+      });
+      expect(customForm.val().errors()).toMatchObject([
+        { kind: 'creditCard', message: 'Custom global CC error' },
+      ]);
+    });
+  });
+
+  it('should allow custom message as a Record', () => {
+    TestBed.runInInjectionContext(() => {
+      const customForm = form(signal({ val: '4111 1111 1111 11' }), path => {
+        creditCard(path.val, {
+          message: {
+            invalid_length: 'Custom invalid length error',
+          },
+        });
+      });
+      expect(customForm.val().errors()).toMatchObject([
+        { kind: 'creditCard', message: 'Custom invalid length error' },
+      ]);
+    });
+  });
 });
