@@ -40,4 +40,35 @@ function creditCard(
 
 Use `creditCard` to validate credit card inputs.
 
+
+
+```typescript
+import { Component, signal } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
+import { creditCard } from 'ngx-oneforall/validators/signals/credit-card';
+
+@Component({
+  selector: 'app-settings',
+  imports: [FormField],
+  template: `
+    <label>
+      ccNumber
+      <input [formField]="settingsForm.ccNumber" />
+    </label>
+  `,
+})
+export class Settings {
+  settingsModel = signal({
+    ccNumber: ''
+  });
+
+  settingsForm = form(this.settingsModel, (path) => {
+    creditCard(path.ccNumber);
+  });
+}
+```
+
+
+## Demo
+
 {{ NgDocActions.demo("CreditCardSignalDemoComponent", { container: true }) }}

@@ -98,7 +98,6 @@ interface CacheMetaType {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CachedMethod<T = any> = T & { clearCache: () => void };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Cache(cacheConfig: CacheDecoratorOptions = {}) {
   return (
     target: object,

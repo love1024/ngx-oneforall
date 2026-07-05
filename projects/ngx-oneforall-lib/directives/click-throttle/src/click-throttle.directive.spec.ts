@@ -18,7 +18,7 @@ import { ClickThrottleDirective } from './click-throttle.directive';
 class TestHostComponent {
   throttle = signal(500);
   eventCount = 0;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   onClick(event: Event) {
     this.eventCount++;
   }

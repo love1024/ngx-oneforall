@@ -85,7 +85,6 @@ describe('memoize', () => {
       class TestClass {
         callCount = 0;
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @memoize((a: number, _b: number) => `key-${a}`)
         expensiveMethod(a: number, b: number): number {
           this.callCount++;
@@ -164,7 +163,6 @@ describe('memoize', () => {
         callCount = 0;
 
         @memoize()
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         async asyncMethod(_a: number): Promise<number> {
           this.callCount++;
           throw new Error('Test error');
@@ -513,7 +511,6 @@ describe('memoize', () => {
         callCount = 0;
 
         @memoize()
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         expensiveMethod(_obj: unknown): string {
           this.callCount++;
           return 'processed';
@@ -602,7 +599,7 @@ describe('memoize', () => {
           num: number,
           str: string,
           obj: { a: number },
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
           _fn: () => void
         ): string {
           this.callCount++;

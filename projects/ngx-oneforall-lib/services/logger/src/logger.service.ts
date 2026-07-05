@@ -39,7 +39,7 @@ export class LoggerService {
   }
 
   private noopLogger(): LogMethod {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     return (...args: unknown[]) => {};
   }
 }

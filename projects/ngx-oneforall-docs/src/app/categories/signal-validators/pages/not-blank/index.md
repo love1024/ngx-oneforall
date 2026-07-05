@@ -29,4 +29,35 @@ function notBlank(
 
 Use `notBlank` to validate that input values contain actual content, not just whitespace. Unlike `Validators.required`, this validator fails for strings containing only spaces, tabs, or newlines.
 
+
+
+```typescript
+import { Component, signal } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
+import { notBlank } from 'ngx-oneforall/validators/signals/not-blank';
+
+@Component({
+  selector: 'app-settings',
+  imports: [FormField],
+  template: `
+    <label>
+      username
+      <input [formField]="settingsForm.username" />
+    </label>
+  `,
+})
+export class Settings {
+  settingsModel = signal({
+    username: ''
+  });
+
+  settingsForm = form(this.settingsModel, (path) => {
+    notBlank(path.username);
+  });
+}
+```
+
+
+## Demo
+
 {{ NgDocActions.demo("NotBlankSignalDemoComponent", { container: true }) }}
