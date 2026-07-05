@@ -1,0 +1,1 @@
+import{Ec as o,Fc as n}from"./chunk-UXY7NMIX.js";import{d as e}from"./chunk-EU2YL7AZ.js";var p=new o(()=>null);function m(i){let t=i,{context:r}=t,u=e(t,["context"]);return(r??new n).set(p,u.timeout)}export{p as a,m as b};

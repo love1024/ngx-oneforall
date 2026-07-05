@@ -1,0 +1,1 @@
+import{a as l}from"./chunk-FS4N4UBM.js";import{a as u,b as o}from"./chunk-77OEBU64.js";function m(r,e){if(r>e)throw new Error("[RangeValidator] min must be less than or equal to max");return t=>{if(!l(t.value))return null;let n=t.value;if(!u(n)&&!o(n))return null;let a=+t.value;return a>=r&&a<=e?null:{range:{reason:"out_of_range",min:r,max:e,actualValue:a}}}}export{m as a};

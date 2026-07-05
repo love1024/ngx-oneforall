@@ -1,0 +1,1 @@
+import{a as e}from"./chunk-FS4N4UBM.js";function l(t){return i=>{let r=i.value;if(!e(r)||typeof r!="string")return null;let n=r.trim().length;return n<t?{minLengthTrimmed:{requiredLength:t,actualLength:n}}:null}}export{l as a};

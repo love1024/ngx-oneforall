@@ -1,0 +1,1 @@
+import{Oa as o,qa as i}from"./chunk-UXY7NMIX.js";var a=class r{validator=null;onChange;validate(t){return this.validator?this.validator(t):null}registerOnValidatorChange(t){this.onChange=t}ngOnChanges(){this.onChange&&this.onChange()}static \u0275fac=function(n){return new(n||r)};static \u0275dir=o({type:r,features:[i]})};export{a};
