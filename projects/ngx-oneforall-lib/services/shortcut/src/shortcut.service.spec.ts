@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { TestBed } from '@angular/core/testing';
 import { ShortcutService } from './shortcut.service';
 import { Subscription, NEVER } from 'rxjs';
